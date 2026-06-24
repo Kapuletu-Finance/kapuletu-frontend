@@ -1,1 +1,3 @@
-export default function Component() { return null; }
+const Component = () => { return null; }
+
+export default Component;

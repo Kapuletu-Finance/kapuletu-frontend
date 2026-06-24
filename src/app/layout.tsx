@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
-import { Providers } from "@/components/providers";
+import { Providers } from "@/components/Providers";
+import { PublicThemeToggle } from "@/components/shared/PublicThemeToggle";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -15,23 +17,29 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   description: "The app for chamas",
-  title: "Kapu Letu",
+  title: "Kapuletu",
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
-        <Providers>{children}</Providers>
+      <body className="min-h-full flex flex-col relative">
+        <Providers>
+          <PublicThemeToggle />
+          {children}
+        </Providers>
+        <Toaster />
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

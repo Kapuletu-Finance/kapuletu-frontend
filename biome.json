@@ -36,7 +36,13 @@
     },
     "enabled": true,
     "rules": {
-      "recommended": true
+      "complexity": {
+        "useArrowFunction": "error"
+      },
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "error"
+      }
     }
   },
   "overrides": [
