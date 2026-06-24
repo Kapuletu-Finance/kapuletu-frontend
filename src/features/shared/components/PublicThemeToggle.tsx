@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
 
 export const PublicThemeToggle = () => {
   const pathname = usePathname();

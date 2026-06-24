@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
-import type { UserRole } from "@/features/auth/utils/auth-utils";
+import type { UserRole } from "@/features/auth/utils";
+import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
 
 // A mock definition for the WorkspaceSwitcher.
 // In a real scenario, this would be imported from "@/features/shared/components/WorkspaceSwitcher"

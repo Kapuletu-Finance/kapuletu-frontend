@@ -11,7 +11,7 @@ import {
   ROLE_COOKIE_NAME,
   SECURE_COOKIE_OPTIONS,
   validateCsrfShield,
-} from "@/features/auth/utils/auth-utils";
+} from "@/features/auth/utils";
 import { campaignsSecurityRules } from "@/features/campaigns/security";
 import { groupsSecurityRules } from "@/features/groups/security";
 import { transactionsSecurityRules } from "@/features/transactions/security";

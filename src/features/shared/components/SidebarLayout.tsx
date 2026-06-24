@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import type React from "react";
-import { SidebarLayoutClient } from "@/components/shared/SidebarLayoutClient";
-import type { UserRole } from "@/features/auth/utils/auth-utils";
+import type { UserRole } from "@/features/auth/utils";
+import { SidebarLayoutClient } from "@/features/shared/components/SidebarLayoutClient";
 
 export const SidebarLayout = async ({ children }: { children: React.ReactNode }) => {
   const cookieStore = await cookies();
