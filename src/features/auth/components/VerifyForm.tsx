@@ -29,6 +29,9 @@ export const VerifyForm = () => {
   const router = useRouter();
 
   const form = useForm<VerifyFormData>({
+    defaultValues: {
+      code: "",
+    },
     resolver: zodResolver(verifySchema),
   });
 

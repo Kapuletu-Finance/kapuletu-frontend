@@ -32,6 +32,12 @@ export const RegisterForm = () => {
 
   const form = useForm<RegisterFormData & { showPassword?: boolean }>({
     defaultValues: {
+      confirmPassword: "",
+      email: "",
+      firstName: "",
+      lastName: "",
+      password: "",
+      phoneNumber: "",
       role: "treasurer",
       showPassword: false,
     },

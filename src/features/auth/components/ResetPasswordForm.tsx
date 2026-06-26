@@ -33,7 +33,11 @@ const ResetPasswordFormContent = () => {
   const token = searchParams?.get("token") || "";
 
   const form = useForm<ResetPasswordFormData>({
-    defaultValues: { token },
+    defaultValues: {
+      confirmPassword: "",
+      password: "",
+      token,
+    },
     resolver: zodResolver(resetPasswordSchema),
   });
 

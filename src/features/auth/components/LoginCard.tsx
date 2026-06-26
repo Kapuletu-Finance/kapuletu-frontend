@@ -28,6 +28,8 @@ import { useLoginMutation } from "@/features/auth/services/mutations";
 export const LoginCard = () => {
   const form = useForm<LoginFormData & { showPassword?: boolean }>({
     defaultValues: {
+      email: "",
+      password: "",
       showPassword: false,
     },
     resolver: zodResolver(loginSchema),
