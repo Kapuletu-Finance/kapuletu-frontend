@@ -13,18 +13,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { type ForgotPasswordFormData, forgotPasswordSchema } from "@/features/auth/schemas";
 
 import { useForgotPasswordMutation } from "@/features/auth/services/mutations";
 
 export const ForgotPasswordForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ForgotPasswordFormData>({
+  const form = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
   });
 
@@ -47,34 +50,43 @@ export const ForgotPasswordForm = () => {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber" required>
-              Phone Number
-            </Label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Phone className="h-4 w-4" />
-              </div>
-              <Input
-                id="phoneNumber"
-                type="tel"
-                placeholder="+254 7XX XXXXXX"
-                className="pl-10"
-                {...register("phoneNumber")}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <fieldset disabled={forgotPasswordMutation.isPending} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel required>Phone Number</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <Phone className="h-4 w-4" />
+                        </div>
+                        <Input
+                          type="tel"
+                          placeholder="+254 7XX XXXXXX"
+                          className="pl-10"
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            {errors.phoneNumber && <p className="text-sm mt-1">{errors.phoneNumber.message}</p>}
-          </div>
 
-          <Button
-            type="submit"
-            className="w-full mt-4"
-            isLoading={forgotPasswordMutation.isPending}
-          >
-            Send Reset Link
-          </Button>
-        </form>
+              <Button
+                type="submit"
+                className="w-full mt-4"
+                isLoading={forgotPasswordMutation.isPending}
+              >
+                Send Reset Link
+              </Button>
+            </fieldset>
+          </form>
+        </Form>
       </CardContent>
 
       <CardFooter className="flex justify-center">

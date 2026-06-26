@@ -5,8 +5,15 @@ import { Loader2, Lock, Mail, Phone, RefreshCw, User as UserIcon } from "lucide-
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   type ChangePasswordFormData,
@@ -88,93 +95,95 @@ export const ProfileForm = () => {
               <CardDescription>Update your personal details here.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <UserIcon className="h-4 w-4" />
-                      </div>
-                      <Input
-                        id="firstName"
-                        type="text"
-                        className="pl-10"
-                        {...profileForm.register("firstName")}
+              <Form {...profileForm}>
+                <form onSubmit={profileForm.handleSubmit(onProfileSubmit)}>
+                  <fieldset disabled={updateProfileMutation.isPending} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={profileForm.control}
+                        name="firstName"
+                        render={({ field }) => (
+                          <FormItem className="space-y-2">
+                            <FormLabel>First Name</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                  <UserIcon className="h-4 w-4" />
+                                </div>
+                                <Input type="text" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={profileForm.control}
+                        name="lastName"
+                        render={({ field }) => (
+                          <FormItem className="space-y-2">
+                            <FormLabel>Last Name</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                  <UserIcon className="h-4 w-4" />
+                                </div>
+                                <Input type="text" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                    {profileForm.formState.errors.firstName && (
-                      <p className="text-sm mt-1">
-                        {profileForm.formState.errors.firstName.message}
-                      </p>
-                    )}
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <UserIcon className="h-4 w-4" />
-                      </div>
-                      <Input
-                        id="lastName"
-                        type="text"
-                        className="pl-10"
-                        {...profileForm.register("lastName")}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={profileForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem className="space-y-2">
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                  <Mail className="h-4 w-4" />
+                                </div>
+                                <Input type="email" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={profileForm.control}
+                        name="phoneNumber"
+                        render={({ field }) => (
+                          <FormItem className="space-y-2">
+                            <FormLabel>Phone Number</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                  <Phone className="h-4 w-4" />
+                                </div>
+                                <Input type="tel" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                    {profileForm.formState.errors.lastName && (
-                      <p className="text-sm mt-1">
-                        {profileForm.formState.errors.lastName.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Mail className="h-4 w-4" />
-                      </div>
-                      <Input
-                        id="email"
-                        type="email"
-                        className="pl-10"
-                        {...profileForm.register("email")}
-                      />
-                    </div>
-                    {profileForm.formState.errors.email && (
-                      <p className="text-sm mt-1">{profileForm.formState.errors.email.message}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="phoneNumber">Phone Number</Label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Phone className="h-4 w-4" />
-                      </div>
-                      <Input
-                        id="phoneNumber"
-                        type="tel"
-                        className="pl-10"
-                        {...profileForm.register("phoneNumber")}
-                      />
-                    </div>
-                    {profileForm.formState.errors.phoneNumber && (
-                      <p className="text-sm mt-1">
-                        {profileForm.formState.errors.phoneNumber.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <Button type="submit" isLoading={updateProfileMutation.isPending}>
-                  Save Changes
-                </Button>
-              </form>
+                    <Button type="submit" isLoading={updateProfileMutation.isPending}>
+                      Save Changes
+                    </Button>
+                  </fieldset>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </TabsContent>
@@ -186,77 +195,72 @@ export const ProfileForm = () => {
               <CardDescription>Update your password to keep your account secure.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="currentPassword" required>
-                    Current Password
-                  </Label>
-                  <div className="relative max-w-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-4 w-4" />
-                    </div>
-                    <Input
-                      id="currentPassword"
-                      type="password"
-                      className="pl-10"
-                      {...passwordForm.register("currentPassword")}
+              <Form {...passwordForm}>
+                <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
+                  <fieldset disabled={changePasswordMutation.isPending} className="space-y-6">
+                    <FormField
+                      control={passwordForm.control}
+                      name="currentPassword"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel required>Current Password</FormLabel>
+                          <FormControl>
+                            <div className="relative max-w-sm">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Lock className="h-4 w-4" />
+                              </div>
+                              <Input type="password" className="pl-10" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  {passwordForm.formState.errors.currentPassword && (
-                    <p className="text-sm mt-1">
-                      {passwordForm.formState.errors.currentPassword.message}
-                    </p>
-                  )}
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword" required>
-                    New Password
-                  </Label>
-                  <div className="relative max-w-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <RefreshCw className="h-4 w-4" />
-                    </div>
-                    <Input
-                      id="newPassword"
-                      type="password"
-                      className="pl-10"
-                      {...passwordForm.register("newPassword")}
+                    <FormField
+                      control={passwordForm.control}
+                      name="newPassword"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel required>New Password</FormLabel>
+                          <FormControl>
+                            <div className="relative max-w-sm">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <RefreshCw className="h-4 w-4" />
+                              </div>
+                              <Input type="password" className="pl-10" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  {passwordForm.formState.errors.newPassword && (
-                    <p className="text-sm mt-1">
-                      {passwordForm.formState.errors.newPassword.message}
-                    </p>
-                  )}
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="confirmNewPassword" required>
-                    Confirm New Password
-                  </Label>
-                  <div className="relative max-w-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-4 w-4" />
-                    </div>
-                    <Input
-                      id="confirmNewPassword"
-                      type="password"
-                      className="pl-10"
-                      {...passwordForm.register("confirmNewPassword")}
+                    <FormField
+                      control={passwordForm.control}
+                      name="confirmNewPassword"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel required>Confirm New Password</FormLabel>
+                          <FormControl>
+                            <div className="relative max-w-sm">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Lock className="h-4 w-4" />
+                              </div>
+                              <Input type="password" className="pl-10" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  {passwordForm.formState.errors.confirmNewPassword && (
-                    <p className="text-sm mt-1">
-                      {passwordForm.formState.errors.confirmNewPassword.message}
-                    </p>
-                  )}
-                </div>
 
-                <Button type="submit" isLoading={changePasswordMutation.isPending}>
-                  Update Password
-                </Button>
-              </form>
+                    <Button type="submit" isLoading={changePasswordMutation.isPending}>
+                      Update Password
+                    </Button>
+                  </fieldset>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </TabsContent>

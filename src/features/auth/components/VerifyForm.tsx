@@ -13,19 +13,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { type VerifyFormData, verifySchema } from "@/features/auth/schemas";
 import { useVerifyMutation } from "@/features/auth/services/mutations";
 
 export const VerifyForm = () => {
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<VerifyFormData>({
+  const form = useForm<VerifyFormData>({
     resolver: zodResolver(verifySchema),
   });
 
@@ -50,27 +53,36 @@ export const VerifyForm = () => {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="code" required>
-              Verification Code
-            </Label>
-            <div className="relative">
-              <Input
-                id="code"
-                type="text"
-                placeholder="123456"
-                className="text-center tracking-widest text-lg"
-                {...register("code")}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <fieldset disabled={verifyMutation.isPending} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel required>Verification Code</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          placeholder="123456"
+                          className="text-center tracking-widest text-lg"
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage className="text-center" />
+                  </FormItem>
+                )}
               />
-            </div>
-            {errors.code && <p className="text-sm mt-1 text-center">{errors.code.message}</p>}
-          </div>
 
-          <Button type="submit" className="w-full mt-4" isLoading={verifyMutation.isPending}>
-            Verify Code
-          </Button>
-        </form>
+              <Button type="submit" className="w-full mt-4" isLoading={verifyMutation.isPending}>
+                Verify Code
+              </Button>
+            </fieldset>
+          </form>
+        </Form>
       </CardContent>
 
       <CardFooter className="flex justify-center">

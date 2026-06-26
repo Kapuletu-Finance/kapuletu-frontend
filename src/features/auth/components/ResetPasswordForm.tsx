@@ -15,8 +15,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { type ResetPasswordFormData, resetPasswordSchema } from "@/features/auth/schemas";
 import { useResetPasswordMutation } from "@/features/auth/services/mutations";
 
@@ -25,11 +32,7 @@ const ResetPasswordFormContent = () => {
   const searchParams = useSearchParams();
   const token = searchParams?.get("token") || "";
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ResetPasswordFormData>({
+  const form = useForm<ResetPasswordFormData>({
     defaultValues: { token },
     resolver: zodResolver(resetPasswordSchema),
   });
@@ -55,53 +58,69 @@ const ResetPasswordFormContent = () => {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <input type="hidden" {...register("token")} />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <fieldset disabled={resetPasswordMutation.isPending} className="space-y-6">
+              <input type="hidden" {...form.register("token")} />
 
-          <div className="space-y-2">
-            <Label htmlFor="password" required>
-              New Password
-            </Label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-4 w-4" />
-              </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                className="pl-10"
-                {...register("password")}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel required>New Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <Lock className="h-4 w-4" />
+                        </div>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          className="pl-10"
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            {errors.password && <p className="text-sm mt-1">{errors.password.message}</p>}
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword" required>
-              Confirm Password
-            </Label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-4 w-4" />
-              </div>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                className="pl-10"
-                {...register("confirmPassword")}
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel required>Confirm Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <Lock className="h-4 w-4" />
+                        </div>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          className="pl-10"
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            {errors.confirmPassword && (
-              <p className="text-sm mt-1">{errors.confirmPassword.message}</p>
-            )}
-          </div>
 
-          <Button type="submit" className="w-full mt-4" isLoading={resetPasswordMutation.isPending}>
-            Reset Password
-          </Button>
-        </form>
+              <Button
+                type="submit"
+                className="w-full mt-4"
+                isLoading={resetPasswordMutation.isPending}
+              >
+                Reset Password
+              </Button>
+            </fieldset>
+          </form>
+        </Form>
       </CardContent>
 
       <CardFooter className="flex justify-center">
