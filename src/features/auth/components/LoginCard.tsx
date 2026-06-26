@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Loader2, Lock, Phone } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -52,24 +52,26 @@ export const LoginCard = () => {
 
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Phone Field */}
+          {/* Email Field */}
           <div className="space-y-2">
-            <Label htmlFor="phoneNumber" required>
-              Phone Number
+            <Label htmlFor="email" required>
+              Email Address
             </Label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Phone className="h-4 w-4" />
+                <Mail className="h-4 w-4" />
               </div>
               <Input
-                id="phoneNumber"
-                type="tel"
-                placeholder="+254 7XX XXXXXX"
+                id="email"
+                type="email"
+                placeholder="you@example.com"
                 className="pl-10"
-                {...register("phoneNumber")}
+                {...register("email")}
               />
             </div>
-            {errors.phoneNumber && <p className="text-sm mt-1">{errors.phoneNumber.message}</p>}
+            {errors.email && (
+              <p className="text-sm mt-1 text-destructive">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Password Field */}

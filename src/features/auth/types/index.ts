@@ -1,7 +1,7 @@
 /**
  * User type exactly mapping the KapuLetu backend SQLAlchemy `User` model.
  */
-export interface User {
+export type User = {
   user_id: string; // UUID
   first_name: string;
   last_name: string;
@@ -10,50 +10,50 @@ export interface User {
   role: "treasurer" | "admin" | "super_admin";
   is_active: boolean;
   created_at: string; // ISO 8601 DateTime
-}
+};
 
 /**
  * Authentication response from our proxy which extends the user
  * with any proxy-specific metadata (though our proxy currently
  * strips tokens and passes the rest).
  */
-export interface AuthResponse extends User {}
+export type AuthResponse = User;
 
-export interface LoginRequest {
-  phone_number: string;
+export type LoginRequest = {
+  email: string;
   password: string;
-}
+};
 
-export interface RegisterRequest {
+export type RegisterRequest = {
   first_name: string;
   last_name: string;
   email: string;
   phone_number: string;
   password: string;
   role: "treasurer" | "admin";
-}
+};
 
-export interface ForgotPasswordRequest {
+export type ForgotPasswordRequest = {
   phone_number: string;
-}
+};
 
-export interface ResetPasswordRequest {
+export type ResetPasswordRequest = {
   token: string;
   new_password: string;
-}
+};
 
-export interface ChangePasswordRequest {
+export type ChangePasswordRequest = {
   current_password: string;
   new_password: string;
-}
+};
 
-export interface UpdateProfileRequest {
+export type UpdateProfileRequest = {
   first_name?: string;
   last_name?: string;
   email?: string;
   phone_number?: string;
-}
+};
 
-export interface VerifyRequest {
+export type VerifyRequest = {
   code: string;
-}
+};

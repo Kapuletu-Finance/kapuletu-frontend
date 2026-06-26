@@ -30,17 +30,15 @@ export const useLoginMutation = () => {
     mutationFn: async (data: LoginFormData) => {
       // Map form data to backend expected snake_case DTO
       const requestPayload: LoginRequest = {
+        email: data.email,
         password: data.password,
-        phone_number: data.phoneNumber,
       };
       const response = await apiClient.post<AuthResponse>(AUTH_URLS.LOGIN, requestPayload);
       return response.data;
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Invalid phone number or password. Please try again.",
+        error instanceof Error ? error.message : "Invalid email or password. Please try again.",
       );
     },
     onSuccess: (data) => {

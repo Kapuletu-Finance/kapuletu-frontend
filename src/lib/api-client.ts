@@ -1,5 +1,6 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { env } from "@/env";
+import type { ApiErrorResponse } from "@/types/api";
 
 const CSRF_HEADER_NAME = env.NEXT_PUBLIC_CSRF_HEADER_NAME;
 
@@ -56,6 +57,19 @@ apiClient.interceptors.response.use(
           // Force route to login, appending the attempted URL
           window.location.href = `/login?from=${encodeURIComponent(window.location.pathname)}`;
         }
+      }
+    }
+
+    // Try to extract a human-readable message from the response payload
+    if (error.response?.data && typeof error.response.data === "object") {
+      const data = error.response.data as ApiErrorResponse;
+      if (typeof data.detail === "string") {
+        error.message = data.detail;
+      } else if (Array.isArray(data.detail)) {
+        // Handle Pydantic validation errors
+        error.message = data.detail.map((err) => err.msg).join(", ");
+      } else if (typeof data.message === "string") {
+        error.message = data.message;
       }
     }
 
