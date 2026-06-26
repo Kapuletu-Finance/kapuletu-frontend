@@ -171,15 +171,8 @@ export const ProfileForm = () => {
                   </div>
                 </div>
 
-                <Button type="submit" disabled={updateProfileMutation.isPending}>
-                  {updateProfileMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    "Save Changes"
-                  )}
+                <Button type="submit" isLoading={updateProfileMutation.isPending}>
+                  Save Changes
                 </Button>
               </form>
             </CardContent>
@@ -260,15 +253,8 @@ export const ProfileForm = () => {
                   )}
                 </div>
 
-                <Button type="submit" disabled={changePasswordMutation.isPending}>
-                  {changePasswordMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Updating...
-                    </>
-                  ) : (
-                    "Update Password"
-                  )}
+                <Button type="submit" isLoading={changePasswordMutation.isPending}>
+                  Update Password
                 </Button>
               </form>
             </CardContent>

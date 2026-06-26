@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { KeyRound, Loader2, Phone } from "lucide-react";
+import { KeyRound, Phone } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -67,15 +67,12 @@ export const ForgotPasswordForm = () => {
             {errors.phoneNumber && <p className="text-sm mt-1">{errors.phoneNumber.message}</p>}
           </div>
 
-          <Button type="submit" className="w-full mt-4" disabled={forgotPasswordMutation.isPending}>
-            {forgotPasswordMutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sending link...
-              </>
-            ) : (
-              "Send Reset Link"
-            )}
+          <Button
+            type="submit"
+            className="w-full mt-4"
+            isLoading={forgotPasswordMutation.isPending}
+          >
+            Send Reset Link
           </Button>
         </form>
       </CardContent>

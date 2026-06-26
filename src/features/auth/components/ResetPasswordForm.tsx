@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { KeyRound, Loader2, Lock } from "lucide-react";
+import { KeyRound, Lock } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -98,15 +98,8 @@ const ResetPasswordFormContent = () => {
             )}
           </div>
 
-          <Button type="submit" className="w-full mt-4" disabled={resetPasswordMutation.isPending}>
-            {resetPasswordMutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Resetting Password...
-              </>
-            ) : (
-              "Reset Password"
-            )}
+          <Button type="submit" className="w-full mt-4" isLoading={resetPasswordMutation.isPending}>
+            Reset Password
           </Button>
         </form>
       </CardContent>

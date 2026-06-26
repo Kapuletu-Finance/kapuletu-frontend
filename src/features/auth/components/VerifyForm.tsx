@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -67,15 +67,8 @@ export const VerifyForm = () => {
             {errors.code && <p className="text-sm mt-1 text-center">{errors.code.message}</p>}
           </div>
 
-          <Button type="submit" className="w-full mt-4" disabled={verifyMutation.isPending}>
-            {verifyMutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Verifying...
-              </>
-            ) : (
-              "Verify Code"
-            )}
+          <Button type="submit" className="w-full mt-4" isLoading={verifyMutation.isPending}>
+            Verify Code
           </Button>
         </form>
       </CardContent>

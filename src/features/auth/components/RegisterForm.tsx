@@ -1,17 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Building2,
-  Eye,
-  EyeOff,
-  Loader2,
-  Lock,
-  Mail,
-  Phone,
-  ShieldAlert,
-  User,
-} from "lucide-react";
+import { Building2, Eye, EyeOff, Lock, Mail, Phone, ShieldAlert, User } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -255,15 +245,8 @@ export const RegisterForm = () => {
           </div>
 
           {/* Submit Button */}
-          <Button type="submit" className="w-full mt-4" disabled={registerMutation.isPending}>
-            {registerMutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating Account...
-              </>
-            ) : (
-              "Create Account"
-            )}
+          <Button type="submit" className="w-full mt-4" isLoading={registerMutation.isPending}>
+            Create Account
           </Button>
         </form>
       </CardContent>
