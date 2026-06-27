@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
+import { SignOutButton } from "@/features/auth/components/SignOutButton";
 import type { UserRole } from "@/features/auth/utils";
 import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
 
@@ -62,7 +63,7 @@ export const SidebarLayoutClient = ({
         {/* Header */}
         <header className="h-16 flex items-center justify-between px-6 bg-white border-b shadow-sm">
           <div className="font-semibold text-gray-800 truncate">
-            {role === "admin" ? "System Operator Terminal" : "Treasury Dashboard"}
+            {role === "admin" ? "Admin Dashboard" : "Treasurer Dashboard"}
           </div>
 
           <div className="flex items-center space-x-4">
@@ -74,6 +75,8 @@ export const SidebarLayoutClient = ({
             <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold cursor-pointer">
               {role === "admin" ? "A" : "T"}
             </div>
+
+            <SignOutButton />
           </div>
         </header>
 
@@ -103,14 +106,14 @@ export const SidebarLayoutClient = ({
 };
 
 const ADMIN_LINKS = [
-  { href: "/admin", label: "Metrics / Health Dashboard" },
-  { href: "/admin/groups", label: "Tenant Provisioning" },
-  { href: "/admin/audit/logs", label: "Global Audit Logs" },
+  { href: "/admin", label: "Dashboard" },
+  { href: "/admin/groups", label: "Groups" },
+  { href: "/admin/audit/logs", label: "Audit Logs" },
 ];
 
 const TREASURER_LINKS = [
-  { href: "/treasurer/transactions", label: "Pending Inbox" },
-  { href: "/treasurer/ledger", label: "Historic Audit Ledger" },
-  { href: "/treasurer/campaigns", label: "Milestones & Campaigns" },
-  { href: "/treasurer/members", label: "Member Profiles" },
+  { href: "/treasurer/transactions", label: "Transactions" },
+  { href: "/treasurer/ledger", label: "Ledger" },
+  { href: "/treasurer/campaigns", label: "Campaigns" },
+  { href: "/treasurer/members", label: "Members" },
 ];

@@ -201,3 +201,22 @@ export const useVerifyMutation = () => {
     },
   });
 };
+
+export const useLogoutMutation = () => {
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async () => {
+      // The proxy intercepts this and clears cookies
+      const response = await apiClient.post<{ message: string }>("/auth/logout");
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to sign out.");
+    },
+    onSuccess: () => {
+      toast.success("Signed out successfully.");
+      router.push("/login");
+    },
+  });
+};
