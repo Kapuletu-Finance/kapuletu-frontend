@@ -1,5 +1,3 @@
-const Component = () => {
-  return null;
-};
-
-export default Component;
+export default function TreasurerLayout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}

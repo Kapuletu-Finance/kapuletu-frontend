@@ -43,11 +43,15 @@ export const useLoginMutation = () => {
     },
     onSuccess: (data) => {
       toast.success("Login successful!");
-      // Redirect based on role returned from the BFF
-      if (data.role === "admin") {
+      const params = new URLSearchParams(window.location.search);
+      const from = params.get("from");
+
+      if (from) {
+        router.push(from);
+      } else if (data.role === "admin") {
         router.push("/admin");
       } else {
-        router.push("/treasurer/transactions");
+        router.push("/treasurer");
       }
     },
   });
@@ -80,10 +84,15 @@ export const useRegisterMutation = () => {
     },
     onSuccess: (data) => {
       toast.success("Account created successfully!");
-      if (data.role === "admin") {
+      const params = new URLSearchParams(window.location.search);
+      const from = params.get("from");
+
+      if (from) {
+        router.push(from);
+      } else if (data.role === "admin") {
         router.push("/admin");
       } else {
-        router.push("/treasurer/transactions");
+        router.push("/treasurer");
       }
     },
   });

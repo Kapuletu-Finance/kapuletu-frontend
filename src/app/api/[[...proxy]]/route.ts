@@ -46,9 +46,7 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
   const role = cookieStore.get(ROLE_COOKIE_NAME)?.value;
 
   const matchedRule = securityRegistry.find((rule) =>
-    typeof rule.path === "string"
-      ? rule.path === `/${backendPath}`
-      : rule.path.test(`/${backendPath}`),
+    typeof rule.path === "string" ? rule.path === backendPath : rule.path.test(backendPath),
   );
 
   if (matchedRule && !matchedRule.skipAuth) {
@@ -134,7 +132,7 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
 
     // Handle Auth Login Interception
     if (
-      `/${backendPath}` === AUTH_URLS.LOGIN &&
+      backendPath === AUTH_URLS.LOGIN &&
       axiosResponse.status >= 200 &&
       axiosResponse.status < 300
     ) {

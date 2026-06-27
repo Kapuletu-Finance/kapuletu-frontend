@@ -34,7 +34,10 @@ export const registerSchema = z
     phoneNumber: z
       .string({ message: "Phone number is required." })
       .min(1, "Phone number is required.")
-      .min(10, "Please enter a valid phone number (e.g., +254...)."),
+      .regex(
+        /^(?:\+2547|\+2541|07|01)\d{8}$/,
+        "Please enter a valid phone number (e.g., +2547... or 07...).",
+      ),
     role: z.enum(["admin", "treasurer"], {
       message: "Please select a valid role.",
     }),
@@ -50,7 +53,7 @@ export const forgotPasswordSchema = z.object({
   phoneNumber: z
     .string({ message: "Phone number is required." })
     .min(1, "Phone number is required.")
-    .min(10, "Please enter a valid phone number."),
+    .regex(/^(?:\+2547|\+2541|07|01)\d{8}$/, "Please enter a valid phone number."),
 });
 
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
@@ -115,7 +118,7 @@ export const updateProfileSchema = z.object({
   phoneNumber: z
     .string({ message: "Phone number is required." })
     .min(1, "Phone number is required.")
-    .min(10, "Please enter a valid phone number.")
+    .regex(/^(?:\+2547|\+2541|07|01)\d{8}$/, "Please enter a valid phone number.")
     .optional()
     .or(z.literal("")),
 });
