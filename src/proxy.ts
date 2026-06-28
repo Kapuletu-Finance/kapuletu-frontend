@@ -5,11 +5,14 @@ import { env } from "@/env";
 export const proxy = (request: NextRequest) => {
   const { pathname } = request.nextUrl;
 
-  // We only care about /treasurer and /admin route groups
   const isTreasurerRoute = pathname.startsWith("/treasurer");
   const isAdminRoute = pathname.startsWith("/admin");
+  const isAuthRoute = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password"].includes(
+    pathname,
+  );
+  const isRootRoute = pathname === "/";
 
-  if (!isTreasurerRoute && !isAdminRoute) {
+  if (!isTreasurerRoute && !isAdminRoute && !isAuthRoute && !isRootRoute) {
     return NextResponse.next();
   }
 
@@ -19,30 +22,50 @@ export const proxy = (request: NextRequest) => {
   const accessToken = request.cookies.get(accessTokenCookieName)?.value;
   const userRole = request.cookies.get(roleCookieName)?.value;
 
+  // Signed-in user logic
+  if (accessToken && userRole) {
+    // Redirect away from root and auth pages to their dashboard
+    if (isRootRoute || isAuthRoute) {
+      if (userRole === "treasurer")
+        return NextResponse.redirect(new URL("/treasurer", request.url));
+      if (userRole === "admin") return NextResponse.redirect(new URL("/admin", request.url));
+      return NextResponse.next();
+    }
+
+    // Role-Based Cross-Routing Restrictions
+    if (userRole === "treasurer" && isAdminRoute) {
+      return NextResponse.redirect(new URL("/treasurer", request.url));
+    }
+
+    if (userRole === "admin" && isTreasurerRoute) {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
+
+    // Valid session and valid role scope, allow access
+    return NextResponse.next();
+  }
+
   // Unauthenticated user attempting to access secure routes
-  if (!accessToken) {
-    const loginUrl = new URL("/login", request.url);
-    // Optionally preserve the attempted URL for post-login redirect
-    loginUrl.searchParams.set("from", pathname);
-    return NextResponse.redirect(loginUrl);
+  if (isTreasurerRoute || isAdminRoute) {
+    const signInUrl = new URL("/sign-in", request.url);
+    // Optionally preserve the attempted URL for post-sign in redirect
+    signInUrl.searchParams.set("from", pathname);
+    return NextResponse.redirect(signInUrl);
   }
 
-  // Role-Based Cross-Routing Restrictions
-  if (userRole === "treasurer" && isAdminRoute) {
-    // Treasurers shouldn't access admin
-    return NextResponse.redirect(new URL("/treasurer/transactions", request.url));
-  }
-
-  if (userRole === "admin" && isTreasurerRoute) {
-    // Admins shouldn't access treasurer
-    return NextResponse.redirect(new URL("/admin", request.url));
-  }
-
-  // Valid session and valid role scope, allow access
+  // Allow unauthenticated access to root and auth routes
   return NextResponse.next();
 };
 
 export const config = {
-  // Apply middleware only to /treasurer/* and /admin/* routes
-  matcher: ["/treasurer/:path*", "/admin/:path*"],
+  // Apply middleware to protected routes, auth routes, and the root route
+  matcher: [
+    "/treasurer/:path*",
+    "/admin/:path*",
+    "/",
+    "/sign-in",
+    "/sign-up",
+    "/forgot-password",
+    "/reset-password",
+  ],
 };

@@ -21,7 +21,6 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
         {...props}
       >
         {children}
-        {required && <span className="text-destructive">*</span>}
       </label>
     )
   }

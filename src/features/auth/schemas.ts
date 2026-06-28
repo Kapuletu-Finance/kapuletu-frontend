@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
+export const signInSchema = z.object({
   email: z
     .string({ message: "Email address is required." })
     .min(1, "Email address is required.")
@@ -8,9 +8,9 @@ export const loginSchema = z.object({
   password: z.string({ message: "Password is required." }).min(1, "Password is required."),
 });
 
-export type LoginFormData = z.infer<typeof loginSchema>;
+export type SignInFormData = z.infer<typeof signInSchema>;
 
-export const registerSchema = z
+export const signUpSchema = z
   .object({
     confirmPassword: z
       .string({ message: "Please confirm your password." })
@@ -47,7 +47,7 @@ export const registerSchema = z
     path: ["confirmPassword"],
   });
 
-export type RegisterFormData = z.infer<typeof registerSchema>;
+export type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export const forgotPasswordSchema = z.object({
   phoneNumber: z

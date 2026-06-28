@@ -4,9 +4,9 @@ import { toast } from "sonner";
 import type {
   ChangePasswordFormData,
   ForgotPasswordFormData,
-  LoginFormData,
-  RegisterFormData,
   ResetPasswordFormData,
+  SignInFormData,
+  SignUpFormData,
   UpdateProfileFormData,
   VerifyFormData,
 } from "@/features/auth/schemas";
@@ -14,26 +14,26 @@ import type {
   AuthResponse,
   ChangePasswordRequest,
   ForgotPasswordRequest,
-  LoginRequest,
-  RegisterRequest,
   ResetPasswordRequest,
+  SignInRequest,
+  SignUpRequest,
   UpdateProfileRequest,
   VerifyRequest,
 } from "@/features/auth/types";
 import { AUTH_URLS } from "@/features/auth/urls";
 import { apiClient } from "@/lib/api-client";
 
-export const useLoginMutation = () => {
+export const useSignInMutation = () => {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: async (data: LoginFormData) => {
+    mutationFn: async (data: SignInFormData) => {
       // Map form data to backend expected snake_case DTO
-      const requestPayload: LoginRequest = {
+      const requestPayload: SignInRequest = {
         email: data.email,
         password: data.password,
       };
-      const response = await apiClient.post<AuthResponse>(AUTH_URLS.LOGIN, requestPayload);
+      const response = await apiClient.post<AuthResponse>(AUTH_URLS.SIGN_IN, requestPayload);
       return response.data;
     },
     onError: (error) => {
@@ -42,7 +42,7 @@ export const useLoginMutation = () => {
       );
     },
     onSuccess: (data) => {
-      toast.success("Login successful!");
+      toast.success("Sign in successful!");
       const params = new URLSearchParams(window.location.search);
       const from = params.get("from");
 
@@ -57,13 +57,13 @@ export const useLoginMutation = () => {
   });
 };
 
-export const useRegisterMutation = () => {
+export const useSignUpMutation = () => {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: async (data: RegisterFormData) => {
+    mutationFn: async (data: SignUpFormData) => {
       // Map form data to backend expected snake_case DTO
-      const requestPayload: RegisterRequest = {
+      const requestPayload: SignUpRequest = {
         email: data.email,
         first_name: data.firstName,
         last_name: data.lastName,
@@ -72,7 +72,7 @@ export const useRegisterMutation = () => {
         role: data.role,
       };
 
-      const response = await apiClient.post<AuthResponse>(AUTH_URLS.REGISTER, requestPayload);
+      const response = await apiClient.post<AuthResponse>(AUTH_URLS.SIGN_UP, requestPayload);
       return response.data;
     },
     onError: (error) => {
@@ -216,7 +216,7 @@ export const useLogoutMutation = () => {
     },
     onSuccess: () => {
       toast.success("Signed out successfully.");
-      router.push("/login");
+      router.push("/sign-in");
     },
   });
 };

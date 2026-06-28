@@ -13,7 +13,7 @@ export const SignOutButton = () => {
       size="sm"
       onClick={() => logoutMutation.mutate()}
       isLoading={logoutMutation.isPending}
-      className="text-slate-600 hover:text-slate-900"
+      className="text-muted-foreground hover:text-foreground"
     >
       <LogOut className="h-4 w-4 mr-2" />
       Sign Out

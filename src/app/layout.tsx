@@ -1,13 +1,12 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
-import { Toaster } from "@/components/ui/sonner";
+import type { Metadata } from "next";
+import { Figtree, Geist_Mono } from "next/font/google";
 import { Providers } from "@/features/shared/components/Providers";
 import { PublicThemeToggle } from "@/features/shared/components/PublicThemeToggle";
 
-const geistSans = Geist({
+const figtree = Figtree({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-figtree",
 });
 
 const geistMono = Geist_Mono({
@@ -20,15 +19,15 @@ export const metadata: Metadata = {
   title: "Kapuletu",
 };
 
-const RootLayout = ({
-  children,
-}: Readonly<{
+interface RootLayoutProps {
   children: React.ReactNode;
-}>) => {
+}
+
+const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${figtree.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col relative">
@@ -36,7 +35,6 @@ const RootLayout = ({
           <PublicThemeToggle />
           {children}
         </Providers>
-        <Toaster />
       </body>
     </html>
   );

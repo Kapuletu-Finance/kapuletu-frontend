@@ -1,33 +1,21 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { KeyRound, Phone } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { type ForgotPasswordFormData, forgotPasswordSchema } from "@/features/auth/schemas";
-
 import { useForgotPasswordMutation } from "@/features/auth/services/mutations";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 export const ForgotPasswordForm = () => {
   const form = useForm<ForgotPasswordFormData>({
+    defaultValues: {
+      phoneNumber: "",
+    },
     resolver: zodResolver(forgotPasswordSchema),
   });
 
@@ -38,67 +26,63 @@ export const ForgotPasswordForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader className="text-center space-y-2">
-        <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4">
-          <KeyRound className="h-8 w-8" />
-        </div>
-        <CardTitle className="text-2xl font-bold tracking-tight">Reset Password</CardTitle>
-        <CardDescription>
-          Enter your phone number and we'll send you a link to reset your password.
-        </CardDescription>
-      </CardHeader>
+    <div className="w-full max-w-md mx-auto pb-4">
+      <div className="flex flex-col items-center mb-8">
+        <SiteLogo width={40} height={40} className="mb-6" />
+        <h1 className="text-xl font-bold mb-2">Reset password</h1>
+        <p className="text-sm text-center text-muted-foreground px-4">
+          Enter your phone number and we&apos;ll send you a link to reset your password.
+        </p>
+      </div>
 
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <fieldset disabled={forgotPasswordMutation.isPending} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel required>Phone Number</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Phone className="h-4 w-4" />
-                        </div>
-                        <Input
-                          type="tel"
-                          placeholder="+254 7XX XXXXXX"
-                          className="pl-10"
-                          {...field}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <fieldset disabled={forgotPasswordMutation.isPending} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <Field data-invalid={!!form.formState.errors.phoneNumber}>
+                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                    Phone Number
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    type="tel"
+                    placeholder="+254 7XX XXXXXX"
+                    className="bg-muted/50 rounded-xl"
+                    {...field}
+                    aria-invalid={!!form.formState.errors.phoneNumber}
+                  />
+                  {form.formState.errors.phoneNumber && (
+                    <FieldError>{form.formState.errors.phoneNumber.message}</FieldError>
+                  )}
+                </Field>
+              )}
+            />
 
+            <div className="pt-2">
               <Button
                 type="submit"
-                className="w-full mt-4"
+                className="w-full rounded-xl bg-primary hover:bg-primary/90 text-white font-medium py-6"
                 isLoading={forgotPasswordMutation.isPending}
               >
                 Send Reset Link
               </Button>
-            </fieldset>
-          </form>
-        </Form>
-      </CardContent>
+            </div>
 
-      <CardFooter className="flex justify-center">
-        <div className="text-sm">
-          Remember your password?{" "}
-          <Link href="/login" className="font-medium hover:underline">
-            Sign in
-          </Link>
-        </div>
-      </CardFooter>
-    </Card>
+            <div className="text-center text-[13px] text-muted-foreground pt-2 leading-tight">
+              Remember your password?{" "}
+              <Link
+                href="/sign-in"
+                className="text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground"
+              >
+                Sign in
+              </Link>
+            </div>
+          </fieldset>
+        </form>
+      </Form>
+    </div>
   );
 };
-
-export default ForgotPasswordForm;

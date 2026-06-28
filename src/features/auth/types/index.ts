@@ -9,6 +9,7 @@ export type User = {
   phone_number: string;
   role: "treasurer" | "admin" | "super_admin";
   is_active: boolean;
+  is_email_verified?: boolean;
   created_at: string; // ISO 8601 DateTime
 };
 
@@ -19,12 +20,12 @@ export type User = {
  */
 export type AuthResponse = User;
 
-export type LoginRequest = {
+export type SignInRequest = {
   email: string;
   password: string;
 };
 
-export type RegisterRequest = {
+export type SignUpRequest = {
   first_name: string;
   last_name: string;
   email: string;

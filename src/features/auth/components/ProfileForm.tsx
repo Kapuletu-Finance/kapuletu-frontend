@@ -5,14 +5,8 @@ import { Loader2, Lock, Mail, Phone, RefreshCw, User as UserIcon } from "lucide-
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -102,38 +96,46 @@ export const ProfileForm = () => {
                       <FormField
                         control={profileForm.control}
                         name="firstName"
-                        render={({ field }) => (
-                          <FormItem className="space-y-2">
-                            <FormLabel>First Name</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                  <UserIcon className="h-4 w-4" />
-                                </div>
-                                <Input type="text" className="pl-10" {...field} />
+                        render={({ field, fieldState }) => (
+                          <Field className="space-y-2" data-invalid={!!fieldState.error}>
+                            <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <UserIcon className="h-4 w-4" />
                               </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                              <Input
+                                id={field.name}
+                                type="text"
+                                className="pl-10"
+                                {...field}
+                                aria-invalid={!!fieldState.error}
+                              />
+                            </div>
+                            <FieldError>{fieldState.error?.message}</FieldError>
+                          </Field>
                         )}
                       />
 
                       <FormField
                         control={profileForm.control}
                         name="lastName"
-                        render={({ field }) => (
-                          <FormItem className="space-y-2">
-                            <FormLabel>Last Name</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                  <UserIcon className="h-4 w-4" />
-                                </div>
-                                <Input type="text" className="pl-10" {...field} />
+                        render={({ field, fieldState }) => (
+                          <Field className="space-y-2" data-invalid={!!fieldState.error}>
+                            <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <UserIcon className="h-4 w-4" />
                               </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                              <Input
+                                id={field.name}
+                                type="text"
+                                className="pl-10"
+                                {...field}
+                                aria-invalid={!!fieldState.error}
+                              />
+                            </div>
+                            <FieldError>{fieldState.error?.message}</FieldError>
+                          </Field>
                         )}
                       />
                     </div>
@@ -142,38 +144,46 @@ export const ProfileForm = () => {
                       <FormField
                         control={profileForm.control}
                         name="email"
-                        render={({ field }) => (
-                          <FormItem className="space-y-2">
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                  <Mail className="h-4 w-4" />
-                                </div>
-                                <Input type="email" className="pl-10" {...field} />
+                        render={({ field, fieldState }) => (
+                          <Field className="space-y-2" data-invalid={!!fieldState.error}>
+                            <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Mail className="h-4 w-4" />
                               </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                              <Input
+                                id={field.name}
+                                type="email"
+                                className="pl-10"
+                                {...field}
+                                aria-invalid={!!fieldState.error}
+                              />
+                            </div>
+                            <FieldError>{fieldState.error?.message}</FieldError>
+                          </Field>
                         )}
                       />
 
                       <FormField
                         control={profileForm.control}
                         name="phoneNumber"
-                        render={({ field }) => (
-                          <FormItem className="space-y-2">
-                            <FormLabel>Phone Number</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                  <Phone className="h-4 w-4" />
-                                </div>
-                                <Input type="tel" className="pl-10" {...field} />
+                        render={({ field, fieldState }) => (
+                          <Field className="space-y-2" data-invalid={!!fieldState.error}>
+                            <FieldLabel htmlFor={field.name}>Phone Number</FieldLabel>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Phone className="h-4 w-4" />
                               </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                              <Input
+                                id={field.name}
+                                type="tel"
+                                className="pl-10"
+                                {...field}
+                                aria-invalid={!!fieldState.error}
+                              />
+                            </div>
+                            <FieldError>{fieldState.error?.message}</FieldError>
+                          </Field>
                         )}
                       />
                     </div>
@@ -201,57 +211,75 @@ export const ProfileForm = () => {
                     <FormField
                       control={passwordForm.control}
                       name="currentPassword"
-                      render={({ field }) => (
-                        <FormItem className="space-y-2">
-                          <FormLabel required>Current Password</FormLabel>
-                          <FormControl>
-                            <div className="relative max-w-sm">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="h-4 w-4" />
-                              </div>
-                              <Input type="password" className="pl-10" {...field} />
+                      render={({ field, fieldState }) => (
+                        <Field className="space-y-2" data-invalid={!!fieldState.error}>
+                          <FieldLabel htmlFor={field.name} required>
+                            Current Password
+                          </FieldLabel>
+                          <div className="relative max-w-sm">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Lock className="h-4 w-4" />
                             </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                            <Input
+                              id={field.name}
+                              type="password"
+                              className="pl-10"
+                              {...field}
+                              aria-invalid={!!fieldState.error}
+                            />
+                          </div>
+                          <FieldError>{fieldState.error?.message}</FieldError>
+                        </Field>
                       )}
                     />
 
                     <FormField
                       control={passwordForm.control}
                       name="newPassword"
-                      render={({ field }) => (
-                        <FormItem className="space-y-2">
-                          <FormLabel required>New Password</FormLabel>
-                          <FormControl>
-                            <div className="relative max-w-sm">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <RefreshCw className="h-4 w-4" />
-                              </div>
-                              <Input type="password" className="pl-10" {...field} />
+                      render={({ field, fieldState }) => (
+                        <Field className="space-y-2" data-invalid={!!fieldState.error}>
+                          <FieldLabel htmlFor={field.name} required>
+                            New Password
+                          </FieldLabel>
+                          <div className="relative max-w-sm">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <RefreshCw className="h-4 w-4" />
                             </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                            <Input
+                              id={field.name}
+                              type="password"
+                              className="pl-10"
+                              {...field}
+                              aria-invalid={!!fieldState.error}
+                            />
+                          </div>
+                          <FieldError>{fieldState.error?.message}</FieldError>
+                        </Field>
                       )}
                     />
 
                     <FormField
                       control={passwordForm.control}
                       name="confirmNewPassword"
-                      render={({ field }) => (
-                        <FormItem className="space-y-2">
-                          <FormLabel required>Confirm New Password</FormLabel>
-                          <FormControl>
-                            <div className="relative max-w-sm">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="h-4 w-4" />
-                              </div>
-                              <Input type="password" className="pl-10" {...field} />
+                      render={({ field, fieldState }) => (
+                        <Field className="space-y-2" data-invalid={!!fieldState.error}>
+                          <FieldLabel htmlFor={field.name} required>
+                            Confirm New Password
+                          </FieldLabel>
+                          <div className="relative max-w-sm">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Lock className="h-4 w-4" />
                             </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                            <Input
+                              id={field.name}
+                              type="password"
+                              className="pl-10"
+                              {...field}
+                              aria-invalid={!!fieldState.error}
+                            />
+                          </div>
+                          <FieldError>{fieldState.error?.message}</FieldError>
+                        </Field>
                       )}
                     />
 

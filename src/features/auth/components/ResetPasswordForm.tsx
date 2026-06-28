@@ -15,14 +15,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { type ResetPasswordFormData, resetPasswordSchema } from "@/features/auth/schemas";
 import { useResetPasswordMutation } from "@/features/auth/services/mutations";
@@ -46,7 +40,7 @@ const ResetPasswordFormContent = () => {
   const onSubmit = (data: ResetPasswordFormData) => {
     resetPasswordMutation.mutate(data, {
       onSuccess: () => {
-        setTimeout(() => router.push("/login"), 3000);
+        setTimeout(() => router.push("/sign-in"), 3000);
       },
     });
   };
@@ -65,29 +59,29 @@ const ResetPasswordFormContent = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <fieldset disabled={resetPasswordMutation.isPending} className="space-y-6">
-              <input type="hidden" {...form.register("token")} />
-
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel required>New Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Lock className="h-4 w-4" />
-                        </div>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          className="pl-10"
-                          {...field}
-                        />
+                  <Field className="space-y-2" data-invalid={!!form.formState.errors.password}>
+                    <FieldLabel htmlFor={field.name}>New Password</FieldLabel>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Lock className="h-4 w-4" />
                       </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                      <Input
+                        id={field.name}
+                        type="password"
+                        placeholder="••••••••"
+                        className="pl-10"
+                        {...field}
+                        aria-invalid={!!form.formState.errors.password}
+                      />
+                    </div>
+                    {form.formState.errors.password && (
+                      <FieldError>{form.formState.errors.password.message}</FieldError>
+                    )}
+                  </Field>
                 )}
               />
 
@@ -95,23 +89,28 @@ const ResetPasswordFormContent = () => {
                 control={form.control}
                 name="confirmPassword"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel required>Confirm Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Lock className="h-4 w-4" />
-                        </div>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          className="pl-10"
-                          {...field}
-                        />
+                  <Field
+                    className="space-y-2"
+                    data-invalid={!!form.formState.errors.confirmPassword}
+                  >
+                    <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Lock className="h-4 w-4" />
                       </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                      <Input
+                        id={field.name}
+                        type="password"
+                        placeholder="••••••••"
+                        className="pl-10"
+                        {...field}
+                        aria-invalid={!!form.formState.errors.confirmPassword}
+                      />
+                    </div>
+                    {form.formState.errors.confirmPassword && (
+                      <FieldError>{form.formState.errors.confirmPassword.message}</FieldError>
+                    )}
+                  </Field>
                 )}
               />
 
@@ -130,7 +129,7 @@ const ResetPasswordFormContent = () => {
       <CardFooter className="flex justify-center">
         <div className="text-sm">
           Remember your password?{" "}
-          <Link href="/login" className="font-medium hover:underline">
+          <Link href="/sign-in" className="font-medium hover:underline">
             Sign in
           </Link>
         </div>

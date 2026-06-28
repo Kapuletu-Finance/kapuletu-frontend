@@ -43,9 +43,9 @@ apiClient.interceptors.response.use(
     // resilience loop has already tried (and failed) to refresh, we must log out.
     if (error.response?.status === 401 || error.response?.status === 403) {
       if (typeof window !== "undefined") {
-        // We ensure we only redirect if we aren't already on the login page
-        if (!window.location.pathname.startsWith("/login")) {
-          console.warn("Session explicitly terminated or CSRF blocked. Redirecting to login.");
+        // We ensure we only redirect if we aren't already on the sign in page
+        if (!window.location.pathname.startsWith("/sign-in")) {
+          console.warn("Session explicitly terminated or CSRF blocked. Redirecting to sign in.");
 
           // Note: In a full app, you might also clear TanStack Query cache here
           // e.g., queryClient.clear();
@@ -54,8 +54,8 @@ apiClient.interceptors.response.use(
           // biome-ignore lint/suspicious/noDocumentCookie: Standard synchronous cookie deletion for client-side logout
           document.cookie = "user_role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
-          // Force route to login, appending the attempted URL
-          window.location.href = `/login?from=${encodeURIComponent(window.location.pathname)}`;
+          // Force route to sign in, appending the attempted URL
+          window.location.href = `/sign-in?from=${encodeURIComponent(window.location.pathname)}`;
         }
       }
     }

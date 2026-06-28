@@ -130,9 +130,9 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
       }
     }
 
-    // Handle Auth Login Interception
+    // Handle Auth Sign in Interception
     if (
-      backendPath === AUTH_URLS.LOGIN &&
+      backendPath === AUTH_URLS.SIGN_IN &&
       axiosResponse.status >= 200 &&
       axiosResponse.status < 300
     ) {

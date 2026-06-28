@@ -1,22 +1,20 @@
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const Home = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
       <div className="text-center space-y-6">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-foreground">
-          Welcome to Kapuletu
-        </h1>
-        <p className="text-lg text-muted-foreground">Your personal finance companion.</p>
+        <SiteLogo variant="full" className="text-4xl sm:text-6xl" logoClassName="h-[1em] w-[1em]" />
+        <p className="text-lg">Built for Group Finance</p>
         <div className="flex flex-row items-center justify-center gap-4 pt-4">
-          <Link href="/register" className={cn(buttonVariants({ size: "lg" }))}>
-            Sign Up
-          </Link>
-          <Link href="/login" className={cn(buttonVariants({ size: "lg", variant: "outline" }))}>
-            Sign In
-          </Link>
+          <Button>
+            <Link href="/sign-up">Sign Up</Link>
+          </Button>
+          <Button variant="outline">
+            <Link href="/sign-in">Sign In</Link>
+          </Button>
         </div>
       </div>
     </div>
