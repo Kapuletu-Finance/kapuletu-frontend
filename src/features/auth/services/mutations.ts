@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+
 import { toast } from "sonner";
+import { env } from "@/env";
 import type {
   ChangePasswordFormData,
   ForgotPasswordFormData,
@@ -24,8 +25,6 @@ import { AUTH_URLS } from "@/features/auth/urls";
 import { apiClient } from "@/lib/api-client";
 
 export const useSignInMutation = () => {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: async (data: SignInFormData) => {
       // Map form data to backend expected snake_case DTO
@@ -43,23 +42,24 @@ export const useSignInMutation = () => {
     },
     onSuccess: (data) => {
       toast.success("Sign in successful!");
+      // biome-ignore lint/suspicious/noDocumentCookie: Needed for proxy middleware
+      document.cookie = `${env.NEXT_PUBLIC_ROLE_COOKIE_NAME}=${data.role}; path=/; max-age=604800`;
+
       const params = new URLSearchParams(window.location.search);
       const from = params.get("from");
 
       if (from) {
-        router.push(from);
+        window.location.href = from;
       } else if (data.role === "admin") {
-        router.push("/admin");
+        window.location.href = "/admin";
       } else {
-        router.push("/treasurer");
+        window.location.href = "/treasurer";
       }
     },
   });
 };
 
 export const useSignUpMutation = () => {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: async (data: SignUpFormData) => {
       // Map form data to backend expected snake_case DTO
@@ -84,15 +84,18 @@ export const useSignUpMutation = () => {
     },
     onSuccess: (data) => {
       toast.success("Account created successfully!");
+      // biome-ignore lint/suspicious/noDocumentCookie: Needed for proxy middleware
+      document.cookie = `${env.NEXT_PUBLIC_ROLE_COOKIE_NAME}=${data.role}; path=/; max-age=604800`;
+
       const params = new URLSearchParams(window.location.search);
       const from = params.get("from");
 
       if (from) {
-        router.push(from);
+        window.location.href = from;
       } else if (data.role === "admin") {
-        router.push("/admin");
+        window.location.href = "/admin";
       } else {
-        router.push("/treasurer");
+        window.location.href = "/treasurer";
       }
     },
   });
@@ -203,8 +206,6 @@ export const useVerifyMutation = () => {
 };
 
 export const useLogoutMutation = () => {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: async () => {
       // The proxy intercepts this and clears cookies
@@ -216,7 +217,9 @@ export const useLogoutMutation = () => {
     },
     onSuccess: () => {
       toast.success("Signed out successfully.");
-      router.push("/sign-in");
+      // biome-ignore lint/suspicious/noDocumentCookie: Needed for proxy middleware
+      document.cookie = `${env.NEXT_PUBLIC_ROLE_COOKIE_NAME}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      window.location.href = "/sign-in";
     },
   });
 };
