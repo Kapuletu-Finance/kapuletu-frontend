@@ -1,15 +1,39 @@
 "use client";
 
-import { AlertCircle, ChevronRight } from "lucide-react";
+import { AlertCircle, ChevronRight, X } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { AUTH_EVENTS, AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 
 export const VerifyEmailAlert = () => {
   const { data: user, isLoading } = useGetMeQuery();
+  const [isDismissed, setIsDismissed] = useState(true);
+
+  useEffect(() => {
+    setIsDismissed(
+      localStorage.getItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED) === "true",
+    );
+
+    const handleEvent = () =>
+      setIsDismissed(
+        localStorage.getItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED) === "true",
+      );
+    window.addEventListener(AUTH_EVENTS.VERIFY_EMAIL_DISMISSED, handleEvent);
+    return () => window.removeEventListener(AUTH_EVENTS.VERIFY_EMAIL_DISMISSED, handleEvent);
+  }, []);
+
+  const dismissAlert = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    localStorage.setItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED, "true");
+    window.dispatchEvent(new Event(AUTH_EVENTS.VERIFY_EMAIL_DISMISSED));
+  };
 
   // If loading or if we know the user is verified, don't show the banner
   // Default to showing if we don't know (or if explicitly false)
-  if (isLoading || !user || user.is_email_verified) {
+  if (isLoading || !user || user.is_email_verified || isDismissed) {
     return null;
   }
 
@@ -28,7 +52,15 @@ export const VerifyEmailAlert = () => {
               </p>
             </div>
           </div>
-          <ChevronRight className="w-5 h-5 text-burnt-amber/70 group-hover:text-burnt-amber transition-colors" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={dismissAlert}
+            className="h-7 w-7 hover:bg-burnt-amber/20 text-burnt-amber/70 hover:text-burnt-amber"
+          >
+            <X className="w-4 h-4" />
+          </Button>
         </div>
       </Link>
     </div>

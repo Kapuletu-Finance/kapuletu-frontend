@@ -21,6 +21,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import type React from "react";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,6 +46,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { AUTH_EVENTS, AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
 import { useLogoutMutation } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
@@ -117,6 +119,21 @@ const AppSidebar = ({
   const isCollapsed = state === "collapsed";
   const { data: user } = useGetMeQuery();
 
+  const [isAlertDismissed, setIsAlertDismissed] = useState(true);
+
+  useEffect(() => {
+    setIsAlertDismissed(
+      localStorage.getItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED) === "true",
+    );
+
+    const handleEvent = () =>
+      setIsAlertDismissed(
+        localStorage.getItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED) === "true",
+      );
+    window.addEventListener(AUTH_EVENTS.VERIFY_EMAIL_DISMISSED, handleEvent);
+    return () => window.removeEventListener(AUTH_EVENTS.VERIFY_EMAIL_DISMISSED, handleEvent);
+  }, []);
+
   return (
     <Sidebar collapsible="icon" className="border-border">
       <SidebarHeader className="border-b border-border/50">
@@ -177,8 +194,11 @@ const AppSidebar = ({
         <DropdownMenu>
           <DropdownMenuTrigger>
             <div className="flex items-center gap-2 w-full p-2 hover:bg-muted cursor-pointer rounded-md transition-colors group-data-[collapsible=icon]:justify-center">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shrink-0 overflow-hidden">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shrink-0 overflow-hidden relative">
                 <UserIcon className="size-4 text-muted-foreground" />
+                {user && !user.is_email_verified && isAlertDismissed && (
+                  <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
+                )}
               </div>
               <div className="flex flex-col group-data-[collapsible=icon]:hidden overflow-hidden flex-1 text-left">
                 <span className="text-sm font-semibold text-foreground truncate leading-tight">
@@ -200,8 +220,11 @@ const AppSidebar = ({
             <DropdownMenuGroup>
               <DropdownMenuLabel className="font-normal p-0">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted overflow-hidden">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted overflow-hidden relative">
                     <UserIcon className="size-4 text-muted-foreground" />
+                    {user && !user.is_email_verified && isAlertDismissed && (
+                      <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
+                    )}
                   </div>
                   <div className="flex flex-col flex-1 leading-none overflow-hidden text-left">
                     <span className="font-semibold truncate">
@@ -216,6 +239,17 @@ const AppSidebar = ({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              {user && !user.is_email_verified && (
+                <DropdownMenuItem>
+                  <Link
+                    href="/verify-email"
+                    className="cursor-pointer flex items-center w-full text-burnt-amber"
+                  >
+                    <ShieldAlert className="w-4 h-4 mr-2" />
+                    Verify Email
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem>
                 <Link href="/settings" className="cursor-pointer flex items-center w-full">
                   <Settings className="w-4 h-4 mr-2" />
