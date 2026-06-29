@@ -1,8 +1,8 @@
 import "@/app/globals.css";
-import type { Metadata } from "next";
 import { Figtree, Geist_Mono } from "next/font/google";
 import { Providers } from "@/features/shared/components/Providers";
 import { PublicThemeToggle } from "@/features/shared/components/PublicThemeToggle";
+import { SEOConfig } from "@/features/shared/components/SEOConfig";
 
 const figtree = Figtree({
   subsets: ["latin"],
@@ -14,10 +14,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
-export const metadata: Metadata = {
-  description: "The app for chamas",
-  title: "Kapuletu",
-};
+export { metadataConfig as metadata } from "@/features/shared/components/SEOConfig";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -31,6 +28,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col relative">
+        <SEOConfig />
         <Providers>
           <PublicThemeToggle />
           {children}
