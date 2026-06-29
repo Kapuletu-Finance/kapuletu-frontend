@@ -24,3 +24,6 @@
 
 ## Post-Processing
 - **Lint & Format:** Always run linting and formatting when you are done modifying files, and proactively fix any resulting errors.
+
+## Next.js Architecture
+- **Middleware:** Never add a `middleware.ts` file to this codebase. The version of Next.js being used relies on `proxy.ts` instead.
