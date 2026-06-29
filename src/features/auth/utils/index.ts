@@ -1,3 +1,4 @@
+import { getCookie } from "cookies-next";
 import type { NextRequest } from "next/server";
 import { env } from "@/env";
 
@@ -36,7 +37,7 @@ export const getRoleFromCookie = (): UserRole => {
   if (typeof document === "undefined") return null;
   // Use the standard ROLE_COOKIE_NAME if it matches what sidebar expects
   // The sidebar regex was looking for `user_role=`
-  const match = document.cookie.match(/(^| )user_role=([^;]+)/);
-  if (match) return match[2] as UserRole;
+  const role = getCookie("user_role");
+  if (role) return role as UserRole;
   return null;
 };

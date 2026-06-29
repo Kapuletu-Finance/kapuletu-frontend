@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { deleteCookie, setCookie } from "cookies-next";
 
 import { toast } from "sonner";
 import { env } from "@/env";
@@ -42,8 +43,7 @@ export const useSignInMutation = () => {
     },
     onSuccess: (data) => {
       toast.success("Sign in successful!");
-      // biome-ignore lint/suspicious/noDocumentCookie: Needed for proxy middleware
-      document.cookie = `${env.NEXT_PUBLIC_ROLE_COOKIE_NAME}=${data.role}; path=/; max-age=604800`;
+      setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
 
       const params = new URLSearchParams(window.location.search);
       const from = params.get("from");
@@ -84,8 +84,7 @@ export const useSignUpMutation = () => {
     },
     onSuccess: (data) => {
       toast.success("Account created successfully!");
-      // biome-ignore lint/suspicious/noDocumentCookie: Needed for proxy middleware
-      document.cookie = `${env.NEXT_PUBLIC_ROLE_COOKIE_NAME}=${data.role}; path=/; max-age=604800`;
+      setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
 
       const params = new URLSearchParams(window.location.search);
       const from = params.get("from");
@@ -217,8 +216,7 @@ export const useLogoutMutation = () => {
     },
     onSuccess: () => {
       toast.success("Signed out successfully.");
-      // biome-ignore lint/suspicious/noDocumentCookie: Needed for proxy middleware
-      document.cookie = `${env.NEXT_PUBLIC_ROLE_COOKIE_NAME}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
       window.location.href = "/sign-in";
     },
   });

@@ -1,4 +1,5 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
+import { deleteCookie } from "cookies-next";
 import { env } from "@/env";
 import type { ApiErrorResponse } from "@/types/api";
 
@@ -51,8 +52,7 @@ apiClient.interceptors.response.use(
           // e.g., queryClient.clear();
 
           // Clear any non-HTTP-only client cookies explicitly if needed
-          // biome-ignore lint/suspicious/noDocumentCookie: Standard synchronous cookie deletion for client-side logout
-          document.cookie = "user_role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          deleteCookie("user_role", { path: "/" });
 
           // Force route to sign in, appending the attempted URL
           window.location.href = `/sign-in?from=${encodeURIComponent(window.location.pathname)}`;
