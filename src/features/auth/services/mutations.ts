@@ -3,6 +3,7 @@ import { deleteCookie, setCookie } from "cookies-next";
 
 import { toast } from "sonner";
 import { env } from "@/env";
+import { AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
 import type {
   ChangePasswordFormData,
   ForgotPasswordFormData,
@@ -44,6 +45,7 @@ export const useSignInMutation = () => {
     onSuccess: (data) => {
       toast.success("Sign in successful!");
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
+      localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
       const params = new URLSearchParams(window.location.search);
       const from = params.get("from");
@@ -85,6 +87,7 @@ export const useSignUpMutation = () => {
     onSuccess: (data) => {
       toast.success("Account created successfully!");
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
+      localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
       const params = new URLSearchParams(window.location.search);
       const from = params.get("from");
@@ -217,6 +220,7 @@ export const useLogoutMutation = () => {
     onSuccess: () => {
       toast.success("Signed out successfully.");
       deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
+      localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
       window.location.href = "/sign-in";
     },
   });
