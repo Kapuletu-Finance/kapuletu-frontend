@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, ChevronRight, X } from "lucide-react";
+import { AlertCircle, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";

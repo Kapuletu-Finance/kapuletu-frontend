@@ -5,6 +5,7 @@ import { Info } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -18,11 +19,11 @@ export const SignUpForm = () => {
   const form = useForm<SignUpFormData & { showPassword?: boolean }>({
     defaultValues: {
       confirmPassword: "",
-      email: "",
+      consent: false,
       firstName: "",
+      identifier: "",
       lastName: "",
       password: "",
-      phoneNumber: "",
       role: "treasurer",
       showPassword: false,
     },
@@ -102,45 +103,22 @@ export const SignUpForm = () => {
 
             <FormField
               control={form.control}
-              name="email"
+              name="identifier"
               render={({ field }) => (
-                <Field data-invalid={!!form.formState.errors.email}>
+                <Field data-invalid={!!form.formState.errors.identifier}>
                   <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
-                    Email
+                    Email or Phone Number
                   </FieldLabel>
                   <Input
                     id={field.name}
-                    type="email"
-                    placeholder="m@example.com"
+                    type="text"
+                    placeholder="m@example.com or +254..."
                     className="bg-muted/50 rounded-xl"
                     {...field}
-                    aria-invalid={!!form.formState.errors.email}
+                    aria-invalid={!!form.formState.errors.identifier}
                   />
-                  {form.formState.errors.email && (
-                    <FieldError>{form.formState.errors.email.message}</FieldError>
-                  )}
-                </Field>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phoneNumber"
-              render={({ field }) => (
-                <Field data-invalid={!!form.formState.errors.phoneNumber}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
-                    Phone number
-                  </FieldLabel>
-                  <Input
-                    id={field.name}
-                    type="tel"
-                    placeholder="m@example.com"
-                    className="bg-muted/50 rounded-xl"
-                    {...field}
-                    aria-invalid={!!form.formState.errors.phoneNumber}
-                  />
-                  {form.formState.errors.phoneNumber && (
-                    <FieldError>{form.formState.errors.phoneNumber.message}</FieldError>
+                  {form.formState.errors.identifier && (
+                    <FieldError>{form.formState.errors.identifier.message}</FieldError>
                   )}
                 </Field>
               )}
@@ -211,7 +189,48 @@ export const SignUpForm = () => {
                 </Field>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="consent"
+              render={({ field }) => (
+                <Field
+                  className="flex flex-row items-start space-x-3 space-y-0 p-4 rounded-xl border border-border"
+                  data-invalid={!!form.formState.errors.consent}
+                >
+                  <Checkbox
+                    id={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    aria-invalid={!!form.formState.errors.consent}
+                  />
+                  <div className="space-y-1 leading-none">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-xs text-foreground font-normal leading-relaxed"
+                    >
+                      By checking this box, you agree to our{" "}
+                      <Link
+                        href="/terms"
+                        className="underline decoration-border underline-offset-2 hover:text-foreground"
+                      >
+                        Terms of Service
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        href="/privacy"
+                        className="underline decoration-border underline-offset-2 hover:text-foreground"
+                      >
+                        Privacy Policy
+                      </Link>
+                      .
+                    </FieldLabel>
+                    {form.formState.errors.consent && (
+                      <FieldError>{form.formState.errors.consent.message}</FieldError>
+                    )}
+                  </div>
+                </Field>
+              )}
+            />
             <div className="pt-2">
               <Button
                 type="submit"

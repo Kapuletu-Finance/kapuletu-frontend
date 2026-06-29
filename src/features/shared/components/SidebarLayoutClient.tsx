@@ -6,7 +6,6 @@ import {
   BookOpen,
   ChevronDown,
   ChevronsUpDown,
-  GalleryVerticalEnd,
   LayoutDashboard,
   LogOut,
   Megaphone,

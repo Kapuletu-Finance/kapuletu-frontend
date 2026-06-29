@@ -21,15 +21,16 @@ export type User = {
 export type AuthResponse = User;
 
 export type SignInRequest = {
-  email: string;
+  email?: string;
+  phone_number?: string;
   password: string;
 };
 
 export type SignUpRequest = {
   first_name: string;
   last_name: string;
-  email: string;
-  phone_number: string;
+  email?: string;
+  phone_number?: string;
   password: string;
   role: "treasurer" | "admin";
 };

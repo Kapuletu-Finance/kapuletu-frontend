@@ -31,9 +31,14 @@ export const useSignInMutation = () => {
     mutationFn: async (data: SignInFormData) => {
       // Map form data to backend expected snake_case DTO
       const requestPayload: SignInRequest = {
-        email: data.email,
         password: data.password,
       };
+
+      if (data.identifier.includes("@")) {
+        requestPayload.email = data.identifier;
+      } else {
+        requestPayload.phone_number = data.identifier;
+      }
       const response = await apiClient.post<AuthResponse>(AUTH_URLS.SIGN_IN, requestPayload);
       return response.data;
     },
@@ -66,13 +71,17 @@ export const useSignUpMutation = () => {
     mutationFn: async (data: SignUpFormData) => {
       // Map form data to backend expected snake_case DTO
       const requestPayload: SignUpRequest = {
-        email: data.email,
         first_name: data.firstName,
         last_name: data.lastName,
         password: data.password,
-        phone_number: data.phoneNumber,
         role: data.role,
       };
+
+      if (data.identifier.includes("@")) {
+        requestPayload.email = data.identifier;
+      } else {
+        requestPayload.phone_number = data.identifier;
+      }
 
       const response = await apiClient.post<AuthResponse>(AUTH_URLS.SIGN_UP, requestPayload);
       return response.data;

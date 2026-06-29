@@ -13,7 +13,7 @@ import { useSignInMutation } from "@/features/auth/services/mutations";
 export const SignInForm = () => {
   const form = useForm<SignInFormData>({
     defaultValues: {
-      email: "",
+      identifier: "",
       password: "",
     },
     resolver: zodResolver(signInSchema),
@@ -48,22 +48,22 @@ export const SignInForm = () => {
           <fieldset disabled={signInMutation.isPending} className="space-y-5">
             <FormField
               control={form.control}
-              name="email"
+              name="identifier"
               render={({ field }) => (
-                <Field data-invalid={!!form.formState.errors.email}>
+                <Field data-invalid={!!form.formState.errors.identifier}>
                   <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
-                    Email
+                    Email or Phone Number
                   </FieldLabel>
                   <Input
                     id={field.name}
-                    type="email"
-                    placeholder="m@example.com"
+                    type="text"
+                    placeholder="m@example.com or +254..."
                     className="bg-muted/50 rounded-xl"
                     {...field}
-                    aria-invalid={!!form.formState.errors.email}
+                    aria-invalid={!!form.formState.errors.identifier}
                   />
-                  {form.formState.errors.email && (
-                    <FieldError>{form.formState.errors.email.message}</FieldError>
+                  {form.formState.errors.identifier && (
+                    <FieldError>{form.formState.errors.identifier.message}</FieldError>
                   )}
                 </Field>
               )}
