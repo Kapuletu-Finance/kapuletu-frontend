@@ -9,7 +9,6 @@ import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { type ForgotPasswordFormData, forgotPasswordSchema } from "@/features/auth/schemas";
 import { useForgotPasswordMutation } from "@/features/auth/services/mutations";
-import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 export const ForgotPasswordForm = () => {
   const form = useForm<ForgotPasswordFormData>({
@@ -28,7 +27,6 @@ export const ForgotPasswordForm = () => {
   return (
     <div className="w-full max-w-md mx-auto pb-4">
       <div className="flex flex-col items-center mb-8">
-        <SiteLogo width={40} height={40} className="mb-6" />
         <h1 className="text-xl font-bold mb-2">Reset password</h1>
         <p className="text-sm text-center text-muted-foreground px-4">
           Enter your phone number and we&apos;ll send you a link to reset your password.
