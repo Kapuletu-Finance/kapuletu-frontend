@@ -1,10 +1,7 @@
 import { z } from "zod";
 
 export const signInSchema = z.object({
-  email: z
-    .string({ message: "Email address is required." })
-    .min(1, "Email address is required.")
-    .email("Please enter a valid email address."),
+  email: z.email("Please enter a valid email address.").min(1, "Email address is required."),
   password: z.string({ message: "Password is required." }).min(1, "Password is required."),
 });
 
@@ -15,10 +12,7 @@ export const signUpSchema = z
     confirmPassword: z
       .string({ message: "Please confirm your password." })
       .min(1, "Please confirm your password."),
-    email: z
-      .string({ message: "Email address is required." })
-      .min(1, "Email address is required.")
-      .email("Please enter a valid email address."),
+    email: z.email("Please enter a valid email address.").min(1, "Email address is required."),
     firstName: z
       .string({ message: "First name is required." })
       .min(1, "First name is required.")
@@ -33,11 +27,11 @@ export const signUpSchema = z
       .min(8, "Password must be at least 8 characters long."),
     phoneNumber: z
       .string({ message: "Phone number is required." })
-      .min(1, "Phone number is required.")
       .regex(
         /^(?:\+2547|\+2541|07|01)\d{8}$/,
         "Please enter a valid phone number (e.g., +2547... or 07...).",
-      ),
+      )
+      .min(1, "Phone number is required."),
     role: z.enum(["admin", "treasurer"], {
       message: "Please select a valid role.",
     }),
@@ -52,8 +46,8 @@ export type SignUpFormData = z.infer<typeof signUpSchema>;
 export const forgotPasswordSchema = z.object({
   phoneNumber: z
     .string({ message: "Phone number is required." })
-    .min(1, "Phone number is required.")
-    .regex(/^(?:\+2547|\+2541|07|01)\d{8}$/, "Please enter a valid phone number."),
+    .regex(/^(?:\+2547|\+2541|07|01)\d{8}$/, "Please enter a valid phone number.")
+    .min(1, "Phone number is required."),
 });
 
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
@@ -98,9 +92,8 @@ export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
 export const updateProfileSchema = z.object({
   email: z
-    .string({ message: "Email address is required." })
-    .min(1, "Email address is required.")
     .email("Please enter a valid email address.")
+    .min(1, "Email address is required.")
     .optional()
     .or(z.literal("")),
   firstName: z
@@ -117,8 +110,8 @@ export const updateProfileSchema = z.object({
     .or(z.literal("")),
   phoneNumber: z
     .string({ message: "Phone number is required." })
-    .min(1, "Phone number is required.")
     .regex(/^(?:\+2547|\+2541|07|01)\d{8}$/, "Please enter a valid phone number.")
+    .min(1, "Phone number is required.")
     .optional()
     .or(z.literal("")),
 });

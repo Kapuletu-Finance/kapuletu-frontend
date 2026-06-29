@@ -3,13 +3,11 @@ import { z } from "zod";
 const envSchema = z.object({
   ACCESS_TOKEN_COOKIE_NAME: z.string().min(1).default("access_token"),
   NEXT_PUBLIC_APP_URL: z
-    .string()
     .url({
       message: "NEXT_PUBLIC_APP_URL must be a valid URL",
     })
     .default("http://localhost:3000"),
   NEXT_PUBLIC_BACKEND_URL: z
-    .string()
     .url({
       message: "NEXT_PUBLIC_BACKEND_URL must be a valid URL",
     })
