@@ -5,5 +5,8 @@ export const AUTH_URLS = {
   RESET_PASSWORD: "/auth/reset-password",
   SIGN_IN: "/auth/login",
   SIGN_UP: "/auth/register",
-  VERIFY: "/auth/verify",
+  VERIFY_EMAIL_CONFIRM: "/auth/verify-email/confirm",
+  VERIFY_EMAIL_REQUEST: "/auth/verify-email/request",
+  VERIFY_PHONE_CONFIRM: "/auth/verify-phone/confirm",
+  VERIFY_PHONE_REQUEST: "/auth/verify-phone/request",
 } as const;

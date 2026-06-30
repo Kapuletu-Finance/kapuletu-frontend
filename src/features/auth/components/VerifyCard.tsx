@@ -13,7 +13,12 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { type VerifyFormData, verifySchema } from "@/features/auth/schemas";
-import { useVerifyMutation } from "@/features/auth/services/mutations";
+import {
+  useVerifyEmailConfirmMutation,
+  useVerifyEmailRequestMutation,
+  useVerifyPhoneConfirmMutation,
+  useVerifyPhoneRequestMutation,
+} from "@/features/auth/services/mutations";
 import { cn } from "@/lib/utils";
 
 interface VerifyCardProps {
@@ -31,7 +36,13 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     resolver: zodResolver(verifySchema),
   });
 
-  const verifyMutation = useVerifyMutation();
+  const emailConfirmMutation = useVerifyEmailConfirmMutation();
+  const phoneConfirmMutation = useVerifyPhoneConfirmMutation();
+  const emailRequestMutation = useVerifyEmailRequestMutation();
+  const phoneRequestMutation = useVerifyPhoneRequestMutation();
+
+  const verifyMutation = isPhone ? phoneConfirmMutation : emailConfirmMutation;
+  const requestMutation = isPhone ? phoneRequestMutation : emailRequestMutation;
 
   const isError = !!form.formState.errors.code || verifyMutation.isError;
 
@@ -41,6 +52,10 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
         setTimeout(() => router.push("/sign-in"), 2000);
       },
     });
+  };
+
+  const handleResend = () => {
+    requestMutation.mutate();
   };
 
   return (
@@ -128,6 +143,8 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
               <Button
                 variant="link"
                 type="button"
+                onClick={handleResend}
+                disabled={requestMutation.isPending}
                 className="text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground p-0 h-auto font-normal"
               >
                 Resend

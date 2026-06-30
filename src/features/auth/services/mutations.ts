@@ -194,20 +194,78 @@ export const useUpdateProfileMutation = () => {
   });
 };
 
-export const useVerifyMutation = () => {
+export const useVerifyEmailConfirmMutation = () => {
   return useMutation({
     mutationFn: async (data: VerifyFormData) => {
       const requestPayload: VerifyRequest = {
         code: data.code,
       };
-      const response = await apiClient.post<{ message: string }>(AUTH_URLS.VERIFY, requestPayload);
+      const response = await apiClient.post<{ message: string }>(
+        AUTH_URLS.VERIFY_EMAIL_CONFIRM,
+        requestPayload,
+      );
       return response.data;
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to verify code.");
+      toast.error(error instanceof Error ? error.message : "Failed to verify email code.");
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Account verified successfully!");
+      toast.success(data.message || "Email verified successfully!");
+    },
+  });
+};
+
+export const useVerifyPhoneConfirmMutation = () => {
+  return useMutation({
+    mutationFn: async (data: VerifyFormData) => {
+      const requestPayload: VerifyRequest = {
+        code: data.code,
+      };
+      const response = await apiClient.post<{ message: string }>(
+        AUTH_URLS.VERIFY_PHONE_CONFIRM,
+        requestPayload,
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to verify phone code.");
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Phone number verified successfully!");
+    },
+  });
+};
+
+export const useVerifyEmailRequestMutation = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.post<{ message: string }>(AUTH_URLS.VERIFY_EMAIL_REQUEST);
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to request email verification code.",
+      );
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Email verification code sent successfully!");
+    },
+  });
+};
+
+export const useVerifyPhoneRequestMutation = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.post<{ message: string }>(AUTH_URLS.VERIFY_PHONE_REQUEST);
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to request phone verification code.",
+      );
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Phone verification code sent successfully!");
     },
   });
 };
