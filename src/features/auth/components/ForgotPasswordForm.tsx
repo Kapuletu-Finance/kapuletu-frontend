@@ -62,7 +62,7 @@ export const ForgotPasswordForm = () => {
             <div className="pt-2">
               <Button
                 type="submit"
-                className="w-full rounded-xl bg-primary hover:bg-primary/90 text-white font-medium py-6"
+                className="w-full rounded-xl font-medium py-6"
                 isLoading={forgotPasswordMutation.isPending}
               >
                 Send Reset Link

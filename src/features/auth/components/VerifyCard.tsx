@@ -137,7 +137,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
             <div className="pt-2">
               <Button
                 type="submit"
-                className="w-full rounded-xl bg-primary hover:bg-primary/90 text-white font-medium py-6"
+                className="w-full rounded-xl font-medium py-6"
                 isLoading={verifyMutation.isPending}
               >
                 Verify

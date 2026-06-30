@@ -13,7 +13,7 @@ const NotFoundPage = () => {
           Oops! The page you&apos;re looking for doesn&apos;t exist or has been moved. Let&apos;s
           get you back on track.
         </p>
-        <Button className="rounded-xl bg-primary hover:bg-primary/90 text-white font-medium px-8 py-6">
+        <Button className="rounded-xl font-medium px-8 py-6">
           <Link href="/">Return Home</Link>
         </Button>
       </div>

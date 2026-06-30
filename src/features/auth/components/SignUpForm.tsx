@@ -20,10 +20,11 @@ export const SignUpForm = () => {
     defaultValues: {
       confirmPassword: "",
       consent: false,
+      email: "",
       firstName: "",
-      identifier: "",
       lastName: "",
       password: "",
+      phoneNumber: "",
       role: "treasurer",
       showPassword: false,
     },
@@ -103,22 +104,45 @@ export const SignUpForm = () => {
 
             <FormField
               control={form.control}
-              name="identifier"
+              name="email"
               render={({ field }) => (
-                <Field data-invalid={!!form.formState.errors.identifier}>
+                <Field data-invalid={!!form.formState.errors.email}>
                   <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
-                    Email or Phone Number
+                    Email Address
                   </FieldLabel>
                   <Input
                     id={field.name}
-                    type="text"
-                    placeholder="m@example.com or +254..."
+                    type="email"
+                    placeholder="m@example.com"
                     className="bg-muted/50 rounded-xl"
                     {...field}
-                    aria-invalid={!!form.formState.errors.identifier}
+                    aria-invalid={!!form.formState.errors.email}
                   />
-                  {form.formState.errors.identifier && (
-                    <FieldError>{form.formState.errors.identifier.message}</FieldError>
+                  {form.formState.errors.email && (
+                    <FieldError>{form.formState.errors.email.message}</FieldError>
+                  )}
+                </Field>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <Field data-invalid={!!form.formState.errors.phoneNumber}>
+                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                    Phone Number
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    type="tel"
+                    placeholder="+254..."
+                    className="bg-muted/50 rounded-xl"
+                    {...field}
+                    aria-invalid={!!form.formState.errors.phoneNumber}
+                  />
+                  {form.formState.errors.phoneNumber && (
+                    <FieldError>{form.formState.errors.phoneNumber.message}</FieldError>
                   )}
                 </Field>
               )}
@@ -189,12 +213,23 @@ export const SignUpForm = () => {
                 </Field>
               )}
             />
+            <div className="pt-2">
+              <Button
+                type="submit"
+                className="w-full rounded-xl font-medium py-6"
+                isLoading={signUpMutation.isPending}
+              >
+                Create Account
+              </Button>
+            </div>
+
             <FormField
               control={form.control}
               name="consent"
               render={({ field }) => (
                 <Field
-                  className="flex flex-row items-start space-x-3 space-y-0 p-4 rounded-xl border border-border"
+                  orientation="horizontal"
+                  className="flex flex-row items-start space-x-3 space-y-0 pt-2"
                   data-invalid={!!form.formState.errors.consent}
                 >
                   <Checkbox
@@ -202,11 +237,12 @@ export const SignUpForm = () => {
                     checked={field.value}
                     onCheckedChange={field.onChange}
                     aria-invalid={!!form.formState.errors.consent}
+                    className="mt-0.5 size-5 border-2 rounded-sm"
                   />
-                  <div className="space-y-1 leading-none">
+                  <div className="space-y-1 leading-none flex-1">
                     <FieldLabel
                       htmlFor={field.name}
-                      className="text-xs text-foreground font-normal leading-relaxed"
+                      className="block text-sm text-muted-foreground font-normal leading-relaxed"
                     >
                       By checking this box, you agree to our{" "}
                       <Link
@@ -231,15 +267,6 @@ export const SignUpForm = () => {
                 </Field>
               )}
             />
-            <div className="pt-2">
-              <Button
-                type="submit"
-                className="w-full rounded-xl bg-primary hover:bg-primary/90 text-white font-medium py-6"
-                isLoading={signUpMutation.isPending}
-              >
-                Create Account
-              </Button>
-            </div>
           </fieldset>
         </form>
       </Form>

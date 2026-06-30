@@ -15,11 +15,11 @@ export const signUpSchema = z
     consent: z.boolean().refine((val) => val === true, {
       message: "You must accept the terms and privacy policy.",
     }),
+    email: z.email("Please enter a valid email address.").min(1, "Email is required."),
     firstName: z
       .string({ message: "First name is required." })
       .min(1, "First name is required.")
       .min(2, "First name must be at least 2 characters."),
-    identifier: z.string().min(1, "Email or phone number is required."),
     lastName: z
       .string({ message: "Last name is required." })
       .min(1, "Last name is required.")
@@ -28,6 +28,10 @@ export const signUpSchema = z
       .string({ message: "Password is required." })
       .min(1, "Password is required.")
       .min(8, "Password must be at least 8 characters long."),
+    phoneNumber: z
+      .string({ message: "Phone number is required." })
+      .regex(/^(?:\+2547|\+2541|07|01)\d{8}$/, "Please enter a valid phone number.")
+      .min(1, "Phone number is required."),
     role: z.enum(["admin", "treasurer"], {
       message: "Please select a valid role.",
     }),
