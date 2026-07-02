@@ -139,15 +139,30 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
       // Decode arraybuffer back to JSON
       const jsonString = Buffer.from(axiosResponse.data).toString("utf-8");
       const responseData = JSON.parse(jsonString);
-      const { access_token, refresh_token, role, ...userData } = responseData;
+      const { access_token, refresh_token, ...rest } = responseData;
 
       if (access_token)
         cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, access_token, SECURE_COOKIE_OPTIONS);
       if (refresh_token)
         cookieStore.set(REFRESH_TOKEN_COOKIE_NAME, refresh_token, SECURE_COOKIE_OPTIONS);
-      if (role) cookieStore.set(ROLE_COOKIE_NAME, role, PUBLIC_COOKIE_OPTIONS);
 
-      return NextResponse.json({ ...userData, role }, { status: axiosResponse.status });
+      // Fetch /auth/me with the new token to get the user's role
+      let role = "treasurer"; // safe default
+      try {
+        const meResponse = await axios.get(`${BACKEND_URL}/auth/me`, {
+          headers: { Authorization: `Bearer ${access_token}` },
+          validateStatus: () => true,
+        });
+        if (meResponse.status >= 200 && meResponse.status < 300 && meResponse.data?.role) {
+          role = meResponse.data.role;
+        }
+      } catch {
+        // If /auth/me fails, fall back to default role
+      }
+
+      cookieStore.set(ROLE_COOKIE_NAME, role, PUBLIC_COOKIE_OPTIONS);
+
+      return NextResponse.json({ ...rest, role }, { status: axiosResponse.status });
     }
 
     // Handle Auth Logout Interception

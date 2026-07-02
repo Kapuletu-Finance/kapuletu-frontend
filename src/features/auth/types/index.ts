@@ -1,4 +1,9 @@
 /**
+ * Possible user roles, matching backend UserRole enum.
+ */
+export type UserRole = "treasurer" | "admin" | "super_admin";
+
+/**
  * User type exactly mapping the KapuLetu backend `UserOut` schema.
  */
 export type User = {
@@ -9,6 +14,7 @@ export type User = {
   phone_number: string;
   email_verified: boolean;
   phone_number_verified: boolean;
+  role: UserRole;
 };
 
 /**
