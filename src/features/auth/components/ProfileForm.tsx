@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Lock, Mail, Phone, RefreshCw, User as UserIcon } from "lucide-react";
+import { Loader2, Lock, Phone, RefreshCw, User as UserIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +29,6 @@ export const ProfileForm = () => {
 
   const profileForm = useForm<UpdateProfileFormData>({
     defaultValues: {
-      email: "",
       firstName: "",
       lastName: "",
       phoneNumber: "",
@@ -37,7 +36,6 @@ export const ProfileForm = () => {
     resolver: zodResolver(updateProfileSchema),
     values: user
       ? {
-          email: user.email || "",
           firstName: user.first_name || "",
           lastName: user.last_name || "",
           phoneNumber: user.phone_number || "",
@@ -140,30 +138,7 @@ export const ProfileForm = () => {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={profileForm.control}
-                        name="email"
-                        render={({ field, fieldState }) => (
-                          <Field className="space-y-2" data-invalid={!!fieldState.error}>
-                            <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                            <div className="relative">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Mail className="h-4 w-4" />
-                              </div>
-                              <Input
-                                id={field.name}
-                                type="email"
-                                className="pl-10"
-                                {...field}
-                                aria-invalid={!!fieldState.error}
-                              />
-                            </div>
-                            <FieldError>{fieldState.error?.message}</FieldError>
-                          </Field>
-                        )}
-                      />
-
+                    <div className="grid grid-cols-1 gap-6">
                       <FormField
                         control={profileForm.control}
                         name="phoneNumber"
@@ -210,7 +185,7 @@ export const ProfileForm = () => {
                   <fieldset disabled={changePasswordMutation.isPending} className="space-y-6">
                     <FormField
                       control={passwordForm.control}
-                      name="currentPassword"
+                      name="oldPassword"
                       render={({ field, fieldState }) => (
                         <Field className="space-y-2" data-invalid={!!fieldState.error}>
                           <FieldLabel htmlFor={field.name} required>

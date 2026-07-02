@@ -25,7 +25,6 @@ export const SignUpForm = () => {
       lastName: "",
       password: "",
       phoneNumber: "",
-      role: "treasurer",
       showPassword: false,
     },
     resolver: zodResolver(signUpSchema),

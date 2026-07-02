@@ -1,8 +1,9 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import type * as React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
@@ -14,11 +15,12 @@ import {
 } from "@/components/ui/input-otp";
 import { type VerifyFormData, verifySchema } from "@/features/auth/schemas";
 import {
+  useResendCodeMutation,
   useVerifyEmailConfirmMutation,
   useVerifyEmailRequestMutation,
   useVerifyPhoneConfirmMutation,
-  useVerifyPhoneRequestMutation,
 } from "@/features/auth/services/mutations";
+import { useGetMeQuery } from "@/features/auth/services/queries";
 import { cn } from "@/lib/utils";
 
 interface VerifyCardProps {
@@ -27,6 +29,7 @@ interface VerifyCardProps {
 
 export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const router = useRouter();
+  const { data: user } = useGetMeQuery();
   const isPhone = type === "phone";
 
   const form = useForm<VerifyFormData>({
@@ -39,7 +42,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const emailConfirmMutation = useVerifyEmailConfirmMutation();
   const phoneConfirmMutation = useVerifyPhoneConfirmMutation();
   const emailRequestMutation = useVerifyEmailRequestMutation();
-  const phoneRequestMutation = useVerifyPhoneRequestMutation();
+  const phoneRequestMutation = useResendCodeMutation();
 
   const verifyMutation = isPhone ? phoneConfirmMutation : emailConfirmMutation;
   const requestMutation = isPhone ? phoneRequestMutation : emailRequestMutation;
@@ -47,15 +50,44 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const isError = !!form.formState.errors.code || verifyMutation.isError;
 
   const onSubmit = (data: VerifyFormData) => {
-    verifyMutation.mutate(data, {
-      onSuccess: () => {
-        setTimeout(() => router.push("/sign-in"), 2000);
-      },
-    });
+    const finalIdentifier = user?.phone_number || "";
+
+    // If phone verification, we need the identifier
+    if (isPhone) {
+      if (!finalIdentifier) {
+        toast.error("Value error, identifier cannot be empty");
+        return;
+      }
+
+      phoneConfirmMutation.mutate(
+        { ...data, identifier: finalIdentifier },
+        {
+          onSuccess: () => {
+            setTimeout(() => router.push("/sign-in"), 2000);
+          },
+        },
+      );
+    } else {
+      emailConfirmMutation.mutate(data, {
+        onSuccess: () => {
+          setTimeout(() => router.push("/sign-in"), 2000);
+        },
+      });
+    }
   };
 
   const handleResend = () => {
-    requestMutation.mutate();
+    const finalIdentifier = user?.phone_number || "";
+
+    if (isPhone) {
+      if (!finalIdentifier) {
+        toast.error("Value error, identifier cannot be empty");
+        return;
+      }
+      phoneRequestMutation.mutate({ identifier: finalIdentifier });
+    } else {
+      emailRequestMutation.mutate();
+    }
   };
 
   return (

@@ -33,7 +33,7 @@ export const VerifyEmailAlert = () => {
 
   // If loading or if we know the user is verified, don't show the banner
   // Default to showing if we don't know (or if explicitly false)
-  if (isLoading || !user || user.is_email_verified || isDismissed) {
+  if (isLoading || !user || user.email_verified || isDismissed) {
     return null;
   }
 

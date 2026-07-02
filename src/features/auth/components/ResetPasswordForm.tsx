@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRound, Lock } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -23,14 +23,12 @@ import { useResetPasswordMutation } from "@/features/auth/services/mutations";
 
 const ResetPasswordFormContent = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams?.get("token") || "";
-
   const form = useForm<ResetPasswordFormData>({
     defaultValues: {
+      code: "",
       confirmPassword: "",
+      identifier: "",
       password: "",
-      token,
     },
     resolver: zodResolver(resetPasswordSchema),
   });
@@ -59,6 +57,44 @@ const ResetPasswordFormContent = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <fieldset disabled={resetPasswordMutation.isPending} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="identifier"
+                render={({ field }) => (
+                  <Field className="space-y-2" data-invalid={!!form.formState.errors.identifier}>
+                    <FieldLabel htmlFor={field.name}>Email or Phone Number</FieldLabel>
+                    <Input
+                      id={field.name}
+                      placeholder="m@example.com or +254..."
+                      {...field}
+                      aria-invalid={!!form.formState.errors.identifier}
+                    />
+                    {form.formState.errors.identifier && (
+                      <FieldError>{form.formState.errors.identifier.message}</FieldError>
+                    )}
+                  </Field>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <Field className="space-y-2" data-invalid={!!form.formState.errors.code}>
+                    <FieldLabel htmlFor={field.name}>Verification Code</FieldLabel>
+                    <Input
+                      id={field.name}
+                      placeholder="6-digit code"
+                      {...field}
+                      aria-invalid={!!form.formState.errors.code}
+                    />
+                    {form.formState.errors.code && (
+                      <FieldError>{form.formState.errors.code.message}</FieldError>
+                    )}
+                  </Field>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="password"

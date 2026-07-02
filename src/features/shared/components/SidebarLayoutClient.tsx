@@ -195,7 +195,7 @@ const AppSidebar = ({
             <div className="flex items-center gap-2 w-full p-2 hover:bg-muted cursor-pointer rounded-md transition-colors group-data-[collapsible=icon]:justify-center">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shrink-0 overflow-hidden relative">
                 <UserIcon className="size-4 text-muted-foreground" />
-                {user && !user.is_email_verified && isAlertDismissed && (
+                {user && !user.email_verified && isAlertDismissed && (
                   <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
                 )}
               </div>
@@ -221,7 +221,7 @@ const AppSidebar = ({
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted overflow-hidden relative">
                     <UserIcon className="size-4 text-muted-foreground" />
-                    {user && !user.is_email_verified && isAlertDismissed && (
+                    {user && !user.email_verified && isAlertDismissed && (
                       <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
                     )}
                   </div>
@@ -238,7 +238,7 @@ const AppSidebar = ({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {user && !user.is_email_verified && (
+              {user && !user.email_verified && (
                 <DropdownMenuItem>
                   <Link
                     href="/verify-email"

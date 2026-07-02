@@ -1,5 +1,5 @@
 /**
- * User type exactly mapping the KapuLetu backend SQLAlchemy `User` model.
+ * User type exactly mapping the KapuLetu backend `UserOut` schema.
  */
 export type User = {
   user_id: string; // UUID
@@ -7,22 +7,36 @@ export type User = {
   last_name: string;
   email: string;
   phone_number: string;
-  role: "treasurer" | "admin" | "super_admin";
-  is_active: boolean;
-  is_email_verified?: boolean;
-  created_at: string; // ISO 8601 DateTime
+  email_verified: boolean;
+  phone_number_verified: boolean;
 };
 
 /**
- * Authentication response from our proxy which extends the user
- * with any proxy-specific metadata (though our proxy currently
- * strips tokens and passes the rest).
+ * Authentication response from our proxy after sign-in.
+ * The proxy strips tokens, sets httpOnly cookies, then returns
+ * a lightweight object with only the role (read from role cookie).
  */
 export type AuthResponse = User;
 
+/**
+ * Response from /auth/register — backend RegisterOut schema.
+ */
+export type RegisterOut = {
+  message: string;
+  user_id: string;
+};
+
+/**
+ * Proxy-synthesised response after sign-in.
+ * The BFF proxy calls /auth/me after login and returns this.
+ */
+export type SignInResponse = {
+  role: string;
+};
+
 export type SignInRequest = {
-  email?: string;
-  phone_number?: string;
+  /** Email address or phone number — backend IdentifierBase */
+  identifier: string;
   password: string;
 };
 
@@ -32,30 +46,45 @@ export type SignUpRequest = {
   email: string;
   phone_number: string;
   password: string;
-  role: "treasurer" | "admin";
 };
 
 export type ForgotPasswordRequest = {
-  phone_number: string;
+  /** Email address or phone number — backend IdentifierBase */
+  identifier: string;
 };
 
 export type ResetPasswordRequest = {
-  token: string;
+  /** Email address or phone number — backend IdentifierBase */
+  identifier: string;
+  /** 6-digit OTP sent to phone/email */
+  code: string;
   new_password: string;
 };
 
 export type ChangePasswordRequest = {
-  current_password: string;
+  /** Field name matches backend ChangePasswordIn */
+  old_password: string;
   new_password: string;
 };
 
 export type UpdateProfileRequest = {
   first_name?: string;
   last_name?: string;
-  email?: string;
   phone_number?: string;
 };
 
 export type VerifyRequest = {
   code: string;
+};
+
+export type VerifyPhoneRequest = {
+  /** Email address or phone number — backend IdentifierBase */
+  identifier: string;
+  /** 6-digit OTP code */
+  code: string;
+};
+
+export type ResendCodeRequest = {
+  /** Email address or phone number — backend IdentifierBase */
+  identifier: string;
 };

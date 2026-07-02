@@ -32,9 +32,6 @@ export const signUpSchema = z
       .string({ message: "Phone number is required." })
       .regex(/^(?:\+2547|\+2541|07|01)\d{8}$/, "Please enter a valid phone number.")
       .min(1, "Phone number is required."),
-    role: z.enum(["admin", "treasurer"], {
-      message: "Please select a valid role.",
-    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
@@ -43,25 +40,37 @@ export const signUpSchema = z
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 
+/**
+ * Forgot password accepts email OR phone number.
+ * The backend uses a single `identifier` field (IdentifierBase).
+ */
 export const forgotPasswordSchema = z.object({
-  phoneNumber: z
-    .string({ message: "Phone number is required." })
-    .regex(/^(?:\+2547|\+2541|07|01)\d{8}$/, "Please enter a valid phone number.")
-    .min(1, "Phone number is required."),
+  identifier: z
+    .string({ message: "Email or phone number is required." })
+    .min(1, "Email or phone number is required."),
 });
 
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
+/**
+ * Reset password uses an OTP code sent to phone/email.
+ * Backend ResetPasswordIn: identifier + code (6-digit) + new_password.
+ */
 export const resetPasswordSchema = z
   .object({
+    code: z
+      .string({ message: "Verification code is required." })
+      .length(6, "Verification code must be exactly 6 digits."),
     confirmPassword: z
       .string({ message: "Please confirm your password." })
       .min(1, "Please confirm your password."),
+    identifier: z
+      .string({ message: "Email or phone number is required." })
+      .min(1, "Email or phone number is required."),
     password: z
       .string({ message: "Password is required." })
       .min(1, "Password is required.")
       .min(8, "Password must be at least 8 characters long."),
-    token: z.string({ message: "Reset token is missing." }).min(1, "Reset token is missing."),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
@@ -70,18 +79,22 @@ export const resetPasswordSchema = z
 
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
+/**
+ * Change password — field names match backend ChangePasswordIn:
+ *   old_password, new_password.
+ */
 export const changePasswordSchema = z
   .object({
     confirmNewPassword: z
       .string({ message: "Please confirm your new password." })
       .min(1, "Please confirm your new password."),
-    currentPassword: z
-      .string({ message: "Current password is required." })
-      .min(1, "Current password is required."),
     newPassword: z
       .string({ message: "New password is required." })
       .min(1, "New password is required.")
       .min(8, "New password must be at least 8 characters long."),
+    oldPassword: z
+      .string({ message: "Current password is required." })
+      .min(1, "Current password is required."),
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
     message: "New passwords do not match.",
@@ -90,12 +103,10 @@ export const changePasswordSchema = z
 
 export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
+/**
+ * Update profile — backend UpdateProfileIn has no email field.
+ */
 export const updateProfileSchema = z.object({
-  email: z
-    .email("Please enter a valid email address.")
-    .min(1, "Email address is required.")
-    .optional()
-    .or(z.literal("")),
   firstName: z
     .string({ message: "First name is required." })
     .min(1, "First name is required.")
@@ -122,7 +133,7 @@ export const verifySchema = z.object({
   code: z
     .string({ message: "Verification code is required." })
     .min(1, "Verification code is required.")
-    .min(4, "Verification code must be at least 4 characters."),
+    .length(6, "Verification code must be exactly 6 digits."),
 });
 
 export type VerifyFormData = z.infer<typeof verifySchema>;
