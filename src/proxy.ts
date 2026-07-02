@@ -10,9 +10,17 @@ export const proxy = (request: NextRequest) => {
   const isAuthRoute = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password"].includes(
     pathname,
   );
+  // Routes that require authentication but are not role-scoped dashboard routes
+  const isAuthenticatedOnlyRoute = ["/verify-email", "/verify-phone"].includes(pathname);
   const isRootRoute = pathname === "/";
 
-  if (!isTreasurerRoute && !isAdminRoute && !isAuthRoute && !isRootRoute) {
+  if (
+    !isTreasurerRoute &&
+    !isAdminRoute &&
+    !isAuthRoute &&
+    !isAuthenticatedOnlyRoute &&
+    !isRootRoute
+  ) {
     return NextResponse.next();
   }
 
@@ -46,7 +54,7 @@ export const proxy = (request: NextRequest) => {
   }
 
   // Unauthenticated user attempting to access secure routes
-  if (isTreasurerRoute || isAdminRoute) {
+  if (isTreasurerRoute || isAdminRoute || isAuthenticatedOnlyRoute) {
     const signInUrl = new URL("/sign-in", request.url);
     // Optionally preserve the attempted URL for post-sign in redirect
     signInUrl.searchParams.set("from", pathname);
@@ -67,5 +75,7 @@ export const config = {
     "/sign-up",
     "/forgot-password",
     "/reset-password",
+    "/verify-email",
+    "/verify-phone",
   ],
 };
