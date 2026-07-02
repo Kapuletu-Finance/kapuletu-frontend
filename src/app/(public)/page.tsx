@@ -9,12 +9,12 @@ const Home = () => {
         <SiteLogo variant="full" className="text-4xl sm:text-6xl" logoClassName="h-[1em] w-[1em]" />
         <p className="text-lg">Built for Group Finance</p>
         <div className="flex flex-row items-center justify-center gap-4 pt-4">
-          <Button>
-            <Link href="/sign-up">Sign Up</Link>
-          </Button>
-          <Button variant="outline">
-            <Link href="/sign-in">Sign In</Link>
-          </Button>
+          <Link href="/sign-up">
+            <Button>Sign Up</Button>
+          </Link>
+          <Link href="/sign-in">
+            <Button variant="outline">Sign In</Button>
+          </Link>
         </div>
       </div>
     </div>
