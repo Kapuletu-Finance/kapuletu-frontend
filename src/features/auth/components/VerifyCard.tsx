@@ -1,7 +1,9 @@
 "use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import type * as React from "react";
+import type React from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -38,6 +40,16 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     },
     resolver: zodResolver(verifySchema),
   });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const otp = params.get("otp");
+      if (otp) {
+        form.setValue("code", otp, { shouldValidate: true });
+      }
+    }
+  }, [form]);
 
   const emailConfirmMutation = useVerifyEmailConfirmMutation();
   const phoneConfirmMutation = useVerifyPhoneConfirmMutation();
