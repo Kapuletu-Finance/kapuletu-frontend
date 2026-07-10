@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
 export const PublicThemeToggle = () => {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/admin") || pathname.startsWith("/treasurer")) {
+  if (pathname.startsWith("/admin") || pathname.startsWith("/treasurer") || pathname === "/") {
     return null;
   }
 
