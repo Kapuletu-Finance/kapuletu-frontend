@@ -8,11 +8,11 @@ export const CtaSection = () => {
       <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
       <div className="container mx-auto px-4 text-center relative z-10">
         <h2 className="text-3xl md:text-5xl font-bold mb-6 text-balance">
-          Ready to empower your financial group?
+          Ready to simplify your treasury management?
         </h2>
         <p className="text-primary-foreground/80 text-lg md:text-xl max-w-2xl mx-auto mb-10 text-balance">
-          Join hundreds of chamas and investment groups already using Kapuletu to achieve their
-          financial goals.
+          Join hundreds of treasurers and financial managers already using KapuLetu to automate
+          their group's bookkeeping.
         </p>
         <Link href="/sign-up">
           <Button
@@ -20,7 +20,7 @@ export const CtaSection = () => {
             variant="secondary"
             className="rounded-full text-base h-14 px-10 shadow-lg hover:shadow-xl transition-all"
           >
-            Create Your Group Now
+            Create Your Workspace Now
           </Button>
         </Link>
       </div>

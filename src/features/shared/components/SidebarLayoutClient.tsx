@@ -72,8 +72,8 @@ const WorkspaceSwitcher = () => (
       className="appearance-none bg-muted/80 hover:bg-muted text-foreground text-sm font-medium pl-3 pr-8 py-1.5 rounded-md cursor-pointer outline-none transition-colors border border-transparent hover:border-border shadow-sm"
       aria-label="Select Workspace"
     >
-      <option value="chama-1">Workspace Alpha</option>
-      <option value="chama-2">Workspace Beta</option>
+      <option value="workspace-1">Workspace Alpha</option>
+      <option value="workspace-2">Workspace Beta</option>
     </select>
     <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none group-hover:text-foreground transition-colors" />
   </div>

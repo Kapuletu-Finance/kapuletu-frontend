@@ -1,4 +1,4 @@
-import { BellRing, CheckCircle2, ShieldCheck, Users, Wallet } from "lucide-react";
+import { BellRing, CheckCircle2, Megaphone, ShieldCheck, Wallet } from "lucide-react";
 import type React from "react";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
@@ -28,11 +28,11 @@ export const FeaturesSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Everything you need to run your group
+            Everything you need to manage your treasury
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg text-balance">
-            Say goodbye to messy spreadsheets and disputes. Kapuletu brings clarity and trust to
-            your group finances.
+            Say goodbye to messy spreadsheets and manual reconciliations. Kapuletu brings clarity,
+            automation, and trust to your organization's finances.
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export const FeaturesSection = () => {
           <FeatureCard
             icon={<Wallet className="h-6 w-6 text-primary" />}
             title="Transparent Ledger"
-            description="Keep track of every contribution, fine, and withdrawal. All members have real-time visibility into the group's finances."
+            description="Keep track of every contribution, expense, and payout. Treasurers and members get real-time, automated updates."
           />
           <FeatureCard
             icon={<BellRing className="h-6 w-6 text-primary" />}
@@ -48,19 +48,19 @@ export const FeaturesSection = () => {
             description="Never miss a payment schedule again. Kapuletu automatically sends SMS and Email reminders to members."
           />
           <FeatureCard
-            icon={<Users className="h-6 w-6 text-primary" />}
-            title="Loan Management"
-            description="Seamlessly issue, track, and manage member loans, interest calculations, and repayment schedules."
+            icon={<Megaphone className="h-6 w-6 text-primary" />}
+            title="Campaign Management"
+            description="Set up specific fundraising campaigns, track targets, and monitor member contributions towards goal progress."
           />
           <FeatureCard
             icon={<ShieldCheck className="h-6 w-6 text-primary" />}
             title="Bank-grade Security"
-            description="Your group's financial data is encrypted and securely stored. We prioritize your privacy and data protection."
+            description="Your financial data is encrypted and securely stored. We prioritize your privacy and data protection."
           />
           <FeatureCard
             icon={<CheckCircle2 className="h-6 w-6 text-primary" />}
             title="Role-based Access"
-            description="Assign specific roles like Chairperson, Treasurer, or Secretary with granular access controls."
+            description="Assign specific roles like Chairperson, Treasurer, or Auditor with granular access controls."
           />
           <FeatureCard
             icon={

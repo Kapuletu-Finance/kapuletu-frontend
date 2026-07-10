@@ -22,9 +22,9 @@ export const HowItWorksSection = () => {
             <div className="w-24 h-24 rounded-full bg-background text-primary flex items-center justify-center text-5xl font-black mb-8 shadow-xl rotate-[-5deg]">
               1
             </div>
-            <h3 className="text-xl font-bold mb-4">Create your group</h3>
+            <h3 className="text-xl font-bold mb-4">Create your workspace</h3>
             <p className="text-primary-foreground/80 leading-relaxed max-w-xs text-balance">
-              Register your chama or group and invite members to join your secure financial
+              Register your organization or group and invite members to join your secure financial
               workspace.
             </p>
           </div>
@@ -33,9 +33,10 @@ export const HowItWorksSection = () => {
             <div className="w-24 h-24 rounded-full bg-background text-primary flex items-center justify-center text-5xl font-black mb-8 shadow-xl rotate-2">
               2
             </div>
-            <h3 className="text-xl font-bold mb-4">Set your rules</h3>
+            <h3 className="text-xl font-bold mb-4">Configure your ledger</h3>
             <p className="text-primary-foreground/80 leading-relaxed max-w-xs text-balance">
-              Define contribution schedules, loan policies, interest rates, and member roles.
+              Define contribution categories, budget limits, payment schedules, and member access
+              roles.
             </p>
           </div>
 
@@ -43,9 +44,10 @@ export const HowItWorksSection = () => {
             <div className="w-24 h-24 rounded-full bg-background text-primary flex items-center justify-center text-5xl font-black mb-8 shadow-xl -rotate-3">
               3
             </div>
-            <h3 className="text-xl font-bold mb-4">Start managing funds</h3>
+            <h3 className="text-xl font-bold mb-4">Track and report</h3>
             <p className="text-primary-foreground/80 leading-relaxed max-w-xs text-balance">
-              Members can easily contribute, track their balances, request loans, and view reports.
+              Easily record transactions, monitor campaign balances, automate reminders, and
+              generate instant reports.
             </p>
           </div>
         </div>

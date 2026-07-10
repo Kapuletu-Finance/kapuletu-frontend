@@ -8,12 +8,12 @@ export const HeroSection = () => {
     <section className="w-full py-20 md:py-32 flex flex-col md:flex-row items-center justify-between px-4 relative overflow-hidden container mx-auto gap-10">
       <div className="flex-1 flex flex-col items-start text-left">
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 text-balance">
-          Modern Finance Management for <span className="text-primary">Groups & Chamas</span>
+          Modern Finance Management for <span className="text-primary">Treasurers & Groups</span>
         </h1>
 
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200 text-balance">
-          Transparent tracking, automated collections, and seamless loan management—all in one
-          secure platform designed for your group's success.
+          Simplify bookkeeping, automate collections, and track contributions with a secure platform
+          designed for treasurers and financial managers.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-7 duration-700 delay-300">

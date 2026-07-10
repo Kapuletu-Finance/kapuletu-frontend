@@ -29,8 +29,8 @@ export const FaqsSection = () => {
               </span>
             </summary>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              KapuLetu is a modern group finance platform designed to help communities, SACCOs,
-              chamas, and organizations manage contributions with transparency and ease.
+              KapuLetu is a modern group finance platform designed to help treasurers, committees,
+              associations, and organizations manage contributions with transparency and ease.
             </p>
           </details>
           <details className="group border border-border rounded-lg p-6 [&_summary::-webkit-details-marker]:hidden bg-card">

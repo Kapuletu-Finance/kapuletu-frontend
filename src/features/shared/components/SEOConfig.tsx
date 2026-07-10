@@ -10,19 +10,19 @@ export const metadataConfig: Metadata = {
   category: "finance",
   creator: "KapuLetu Systems",
   description:
-    "Streamline your Chama, self-help group, or investment welfare club with KapuLetu. Automatically ingest SMS records, split member deposits, manage crowdfunding campaigns, and generate instant immutable ledger updates.",
+    "Streamline treasury operations, member tracking, and group finance with KapuLetu. Automatically ingest transaction records, split member deposits, manage crowdfunding campaigns, and generate instant immutable ledger updates.",
   keywords: [
     "KapuLetu Treasury",
-    "Chama Finance Management",
+    "Treasury Finance Management",
     "Automated Ledger",
     "SMS Ingestion Finance",
     "Welfare Group Accounts",
     "Investment Club Software",
-    "Chama Contribution Tracker",
+    "Group Contribution Tracker",
     "Mobile Ledger Ingestion",
     "Immutable Financial Audit",
     "Split Deposit Allocation",
-    "Kenya Digital Chama Tools",
+    "Digital Treasury Tools",
     "Multi-tenant Financial Platform",
   ],
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -60,7 +60,7 @@ export const metadataConfig: Metadata = {
     card: "summary_large_image",
     description:
       "Empower group treasurers with automated SMS parsing pipelines, explicit role-based safeguards, and multi-member contribution accounting updates.",
-    title: "KapuLetu Treasury | Real-Time Automated Chama Bookkeeping",
+    title: "KapuLetu Treasury | Real-Time Automated Treasury Bookkeeping",
   },
 };
 
