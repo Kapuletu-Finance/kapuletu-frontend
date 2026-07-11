@@ -52,10 +52,13 @@ export const LandingFooter = () => {
             <h3 className="text-lg font-semibold mb-4">Get in Touch</h3>
             <ul className="space-y-3 text-sm text-white/80">
               <li>
-                <span className="font-semibold text-white">Email:</span> support@kapuletu.com
+                <span className="font-semibold text-white">Support:</span> support@kapuletu.co.ke
               </li>
               <li>
-                <span className="font-semibold text-white">Phone:</span> +254 700 000 000
+                <span className="font-semibold text-white">Info:</span> info@kapuletu.co.ke
+              </li>
+              <li>
+                <span className="font-semibold text-white">Phone:</span> +254143933472
               </li>
               <li>
                 <span className="font-semibold text-white">Location:</span> Nairobi, Kenya
