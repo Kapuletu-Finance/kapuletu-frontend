@@ -70,6 +70,11 @@ export const LandingFooter = () => {
             <h3 className="text-lg font-semibold mb-4">Support</h3>
             <ul className="space-y-3 text-sm text-white/80">
               <li>
+                <Link href="/blogs" className="hover:text-white transition-colors">
+                  Blog & News
+                </Link>
+              </li>
+              <li>
                 <Link href="#faqs" className="hover:text-white transition-colors">
                   FAQs
                 </Link>
