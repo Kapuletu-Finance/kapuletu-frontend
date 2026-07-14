@@ -3,10 +3,21 @@ import { z } from "zod";
 const envSchema = z.object({
   ACCESS_TOKEN_COOKIE_NAME: z.string().min(1).default("access_token"),
   NEXT_PUBLIC_APP_URL: z
-    .url({
-      message: "NEXT_PUBLIC_APP_URL must be a valid URL",
+    .string()
+    .transform((str) => {
+      if (str && !str.startsWith("http")) {
+        return `https://${str}`;
+      }
+      return str;
     })
-    .default("http://localhost:3000"),
+    .pipe(z.url({ message: "NEXT_PUBLIC_APP_URL must be a valid URL" }))
+    .default(
+      process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000",
+    ),
   NEXT_PUBLIC_BACKEND_URL: z
     .url({
       message: "NEXT_PUBLIC_BACKEND_URL must be a valid URL",
