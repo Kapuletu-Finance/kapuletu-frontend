@@ -6,6 +6,7 @@ import { HeroSection } from "@/features/landing/components/HeroSection";
 import { HowItWorksSection } from "@/features/landing/components/HowItWorksSection";
 import { LandingFooter } from "@/features/landing/components/LandingFooter";
 import { LandingHeader } from "@/features/landing/components/LandingHeader";
+import { PricingSection } from "@/features/landing/components/PricingSection";
 
 const Home = () => {
   return (
@@ -16,6 +17,7 @@ const Home = () => {
         <AboutUsSection />
         <HowItWorksSection />
         <FeaturesSection />
+        <PricingSection />1
         <FaqsSection />
         <CtaSection />
       </main>
