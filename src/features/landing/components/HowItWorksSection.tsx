@@ -4,8 +4,8 @@ export const HowItWorksSection = () => {
       id="how-it-works"
       className="w-full py-24 bg-primary text-primary-foreground relative overflow-hidden"
     >
-      <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-background/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-background/10 rounded-full blur-3xl"></div>
       <div className="container mx-auto px-4 max-w-5xl text-center relative z-10">
         <span className="text-sm font-bold uppercase tracking-wider text-primary-foreground/80 mb-4 block">
           How KapuLetu Works

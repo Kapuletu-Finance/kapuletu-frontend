@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 export const CtaSection = () => {
   return (
     <section className="w-full py-24 bg-primary text-primary-foreground relative overflow-hidden">
-      <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-background/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-background/10 rounded-full blur-3xl"></div>
       <div className="container mx-auto px-4 text-center relative z-10">
         <h2 className="text-3xl md:text-5xl font-bold mb-6 text-balance">
           Ready to simplify your treasury management?

@@ -173,7 +173,7 @@ export const SignUpForm = () => {
                           <Info className="h-4 w-4" />
                         </TooltipTrigger>
                         <TooltipContent
-                          className="bg-refined-blue text-white [&_.fill-foreground]:bg-refined-blue [&_.fill-foreground]:fill-refined-blue"
+                          className="bg-refined-blue text-primary-foreground [&_.fill-foreground]:bg-refined-blue [&_.fill-foreground]:fill-refined-blue"
                           side="top"
                           align="center"
                           sideOffset={8}

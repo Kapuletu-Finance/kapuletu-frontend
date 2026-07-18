@@ -2,34 +2,21 @@
 
 import type { LucideIcon } from "lucide-react";
 import {
-  ArrowRightLeft,
-  BookOpen,
-  ChevronDown,
-  ChevronsUpDown,
+  Banknote,
+  BarChart3,
+  Bell,
+  FileText,
+  Home,
   LayoutDashboard,
-  LogOut,
-  Megaphone,
-  Moon,
+  Search,
   Settings,
   ShieldAlert,
-  Sun,
-  User as UserIcon,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import type React from "react";
-import { useEffect, useState } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Sidebar,
   SidebarContent,
@@ -45,11 +32,12 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { AUTH_EVENTS, AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
-import { useLogoutMutation } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
+import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
+import NeedAssistanceCard from "@/features/shared/components/NeedAssistanceCard";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
+import { UserProfileDropdown } from "@/features/shared/components/UserProfileDropdown";
 import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert";
 import { cn } from "@/lib/utils";
 
@@ -60,96 +48,42 @@ const ADMIN_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
 ];
 
 const TREASURER_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/treasurer/transactions", icon: ArrowRightLeft, label: "Transactions" },
-  { href: "/treasurer/ledger", icon: BookOpen, label: "Ledger" },
-  { href: "/treasurer/campaigns", icon: Megaphone, label: "Campaigns" },
-  { href: "/treasurer/members", icon: Users, label: "Members" },
+  { href: "/treasurer", icon: Home, label: "Dashboard" },
+  { href: "/treasurer/groups", icon: Users, label: "My Groups" },
+  { href: "/treasurer/transactions", icon: Banknote, label: "Transactions" },
+  { href: "/treasurer/reports", icon: FileText, label: "Reports" },
+  { href: "/treasurer/analytics", icon: BarChart3, label: "Analytics" },
+  { href: "/treasurer/settings", icon: Settings, label: "Settings" },
 ];
 
-const WorkspaceSwitcher = () => (
-  <div className="relative group hidden sm:block">
-    <select
-      className="appearance-none bg-muted/80 hover:bg-muted text-foreground text-sm font-medium pl-3 pr-8 py-1.5 rounded-md cursor-pointer outline-none transition-colors border border-transparent hover:border-border shadow-sm"
-      aria-label="Select Workspace"
-    >
-      <option value="workspace-1">Workspace Alpha</option>
-      <option value="workspace-2">Workspace Beta</option>
-    </select>
-    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none group-hover:text-foreground transition-colors" />
-  </div>
-);
-
-const ThemeDropdownItem = () => {
-  const { theme, setTheme } = useTheme();
-  return (
-    <DropdownMenuItem
-      className="cursor-pointer"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-    >
-      {theme === "dark" ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-      {theme === "dark" ? "Light Mode" : "Dark Mode"}
-    </DropdownMenuItem>
-  );
-};
-
-const SignOutDropdownItem = () => {
-  const logoutMutation = useLogoutMutation();
-  return (
-    <DropdownMenuItem
-      className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
-      onClick={() => logoutMutation.mutate()}
-      disabled={logoutMutation.isPending}
-    >
-      <LogOut className="w-4 h-4 mr-2" />
-      {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
-    </DropdownMenuItem>
-  );
-};
-
-const AppSidebar = ({
-  role,
-  links,
-}: {
-  role: UserRole;
+interface AppSidebarProps {
   links: { href: string; label: string; icon: LucideIcon }[];
-}) => {
+}
+
+const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
   const pathname = usePathname();
   const { state, isMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const { data: user } = useGetMeQuery();
-
-  const [isAlertDismissed, setIsAlertDismissed] = useState(true);
-
-  useEffect(() => {
-    setIsAlertDismissed(
-      localStorage.getItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED) === "true",
-    );
-
-    const handleEvent = () =>
-      setIsAlertDismissed(
-        localStorage.getItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED) === "true",
-      );
-    window.addEventListener(AUTH_EVENTS.VERIFY_EMAIL_DISMISSED, handleEvent);
-    return () => window.removeEventListener(AUTH_EVENTS.VERIFY_EMAIL_DISMISSED, handleEvent);
-  }, []);
 
   return (
-    <Sidebar collapsible="icon" className="border-border">
-      <SidebarHeader className="border-b border-border/50">
-        <div className="flex flex-col items-start justify-center gap-0.5 px-6 py-6 transition-all duration-200 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:items-center h-20">
+    <Sidebar collapsible="icon" className="border-border bg-background">
+      <SidebarHeader className="py-6 flex flex-col items-center justify-center relative">
+        <div className="flex flex-col items-center justify-center transition-all duration-200 group-data-[collapsible=icon]:px-2">
           <SiteLogo
             variant={isCollapsed && !isMobile ? "icon" : "full"}
             className="text-2xl"
-            logoClassName={`w-auto object-contain transition-all duration-200 ${isCollapsed && !isMobile ? "h-10" : "h-7"}`}
+            logoClassName={`w-auto object-contain transition-all duration-200 ${isCollapsed && !isMobile ? "h-10" : "h-10"}`}
           />
         </div>
+        <div className="absolute bottom-0 w-4/5 h-px bg-linear-to-r from-transparent via-border to-transparent group-data-[collapsible=icon]:w-1/2" />
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu className="gap-2">
             {links.map((link) => {
-              const isActive = pathname.startsWith(link.href);
+              const isRootLink = link.href === "/treasurer" || link.href === "/admin";
+              const isActive = isRootLink ? pathname === link.href : pathname.startsWith(link.href);
               const Icon = link.icon;
 
               return (
@@ -158,25 +92,25 @@ const AppSidebar = ({
                     tooltip={link.label}
                     size="lg"
                     className={cn(
-                      "transition-all duration-300 py-7 px-5 group-data-[collapsible=icon]:p-2 rounded-2xl group",
+                      "transition-all duration-300 py-7 px-4 group-data-[collapsible=icon]:p-2 rounded-2xl group",
                       isActive
-                        ? "bg-primary/10 text-primary font-semibold dark:bg-primary/20"
-                        : "hover:bg-muted/80 text-muted-foreground hover:text-foreground",
+                        ? "bg-primary/20 text-foreground font-medium"
+                        : "hover:bg-muted/40 text-muted-foreground hover:text-foreground",
                     )}
                     render={
                       <Link
                         href={link.href}
-                        className="flex items-center gap-4 w-full group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0!"
+                        className="flex items-center gap-3 w-full group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0!"
                       >
-                        <Icon
+                        <div
                           className={cn(
-                            "size-6 transition-transform duration-300 group-hover:scale-110 shrink-0",
-                            isActive
-                              ? "text-primary"
-                              : "text-muted-foreground group-hover:text-primary",
+                            "flex items-center justify-center shrink-0 size-10 transition-colors duration-300 rounded-[14px]",
+                            isActive ? "bg-primary text-primary-foreground" : "text-primary",
                           )}
-                        />
-                        <span className="text-lg tracking-tight truncate group-data-[collapsible=icon]:hidden">
+                        >
+                          <Icon className="size-5 transition-transform duration-300 group-hover:scale-110" />
+                        </div>
+                        <span className="text-base tracking-tight truncate group-data-[collapsible=icon]:hidden">
                           {link.label}
                         </span>
                       </Link>
@@ -189,114 +123,71 @@ const AppSidebar = ({
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <div className="flex items-center gap-2 w-full p-2 hover:bg-muted cursor-pointer rounded-md transition-colors group-data-[collapsible=icon]:justify-center">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shrink-0 overflow-hidden relative">
-                <UserIcon className="size-4 text-muted-foreground" />
-                {user && !user.email_verified && isAlertDismissed && (
-                  <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
-                )}
-              </div>
-              <div className="flex flex-col group-data-[collapsible=icon]:hidden overflow-hidden flex-1 text-left">
-                <span className="text-sm font-semibold text-foreground truncate leading-tight">
-                  {user ? `${user.first_name} ${user.last_name}` : "My Account"}
-                </span>
-                <span className="text-xs text-muted-foreground truncate leading-tight">
-                  {user ? user.email : <span className="capitalize">{role} User</span>}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4 text-muted-foreground group-data-[collapsible=icon]:hidden shrink-0" />
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-[--anchor-width] min-w-56"
-            align="end"
-            side="right"
-            sideOffset={12}
-          >
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="font-normal p-0">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted overflow-hidden relative">
-                    <UserIcon className="size-4 text-muted-foreground" />
-                    {user && !user.email_verified && isAlertDismissed && (
-                      <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
-                    )}
-                  </div>
-                  <div className="flex flex-col flex-1 leading-none overflow-hidden text-left">
-                    <span className="font-semibold truncate">
-                      {user ? `${user.first_name} ${user.last_name}` : "My Account"}
-                    </span>
-                    <span className="text-xs text-muted-foreground truncate">
-                      {user ? user.email : <span className="capitalize">{role} User</span>}
-                    </span>
-                  </div>
-                </div>
-              </DropdownMenuLabel>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {user && !user.email_verified && (
-                <DropdownMenuItem>
-                  <Link
-                    href="/verify-email"
-                    className="cursor-pointer flex items-center w-full text-burnt-amber"
-                  >
-                    <ShieldAlert className="w-4 h-4 mr-2" />
-                    Verify Email
-                  </Link>
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem>
-                <Link href="/settings" className="cursor-pointer flex items-center w-full">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
-                </Link>
-              </DropdownMenuItem>
-              <ThemeDropdownItem />
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <SignOutDropdownItem />
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <SidebarFooter className="gap-2">
+        <CurrentPlanCard />
+        <NeedAssistanceCard />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
 };
 
-export const SidebarLayoutClient = ({
-  children,
-  role,
-}: {
+interface SidebarLayoutClientProps {
   children: React.ReactNode;
   role: UserRole;
-}) => {
-  const isTreasurer = role === "treasurer";
+}
+
+export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
+  const _isTreasurer = role === "treasurer";
   const links = role === "admin" ? ADMIN_LINKS : TREASURER_LINKS;
+  const { data: user } = useGetMeQuery();
+
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "GOOD MORNING" : hour < 18 ? "GOOD AFTERNOON" : "GOOD EVENING";
 
   return (
     <SidebarProvider>
-      <AppSidebar role={role} links={links} />
+      <AppSidebar links={links} />
 
       <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="h-16 shrink-0 flex items-center justify-between px-6 bg-background/80 backdrop-blur-md border-b border-border z-10 sticky top-0 transition-colors">
-          <div className="flex items-center gap-3">
+        <header className="h-20 shrink-0 flex items-center justify-between px-6 bg-background border-b border-border z-10 sticky top-0 transition-colors">
+          <div className="flex items-center gap-4">
             <SidebarTrigger className="-ml-1" />
-            <div className="h-4 w-px bg-border hidden sm:block" />
-            <div className="font-semibold text-foreground tracking-tight text-sm hidden sm:block">
-              {role === "admin" ? "Admin Dashboard" : "Treasurer Dashboard"}
+            <div className="hidden sm:flex sm:flex-col">
+              <h2 className="text-base tracking-tight uppercase">
+                {greeting}, {user ? user.first_name : "USER"}.
+              </h2>
+              <span className="text-[10px] font-semibold text-refined-blue border border-refined-blue/30 bg-refined-blue/5 rounded-full px-2 py-0.5 w-fit mt-0.5">
+                {role === "admin" ? "Admin Workspace" : "Treasurer Workspace"}
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">{isTreasurer && <WorkspaceSwitcher />}</div>
+          <div className="flex items-center gap-4">
+            <div className="relative hidden md:block w-80">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search by group or campaign name..."
+                className="w-full bg-muted/30 pl-10 rounded-full h-9 border-border text-sm"
+              />
+            </div>
+            <button
+              type="button"
+              className="relative p-2 rounded-full hover:bg-muted transition-colors shrink-0"
+            >
+              <Bell className="h-5 w-5 text-muted-foreground" />
+              <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-background">
+                2
+              </span>
+            </button>
+            <UserProfileDropdown role={role} />
+          </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-background transition-colors">
+        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-muted transition-colors">
           <div className="max-w-6xl mx-auto space-y-4">
             <VerifyEmailAlert />
             {children}

@@ -18,7 +18,7 @@ export const getTierStyles = (id: string) => {
         radioClass:
           "data-checked:bg-burnt-amber data-checked:border-burnt-amber dark:data-checked:bg-burnt-amber",
         btnClass:
-          "bg-burnt-amber hover:bg-burnt-amber/90 text-white w-full tracking-wider font-semibold",
+          "bg-burnt-amber hover:bg-burnt-amber/90 text-primary-foreground w-full tracking-wider font-semibold",
       };
     case "silver":
       return {
@@ -38,7 +38,7 @@ export const getTierStyles = (id: string) => {
         radioClass:
           "data-checked:bg-refined-blue data-checked:border-refined-blue dark:data-checked:bg-refined-blue",
         btnClass:
-          "bg-refined-blue hover:bg-refined-blue/90 text-white w-full tracking-wider font-semibold",
+          "bg-refined-blue hover:bg-refined-blue/90 text-primary-foreground w-full tracking-wider font-semibold",
       };
     default:
       return {
