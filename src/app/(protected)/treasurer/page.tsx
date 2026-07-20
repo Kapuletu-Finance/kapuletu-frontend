@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import ActiveCampaignsCard from "@/features/campaigns/components/ActiveCampaignsCard";
 import CreateCampaignButton from "@/features/campaigns/components/CreateCampaignButton";
+import MyCampaignsCard from "@/features/campaigns/components/MyCampaignsCard";
 import AddContributionButton from "@/features/contributions/components/AddContributionButton";
 import PendingContributionsCard from "@/features/contributions/components/PendingContributionsCard";
 import TotalContributionsCard from "@/features/contributions/components/TotalContributionsCard";
@@ -54,7 +55,9 @@ const TreasurerPage = () => {
             </Button>
           </div>
 
-          <Card className="shadow-sm p-5 flex-1 flex flex-col">
+          <MyCampaignsCard />
+
+          {/* <Card className="shadow-sm p-5 flex-1 flex flex-col">
             <div className="flex-1 flex flex-col justify-center rounded-3xl border-none">
               <EmptyState
                 message="Create your first campaign!"
@@ -65,7 +68,7 @@ const TreasurerPage = () => {
                 }
               />
             </div>
-          </Card>
+          </Card> */}
         </section>
 
         <section className="font-semibold flex flex-col gap-4">
@@ -75,11 +78,11 @@ const TreasurerPage = () => {
             </h2>
           </div>
 
-          <Card className="shadow-sm p-5 flex-1 flex flex-col">
+          {/* <Card className="shadow-sm p-5 flex-1 flex flex-col">
             <div className="flex-1 flex flex-col justify-center rounded-3xl border-none">
               <EmptyState message="No activity yet." />
             </div>
-          </Card>
+          </Card> */}
         </section>
       </div>
     </>

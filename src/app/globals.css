@@ -40,6 +40,22 @@
     --color-background: var(--background);
     --color-burnt-amber: #EC7B23;
     --color-refined-blue: #1B4580;
+    --color-plan-free: var(--plan-free);
+    --color-plan-free-fg: var(--plan-free-fg);
+    --color-plan-free-from: var(--plan-free-from);
+    --color-plan-free-to: var(--plan-free-to);
+    --color-plan-bronze: var(--plan-bronze);
+    --color-plan-bronze-fg: var(--plan-bronze-fg);
+    --color-plan-bronze-from: var(--plan-bronze-from);
+    --color-plan-bronze-to: var(--plan-bronze-to);
+    --color-plan-silver: var(--plan-silver);
+    --color-plan-silver-fg: var(--plan-silver-fg);
+    --color-plan-silver-from: var(--plan-silver-from);
+    --color-plan-silver-to: var(--plan-silver-to);
+    --color-plan-gold: var(--plan-gold);
+    --color-plan-gold-fg: var(--plan-gold-fg);
+    --color-plan-gold-from: var(--plan-gold-from);
+    --color-plan-gold-to: var(--plan-gold-to);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -82,6 +98,22 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+    --plan-free: #1B4580;
+    --plan-free-fg: #FFFFFF;
+    --plan-free-from: #133360;
+    --plan-free-to: #2457A0;
+    --plan-bronze: #B45309;
+    --plan-bronze-fg: #FFFFFF;
+    --plan-bronze-from: #8C3B0C;
+    --plan-bronze-to: #C86414;
+    --plan-silver: #94A3B8;
+    --plan-silver-fg: #FFFFFF;
+    --plan-silver-from: #526071;
+    --plan-silver-to: #8C9BAE;
+    --plan-gold: #D4AF37;
+    --plan-gold-fg: #FFFFFF;
+    --plan-gold-from: #B8860B;
+    --plan-gold-to: #E5B83B;
 }
 
 .dark {
@@ -116,6 +148,22 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+    --plan-free: #1B4580;
+    --plan-free-fg: #FFFFFF;
+    --plan-free-from: #133360;
+    --plan-free-to: #2457A0;
+    --plan-bronze: #B45309;
+    --plan-bronze-fg: #FFFFFF;
+    --plan-bronze-from: #8C3B0C;
+    --plan-bronze-to: #C86414;
+    --plan-silver: #94A3B8;
+    --plan-silver-fg: #FFFFFF;
+    --plan-silver-from: #526071;
+    --plan-silver-to: #8C9BAE;
+    --plan-gold: #D4AF37;
+    --plan-gold-fg: #FFFFFF;
+    --plan-gold-from: #B8860B;
+    --plan-gold-to: #E5B83B;
 }
 
 @layer base {

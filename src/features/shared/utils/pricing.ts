@@ -12,33 +12,33 @@ export const getTierStyles = (id: string) => {
       };
     case "bronze":
       return {
-        titleColor: "text-burnt-amber",
-        iconColor: "text-burnt-amber",
-        borderColor: "border-burnt-amber",
+        titleColor: "text-plan-bronze",
+        iconColor: "text-plan-bronze",
+        borderColor: "border-plan-bronze",
         radioClass:
-          "data-checked:bg-burnt-amber data-checked:border-burnt-amber dark:data-checked:bg-burnt-amber",
+          "data-checked:bg-plan-bronze data-checked:border-plan-bronze dark:data-checked:bg-plan-bronze",
         btnClass:
-          "bg-burnt-amber hover:bg-burnt-amber/90 text-primary-foreground w-full tracking-wider font-semibold",
+          "bg-gradient-to-r from-plan-bronze-from to-plan-bronze-to hover:opacity-90 text-plan-bronze-fg w-full tracking-wider font-semibold shadow-sm",
       };
     case "silver":
       return {
-        titleColor: "text-primary",
-        iconColor: "text-primary",
-        borderColor: "border-primary",
+        titleColor: "text-plan-silver",
+        iconColor: "text-plan-silver",
+        borderColor: "border-plan-silver",
         radioClass:
-          "data-checked:bg-primary data-checked:border-primary dark:data-checked:bg-primary",
+          "data-checked:bg-plan-silver data-checked:border-plan-silver dark:data-checked:bg-plan-silver",
         btnClass:
-          "bg-primary hover:bg-primary/90 text-primary-foreground w-full tracking-wider font-semibold",
+          "bg-gradient-to-r from-plan-silver-from to-plan-silver-to hover:opacity-90 text-plan-silver-fg w-full tracking-wider font-semibold shadow-sm",
       };
     case "gold":
       return {
-        titleColor: "text-refined-blue",
-        iconColor: "text-refined-blue",
-        borderColor: "border-refined-blue",
+        titleColor: "text-plan-gold",
+        iconColor: "text-plan-gold",
+        borderColor: "border-plan-gold",
         radioClass:
-          "data-checked:bg-refined-blue data-checked:border-refined-blue dark:data-checked:bg-refined-blue",
+          "data-checked:bg-plan-gold data-checked:border-plan-gold dark:data-checked:bg-plan-gold",
         btnClass:
-          "bg-refined-blue hover:bg-refined-blue/90 text-primary-foreground w-full tracking-wider font-semibold",
+          "bg-gradient-to-r from-plan-gold-from to-plan-gold-to hover:opacity-90 text-plan-gold-fg w-full tracking-wider font-semibold shadow-sm",
       };
     default:
       return {

@@ -124,7 +124,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
       </SidebarContent>
 
       <SidebarFooter className="gap-2">
-        <CurrentPlanCard />
+        <CurrentPlanCard plan="bronze" />
         <NeedAssistanceCard />
       </SidebarFooter>
       <SidebarRail />
@@ -138,7 +138,6 @@ interface SidebarLayoutClientProps {
 }
 
 export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
-  const _isTreasurer = role === "treasurer";
   const links = role === "admin" ? ADMIN_LINKS : TREASURER_LINKS;
   const { data: user } = useGetMeQuery();
 
