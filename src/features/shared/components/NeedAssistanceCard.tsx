@@ -26,10 +26,7 @@ const NeedAssistanceCard = () => {
             FAQ center.
           </p>
 
-          <Button
-            variant="secondary"
-            className="w-full mt-2 rounded-full font-semibold text-primary hover:bg-background"
-          >
+          <Button variant="secondary" className="font-semibold text-primary hover:bg-background">
             Visit our FAQs Page
           </Button>
         </CardContent>

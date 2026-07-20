@@ -1,5 +1,5 @@
-import type * as React from "react";
 import GroupCard, { type GroupInfo } from "@/features/groups/components/GroupCard";
+import GroupsHeaderControls from "@/features/groups/components/GroupsHeaderControls";
 
 const groupsData: GroupInfo[] = [
   {
@@ -58,15 +58,20 @@ const groupsData: GroupInfo[] = [
   },
 ];
 
-const GroupsPage: React.FC = () => {
+const GroupsPage = () => {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">Groups</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          You are currently managing{" "}
-          <span className="font-semibold text-foreground">{groupsData.length}</span> groups.
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-xl font-bold uppercase tracking-tight text-foreground sm:text-2xl">
+            MY GROUPS
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            You are currently managing{" "}
+            <span className="font-semibold text-foreground">{groupsData.length}</span> groups.
+          </p>
+        </div>
+        <GroupsHeaderControls />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

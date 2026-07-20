@@ -120,7 +120,9 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ role }
           <ThemeDropdownItem />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <SignOutDropdownItem />
+        <DropdownMenuGroup>
+          <SignOutDropdownItem />
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
