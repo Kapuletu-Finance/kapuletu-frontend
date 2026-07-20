@@ -1,6 +1,5 @@
 "use client";
 
-import { Smartphone } from "lucide-react";
 import Link from "next/link";
 import { useQueryState } from "nuqs";
 import { useState } from "react";
@@ -10,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { getTierStyles, pricings } from "@/features/shared/utils/pricing";
 
 const PricingPaymentModal = () => {
@@ -106,7 +106,7 @@ const PricingPaymentModal = () => {
               <h3 className="font-bold text-center">Payment Details</h3>
 
               <div className="flex items-center gap-2 bg-background p-2 rounded-lg border">
-                <Smartphone className={`h-6 w-6 ${styles.titleColor}`} />
+                <IconLibrary name="smartphone" className={`h-6 w-6 ${styles.titleColor}`} />
                 <Input
                   placeholder="0712345678"
                   className="border-none shadow-none focus-visible:ring-0"

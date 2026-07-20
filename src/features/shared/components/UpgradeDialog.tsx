@@ -1,6 +1,6 @@
-import { Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const UpgradeDialog = () => {
@@ -10,7 +10,7 @@ const UpgradeDialog = () => {
         <SiteLogo />
 
         <div className="bg-primary/10 p-4 rounded-full">
-          <Gem className="w-12 h-12 text-primary" strokeWidth={1.5} />
+          <IconLibrary name="gem" className="w-12 h-12 text-primary" strokeWidth={1.5} />
         </div>
 
         <div className="space-y-2">

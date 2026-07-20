@@ -1,0 +1,109 @@
+import {
+  AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  Banknote,
+  BarChart3,
+  Bell,
+  BellRing,
+  Calendar,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Clock,
+  Coins,
+  FileText,
+  Gem,
+  Gift,
+  Heart,
+  HelpCircle,
+  Home,
+  Info,
+  KeyRound,
+  LayoutDashboard,
+  Loader2,
+  Lock,
+  LogOut,
+  Megaphone,
+  Menu,
+  Moon,
+  Phone,
+  Plus,
+  PlusCircle,
+  RefreshCw,
+  Search,
+  Settings,
+  ShieldAlert,
+  ShieldCheck,
+  SlidersHorizontal,
+  Smartphone,
+  Star,
+  Sun,
+  User,
+  Users,
+  Wallet,
+  X,
+} from "lucide-react";
+
+const ICON_MAP = {
+  add: Plus,
+  "add-circle": PlusCircle,
+  alert: AlertCircle,
+  analytics: BarChart3,
+  "arrow-left": ArrowLeft,
+  "arrow-right": ArrowRight,
+  audit: ShieldAlert,
+  "bell-ring": BellRing,
+  calendar: Calendar,
+  campaign: Wallet,
+  check: Check,
+  "check-circle": CheckCircle2,
+  "chevron-down": ChevronDown,
+  clock: Clock,
+  close: X,
+  contribution: Coins,
+  dashboard: LayoutDashboard,
+  favorite: Heart,
+  filter: SlidersHorizontal,
+  gem: Gem,
+  gift: Gift,
+  group: Users,
+  help: HelpCircle,
+  home: Home,
+  info: Info,
+  key: KeyRound,
+  loading: Loader2,
+  lock: Lock,
+  "log-out": LogOut,
+  megaphone: Megaphone,
+  member: User,
+  menu: Menu,
+  moon: Moon,
+  notification: Bell,
+  phone: Phone,
+  refresh: RefreshCw,
+  report: FileText,
+  search: Search,
+  settings: Settings,
+  "shield-check": ShieldCheck,
+  smartphone: Smartphone,
+  star: Star,
+  sun: Sun,
+  transaction: Banknote,
+} as const;
+
+type IconName = keyof typeof ICON_MAP;
+
+interface IconLibraryProps {
+  name: IconName;
+  className?: string;
+  strokeWidth?: number;
+}
+
+const IconLibrary: React.FC<IconLibraryProps> = ({ name, className, strokeWidth }) => {
+  const Icon = ICON_MAP[name];
+  return <Icon className={className} strokeWidth={strokeWidth} />;
+};
+
+export default IconLibrary;
+export type { IconName, IconLibraryProps };

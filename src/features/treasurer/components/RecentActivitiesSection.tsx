@@ -1,7 +1,7 @@
-import { Coins, PlusCircle, Users } from "lucide-react";
 import type React from "react";
 import { Card } from "@/components/ui/card";
 import EmptyState from "@/features/shared/components/EmptyState";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 interface Activity {
   icon: React.ReactNode;
@@ -11,22 +11,22 @@ interface Activity {
 
 const activities: Activity[] = [
   {
-    icon: <PlusCircle className="w-5 h-5 fill-primary text-background" />,
+    icon: <IconLibrary name="add-circle" className="w-5 h-5 fill-primary text-background" />,
     time: "13 JULY 11:21 PM",
     title: 'New campaign "VBS" created',
   },
   {
-    icon: <Coins className="w-5 h-5 text-amber-500" />,
+    icon: <IconLibrary name="contribution" className="w-5 h-5 text-amber-500" />,
     time: "11 JULY 9:28 PM",
     title: "Ksh. 3000 for Community outreach approved",
   },
   {
-    icon: <PlusCircle className="w-5 h-5 fill-primary text-background" />,
+    icon: <IconLibrary name="add-circle" className="w-5 h-5 fill-primary text-background" />,
     time: "9 JULY 3:52 PM",
     title: 'New campaign "Community outreach" created',
   },
   {
-    icon: <Users className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />,
+    icon: <IconLibrary name="group" className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />,
     time: "9 JULY 11:35 AM",
     title: 'New group "Church" created',
   },

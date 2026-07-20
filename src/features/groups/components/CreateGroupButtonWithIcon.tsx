@@ -1,10 +1,9 @@
 "use client";
 
-import { Users } from "lucide-react";
 import ButtonWithIcon from "@/features/shared/components/ButtonWithIcon";
 
 const CreateGroupButtonWithIcon = () => {
-  return <ButtonWithIcon label="Create a group" onClick={() => {}} Icon={Users} />;
+  return <ButtonWithIcon label="Create a group" onClick={() => {}} iconName="group" />;
 };
 
 export default CreateGroupButtonWithIcon;

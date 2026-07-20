@@ -1,6 +1,5 @@
 "use client";
 
-import { LogOut, Moon, Settings, ShieldAlert, Sun, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import type React from "react";
@@ -18,6 +17,7 @@ import { AUTH_EVENTS, AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
 import { useLogoutMutation } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 interface UserProfileDropdownProps {
   role: UserRole;
@@ -30,7 +30,11 @@ const ThemeDropdownItem = () => {
       className="cursor-pointer"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
     >
-      {theme === "dark" ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+      {theme === "dark" ? (
+        <IconLibrary name="sun" className="w-4 h-4 mr-2" />
+      ) : (
+        <IconLibrary name="moon" className="w-4 h-4 mr-2" />
+      )}
       {theme === "dark" ? "Light Mode" : "Dark Mode"}
     </DropdownMenuItem>
   );
@@ -44,7 +48,7 @@ const SignOutDropdownItem = () => {
       onClick={() => logoutMutation.mutate()}
       disabled={logoutMutation.isPending}
     >
-      <LogOut className="w-4 h-4 mr-2" />
+      <IconLibrary name="log-out" className="w-4 h-4 mr-2" />
       {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
     </DropdownMenuItem>
   );
@@ -71,7 +75,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ role }
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center cursor-pointer hover:bg-primary/30 transition-colors relative overflow-hidden border border-border shrink-0">
-          <UserIcon className="size-5 text-primary" />
+          <IconLibrary name="member" className="size-5 text-primary" />
           {user && !user.email_verified && isAlertDismissed && (
             <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
           )}
@@ -82,7 +86,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ role }
           <DropdownMenuLabel className="font-normal p-0">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted overflow-hidden relative">
-                <UserIcon className="size-4 text-muted-foreground" />
+                <IconLibrary name="member" className="size-4 text-muted-foreground" />
                 {user && !user.email_verified && isAlertDismissed && (
                   <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
                 )}
@@ -106,14 +110,14 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ role }
                 href="/verify-email"
                 className="cursor-pointer flex items-center w-full text-burnt-amber"
               >
-                <ShieldAlert className="w-4 h-4 mr-2" />
+                <IconLibrary name="audit" className="w-4 h-4 mr-2" />
                 Verify Email
               </Link>
             </DropdownMenuItem>
           )}
           <DropdownMenuItem>
             <Link href="/settings" className="cursor-pointer flex items-center w-full">
-              <Settings className="w-4 h-4 mr-2" />
+              <IconLibrary name="settings" className="w-4 h-4 mr-2" />
               Settings
             </Link>
           </DropdownMenuItem>

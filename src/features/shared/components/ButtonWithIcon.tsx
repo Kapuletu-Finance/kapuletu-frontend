@@ -1,14 +1,15 @@
-import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { IconName } from "@/features/shared/components/IconLibrary";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 interface ButtonWithIconProps {
-  Icon: LucideIcon;
+  iconName: IconName;
   label: string;
   onClick?: () => void;
 }
 
 const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
-  Icon,
+  iconName,
   label = "Create a group",
   onClick,
 }) => {
@@ -21,7 +22,7 @@ const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
       <span className="text-left text-primary font-semibold text-sm leading-snug whitespace-normal wrap-break-word pr-2">
         {label}
       </span>
-      <Icon className="text-burnt-amber size-6 shrink-0" strokeWidth={1.5} />
+      <IconLibrary name={iconName} className="text-burnt-amber size-6 shrink-0" strokeWidth={1.5} />
     </Button>
   );
 };

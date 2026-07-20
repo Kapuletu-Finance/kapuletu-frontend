@@ -1,6 +1,6 @@
-import { HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const NeedAssistanceCard = () => {
   return (
@@ -16,7 +16,7 @@ const NeedAssistanceCard = () => {
         <CardContent className="relative z-10 flex flex-col gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-background/10 p-2 rounded-xl">
-              <HelpCircle className="w-6 h-6 text-background" />
+              <IconLibrary name="help" className="w-6 h-6 text-background" />
             </div>
             <h3 className="text-lg font-semibold tracking-tight">Need assistance?</h3>
           </div>
@@ -35,7 +35,7 @@ const NeedAssistanceCard = () => {
       {/* Collapsed Icon View */}
       <div className="hidden group-data-[collapsible=icon]:flex justify-center shrink-0">
         <div className="flex items-center justify-center size-10 rounded-sm bg-primary text-primary-foreground cursor-pointer hover:opacity-80 transition-opacity">
-          <HelpCircle className="size-5" />
+          <IconLibrary name="help" className="size-5" />
         </div>
       </div>
     </>

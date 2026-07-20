@@ -1,18 +1,5 @@
 "use client";
 
-import type { LucideIcon } from "lucide-react";
-import {
-  Banknote,
-  BarChart3,
-  Bell,
-  FileText,
-  Home,
-  LayoutDashboard,
-  Search,
-  Settings,
-  ShieldAlert,
-  Users,
-} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
@@ -37,29 +24,31 @@ import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
 import AppBreadcrumb from "@/features/shared/components/AppBreadcrumb";
 import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
+import type { IconName } from "@/features/shared/components/IconLibrary";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import NeedAssistanceCard from "@/features/shared/components/NeedAssistanceCard";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { UserProfileDropdown } from "@/features/shared/components/UserProfileDropdown";
 import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert";
 import { cn } from "@/lib/utils";
 
-const ADMIN_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/admin/groups", icon: Users, label: "Groups" },
-  { href: "/admin/audit/logs", icon: ShieldAlert, label: "Audit Logs" },
+const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
+  { href: "/admin", icon: "dashboard", label: "Dashboard" },
+  { href: "/admin/groups", icon: "group", label: "Groups" },
+  { href: "/admin/audit/logs", icon: "audit", label: "Audit Logs" },
 ];
 
-const TREASURER_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/treasurer", icon: Home, label: "Dashboard" },
-  { href: "/treasurer/groups", icon: Users, label: "Groups" },
-  { href: "/treasurer/transactions", icon: Banknote, label: "Transactions" },
-  { href: "/treasurer/reports", icon: FileText, label: "Reports" },
-  { href: "/treasurer/analytics", icon: BarChart3, label: "Analytics" },
-  { href: "/treasurer/settings", icon: Settings, label: "Settings" },
+const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
+  { href: "/treasurer", icon: "home", label: "Dashboard" },
+  { href: "/treasurer/groups", icon: "group", label: "Groups" },
+  { href: "/treasurer/transactions", icon: "transaction", label: "Transactions" },
+  { href: "/treasurer/reports", icon: "report", label: "Reports" },
+  { href: "/treasurer/analytics", icon: "analytics", label: "Analytics" },
+  { href: "/treasurer/settings", icon: "settings", label: "Settings" },
 ];
 
 interface AppSidebarProps {
-  links: { href: string; label: string; icon: LucideIcon }[];
+  links: { href: string; label: string; icon: IconName }[];
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
@@ -86,7 +75,6 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
             {links.map((link) => {
               const isRootLink = link.href === "/treasurer" || link.href === "/admin";
               const isActive = isRootLink ? pathname === link.href : pathname.startsWith(link.href);
-              const Icon = link.icon;
 
               return (
                 <SidebarMenuItem key={link.href}>
@@ -110,7 +98,10 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
                             isActive ? "bg-primary text-primary-foreground" : "text-primary",
                           )}
                         >
-                          <Icon className="size-5 transition-transform duration-300 group-hover:scale-110" />
+                          <IconLibrary
+                            name={link.icon}
+                            className="size-5 transition-transform duration-300 group-hover:scale-110"
+                          />
                         </div>
                         <span className="text-base tracking-tight truncate group-data-[collapsible=icon]:hidden">
                           {link.label}
@@ -167,7 +158,10 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
 
           <div className="flex items-center gap-4">
             <div className="relative hidden md:block w-80">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <IconLibrary
+                name="search"
+                className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"
+              />
               <Input
                 type="search"
                 placeholder="Search by group or campaign name..."
@@ -175,7 +169,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
               />
             </div>
             <Button variant="ghost" size="icon-lg" className="relative rounded-full shrink-0">
-              <Bell className="h-5 w-5 text-muted-foreground" />
+              <IconLibrary name="notification" className="h-5 w-5 text-muted-foreground" />
               <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-background">
                 2
               </span>

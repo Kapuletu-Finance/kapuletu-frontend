@@ -1,7 +1,7 @@
-import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const HeroSection = () => {
   return (
@@ -19,7 +19,7 @@ export const HeroSection = () => {
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-7 duration-700 delay-300">
           <Link href="/sign-up" className="w-full sm:w-auto">
             <Button size="lg" className="w-full sm:w-auto rounded-full text-base h-12 px-8">
-              Get Started for Free <ArrowRight className="ml-2 h-4 w-4" />
+              Get Started for Free <IconLibrary name="arrow-right" className="ml-2 h-4 w-4" />
             </Button>
           </Link>
           <Link href="#features" className="w-full sm:w-auto">

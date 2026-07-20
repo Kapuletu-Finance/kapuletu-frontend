@@ -1,4 +1,5 @@
-import { Gift, Star } from "lucide-react";
+import type { IconName } from "@/features/shared/components/IconLibrary";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 type PlanType = "free" | "bronze" | "silver" | "gold";
 
@@ -8,7 +9,6 @@ interface CurrentPlanCardProps {
 
 const CurrentPlanCard: React.FC<CurrentPlanCardProps> = ({ plan }) => {
   const config = PLAN_CONFIG[plan];
-  const Icon = config.icon;
 
   return (
     <>
@@ -20,7 +20,7 @@ const CurrentPlanCard: React.FC<CurrentPlanCardProps> = ({ plan }) => {
             <span className="font-medium tracking-tight text-sm sm:text-base">Current Plan :</span>
             <div className="flex items-center gap-2">
               <div className={config.iconWrapperClass}>
-                <Icon className={config.iconClass} />
+                <IconLibrary name={config.icon} className={config.iconClass} />
               </div>
               <span className="font-bold tracking-wider">{config.name}</span>
             </div>
@@ -39,7 +39,7 @@ const CurrentPlanCard: React.FC<CurrentPlanCardProps> = ({ plan }) => {
         <div
           className={`flex items-center justify-center size-10 rounded-sm cursor-pointer hover:opacity-80 transition-opacity ${config.bgClass} ${config.textClass}`}
         >
-          <Icon className="size-5 fill-current" />
+          <IconLibrary name={config.icon} className="size-5 fill-current" />
         </div>
       </div>
     </>
@@ -53,7 +53,7 @@ const PLAN_CONFIG = {
     name: "FREE",
     bgClass: "bg-gradient-to-r from-plan-free-from to-plan-free-to",
     textClass: "text-plan-free-fg",
-    icon: Gift,
+    icon: "gift" as IconName,
     iconWrapperClass: "",
     iconClass: "w-6 h-6",
     buttonText: "Unlock all premium features free for 14 days",
@@ -63,7 +63,7 @@ const PLAN_CONFIG = {
     name: "BRONZE",
     bgClass: "bg-gradient-to-r from-plan-bronze-from to-plan-bronze-to",
     textClass: "text-plan-bronze-fg",
-    icon: Star,
+    icon: "star" as IconName,
     iconWrapperClass:
       "bg-gradient-to-br from-amber-500 to-amber-700 border border-white/40 p-1.5 rounded-full shadow-inner",
     iconClass: "w-4 h-4 text-amber-100 fill-amber-100",
@@ -74,7 +74,7 @@ const PLAN_CONFIG = {
     name: "SILVER",
     bgClass: "bg-gradient-to-r from-plan-silver-from to-plan-silver-to",
     textClass: "text-plan-silver-fg",
-    icon: Star,
+    icon: "star" as IconName,
     iconWrapperClass:
       "bg-gradient-to-br from-slate-300 to-slate-500 border border-white/40 p-1.5 rounded-full shadow-inner",
     iconClass: "w-4 h-4 text-slate-100 fill-slate-100",
@@ -85,7 +85,7 @@ const PLAN_CONFIG = {
     name: "GOLD",
     bgClass: "bg-gradient-to-r from-plan-gold-from to-plan-gold-to",
     textClass: "text-plan-gold-fg",
-    icon: Star,
+    icon: "star" as IconName,
     iconWrapperClass:
       "bg-gradient-to-br from-yellow-300 to-amber-500 border border-white/40 p-1.5 rounded-full shadow-inner",
     iconClass: "w-4 h-4 text-yellow-100 fill-yellow-100",

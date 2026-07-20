@@ -1,7 +1,7 @@
-import { Check } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { getTierStyles, pricings } from "@/features/shared/utils/pricing";
 
@@ -57,7 +57,8 @@ export const PricingSection = () => {
                         key={feature}
                         className="flex items-start gap-3 text-sm text-foreground/90 leading-normal"
                       >
-                        <Check
+                        <IconLibrary
+                          name="check"
                           className={`h-5 w-5 shrink-0 mt-0.5 ${styles.iconColor}`}
                           strokeWidth={3}
                         />

@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const FaqsSection = () => {
   return (
@@ -15,7 +15,7 @@ export const FaqsSection = () => {
             <summary className="flex cursor-pointer items-center justify-between gap-1.5 font-semibold text-foreground">
               What is KapuLetu?
               <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-                <ChevronDown className="h-5 w-5" />
+                <IconLibrary name="chevron-down" className="h-5 w-5" />
               </span>
             </summary>
             <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -27,7 +27,7 @@ export const FaqsSection = () => {
             <summary className="flex cursor-pointer items-center justify-between gap-1.5 font-semibold text-foreground">
               How do I create a group?
               <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-                <ChevronDown className="h-5 w-5" />
+                <IconLibrary name="chevron-down" className="h-5 w-5" />
               </span>
             </summary>
             <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -39,7 +39,7 @@ export const FaqsSection = () => {
             <summary className="flex cursor-pointer items-center justify-between gap-1.5 font-semibold text-foreground">
               Is my data secure?
               <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-                <ChevronDown className="h-5 w-5" />
+                <IconLibrary name="chevron-down" className="h-5 w-5" />
               </span>
             </summary>
             <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -51,7 +51,7 @@ export const FaqsSection = () => {
             <summary className="flex cursor-pointer items-center justify-between gap-1.5 font-semibold text-foreground">
               How much does it cost?
               <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-                <ChevronDown className="h-5 w-5" />
+                <IconLibrary name="chevron-down" className="h-5 w-5" />
               </span>
             </summary>
             <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -63,7 +63,7 @@ export const FaqsSection = () => {
             <summary className="flex cursor-pointer items-center justify-between gap-1.5 font-semibold text-foreground">
               Can I track individual contributions?
               <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-                <ChevronDown className="h-5 w-5" />
+                <IconLibrary name="chevron-down" className="h-5 w-5" />
               </span>
             </summary>
             <p className="mt-4 leading-relaxed text-muted-foreground">

@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { KeyRound, Lock } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
@@ -20,6 +19,7 @@ import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { type ResetPasswordFormData, resetPasswordSchema } from "@/features/auth/schemas";
 import { useResetPasswordMutation } from "@/features/auth/services/mutations";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const ResetPasswordFormContent = () => {
   const router = useRouter();
@@ -47,7 +47,7 @@ const ResetPasswordFormContent = () => {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center space-y-2">
         <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4">
-          <KeyRound className="h-8 w-8" />
+          <IconLibrary name="key" className="h-8 w-8" />
         </div>
         <CardTitle className="text-2xl font-bold tracking-tight">Set New Password</CardTitle>
         <CardDescription>Create a new, strong password for your account.</CardDescription>
@@ -103,7 +103,7 @@ const ResetPasswordFormContent = () => {
                     <FieldLabel htmlFor={field.name}>New Password</FieldLabel>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-4 w-4" />
+                        <IconLibrary name="lock" className="h-4 w-4" />
                       </div>
                       <Input
                         id={field.name}
@@ -132,7 +132,7 @@ const ResetPasswordFormContent = () => {
                     <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-4 w-4" />
+                        <IconLibrary name="lock" className="h-4 w-4" />
                       </div>
                       <Input
                         id={field.name}

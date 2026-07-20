@@ -1,12 +1,12 @@
-import { Users } from "lucide-react";
 import CardWithIcon from "@/features/shared/components/CardWithIcon";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const TotalGroupsCard = () => {
   return (
     <CardWithIcon
       label="Total number of groups"
       value={0}
-      icon={<Users className="w-5 h-5 text-primary-foreground" />}
+      icon={<IconLibrary name="group" className="w-5 h-5 text-primary-foreground" />}
     />
   );
 };

@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Info } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { type SignUpFormData, signUpSchema } from "@/features/auth/schemas";
 import { useSignUpMutation } from "@/features/auth/services/mutations";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const SignUpForm = () => {
   const signUpMutation = useSignUpMutation();
@@ -170,7 +170,7 @@ export const SignUpForm = () => {
                           type="button"
                           className="px-3 py-2 text-muted-foreground hover:text-foreground focus:outline-none flex items-center justify-center"
                         >
-                          <Info className="h-4 w-4" />
+                          <IconLibrary name="info" className="h-4 w-4" />
                         </TooltipTrigger>
                         <TooltipContent
                           className="bg-refined-blue text-primary-foreground [&_.fill-foreground]:bg-refined-blue [&_.fill-foreground]:fill-refined-blue"

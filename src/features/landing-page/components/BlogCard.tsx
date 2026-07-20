@@ -1,6 +1,6 @@
-import { ArrowRight, Calendar, User } from "lucide-react";
 import Link from "next/link";
 import type { BlogPost } from "@/features/landing-page/data/posts";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -15,7 +15,7 @@ export const BlogCard = ({ post }: BlogCardProps) => {
             {post.category}
           </span>
           <span className="text-xs text-muted-foreground flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
+            <IconLibrary name="calendar" className="h-3 w-3" />
             {new Date(post.date).toLocaleDateString("en-KE", {
               day: "numeric",
               month: "long",
@@ -29,11 +29,11 @@ export const BlogCard = ({ post }: BlogCardProps) => {
         <p className="text-muted-foreground text-sm leading-relaxed mb-4">{post.excerpt}</p>
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground flex items-center gap-1">
-            <User className="h-3 w-3" />
+            <IconLibrary name="member" className="h-3 w-3" />
             {post.author}
           </span>
           <span className="text-sm font-medium text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
-            Read more <ArrowRight className="h-4 w-4" />
+            Read more <IconLibrary name="arrow-right" className="h-4 w-4" />
           </span>
         </div>
       </article>

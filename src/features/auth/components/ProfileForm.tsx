@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Lock, Phone, RefreshCw, User as UserIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +19,7 @@ import {
   useUpdateProfileMutation,
 } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const ProfileForm = () => {
   const { data: user, isLoading: isUserLoading } = useGetMeQuery();
@@ -62,7 +62,7 @@ export const ProfileForm = () => {
   if (isUserLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <IconLibrary name="loading" className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -99,7 +99,7 @@ export const ProfileForm = () => {
                             <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
                             <div className="relative">
                               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <UserIcon className="h-4 w-4" />
+                                <IconLibrary name="member" className="h-4 w-4" />
                               </div>
                               <Input
                                 id={field.name}
@@ -122,7 +122,7 @@ export const ProfileForm = () => {
                             <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
                             <div className="relative">
                               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <UserIcon className="h-4 w-4" />
+                                <IconLibrary name="member" className="h-4 w-4" />
                               </div>
                               <Input
                                 id={field.name}
@@ -147,7 +147,7 @@ export const ProfileForm = () => {
                             <FieldLabel htmlFor={field.name}>Phone Number</FieldLabel>
                             <div className="relative">
                               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Phone className="h-4 w-4" />
+                                <IconLibrary name="phone" className="h-4 w-4" />
                               </div>
                               <Input
                                 id={field.name}
@@ -193,7 +193,7 @@ export const ProfileForm = () => {
                           </FieldLabel>
                           <div className="relative max-w-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                              <Lock className="h-4 w-4" />
+                              <IconLibrary name="lock" className="h-4 w-4" />
                             </div>
                             <Input
                               id={field.name}
@@ -218,7 +218,7 @@ export const ProfileForm = () => {
                           </FieldLabel>
                           <div className="relative max-w-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                              <RefreshCw className="h-4 w-4" />
+                              <IconLibrary name="refresh" className="h-4 w-4" />
                             </div>
                             <Input
                               id={field.name}
@@ -243,7 +243,7 @@ export const ProfileForm = () => {
                           </FieldLabel>
                           <div className="relative max-w-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                              <Lock className="h-4 w-4" />
+                              <IconLibrary name="lock" className="h-4 w-4" />
                             </div>
                             <Input
                               id={field.name}

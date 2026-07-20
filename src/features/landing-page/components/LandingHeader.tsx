@@ -1,9 +1,9 @@
 "use client";
 
-import { Menu } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
 
@@ -37,7 +37,7 @@ export const LandingHeader = () => {
         <div className="flex items-center gap-2 sm:gap-4">
           <Sheet>
             <SheetTrigger render={<Button variant="ghost" size="icon-sm" className="md:hidden" />}>
-              <Menu className="h-5 w-5" />
+              <IconLibrary name="menu" className="h-5 w-5" />
               <span className="sr-only">Open menu</span>
             </SheetTrigger>
             <SheetContent side="left" showCloseButton={false}>

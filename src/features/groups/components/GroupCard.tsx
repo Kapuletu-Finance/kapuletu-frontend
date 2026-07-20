@@ -1,4 +1,3 @@
-import { Heart } from "lucide-react";
 import type * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { cn } from "@/lib/utils";
 
 export interface CampaignProgress {
@@ -143,7 +143,8 @@ const GroupCard: React.FC<GroupCardProps> = ({
           onClick={onToggleFavorite}
           className="rounded-full border border-border h-11 w-11 shrink-0 flex items-center justify-center"
         >
-          <Heart
+          <IconLibrary
+            name="favorite"
             className={cn(
               "w-5 h-5",
               group.isFavorite ? "text-destructive fill-destructive" : "text-muted-foreground",

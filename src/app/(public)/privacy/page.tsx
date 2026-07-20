@@ -1,5 +1,5 @@
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const PrivacyPage = () => {
@@ -35,7 +35,7 @@ const PrivacyPage = () => {
               href="/sign-up"
               className="text-primary hover:underline font-medium inline-flex items-center"
             >
-              <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
+              <IconLibrary name="arrow-left" className="w-4 h-4 mr-1.5" /> Back
             </Link>
           </div>
         </div>

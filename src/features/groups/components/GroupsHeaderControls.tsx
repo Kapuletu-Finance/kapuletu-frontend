@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import type * as React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import CreateGroupDialogForm from "@/features/groups/components/CreateGroupButtonDialogForm";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { cn } from "@/lib/utils";
 
 const filterOptions = [
@@ -51,7 +51,7 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({ onFilterCha
             }
           >
             <span>{selectedFilter}</span>
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            <IconLibrary name="chevron-down" className="h-4 w-4 text-muted-foreground" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
@@ -91,7 +91,7 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({ onFilterCha
               />
             }
           >
-            <SlidersHorizontal className="h-4 w-4 sm:h-5 sm:w-5" />
+            <IconLibrary name="filter" className="h-4 w-4 sm:h-5 sm:w-5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"

@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
 import type * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,6 +16,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const createGroupSchema = z.object({
   currency: z.string(),
@@ -39,7 +39,6 @@ const CreateGroupDialogForm: React.FC = () => {
   const descriptionValue = form.watch("description") ?? "";
 
   const onSubmit = (data: CreateGroupFormData) => {
-    // Handle group creation submission logic here
     console.log("Creating group:", data);
   };
 
@@ -50,7 +49,7 @@ const CreateGroupDialogForm: React.FC = () => {
           <Button className="h-11 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 sm:text-base" />
         }
       >
-        <Plus className="mr-1.5 h-5 w-5" /> Create New Group
+        <IconLibrary name="add" className="mr-1.5 h-5 w-5" /> Create New Group
       </DialogTrigger>
 
       <DialogContent className="rounded-3xl sm:max-w-112.5">

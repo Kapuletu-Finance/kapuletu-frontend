@@ -1,5 +1,5 @@
-import { BellRing, CheckCircle2, Megaphone, ShieldCheck, Wallet } from "lucide-react";
 import type React from "react";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const FeatureCard = ({
@@ -38,27 +38,27 @@ export const FeaturesSection = () => {
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <FeatureCard
-            icon={<Wallet className="h-6 w-6 text-primary" />}
+            icon={<IconLibrary name="campaign" className="h-6 w-6 text-primary" />}
             title="Transparent Ledger"
             description="Keep track of every contribution, expense, and payout. Treasurers and members get real-time, automated updates."
           />
           <FeatureCard
-            icon={<BellRing className="h-6 w-6 text-primary" />}
+            icon={<IconLibrary name="bell-ring" className="h-6 w-6 text-primary" />}
             title="Automated Reminders"
             description="Never miss a payment schedule again. Kapuletu automatically sends SMS and Email reminders to members."
           />
           <FeatureCard
-            icon={<Megaphone className="h-6 w-6 text-primary" />}
+            icon={<IconLibrary name="megaphone" className="h-6 w-6 text-primary" />}
             title="Campaign Management"
             description="Set up specific fundraising campaigns, track targets, and monitor member contributions towards goal progress."
           />
           <FeatureCard
-            icon={<ShieldCheck className="h-6 w-6 text-primary" />}
+            icon={<IconLibrary name="shield-check" className="h-6 w-6 text-primary" />}
             title="Bank-grade Security"
             description="Your financial data is encrypted and securely stored. We prioritize your privacy and data protection."
           />
           <FeatureCard
-            icon={<CheckCircle2 className="h-6 w-6 text-primary" />}
+            icon={<IconLibrary name="check-circle" className="h-6 w-6 text-primary" />}
             title="Role-based Access"
             description="Assign specific roles like Chairperson, Treasurer, or Auditor with granular access controls."
           />
