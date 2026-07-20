@@ -1,6 +1,6 @@
 import { ArrowRight, Calendar, User } from "lucide-react";
 import Link from "next/link";
-import type { BlogPost } from "@/features/blog/data/posts";
+import type { BlogPost } from "@/features/landing-page/data/posts";
 
 interface BlogCardProps {
   post: BlogPost;

@@ -2,10 +2,10 @@ import { ArrowLeft, Calendar, User } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BlogContent } from "@/features/blog/components/BlogContent";
-import { blogPosts, getPostBySlug } from "@/features/blog/data/posts";
-import { LandingFooter } from "@/features/landing/components/LandingFooter";
-import { LandingHeader } from "@/features/landing/components/LandingHeader";
+import { BlogContent } from "@/features/landing-page/components/BlogContent";
+import { LandingFooter } from "@/features/landing-page/components/LandingFooter";
+import { LandingHeader } from "@/features/landing-page/components/LandingHeader";
+import { blogPosts, getPostBySlug } from "@/features/landing-page/data/posts";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
