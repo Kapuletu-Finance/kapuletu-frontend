@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
+import AppBreadcrumb from "@/features/shared/components/AppBreadcrumb";
 import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
 import NeedAssistanceCard from "@/features/shared/components/NeedAssistanceCard";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
@@ -189,6 +190,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
         <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-muted transition-colors">
           <div className="max-w-6xl mx-auto space-y-4">
             <VerifyEmailAlert />
+            <AppBreadcrumb role={role} />
             {children}
           </div>
         </main>
