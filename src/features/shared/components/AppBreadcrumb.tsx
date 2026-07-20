@@ -18,14 +18,14 @@ interface AppBreadcrumbProps {
   role?: UserRole | string | null;
 }
 
-const formatSegment = (segment: string, role?: UserRole | string | null): string => {
+const formatSegment = (segment: string): string => {
   const lower = segment.toLowerCase();
 
   // Known route mappings
   const knownLabels: Record<string, string> = {
     admin: "Home",
     treasurer: "Home",
-    groups: role === "admin" ? "Groups" : "My Groups",
+    groups: "Groups",
     transactions: "Transactions",
     reports: "Reports",
     analytics: "Analytics",
@@ -57,7 +57,7 @@ const formatSegment = (segment: string, role?: UserRole | string | null): string
     .join(" ");
 };
 
-const AppBreadcrumb: React.FC<AppBreadcrumbProps> = ({ role }) => {
+const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
@@ -81,7 +81,7 @@ const AppBreadcrumb: React.FC<AppBreadcrumbProps> = ({ role }) => {
   const items = segments.map((segment, index) => {
     const href = `/${segments.slice(0, index + 1).join("/")}`;
     const isLast = index === segments.length - 1;
-    const label = formatSegment(segment, role);
+    const label = formatSegment(segment);
 
     return {
       href,

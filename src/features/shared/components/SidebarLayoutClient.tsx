@@ -51,7 +51,7 @@ const ADMIN_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
 
 const TREASURER_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/treasurer", icon: Home, label: "Dashboard" },
-  { href: "/treasurer/groups", icon: Users, label: "My Groups" },
+  { href: "/treasurer/groups", icon: Users, label: "Groups" },
   { href: "/treasurer/transactions", icon: Banknote, label: "Transactions" },
   { href: "/treasurer/reports", icon: FileText, label: "Reports" },
   { href: "/treasurer/analytics", icon: BarChart3, label: "Analytics" },
