@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import CampaignsCard from "@/features/campaigns/components/MyCampaignsCard";
+import MyCampaignsCard from "@/features/campaigns/components/MyCampaignsCard";
 
-const MyCampaignsCard = () => {
+const MyCampaignsSection = () => {
   return (
-    <section className="font-semibold flex flex-col gap-4">
+    <section className="font-semibold flex flex-col flex-1 gap-4">
       <div className="flex justify-between items-center h-9">
         <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
           MY CAMPAIGNS
@@ -15,9 +15,9 @@ const MyCampaignsCard = () => {
         </Button>
       </div>
 
-      <CampaignsCard />
+      <MyCampaignsCard />
     </section>
   );
 };
 
-export default MyCampaignsCard;
+export default MyCampaignsSection;
