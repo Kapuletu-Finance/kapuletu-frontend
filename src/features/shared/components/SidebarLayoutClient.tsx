@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Sidebar,
@@ -170,18 +171,15 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
               <Input
                 type="search"
                 placeholder="Search by group or campaign name..."
-                className="w-full bg-muted/30 pl-10 rounded-full h-9 border-border text-sm"
+                className="w-full bg-muted/30 pl-10 h-9 border-border text-sm"
               />
             </div>
-            <button
-              type="button"
-              className="relative p-2 rounded-full hover:bg-muted transition-colors shrink-0"
-            >
+            <Button variant="ghost" size="icon-lg" className="relative rounded-full shrink-0">
               <Bell className="h-5 w-5 text-muted-foreground" />
               <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-background">
                 2
               </span>
-            </button>
+            </Button>
             <UserProfileDropdown role={role} />
           </div>
         </header>
