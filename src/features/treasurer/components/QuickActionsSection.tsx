@@ -1,4 +1,3 @@
-import CreateCampaignButton from "@/features/campaigns/components/CreateCampaignButton";
 import AddContributionButton from "@/features/contributions/components/AddContributionButton";
 import CreateGroupButtonWithIcon from "@/features/groups/components/CreateGroupButtonWithIcon";
 import GetReportButton from "@/features/reports/components/GetReportButton";
@@ -11,9 +10,8 @@ const QuickActionsSection = () => {
         QUICK ACTIONS
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <CreateGroupButtonWithIcon />
-        <CreateCampaignButton />
         <AddContributionButton />
         <ReviewTransactionButton />
         <GetReportButton />

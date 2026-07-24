@@ -82,7 +82,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
                     tooltip={link.label}
                     size="lg"
                     className={cn(
-                      "transition-all duration-300 py-7 px-4 group-data-[collapsible=icon]:p-2 rounded-2xl group",
+                      "transition-all duration-300 py-7 px-4 group-data-[collapsible=icon]:p-2 rounded-lg group",
                       isActive
                         ? "bg-primary/20 text-foreground font-medium"
                         : "hover:bg-muted/40 text-muted-foreground hover:text-foreground",
@@ -94,7 +94,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
                       >
                         <div
                           className={cn(
-                            "flex items-center justify-center shrink-0 size-10 transition-colors duration-300 rounded-[14px]",
+                            "flex items-center justify-center shrink-0 size-10 transition-colors duration-300",
                             isActive ? "bg-primary text-primary-foreground" : "text-primary",
                           )}
                         >

@@ -4,7 +4,7 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 const PendingContributionsCard = () => {
   return (
     <CardWithIcon
-      label="Pending contributions"
+      label="Awaiting approval"
       value={0}
       icon={<IconLibrary name="clock" className="w-5 h-5 text-primary-foreground" />}
     />
