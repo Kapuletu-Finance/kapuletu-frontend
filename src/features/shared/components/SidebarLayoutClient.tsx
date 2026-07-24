@@ -94,7 +94,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
                       >
                         <div
                           className={cn(
-                            "flex items-center justify-center shrink-0 size-10 transition-colors duration-300",
+                            "flex items-center justify-center shrink-0 size-10 transition-colors duration-300 rounded-md",
                             isActive ? "bg-primary text-primary-foreground" : "text-primary",
                           )}
                         >
