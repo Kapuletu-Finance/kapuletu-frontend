@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { IconName } from "@/features/shared/components/IconLibrary";
@@ -34,7 +35,9 @@ const CurrentPlanCard: React.FC<CurrentPlanCardProps> = ({ plan }) => {
             Next billing date: 22 July 2026
           </p>
 
-          <Button className="w-full font-semibold">{config.buttonText}</Button>
+          <Link href="/subscriptions" className="w-full">
+            <Button className="w-full font-semibold">{config.buttonText}</Button>
+          </Link>
         </CardContent>
       </Card>
 

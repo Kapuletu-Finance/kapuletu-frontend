@@ -4,12 +4,18 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { getTierStyles, pricings } from "@/features/shared/utils/pricing";
+import { cn } from "@/lib/utils";
 
-export const PricingSection = () => {
+interface PricingSectionProps {
+  hideLogo?: boolean;
+  className?: string;
+}
+
+export const PricingSection = ({ hideLogo, className }: PricingSectionProps) => {
   return (
-    <section id="pricing" className="py-16 px-4 max-w-7xl mx-auto space-y-12">
+    <section id="pricing" className={cn("py-16 px-4 max-w-7xl mx-auto space-y-12", className)}>
       <div className="text-center flex flex-col items-center space-y-3">
-        <SiteLogo />
+        {!hideLogo && <SiteLogo />}
         <h2 className="text-3xl font-bold tracking-tight font-sans text-foreground">
           Choose your plan
         </h2>
