@@ -26,7 +26,7 @@ const mockCampaigns: CampaignInfo[] = [
 ];
 
 interface CampaignDetailsPageProps {
-  params: Promise<{ slug: string; campaignSlug: string }>;
+  params: Promise<{ groupSlug: string; campaignSlug: string }>;
 }
 
 const CampaignDetailsPage: React.FC<CampaignDetailsPageProps> = async ({ params }) => {

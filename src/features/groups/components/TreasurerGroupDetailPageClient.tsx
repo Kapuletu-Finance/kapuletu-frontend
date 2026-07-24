@@ -23,7 +23,7 @@ export const TreasurerGroupDetailPageClient: React.FC<TreasurerGroupDetailPageCl
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
   const [editingCampaign, setEditingCampaign] = React.useState<CampaignInfo | null>(null);
   const params = useParams();
-  const groupSlug = typeof params.slug === "string" ? params.slug : undefined;
+  const groupSlug = typeof params.groupSlug === "string" ? params.groupSlug : undefined;
 
   const activeCampaigns = campaigns.filter((c) => c.status === "Active").length;
   const archivedCampaigns = campaigns.filter((c) => c.status === "Archived").length;
