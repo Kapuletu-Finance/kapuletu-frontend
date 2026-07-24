@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Sidebar,
   SidebarContent,
@@ -157,17 +156,6 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="relative hidden md:block w-80">
-              <IconLibrary
-                name="search"
-                className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"
-              />
-              <Input
-                type="search"
-                placeholder="Search by group or campaign name..."
-                className="w-full bg-muted/30 pl-10 h-9 border-border text-sm"
-              />
-            </div>
             <Button variant="ghost" size="icon-lg" className="relative rounded-full shrink-0">
               <IconLibrary name="notification" className="h-5 w-5 text-muted-foreground" />
               <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-background">
