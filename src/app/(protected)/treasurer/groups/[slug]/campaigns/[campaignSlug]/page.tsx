@@ -25,13 +25,17 @@ const mockCampaigns: CampaignInfo[] = [
   },
 ];
 
-export default function CampaignDetailsPage({
-  params,
-}: {
-  params: { slug: string; campaignSlug: string };
-}) {
+interface CampaignDetailsPageProps {
+  params: Promise<{ slug: string; campaignSlug: string }>;
+}
+
+const CampaignDetailsPage: React.FC<CampaignDetailsPageProps> = async ({ params }) => {
+  const resolvedParams = await params;
   // Find campaign or use a default one for the mock
-  const campaign = mockCampaigns.find((c) => c.slug === params.campaignSlug) || mockCampaigns[1];
+  const campaign =
+    mockCampaigns.find((c) => c.slug === resolvedParams.campaignSlug) || mockCampaigns[1];
 
   return <TreasurerCampaignDetailPageClient campaign={campaign} />;
-}
+};
+
+export default CampaignDetailsPage;
