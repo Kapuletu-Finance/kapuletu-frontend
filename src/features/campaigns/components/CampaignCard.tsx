@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 export interface CampaignInfo {
   id?: string;
@@ -20,6 +20,7 @@ export interface CampaignInfo {
 
 export interface CampaignCardProps {
   campaign: CampaignInfo;
+  groupSlug?: string;
   className?: string;
   variant?: "grid" | "list";
   onViewDetails?: () => void;
@@ -29,6 +30,7 @@ export interface CampaignCardProps {
 
 const CampaignCard: React.FC<CampaignCardProps> = ({
   campaign,
+  groupSlug,
   className,
   variant = "grid",
   onViewDetails,
@@ -36,15 +38,6 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
   onToggleFavorite,
 }) => {
   const isArchived = campaign.status === "Archived";
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((word) => word[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
-  };
 
   const ProgressBar = ({ className }: { className?: string }) => (
     <div className={cn("flex items-center gap-3 w-32 sm:w-40 shrink-0", className)}>
@@ -106,7 +99,13 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
           <ProgressBar className="hidden sm:flex" />
 
           <div className="flex items-center gap-2 shrink-0">
-            <Link href={`/treasurer/campaigns/${campaign.slug}`}>
+            <Link
+              href={
+                groupSlug
+                  ? `/treasurer/groups/${groupSlug}/campaigns/${campaign.slug}`
+                  : `/treasurer/campaigns/${campaign.slug}`
+              }
+            >
               <Button
                 size="sm"
                 onClick={onViewDetails}
@@ -196,7 +195,13 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
       </CardHeader>
 
       <CardFooter className="flex flex-row items-center gap-2 border-none bg-transparent p-5 pt-0">
-        <Link href={`/treasurer/campaigns/${campaign.slug}`}>
+        <Link
+          href={
+            groupSlug
+              ? `/treasurer/groups/${groupSlug}/campaigns/${campaign.slug}`
+              : `/treasurer/campaigns/${campaign.slug}`
+          }
+        >
           <Button
             onClick={onViewDetails}
             className="bg-primary text-primary-foreground hover:bg-primary/90 px-5 h-10 rounded-lg text-sm font-medium"

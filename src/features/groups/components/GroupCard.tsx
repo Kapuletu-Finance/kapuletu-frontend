@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 export interface CampaignProgress {
   name: string;
@@ -50,15 +50,6 @@ const GroupCard: React.FC<GroupCardProps> = ({
 }) => {
   const campaigns = group.campaigns ?? [];
   const isArchived = group.status === "Archived";
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((word) => word[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
-  };
 
   if (variant === "list") {
     return (

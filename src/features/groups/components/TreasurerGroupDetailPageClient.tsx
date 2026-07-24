@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,8 @@ export const TreasurerGroupDetailPageClient: React.FC<TreasurerGroupDetailPageCl
   const [view] = useQueryState("view", parseAsString.withDefault("grid"));
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
   const [editingCampaign, setEditingCampaign] = React.useState<CampaignInfo | null>(null);
+  const params = useParams();
+  const groupSlug = typeof params.slug === "string" ? params.slug : undefined;
 
   const activeCampaigns = campaigns.filter((c) => c.status === "Active").length;
   const archivedCampaigns = campaigns.filter((c) => c.status === "Archived").length;
@@ -88,6 +91,7 @@ export const TreasurerGroupDetailPageClient: React.FC<TreasurerGroupDetailPageCl
             <CampaignCard
               key={campaign.id ?? campaign.name}
               campaign={campaign}
+              groupSlug={groupSlug}
               variant={view as "grid" | "list"}
               onManageCampaign={() => setEditingCampaign(campaign)}
             />
