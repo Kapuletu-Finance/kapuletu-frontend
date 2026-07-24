@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ export interface CampaignProgress {
 
 export interface GroupInfo {
   id?: string;
+  slug: string;
   name: string;
   description: string;
   iconClassName?: string;
@@ -103,13 +105,15 @@ const GroupCard: React.FC<GroupCardProps> = ({
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <Button
-            size="sm"
-            onClick={onViewDetails}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 h-9"
-          >
-            View Details
-          </Button>
+          <Link href={`/treasurer/groups/${group.slug}`}>
+            <Button
+              size="sm"
+              onClick={onViewDetails}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 h-9"
+            >
+              View Details
+            </Button>
+          </Link>
           <Button
             size="sm"
             variant="outline"
@@ -211,12 +215,14 @@ const GroupCard: React.FC<GroupCardProps> = ({
 
       {/* Footer Actions */}
       <CardFooter className="flex flex-row items-center gap-2 border-none bg-transparent">
-        <Button
-          onClick={onViewDetails}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 px-6"
-        >
-          View Details
-        </Button>
+        <Link href={`/treasurer/groups/${group.slug}`}>
+          <Button
+            onClick={onViewDetails}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 px-6"
+          >
+            View Details
+          </Button>
+        </Link>
         <Button
           variant="outline"
           onClick={onManageGroup}

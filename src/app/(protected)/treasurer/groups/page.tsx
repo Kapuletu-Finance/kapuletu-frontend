@@ -4,6 +4,7 @@ import { TreasurerGroupsPageClient } from "@/features/groups/components/Treasure
 const groupsData: GroupInfo[] = [
   {
     id: "1",
+    slug: "st-peters-welfare",
     name: "St. Peters Welfare",
     description: "Community fund for emergencies",
     iconClassName: "bg-[#E67E22] text-white",
@@ -17,6 +18,7 @@ const groupsData: GroupInfo[] = [
   },
   {
     id: "2",
+    slug: "unity-group",
     name: "Unity Group",
     description: "A joint investments group",
     iconClassName: "bg-[#34495E] text-white",
@@ -29,6 +31,7 @@ const groupsData: GroupInfo[] = [
   },
   {
     id: "3",
+    slug: "church",
     name: "Church",
     description: "Community fellowship & outreach",
     iconClassName: "bg-[#16A085] text-white",
@@ -42,6 +45,7 @@ const groupsData: GroupInfo[] = [
   },
   {
     id: "4",
+    slug: "unity-group-archived",
     name: "Unity Group",
     description: "A joint investments group",
     iconClassName: "bg-[#34495E] text-white",
@@ -54,6 +58,7 @@ const groupsData: GroupInfo[] = [
   },
   {
     id: "5",
+    slug: "church-2",
     name: "Church",
     description: "Community fellowship & outreach",
     iconClassName: "bg-[#16A085] text-white",
@@ -67,6 +72,7 @@ const groupsData: GroupInfo[] = [
   },
   {
     id: "6",
+    slug: "st-peters-welfare-2",
     name: "St. Peters Welfare",
     description: "Community fund for emergencies",
     iconClassName: "bg-[#E67E22] text-white",
