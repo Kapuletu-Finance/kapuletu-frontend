@@ -1,13 +1,12 @@
-import GroupCard, { type GroupInfo } from "@/features/groups/components/GroupCard";
-import GroupsHeaderControls from "@/features/groups/components/GroupsHeaderControls";
+import type { GroupInfo } from "@/features/groups/components/GroupCard";
+import { TreasurerGroupsPageClient } from "@/features/groups/components/TreasurerGroupsPageClient";
 
 const groupsData: GroupInfo[] = [
   {
     id: "1",
     name: "St. Peters Welfare",
     description: "Community fund for emergencies",
-    icon: "🤲",
-    iconClassName: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+    iconClassName: "bg-[#E67E22] text-white",
     status: "Active",
     isFavorite: true,
     campaigns: [
@@ -20,8 +19,7 @@ const groupsData: GroupInfo[] = [
     id: "2",
     name: "Unity Group",
     description: "A joint investments group",
-    icon: "🌱",
-    iconClassName: "bg-blue-500/15 text-blue-700 dark:text-blue-400",
+    iconClassName: "bg-[#34495E] text-white",
     status: "Active",
     isFavorite: false,
     campaigns: [
@@ -33,8 +31,7 @@ const groupsData: GroupInfo[] = [
     id: "3",
     name: "Church",
     description: "Community fellowship & outreach",
-    icon: "⛪",
-    iconClassName: "bg-amber-400/20 text-amber-800 dark:text-amber-300",
+    iconClassName: "bg-[#16A085] text-white",
     status: "Active",
     isFavorite: false,
     campaigns: [
@@ -45,42 +42,46 @@ const groupsData: GroupInfo[] = [
   },
   {
     id: "4",
-    name: "Nyayo Estate",
-    description: "Neighborhood social events & initiatives.",
-    icon: "🏠",
-    iconClassName: "bg-teal-500/15 text-teal-700 dark:text-teal-400",
+    name: "Unity Group",
+    description: "A joint investments group",
+    iconClassName: "bg-[#34495E] text-white",
     status: "Archived",
     isFavorite: false,
     campaigns: [
-      { name: "Security Lighting", progress: 100 },
-      { name: "End of Year Party", progress: 100 },
+      { name: "Business Venture", progress: 70 },
+      { name: "Land Asset Project", progress: 27 },
+    ],
+  },
+  {
+    id: "5",
+    name: "Church",
+    description: "Community fellowship & outreach",
+    iconClassName: "bg-[#16A085] text-white",
+    status: "Active",
+    isFavorite: false,
+    campaigns: [
+      { name: "Instruments Drive", progress: 46 },
+      { name: "Sanctuary Expansion", progress: 90 },
+      { name: "Sunday School Outreach", progress: 30 },
+    ],
+  },
+  {
+    id: "6",
+    name: "St. Peters Welfare",
+    description: "Community fund for emergencies",
+    iconClassName: "bg-[#E67E22] text-white",
+    status: "Active",
+    isFavorite: true,
+    campaigns: [
+      { name: "Food Drive", progress: 60 },
+      { name: "Medical Fund", progress: 90 },
+      { name: "Annual Fund", progress: 30 },
     ],
   },
 ];
 
 const GroupsPage = () => {
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-xl font-bold uppercase tracking-tight text-foreground sm:text-2xl">
-            MY GROUPS
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            You are currently managing{" "}
-            <span className="font-semibold text-foreground">{groupsData.length}</span> groups.
-          </p>
-        </div>
-        <GroupsHeaderControls />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {groupsData.map((group) => (
-          <GroupCard key={group.id ?? group.name} group={group} />
-        ))}
-      </div>
-    </div>
-  );
+  return <TreasurerGroupsPageClient groups={groupsData} />;
 };
 
 export default GroupsPage;

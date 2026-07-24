@@ -14,8 +14,8 @@ const CurrentPlanCard: React.FC<CurrentPlanCardProps> = ({ plan }) => {
 
   return (
     <>
-      <Card className="border border-primary/50 bg-primary/20 group-data-[collapsible=icon]:hidden overflow-hidden rounded-3xl">
-        <CardContent className="flex flex-col items-center space-y-4 p-6">
+      <Card className="border border-primary/50 bg-primary/20 group-data-[collapsible=icon]:hidden overflow-hidden">
+        <CardContent className="flex flex-col items-center space-y-2">
           <div className="flex items-center gap-2">
             <div className={config.iconWrapperClass}>
               <IconLibrary name={config.icon} className={config.iconClass} />
@@ -34,9 +34,7 @@ const CurrentPlanCard: React.FC<CurrentPlanCardProps> = ({ plan }) => {
             Next billing date: 22 July 2026
           </p>
 
-          <Button className="w-full font-semibold rounded-2xl" variant="default" size="lg">
-            {config.buttonText}
-          </Button>
+          <Button className="w-full font-semibold">{config.buttonText}</Button>
         </CardContent>
       </Card>
 
