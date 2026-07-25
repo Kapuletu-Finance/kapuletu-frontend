@@ -1,5 +1,7 @@
 "use client";
 
+import { useQueryState } from "nuqs";
+
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +17,7 @@ export const TreasurerCampaignDetailPageClient: React.FC<
   TreasurerCampaignDetailPageClientProps
 > = ({ campaign }) => {
   const isArchived = campaign.status === "Archived";
+  const [tab, setTab] = useQueryState("tab", { defaultValue: "overview" });
 
   return (
     <PageLayout>
@@ -64,7 +67,7 @@ export const TreasurerCampaignDetailPageClient: React.FC<
         </div>
 
         {/* Tabs and Content */}
-        <Tabs defaultValue="overview" className="w-full">
+        <Tabs value={tab} onValueChange={(val) => setTab(val as string)} className="w-full">
           <div className="border-b mb-6">
             <TabsList className="w-full justify-start h-auto p-0 bg-transparent gap-8 border-none">
               <TabsTrigger
