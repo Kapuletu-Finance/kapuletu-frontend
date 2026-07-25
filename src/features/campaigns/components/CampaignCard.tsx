@@ -8,19 +8,22 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 import { cn, getInitials } from "@/lib/utils";
 
 export interface CampaignInfo {
-  id?: string;
-  slug: string;
+  id: string;
+  group_id: string;
   name: string;
   description: string;
   iconClassName?: string;
   status?: string;
   isFavorite?: boolean;
   progress: number;
+  target_amount?: number;
+  total_raised?: number;
+  contributor_count?: number;
 }
 
 export interface CampaignCardProps {
   campaign: CampaignInfo;
-  groupSlug?: string;
+  groupId?: string;
   className?: string;
   variant?: "grid" | "list";
   onViewDetails?: () => void;
@@ -30,7 +33,7 @@ export interface CampaignCardProps {
 
 const CampaignCard: React.FC<CampaignCardProps> = ({
   campaign,
-  groupSlug,
+  groupId,
   className,
   variant = "grid",
   onViewDetails,
@@ -50,6 +53,10 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
       </span>
     </div>
   );
+
+  const detailHref = groupId
+    ? `/treasurer/groups/${groupId}/campaigns/${campaign.id}`
+    : `/treasurer/campaigns/${campaign.id}`;
 
   if (variant === "list") {
     return (
@@ -99,13 +106,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
           <ProgressBar className="hidden sm:flex" />
 
           <div className="flex items-center gap-2 shrink-0">
-            <Link
-              href={
-                groupSlug
-                  ? `/treasurer/groups/${groupSlug}/campaigns/${campaign.slug}`
-                  : `/treasurer/campaigns/${campaign.slug}`
-              }
-            >
+            <Link href={detailHref}>
               <Button
                 size="sm"
                 onClick={onViewDetails}
@@ -195,13 +196,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
       </CardHeader>
 
       <CardFooter className="flex flex-row items-center gap-2 border-none bg-transparent p-5 pt-0">
-        <Link
-          href={
-            groupSlug
-              ? `/treasurer/groups/${groupSlug}/campaigns/${campaign.slug}`
-              : `/treasurer/campaigns/${campaign.slug}`
-          }
-        >
+        <Link href={detailHref}>
           <Button
             onClick={onViewDetails}
             className="bg-primary text-primary-foreground hover:bg-primary/90 px-5 h-10 text-sm font-medium"

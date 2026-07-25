@@ -1,11 +1,15 @@
 import CardWithIcon from "@/features/shared/components/CardWithIcon";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
-const ActiveCampaignsCard = () => {
+interface ActiveCampaignsCardProps {
+  value?: number;
+}
+
+const ActiveCampaignsCard = ({ value = 0 }: ActiveCampaignsCardProps) => {
   return (
     <CardWithIcon
       label="Total campaigns"
-      value={0}
+      value={value}
       icon={<IconLibrary name="transaction" className="w-5 h-5 text-primary-foreground" />}
     />
   );

@@ -1,0 +1,154 @@
+export type Currency = "KES" | "USD" | "EUR" | "GBP";
+export type GroupStatus = "active" | "archived";
+export type CampaignStatus = "active" | "archived";
+
+export interface GroupOut {
+  id: string;
+  name: string;
+  description: string | null;
+  currency: Currency;
+  status: GroupStatus;
+  is_active: boolean;
+  created_at: string;
+  total_campaigns_count: number;
+  active_campaigns_count: number;
+  total_funds_raised: number;
+}
+
+export interface CampaignOut {
+  id: string;
+  group_id: string;
+  title: string;
+  description: string | null;
+  target_amount: number;
+  payment_instructions: string | null;
+  status: CampaignStatus;
+  is_active: boolean;
+  created_at: string;
+  total_raised: number;
+  progress_percentage: number;
+  contributor_count: number;
+}
+
+export interface PaginatedGroupResponse {
+  items: GroupOut[];
+  total_items: number;
+  total_pages: number;
+  page: number;
+  limit: number;
+}
+
+export interface PaginatedCampaignResponse {
+  items: CampaignOut[];
+  total_items: number;
+  total_pages: number;
+  page: number;
+  limit: number;
+}
+
+export interface GroupOverview {
+  group_id: string;
+  name: string;
+  currency: string;
+  total_campaigns: number;
+}
+
+export interface CampaignSummary {
+  campaign_id: string;
+  title: string;
+  target_amount: number;
+  total_raised: number;
+  progress_percentage: number;
+}
+
+export interface SubscriptionOverview {
+  plan_name: string;
+  status: string;
+  days_left: number | null;
+}
+
+export interface WorkspaceActivity {
+  log_id: string;
+  action: string;
+  entity_type: string;
+  created_at: string;
+}
+
+export interface WorkspaceOverviewOut {
+  total_groups: number;
+  total_campaigns: number;
+  total_members: number;
+  pending_approvals: number;
+  total_collected: number;
+  subscription: SubscriptionOverview;
+  active_groups: GroupOverview[];
+  recent_activities: WorkspaceActivity[];
+}
+
+export interface PendingTransactionOut {
+  pending_id: string;
+  raw_message: string;
+  sender_name: string | null;
+  amount: number | null;
+  currency: string | null;
+  transaction_code: string | null;
+  sender_phone: string | null;
+  purpose: string | null;
+  confidence_score: number;
+  workflow_status: string;
+  created_at: string;
+}
+
+export interface PaginatedPendingResponse {
+  items: PendingTransactionOut[];
+  total_items: number;
+  total_pages: number;
+  page: number;
+  limit: number;
+}
+
+export interface RecentActivity {
+  transaction_id: string;
+  sender_name: string;
+  amount: number;
+  campaign_title: string | null;
+  created_at: string;
+}
+
+export interface DailyCollection {
+  date: string;
+  amount: number;
+}
+
+export interface DashboardOverviewOut {
+  total_collected: number;
+  transaction_count: number;
+  campaign_breakdown: CampaignSummary[];
+  recent_activity: RecentActivity[];
+  daily_collections_7_days: DailyCollection[];
+}
+
+export interface GroupCreate {
+  name: string;
+  description?: string | null;
+  currency?: Currency;
+}
+
+export interface GroupUpdate {
+  name?: string | null;
+  description?: string | null;
+}
+
+export interface CampaignCreate {
+  title: string;
+  description?: string | null;
+  target_amount?: number;
+  payment_instructions?: string | null;
+}
+
+export interface CampaignUpdate {
+  title?: string | null;
+  description?: string | null;
+  target_amount?: number | null;
+  payment_instructions?: string | null;
+}

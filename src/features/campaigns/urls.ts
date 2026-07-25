@@ -1,5 +1,4 @@
 export const CAMPAIGNS_URLS = {
-  LIST_CAMPAIGNS: "/groups/campaigns",
-  STATUS_TOGGLE: "/campaigns/status",
-  UPDATE_CAMPAIGN: "/campaigns",
+  campaignDetail: (id: string) => `/campaigns/${id}` as const,
+  campaignReports: (id: string) => `/reports/whatsapp/${id}` as const,
 } as const;

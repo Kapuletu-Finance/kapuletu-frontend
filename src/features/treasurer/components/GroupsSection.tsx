@@ -9,7 +9,7 @@ const GroupsSection = () => {
         <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">GROUPS</h2>
 
         <Button size="sm" variant="secondary" className="text-primary hover:bg-primary/10">
-          <Link href="#">View All</Link>
+          <Link href="/treasurer/groups">View All</Link>
         </Button>
       </div>
 

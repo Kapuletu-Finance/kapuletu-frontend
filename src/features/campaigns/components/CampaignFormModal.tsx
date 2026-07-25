@@ -15,6 +15,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  useCreateCampaignMutation,
+  useUpdateCampaignMutation,
+} from "@/features/campaigns/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { CampaignInfo } from "./CampaignCard";
 
@@ -29,36 +33,40 @@ const campaignSchema = z.object({
 type CampaignFormData = z.infer<typeof campaignSchema>;
 
 interface CampaignFormModalProps {
+  groupId: string;
   campaign?: CampaignInfo | null;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
+  groupId,
   campaign,
   isOpen,
   onOpenChange,
 }) => {
   const isEditing = !!campaign;
 
+  const createMutation = useCreateCampaignMutation(groupId);
+  const updateMutation = useUpdateCampaignMutation(campaign?.id ?? "");
+
   const form = useForm<CampaignFormData>({
     resolver: zodResolver(campaignSchema),
     defaultValues: {
       name: campaign?.name || "",
       description: campaign?.description || "",
-      target: "", // No target field in CampaignInfo currently, defaulting to empty string
+      target: "",
       instructions: "",
       status: campaign?.status || "Active",
     },
   });
 
-  // Update default values when campaign changes
   React.useEffect(() => {
     if (campaign) {
       form.reset({
         name: campaign.name || "",
         description: campaign.description || "",
-        target: "",
+        target: campaign.target_amount ? String(campaign.target_amount) : "",
         instructions: "",
         status: campaign.status || "Active",
       });
@@ -74,9 +82,28 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
   }, [campaign, form]);
 
   const onSubmit = (data: CampaignFormData) => {
-    console.log(isEditing ? "Updating campaign:" : "Creating campaign:", data);
-    onOpenChange(false);
+    const payload = {
+      title: data.name,
+      description: data.description || null,
+      target_amount: data.target ? Number.parseFloat(data.target) : 0,
+      payment_instructions: data.instructions || null,
+    };
+
+    if (isEditing && campaign?.id) {
+      updateMutation.mutate(payload, {
+        onSuccess: () => onOpenChange(false),
+      });
+    } else {
+      createMutation.mutate(payload, {
+        onSuccess: () => {
+          form.reset();
+          onOpenChange(false);
+        },
+      });
+    }
   };
+
+  const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -190,7 +217,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                       htmlFor={field.name}
                       className="text-xs font-medium text-foreground"
                     >
-                      Group Status
+                      Campaign Status
                     </FieldLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <SelectTrigger
@@ -216,8 +243,9 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
             <Button
               type="submit"
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-11 text-sm font-medium mt-2"
+              disabled={isPending}
             >
-              {isEditing ? "Save Changes" : "Create Campaign"}
+              {isPending ? "Saving..." : isEditing ? "Save Changes" : "Create Campaign"}
             </Button>
           </form>
         </Form>

@@ -1,0 +1,66 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { campaignsQueryKey } from "@/features/campaigns/services/queries";
+import { CAMPAIGNS_URLS } from "@/features/campaigns/urls";
+import { GROUPS_URLS } from "@/features/groups/urls";
+import type { CampaignCreate, CampaignOut, CampaignUpdate } from "@/features/shared/types";
+import { apiClient } from "@/lib/api-client";
+
+export const useCreateCampaignMutation = (groupId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CampaignCreate) => {
+      const response = await apiClient.post<CampaignOut>(GROUPS_URLS.groupCampaigns(groupId), data);
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to create campaign.");
+    },
+    onSuccess: () => {
+      toast.success("Campaign created successfully!");
+      queryClient.invalidateQueries({ queryKey: campaignsQueryKey });
+    },
+  });
+};
+
+export const useUpdateCampaignMutation = (campaignId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CampaignUpdate) => {
+      const response = await apiClient.patch<CampaignOut>(
+        CAMPAIGNS_URLS.campaignDetail(campaignId),
+        data,
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update campaign.");
+    },
+    onSuccess: () => {
+      toast.success("Campaign updated successfully!");
+      queryClient.invalidateQueries({ queryKey: campaignsQueryKey });
+    },
+  });
+};
+
+export const useArchiveCampaignMutation = (campaignId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.delete<CampaignOut>(
+        CAMPAIGNS_URLS.campaignDetail(campaignId),
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to archive campaign.");
+    },
+    onSuccess: () => {
+      toast.success("Campaign archived successfully!");
+      queryClient.invalidateQueries({ queryKey: campaignsQueryKey });
+    },
+  });
+};

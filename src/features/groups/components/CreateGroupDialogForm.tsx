@@ -16,6 +16,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useCreateGroupMutation } from "@/features/groups/services/mutations";
 
 const createGroupSchema = z.object({
   currency: z.string(),
@@ -30,6 +31,8 @@ interface CreateGroupDialogFormProps {
 }
 
 const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children }) => {
+  const createGroupMutation = useCreateGroupMutation();
+
   const form = useForm<CreateGroupFormData>({
     defaultValues: {
       currency: "KES",
@@ -42,7 +45,18 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
   const descriptionValue = form.watch("description") ?? "";
 
   const onSubmit = (data: CreateGroupFormData) => {
-    console.log("Creating group:", data);
+    createGroupMutation.mutate(
+      {
+        name: data.name,
+        description: data.description || null,
+        currency: data.currency as "KES",
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+        },
+      },
+    );
   };
 
   return (
@@ -131,8 +145,9 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
             <Button
               type="submit"
               className="w-full bg-primary py-6 text-base font-semibold text-primary-foreground hover:bg-primary/90"
+              disabled={createGroupMutation.isPending}
             >
-              Create Group
+              {createGroupMutation.isPending ? "Creating..." : "Create Group"}
             </Button>
           </form>
         </Form>

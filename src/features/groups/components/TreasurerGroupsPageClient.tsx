@@ -1,24 +1,65 @@
 "use client";
 
 import { parseAsString, useQueryState } from "nuqs";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import CreateGroupButtonDialogForm from "@/features/groups/components/CreateGroupButtonDialogForm";
 import GroupCard, { type GroupInfo } from "@/features/groups/components/GroupCard";
-import GroupsHeaderControls from "@/features/groups/components/GroupsHeaderControls";
+import GroupsHeaderControls, {
+  type FilterValue,
+} from "@/features/groups/components/GroupsHeaderControls";
+import { useGroupsQuery } from "@/features/groups/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import StatCard from "@/features/shared/components/StatCard";
+import type { GroupOut } from "@/features/shared/types";
+import { getAvatarColor } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 
-interface TreasurerGroupsPageClientProps {
-  groups: GroupInfo[];
-}
+const mapGroupToInfo = (group: GroupOut): GroupInfo => ({
+  id: group.id,
+  name: group.name,
+  description: group.description || "",
+  iconClassName: getAvatarColor(group.name),
+  status: group.status === "active" ? "Active" : "Archived",
+  isFavorite: false,
+  campaigns: [],
+  total_campaigns_count: group.total_campaigns_count,
+  active_campaigns_count: group.active_campaigns_count,
+  total_funds_raised: group.total_funds_raised,
+});
 
-export const TreasurerGroupsPageClient = ({ groups }: TreasurerGroupsPageClientProps) => {
+export const TreasurerGroupsPageClient = () => {
   const [view] = useQueryState("view", parseAsString.withDefault("grid"));
+  const [search, setSearch] = React.useState("");
+  const [filter, setFilter] = React.useState<FilterValue>("all");
+  const [page, setPage] = React.useState(0);
+  const limit = 12;
+
+  const { data, isLoading } = useGroupsQuery({
+    skip: page * limit,
+    limit,
+    search: search || undefined,
+    group_status: filter === "all" ? undefined : filter,
+  });
+
+  const groups = (data?.items ?? []).map(mapGroupToInfo);
+  const totalPages = data?.total_pages ?? 1;
+  const totalItems = data?.total_items ?? 0;
 
   const activeGroups = groups.filter((g) => g.status === "Active").length;
   const archivedGroups = groups.filter((g) => g.status === "Archived").length;
+
+  const handleSearchChange = React.useCallback((value: string) => {
+    setSearch(value);
+    setPage(0);
+  }, []);
+
+  const handleFilterChange = React.useCallback((value: FilterValue) => {
+    setFilter(value);
+    setPage(0);
+  }, []);
 
   return (
     <PageLayout
@@ -27,7 +68,7 @@ export const TreasurerGroupsPageClient = ({ groups }: TreasurerGroupsPageClientP
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           <StatCard
             label="Total number of groups"
-            count={groups.length}
+            count={totalItems}
             trend="+5% vs last month"
             trendDirection="up"
             iconName="group"
@@ -48,46 +89,85 @@ export const TreasurerGroupsPageClient = ({ groups }: TreasurerGroupsPageClientP
           />
         </div>
       }
-      controls={<GroupsHeaderControls />}
+      controls={
+        <GroupsHeaderControls
+          searchValue={search}
+          filterValue={filter}
+          onSearchChange={handleSearchChange}
+          onFilterChange={handleFilterChange}
+        />
+      }
       pagination={
-        <div className="flex justify-center items-center gap-2 pt-6">
-          <Button variant="outline" size="icon" className="rounded-full text-muted-foreground">
-            <IconLibrary name="chevron-left" className="w-4 h-4" />
-          </Button>
-          <Button size="icon" className="rounded-full font-semibold shadow-sm">
-            1
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full text-foreground font-medium"
-          >
-            2
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full text-foreground font-medium"
-          >
-            3
-          </Button>
-          <Button variant="outline" size="icon" className="rounded-full text-muted-foreground">
-            <IconLibrary name="chevron-right" className="w-4 h-4" />
-          </Button>
-        </div>
+        totalPages > 1 ? (
+          <div className="flex justify-center items-center gap-2 pt-6">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full text-muted-foreground"
+              disabled={page === 0}
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+            >
+              <IconLibrary name="chevron-left" className="w-4 h-4" />
+            </Button>
+            {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => (
+              <Button
+                key={String(i + 1)}
+                variant={page === i ? "default" : "outline"}
+                size="icon"
+                className={cn(
+                  "rounded-full font-semibold shadow-sm",
+                  page !== i && "text-foreground font-medium",
+                )}
+                onClick={() => setPage(i)}
+              >
+                {i + 1}
+              </Button>
+            ))}
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full text-muted-foreground"
+              disabled={page >= totalPages - 1}
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            >
+              <IconLibrary name="chevron-right" className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : undefined
       }
     >
-      <div
-        className={cn(
-          view === "grid"
-            ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-            : "flex flex-col gap-4",
-        )}
-      >
-        {groups.map((group) => (
-          <GroupCard key={group.id ?? group.name} group={group} variant={view as "grid" | "list"} />
-        ))}
-      </div>
+      {isLoading ? (
+        <div
+          className={cn(
+            view === "grid"
+              ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+              : "flex flex-col gap-4",
+          )}
+        >
+          {["sk-1", "sk-2", "sk-3", "sk-4", "sk-5", "sk-6"].map((key) => (
+            <Skeleton key={key} className="h-64 rounded-3xl" />
+          ))}
+        </div>
+      ) : (
+        <div
+          className={cn(
+            view === "grid"
+              ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+              : "flex flex-col gap-4",
+          )}
+        >
+          {groups.map((group) => (
+            <GroupCard key={group.id} group={group} variant={view as "grid" | "list"} />
+          ))}
+          {groups.length === 0 && (
+            <div className="col-span-full text-center py-12 text-muted-foreground">
+              No groups found.
+            </div>
+          )}
+        </div>
+      )}
     </PageLayout>
   );
 };
+
+export default TreasurerGroupsPageClient;

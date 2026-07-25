@@ -17,27 +17,36 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 import { cn } from "@/lib/utils";
 
 const filterOptions = [
-  "All Groups",
-  "Favorite Groups",
-  "Active Groups",
-  "Completed Groups",
-  "Archived Groups",
+  { label: "All Groups", value: "all" },
+  { label: "Active Groups", value: "active" },
+  { label: "Archived Groups", value: "archived" },
 ] as const;
 
-export type FilterOption = (typeof filterOptions)[number];
+export type FilterValue = (typeof filterOptions)[number]["value"];
 
 export interface GroupsHeaderControlsProps {
-  onFilterChange?: (filter: FilterOption) => void;
+  onSearchChange?: (search: string) => void;
+  onFilterChange?: (filter: FilterValue) => void;
+  searchValue?: string;
+  filterValue?: FilterValue;
 }
 
-const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({ onFilterChange }) => {
-  const [selectedFilter, setSelectedFilter] = useState<FilterOption>("All Groups");
+const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({
+  onSearchChange,
+  onFilterChange,
+  searchValue,
+  filterValue,
+}) => {
+  const [selectedFilter, setSelectedFilter] = useState<FilterValue>(filterValue ?? "all");
   const [view, setView] = useQueryState("view", parseAsString.withDefault("grid"));
 
-  const handleSelectFilter = (option: FilterOption) => {
-    setSelectedFilter(option);
-    onFilterChange?.(option);
+  const handleSelectFilter = (value: FilterValue) => {
+    setSelectedFilter(value);
+    onFilterChange?.(value);
   };
+
+  const selectedLabel =
+    filterOptions.find((o) => o.value === selectedFilter)?.label ?? "All Groups";
 
   return (
     <div className="flex flex-col sm:flex-row items-center w-full justify-between gap-4">
@@ -51,6 +60,8 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({ onFilterCha
           type="search"
           placeholder="Search group..."
           className="w-full bg-background pl-10 pr-4 h-10"
+          value={searchValue ?? ""}
+          onChange={(e) => onSearchChange?.(e.target.value)}
         />
       </div>
 
@@ -65,7 +76,7 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({ onFilterCha
               />
             }
           >
-            <span>{selectedFilter}</span>
+            <span>{selectedLabel}</span>
             <IconLibrary name="chevron-down" className="h-4 w-4 text-muted-foreground" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -78,46 +89,19 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({ onFilterCha
               </DropdownMenuLabel>
               {filterOptions.map((option) => (
                 <DropdownMenuItem
-                  key={option}
-                  onClick={() => handleSelectFilter(option)}
+                  key={option.value}
+                  onClick={() => handleSelectFilter(option.value)}
                   className={cn(
                     "cursor-pointer rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                    selectedFilter === option
+                    selectedFilter === option.value
                       ? "bg-primary/10 font-semibold text-primary"
                       : "text-foreground hover:bg-muted",
                   )}
                 >
-                  {option}
+                  {option.label}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                type="button"
-                variant="outline"
-                className="flex h-10 cursor-pointer items-center gap-2 px-4 rounded-xl text-sm font-semibold text-foreground bg-background"
-              />
-            }
-          >
-            <IconLibrary name="calendar" className="h-4 w-4 text-muted-foreground" />
-            <span>This year</span>
-            <IconLibrary name="chevron-down" className="h-4 w-4 text-muted-foreground" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="w-40 rounded-2xl border border-border bg-popover p-2 shadow-xl"
-          >
-            <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted">
-              This year
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted">
-              Last year
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 

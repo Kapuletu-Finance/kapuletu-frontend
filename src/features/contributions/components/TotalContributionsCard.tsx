@@ -1,11 +1,15 @@
 import CardWithIcon from "@/features/shared/components/CardWithIcon";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
-const TotalContributionsCard = () => {
+interface TotalContributionsCardProps {
+  value?: number;
+}
+
+const TotalContributionsCard = ({ value = 0 }: TotalContributionsCardProps) => {
   return (
     <CardWithIcon
       label="Active groups"
-      value={0}
+      value={value}
       icon={<IconLibrary name="badge-check" className="w-5 h-5 text-primary-foreground" />}
     />
   );
