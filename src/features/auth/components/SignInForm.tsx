@@ -58,7 +58,7 @@ export const SignInForm = () => {
                     id={field.name}
                     type="text"
                     placeholder="m@example.com or +254..."
-                    className="bg-muted/50 rounded-xl"
+                    className="bg-muted/50"
                     {...field}
                     aria-invalid={!!form.formState.errors.identifier}
                   />
@@ -89,7 +89,7 @@ export const SignInForm = () => {
                     id={field.name}
                     type="password"
                     placeholder="**********"
-                    className="bg-muted/50 rounded-xl"
+                    className="bg-muted/50"
                     {...field}
                     aria-invalid={!!form.formState.errors.password}
                   />
@@ -103,7 +103,7 @@ export const SignInForm = () => {
             <div className="pt-2">
               <Button
                 type="submit"
-                className="w-full rounded-xl font-medium py-6"
+                className="w-full font-medium py-6"
                 isLoading={signInMutation.isPending}
               >
                 Sign in

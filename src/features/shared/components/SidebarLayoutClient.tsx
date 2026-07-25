@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
-import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -26,6 +25,7 @@ import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
 import type { IconName } from "@/features/shared/components/IconLibrary";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import NeedAssistanceCard from "@/features/shared/components/NeedAssistanceCard";
+import NotificationsDropdown from "@/features/shared/components/NotificationsDropdown";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { UserProfileDropdown } from "@/features/shared/components/UserProfileDropdown";
 import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert";
@@ -156,12 +156,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon-lg" className="relative rounded-full shrink-0">
-              <IconLibrary name="notification" className="h-5 w-5 text-muted-foreground" />
-              <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-background">
-                2
-              </span>
-            </Button>
+            <NotificationsDropdown />
             <UserProfileDropdown role={role} />
           </div>
         </header>

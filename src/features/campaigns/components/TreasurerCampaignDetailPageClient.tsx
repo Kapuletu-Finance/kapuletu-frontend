@@ -39,7 +39,7 @@ export const TreasurerCampaignDetailPageClient: React.FC<
                   <Badge
                     variant="secondary"
                     className={cn(
-                      "font-medium rounded-full px-3 py-1 text-xs gap-1.5 border-none shadow-none",
+                      "font-medium px-3 py-1 text-xs gap-1.5 border-none shadow-none",
                       isArchived
                         ? "bg-muted text-muted-foreground"
                         : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
@@ -66,28 +66,28 @@ export const TreasurerCampaignDetailPageClient: React.FC<
         {/* Tabs and Content */}
         <Tabs defaultValue="overview" className="w-full">
           <div className="border-b mb-6">
-            <TabsList className="w-full justify-start h-auto p-0 bg-transparent gap-8 rounded-none">
+            <TabsList className="w-full justify-start h-auto p-0 bg-transparent gap-8 border-none">
               <TabsTrigger
                 value="overview"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold"
+                className="border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger
                 value="contributions"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold text-muted-foreground data-[state=active]:text-foreground"
+                className="border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold text-muted-foreground data-[state=active]:text-foreground"
               >
                 Contributions
               </TabsTrigger>
               <TabsTrigger
                 value="activity"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold text-muted-foreground data-[state=active]:text-foreground"
+                className="border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold text-muted-foreground data-[state=active]:text-foreground"
               >
                 Activity
               </TabsTrigger>
               <TabsTrigger
                 value="settings"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold text-muted-foreground data-[state=active]:text-foreground"
+                className="border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold text-muted-foreground data-[state=active]:text-foreground"
               >
                 Settings
               </TabsTrigger>
@@ -97,10 +97,10 @@ export const TreasurerCampaignDetailPageClient: React.FC<
           <TabsContent value="overview" className="mt-0 outline-none">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Empty Card 1 */}
-              <Card className="min-h-100 bg-muted/30 border-muted rounded-2xl shadow-sm" />
+              <Card className="min-h-100 bg-muted/30 border-muted" />
 
               {/* Campaign Summary Card */}
-              <Card className="min-h-100 bg-muted/30 border-muted rounded-2xl shadow-sm p-6">
+              <Card className="min-h-100 bg-muted/30 border-muted p-6">
                 <h3 className="font-semibold text-foreground">Campaign Summary</h3>
               </Card>
             </div>
@@ -108,21 +108,21 @@ export const TreasurerCampaignDetailPageClient: React.FC<
 
           <TabsContent value="contributions" className="mt-0">
             {/* Placeholder for Contributions */}
-            <Card className="min-h-100 bg-muted/30 border-muted rounded-2xl shadow-sm p-6 flex items-center justify-center text-muted-foreground">
+            <Card className="min-h-100 bg-muted/30 border-muted p-6 flex items-center justify-center text-muted-foreground">
               Contributions Content
             </Card>
           </TabsContent>
 
           <TabsContent value="activity" className="mt-0">
             {/* Placeholder for Activity */}
-            <Card className="min-h-100 bg-muted/30 border-muted rounded-2xl shadow-sm p-6 flex items-center justify-center text-muted-foreground">
+            <Card className="min-h-100 bg-muted/30 border-muted p-6 flex items-center justify-center text-muted-foreground">
               Activity Content
             </Card>
           </TabsContent>
 
           <TabsContent value="settings" className="mt-0">
             {/* Placeholder for Settings */}
-            <Card className="min-h-100 bg-muted/30 border-muted rounded-2xl shadow-sm p-6 flex items-center justify-center text-muted-foreground">
+            <Card className="min-h-100 bg-muted/30 border-muted p-6 flex items-center justify-center text-muted-foreground">
               Settings Content
             </Card>
           </TabsContent>

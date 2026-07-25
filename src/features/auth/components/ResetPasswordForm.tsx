@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,7 +20,7 @@ import { type ResetPasswordFormData, resetPasswordSchema } from "@/features/auth
 import { useResetPasswordMutation } from "@/features/auth/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
-const ResetPasswordFormContent = () => {
+const ResetPasswordForm = () => {
   const router = useRouter();
   const form = useForm<ResetPasswordFormData>({
     defaultValues: {
@@ -171,14 +170,6 @@ const ResetPasswordFormContent = () => {
         </div>
       </CardFooter>
     </Card>
-  );
-};
-
-export const ResetPasswordForm = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ResetPasswordFormContent />
-    </Suspense>
   );
 };
 

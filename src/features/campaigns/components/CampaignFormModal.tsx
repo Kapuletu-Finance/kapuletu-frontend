@@ -7,6 +7,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { CampaignInfo } from "./CampaignCard";
@@ -73,7 +80,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-100 p-6 gap-6 rounded-3xl">
+      <DialogContent className="sm:max-w-100 p-6 gap-6">
         <DialogHeader className="flex flex-col items-center gap-3">
           <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0">
             <IconLibrary name="campaign" className="w-8 h-8 text-primary" />
@@ -97,7 +104,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                     id={field.name}
                     placeholder={isEditing ? "" : "e.g. Food Drive"}
                     {...field}
-                    className="bg-muted/30 border-muted rounded-xl"
+                    className="bg-muted/30 border-muted"
                     aria-invalid={!!form.formState.errors.name}
                   />
                   {form.formState.errors.name && (
@@ -119,7 +126,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                     id={field.name}
                     placeholder={isEditing ? "" : "e.g. support, savings, or fundraising purposes"}
                     {...field}
-                    className="resize-none h-24 bg-muted/30 border-muted rounded-xl"
+                    className="resize-none h-24 bg-muted/30 border-muted"
                     aria-invalid={!!form.formState.errors.description}
                   />
                   {form.formState.errors.description && (
@@ -141,7 +148,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                     id={field.name}
                     placeholder="e.g. 10,000"
                     {...field}
-                    className="bg-muted/30 border-muted rounded-xl"
+                    className="bg-muted/30 border-muted"
                     aria-invalid={!!form.formState.errors.target}
                   />
                   {form.formState.errors.target && (
@@ -163,7 +170,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                     id={field.name}
                     placeholder="e.g. Paybill 12345, Account 6789"
                     {...field}
-                    className="bg-muted/30 border-muted rounded-xl"
+                    className="bg-muted/30 border-muted"
                     aria-invalid={!!form.formState.errors.instructions}
                   />
                   {form.formState.errors.instructions && (
@@ -185,23 +192,19 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                     >
                       Group Status
                     </FieldLabel>
-                    <div className="relative">
-                      <select
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger
                         id={field.name}
-                        {...field}
-                        className="flex h-10 w-full appearance-none items-center justify-between whitespace-nowrap rounded-xl border border-muted bg-muted/30 px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        className="bg-muted/30 h-10 w-full px-3 py-2 text-sm"
                         aria-invalid={!!form.formState.errors.status}
                       >
-                        <option value="Active">Active</option>
-                        <option value="Archived">Archived</option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                        <IconLibrary
-                          name="chevron-down"
-                          className="h-4 w-4 text-muted-foreground"
-                        />
-                      </div>
-                    </div>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Active">Active</SelectItem>
+                        <SelectItem value="Archived">Archived</SelectItem>
+                      </SelectContent>
+                    </Select>
                     {form.formState.errors.status && (
                       <FieldError>{form.formState.errors.status.message}</FieldError>
                     )}
@@ -212,7 +215,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-11 rounded-xl text-sm font-medium mt-2"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-11 text-sm font-medium mt-2"
             >
               {isEditing ? "Save Changes" : "Create Campaign"}
             </Button>

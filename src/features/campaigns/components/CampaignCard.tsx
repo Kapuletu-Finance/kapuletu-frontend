@@ -78,7 +78,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
             <Badge
               variant="secondary"
               className={cn(
-                "ml-4 font-semibold rounded-full px-2.5 py-0.5 text-[10px] gap-1.5 border-none shadow-none hidden sm:inline-flex shrink-0",
+                "ml-4 font-semibold px-2.5 py-0.5 text-[10px] gap-1.5 border-none shadow-none hidden sm:inline-flex shrink-0",
                 isArchived
                   ? "bg-muted text-muted-foreground"
                   : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
@@ -126,7 +126,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
               variant="outline"
               size="icon"
               onClick={onToggleFavorite}
-              className="rounded-full border border-border h-9 w-9 shrink-0 flex items-center justify-center"
+              className="border border-border h-9 w-9 shrink-0 flex items-center justify-center"
             >
               <IconLibrary
                 name="favorite"
@@ -176,7 +176,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
             <Badge
               variant="secondary"
               className={cn(
-                "font-medium rounded-full px-3 py-1 text-xs gap-1.5 border-none shadow-none",
+                "font-medium px-3 py-1 text-xs gap-1.5 border-none shadow-none",
                 isArchived
                   ? "bg-muted text-muted-foreground"
                   : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
@@ -204,7 +204,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
         >
           <Button
             onClick={onViewDetails}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 px-5 h-10 rounded-lg text-sm font-medium"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 px-5 h-10 text-sm font-medium"
           >
             View Details
           </Button>
@@ -212,7 +212,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
         <Button
           variant="outline"
           onClick={onManageCampaign}
-          className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-10 px-5 rounded-lg text-sm font-medium"
+          className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-10 px-5 text-sm font-medium"
         >
           Manage Campaign
         </Button>
@@ -220,7 +220,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
           variant="outline"
           size="icon"
           onClick={onToggleFavorite}
-          className="rounded-full border border-border h-10 w-10 shrink-0 flex items-center justify-center bg-transparent"
+          className="border border-border h-10 w-10 shrink-0 flex items-center justify-center bg-transparent"
         >
           <IconLibrary
             name="favorite"

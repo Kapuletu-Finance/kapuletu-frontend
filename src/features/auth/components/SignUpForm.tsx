@@ -68,7 +68,7 @@ export const SignUpForm = () => {
                       id={field.name}
                       placeholder="John"
                       {...field}
-                      className="bg-muted/50 rounded-xl"
+                      className="bg-muted/50"
                       aria-invalid={!!form.formState.errors.firstName}
                     />
                     {form.formState.errors.firstName && (
@@ -90,7 +90,7 @@ export const SignUpForm = () => {
                       id={field.name}
                       placeholder="Doe"
                       {...field}
-                      className="bg-muted/50 rounded-xl"
+                      className="bg-muted/50"
                       aria-invalid={!!form.formState.errors.lastName}
                     />
                     {form.formState.errors.lastName && (
@@ -113,7 +113,7 @@ export const SignUpForm = () => {
                     id={field.name}
                     type="email"
                     placeholder="m@example.com"
-                    className="bg-muted/50 rounded-xl"
+                    className="bg-muted/50"
                     {...field}
                     aria-invalid={!!form.formState.errors.email}
                   />
@@ -136,7 +136,7 @@ export const SignUpForm = () => {
                     id={field.name}
                     type="tel"
                     placeholder="+254..."
-                    className="bg-muted/50 rounded-xl"
+                    className="bg-muted/50"
                     {...field}
                     aria-invalid={!!form.formState.errors.phoneNumber}
                   />
@@ -160,7 +160,7 @@ export const SignUpForm = () => {
                       id={field.name}
                       type="password"
                       placeholder="Enter password"
-                      className="bg-muted/50 pr-10 rounded-xl"
+                      className="bg-muted/50 pr-10"
                       {...field}
                       aria-invalid={!!form.formState.errors.password}
                     />
@@ -202,7 +202,7 @@ export const SignUpForm = () => {
                     id={field.name}
                     type="password"
                     placeholder="Enter password"
-                    className="bg-muted/50 rounded-xl"
+                    className="bg-muted/50"
                     {...field}
                     aria-invalid={!!form.formState.errors.confirmPassword}
                   />
@@ -215,7 +215,7 @@ export const SignUpForm = () => {
             <div className="pt-2">
               <Button
                 type="submit"
-                className="w-full rounded-xl font-medium py-6"
+                className="w-full font-medium py-6"
                 isLoading={signUpMutation.isPending}
               >
                 Create Account
@@ -236,7 +236,7 @@ export const SignUpForm = () => {
                     checked={field.value}
                     onCheckedChange={field.onChange}
                     aria-invalid={!!form.formState.errors.consent}
-                    className="mt-0.5 size-5 border-2 rounded-sm"
+                    className="mt-0.5 size-5 border-2"
                   />
                   <div className="space-y-1 leading-none flex-1">
                     <FieldLabel

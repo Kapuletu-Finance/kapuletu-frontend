@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 import { BlogContent } from "@/features/landing-page/components/BlogContent";
 import { LandingFooter } from "@/features/landing-page/components/LandingFooter";
 import { LandingHeader } from "@/features/landing-page/components/LandingHeader";
@@ -48,9 +49,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
             </Link>
 
             <div className="flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
-                {post.category}
-              </span>
+              <Badge variant="secondary">{post.category}</Badge>
               <span className="text-xs text-muted-foreground flex items-center gap-1">
                 <IconLibrary name="calendar" className="h-3 w-3" />
                 {new Date(post.date).toLocaleDateString("en-KE", {

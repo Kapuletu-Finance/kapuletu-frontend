@@ -1,19 +1,20 @@
 import Link from "next/link";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const TermsPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 bg-muted/50">
-      <div className="w-full max-w-3xl bg-background p-8 md:p-12 rounded-3xl border border-border shadow-sm">
-        <div className="flex flex-col items-center mb-8">
+      <Card className="w-full max-w-3xl p-4 md:p-8">
+        <CardHeader className="flex flex-col items-center mb-4">
           <SiteLogo width={48} height={48} className="mb-6" />
           <h1 className="text-3xl font-bold tracking-tight">Terms of Service</h1>
           <p className="text-sm text-muted-foreground mt-2">
             Last updated: {new Date().toLocaleDateString()}
           </p>
-        </div>
-        <div className="space-y-6 text-muted-foreground leading-relaxed">
+        </CardHeader>
+        <CardContent className="space-y-6 text-muted-foreground leading-relaxed">
           <p>
             Welcome to KapuLetu. These Terms of Service constitute a legally binding agreement made
             between you and KapuLetu, concerning your access to and use of our website and services.
@@ -36,8 +37,8 @@ const TermsPage = () => {
               <IconLibrary name="arrow-left" className="w-4 h-4 mr-1.5" /> Back
             </Link>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

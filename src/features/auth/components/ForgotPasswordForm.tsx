@@ -48,7 +48,7 @@ export const ForgotPasswordForm = () => {
                     id={field.name}
                     type="text"
                     placeholder="m@example.com or +254..."
-                    className="bg-muted/50 rounded-xl"
+                    className="bg-muted/50"
                     {...field}
                     aria-invalid={!!form.formState.errors.identifier}
                   />
@@ -62,7 +62,7 @@ export const ForgotPasswordForm = () => {
             <div className="pt-2">
               <Button
                 type="submit"
-                className="w-full rounded-xl font-medium py-6"
+                className="w-full font-medium py-6"
                 isLoading={forgotPasswordMutation.isPending}
               >
                 Send Reset Link

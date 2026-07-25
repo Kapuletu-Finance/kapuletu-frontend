@@ -61,7 +61,7 @@ const CampaignsHeaderControls: React.FC<CampaignsHeaderControlsProps> = ({ onFil
               <Button
                 type="button"
                 variant="outline"
-                className="flex h-10 cursor-pointer items-center gap-2 px-4 rounded-xl text-sm font-semibold text-foreground bg-background"
+                className="flex h-10 cursor-pointer items-center gap-2 px-4 text-sm font-semibold text-foreground bg-background"
               />
             }
           >
@@ -70,7 +70,7 @@ const CampaignsHeaderControls: React.FC<CampaignsHeaderControlsProps> = ({ onFil
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-48 rounded-2xl border border-border bg-popover p-2 shadow-xl"
+            className="w-48 border border-border bg-popover p-2 shadow-xl"
           >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
@@ -81,7 +81,7 @@ const CampaignsHeaderControls: React.FC<CampaignsHeaderControlsProps> = ({ onFil
                   key={option}
                   onClick={() => handleSelectFilter(option)}
                   className={cn(
-                    "cursor-pointer rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                    "cursor-pointer px-3 py-2.5 text-sm font-medium transition-colors",
                     selectedFilter === option
                       ? "bg-primary/10 font-semibold text-primary"
                       : "text-foreground hover:bg-muted",
@@ -100,7 +100,7 @@ const CampaignsHeaderControls: React.FC<CampaignsHeaderControlsProps> = ({ onFil
               <Button
                 type="button"
                 variant="outline"
-                className="flex h-10 cursor-pointer items-center gap-2 px-4 rounded-xl text-sm font-semibold text-foreground bg-background"
+                className="flex h-10 cursor-pointer items-center gap-2 px-4 text-sm font-semibold text-foreground bg-background"
               />
             }
           >
@@ -110,12 +110,12 @@ const CampaignsHeaderControls: React.FC<CampaignsHeaderControlsProps> = ({ onFil
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-40 rounded-2xl border border-border bg-popover p-2 shadow-xl"
+            className="w-40 border border-border bg-popover p-2 shadow-xl"
           >
-            <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted">
+            <DropdownMenuItem className="cursor-pointer px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted">
               This year
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted">
+            <DropdownMenuItem className="cursor-pointer px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted">
               Last year
             </DropdownMenuItem>
           </DropdownMenuContent>
