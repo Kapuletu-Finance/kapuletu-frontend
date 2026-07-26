@@ -19,6 +19,7 @@ export interface CampaignInfo {
   target_amount?: number;
   total_raised?: number;
   contributor_count?: number;
+  end_date?: string | null;
 }
 
 export interface CampaignCardProps {

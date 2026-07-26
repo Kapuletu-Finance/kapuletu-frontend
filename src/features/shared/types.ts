@@ -10,6 +10,8 @@ export interface GroupOut {
   status: GroupStatus;
   is_active: boolean;
   created_at: string;
+  slug: string | null;
+  is_favorite: boolean;
   total_campaigns_count: number;
   active_campaigns_count: number;
   total_funds_raised: number;
@@ -25,6 +27,9 @@ export interface CampaignOut {
   status: CampaignStatus;
   is_active: boolean;
   created_at: string;
+  slug: string | null;
+  is_favorite: boolean;
+  end_date: string | null;
   total_raised: number;
   progress_percentage: number;
   contributor_count: number;
@@ -144,6 +149,7 @@ export interface CampaignCreate {
   description?: string | null;
   target_amount?: number;
   payment_instructions?: string | null;
+  end_date?: string | null;
 }
 
 export interface CampaignUpdate {
@@ -151,4 +157,5 @@ export interface CampaignUpdate {
   description?: string | null;
   target_amount?: number | null;
   payment_instructions?: string | null;
+  end_date?: string | null;
 }

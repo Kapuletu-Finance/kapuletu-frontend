@@ -58,3 +58,20 @@ export const useArchiveGroupMutation = (groupId: string) => {
     },
   });
 };
+
+export const useToggleGroupFavoriteMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (groupId: string) => {
+      const response = await apiClient.patch<GroupOut>(GROUPS_URLS.groupFavorite(groupId));
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update favorite.");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: groupsQueryKey });
+    },
+  });
+};

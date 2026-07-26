@@ -1,6 +1,6 @@
 "use client";
 
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,7 +9,9 @@ import GroupCard, { type GroupInfo } from "@/features/groups/components/GroupCar
 import GroupsHeaderControls, {
   type FilterValue,
 } from "@/features/groups/components/GroupsHeaderControls";
+import { useToggleGroupFavoriteMutation } from "@/features/groups/services/mutations";
 import { useGroupsQuery } from "@/features/groups/services/queries";
+import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import StatCard from "@/features/shared/components/StatCard";
@@ -23,7 +25,7 @@ const mapGroupToInfo = (group: GroupOut): GroupInfo => ({
   description: group.description || "",
   iconClassName: getAvatarColor(group.name),
   status: group.status === "active" ? "Active" : "Archived",
-  isFavorite: false,
+  isFavorite: group.is_favorite,
   campaigns: [],
   total_campaigns_count: group.total_campaigns_count,
   active_campaigns_count: group.active_campaigns_count,
@@ -32,16 +34,16 @@ const mapGroupToInfo = (group: GroupOut): GroupInfo => ({
 
 export const TreasurerGroupsPageClient = () => {
   const [view] = useQueryState("view", parseAsString.withDefault("grid"));
-  const [search, setSearch] = React.useState("");
-  const [filter, setFilter] = React.useState<FilterValue>("all");
-  const [page, setPage] = React.useState(0);
+  const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
+  const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("all"));
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(0));
   const limit = 12;
 
   const { data, isLoading } = useGroupsQuery({
     skip: page * limit,
     limit,
     search: search || undefined,
-    group_status: filter === "all" ? undefined : filter,
+    group_status: filter === "all" ? undefined : (filter as FilterValue),
   });
 
   const groups = (data?.items ?? []).map(mapGroupToInfo);
@@ -51,15 +53,23 @@ export const TreasurerGroupsPageClient = () => {
   const activeGroups = groups.filter((g) => g.status === "Active").length;
   const archivedGroups = groups.filter((g) => g.status === "Archived").length;
 
-  const handleSearchChange = React.useCallback((value: string) => {
-    setSearch(value);
-    setPage(0);
-  }, []);
+  const handleSearchChange = React.useCallback(
+    (value: string) => {
+      setSearch(value);
+      setPage(0);
+    },
+    [setSearch, setPage],
+  );
 
-  const handleFilterChange = React.useCallback((value: FilterValue) => {
-    setFilter(value);
-    setPage(0);
-  }, []);
+  const handleFilterChange = React.useCallback(
+    (value: FilterValue) => {
+      setFilter(value);
+      setPage(0);
+    },
+    [setFilter, setPage],
+  );
+
+  const toggleFavorite = useToggleGroupFavoriteMutation();
 
   return (
     <PageLayout
@@ -92,7 +102,7 @@ export const TreasurerGroupsPageClient = () => {
       controls={
         <GroupsHeaderControls
           searchValue={search}
-          filterValue={filter}
+          filterValue={filter as FilterValue}
           onSearchChange={handleSearchChange}
           onFilterChange={handleFilterChange}
         />
@@ -105,7 +115,7 @@ export const TreasurerGroupsPageClient = () => {
               size="icon"
               className="rounded-full text-muted-foreground"
               disabled={page === 0}
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              onClick={() => setPage(Math.max(0, page - 1))}
             >
               <IconLibrary name="chevron-left" className="w-4 h-4" />
             </Button>
@@ -128,7 +138,7 @@ export const TreasurerGroupsPageClient = () => {
               size="icon"
               className="rounded-full text-muted-foreground"
               disabled={page >= totalPages - 1}
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
             >
               <IconLibrary name="chevron-right" className="w-4 h-4" />
             </Button>
@@ -157,11 +167,16 @@ export const TreasurerGroupsPageClient = () => {
           )}
         >
           {groups.map((group) => (
-            <GroupCard key={group.id} group={group} variant={view as "grid" | "list"} />
+            <GroupCard
+              key={group.id}
+              group={group}
+              variant={view as "grid" | "list"}
+              onToggleFavorite={() => toggleFavorite.mutate(group.id)}
+            />
           ))}
           {groups.length === 0 && (
-            <div className="col-span-full text-center py-12 text-muted-foreground">
-              No groups found.
+            <div className="col-span-full py-12">
+              <EmptyState message="No groups found." />
             </div>
           )}
         </div>

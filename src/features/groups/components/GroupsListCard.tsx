@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGroupsQuery } from "@/features/groups/services/queries";
+import EmptyState from "@/features/shared/components/EmptyState";
 import { getAvatarColor } from "@/lib/colors";
 import { getInitials } from "@/lib/utils";
 
@@ -67,7 +68,9 @@ const GroupsListCard = () => {
           </Link>
         ))}
         {groups.length === 0 && (
-          <p className="text-muted-foreground text-sm py-4 text-center">No groups yet.</p>
+          <div className="py-4">
+            <EmptyState message="No groups yet." />
+          </div>
         )}
       </div>
     </Card>

@@ -46,11 +46,12 @@ const CampaignDetailsPage = () => {
     description: campaignData.description || "",
     iconClassName: getAvatarColor(campaignData.title),
     status: campaignData.status === "active" ? "Active" : "Archived",
-    isFavorite: false,
+    isFavorite: campaignData.is_favorite,
     progress: campaignData.progress_percentage ?? 0,
     target_amount: campaignData.target_amount,
     total_raised: campaignData.total_raised,
     contributor_count: campaignData.contributor_count,
+    end_date: campaignData.end_date,
   };
 
   return <TreasurerCampaignDetailPageClient campaign={campaign} />;

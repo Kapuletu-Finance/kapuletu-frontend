@@ -64,3 +64,22 @@ export const useArchiveCampaignMutation = (campaignId: string) => {
     },
   });
 };
+
+export const useToggleCampaignFavoriteMutation = (campaignId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.patch<CampaignOut>(
+        CAMPAIGNS_URLS.campaignFavorite(campaignId),
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update favorite.");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: campaignsQueryKey });
+    },
+  });
+};

@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,6 +11,7 @@ import CampaignsHeaderControls, {
   type FilterValue,
 } from "@/features/campaigns/components/CampaignsHeaderControls";
 import { useCampaignsQuery } from "@/features/campaigns/services/queries";
+import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import StatCard from "@/features/shared/components/StatCard";
@@ -25,20 +26,21 @@ const mapCampaignToInfo = (campaign: CampaignOut): CampaignInfo => ({
   description: campaign.description || "",
   iconClassName: getAvatarColor(campaign.title),
   status: campaign.status === "active" ? "Active" : "Archived",
-  isFavorite: false,
+  isFavorite: campaign.is_favorite,
   progress: campaign.progress_percentage ?? 0,
   target_amount: campaign.target_amount,
   total_raised: campaign.total_raised,
   contributor_count: campaign.contributor_count,
+  end_date: campaign.end_date,
 });
 
 export const TreasurerGroupDetailPageClient = () => {
   const [view] = useQueryState("view", parseAsString.withDefault("grid"));
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
   const [editingCampaign, setEditingCampaign] = React.useState<CampaignInfo | null>(null);
-  const [search, setSearch] = React.useState("");
-  const [filter, setFilter] = React.useState<FilterValue>("all");
-  const [page, setPage] = React.useState(0);
+  const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
+  const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("all"));
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(0));
 
   const params = useParams();
   const groupId = typeof params.groupId === "string" ? params.groupId : "";
@@ -48,7 +50,7 @@ export const TreasurerGroupDetailPageClient = () => {
     skip: page * limit,
     limit,
     search: search || undefined,
-    campaign_status: filter === "all" ? undefined : filter,
+    campaign_status: filter === "all" ? undefined : (filter as FilterValue),
   });
 
   const campaigns = (data?.items ?? []).map(mapCampaignToInfo);
@@ -58,15 +60,21 @@ export const TreasurerGroupDetailPageClient = () => {
   const activeCampaigns = campaigns.filter((c) => c.status === "Active").length;
   const archivedCampaigns = campaigns.filter((c) => c.status === "Archived").length;
 
-  const handleSearchChange = React.useCallback((value: string) => {
-    setSearch(value);
-    setPage(0);
-  }, []);
+  const handleSearchChange = React.useCallback(
+    (value: string) => {
+      setSearch(value);
+      setPage(0);
+    },
+    [setSearch, setPage],
+  );
 
-  const handleFilterChange = React.useCallback((value: FilterValue) => {
-    setFilter(value);
-    setPage(0);
-  }, []);
+  const handleFilterChange = React.useCallback(
+    (value: FilterValue) => {
+      setFilter(value);
+      setPage(0);
+    },
+    [setFilter, setPage],
+  );
 
   return (
     <>
@@ -108,7 +116,7 @@ export const TreasurerGroupDetailPageClient = () => {
         controls={
           <CampaignsHeaderControls
             searchValue={search}
-            filterValue={filter}
+            filterValue={filter as FilterValue}
             onSearchChange={handleSearchChange}
             onFilterChange={handleFilterChange}
           />
@@ -121,7 +129,7 @@ export const TreasurerGroupDetailPageClient = () => {
                 size="icon"
                 className="rounded-full text-muted-foreground"
                 disabled={page === 0}
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                onClick={() => setPage(Math.max(0, page - 1))}
               >
                 <IconLibrary name="chevron-left" className="w-4 h-4" />
               </Button>
@@ -144,7 +152,7 @@ export const TreasurerGroupDetailPageClient = () => {
                 size="icon"
                 className="rounded-full text-muted-foreground"
                 disabled={page >= totalPages - 1}
-                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
               >
                 <IconLibrary name="chevron-right" className="w-4 h-4" />
               </Button>
@@ -182,8 +190,8 @@ export const TreasurerGroupDetailPageClient = () => {
               />
             ))}
             {campaigns.length === 0 && (
-              <div className="col-span-full text-center py-12 text-muted-foreground">
-                No campaigns found.
+              <div className="col-span-full py-12">
+                <EmptyState message="No campaigns found." />
               </div>
             )}
           </div>
