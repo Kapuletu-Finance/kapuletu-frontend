@@ -21,13 +21,15 @@ const GroupsListCard = () => {
               className="flex items-center justify-between gap-4 py-4 border-b border-border"
             >
               <div className="flex items-center gap-4">
-                <Skeleton className="size-10 rounded-full" />
-                <div className="flex flex-col gap-1">
-                  <Skeleton className="h-4 w-32" />
-                  <Skeleton className="h-3 w-48" />
+                <div className="size-10 rounded-full flex items-center justify-center bg-muted text-muted-foreground font-semibold text-sm">
+                  --
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton className="h-4 w-32 rounded-md" />
+                  <Skeleton className="h-3 w-48 rounded-md" />
                 </div>
               </div>
-              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-20 rounded-md" />
             </div>
           ))}
         </div>

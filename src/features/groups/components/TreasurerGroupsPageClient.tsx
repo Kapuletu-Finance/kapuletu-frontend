@@ -3,6 +3,7 @@
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreateGroupButtonDialogForm from "@/features/groups/components/CreateGroupButtonDialogForm";
 import GroupCard, { type GroupInfo } from "@/features/groups/components/GroupCard";
@@ -155,7 +156,21 @@ export const TreasurerGroupsPageClient = () => {
           )}
         >
           {["sk-1", "sk-2", "sk-3", "sk-4", "sk-5", "sk-6"].map((key) => (
-            <Skeleton key={key} className="h-64 rounded-3xl" />
+            <Card key={key} className="rounded-3xl border-none shadow-sm p-6 space-y-6 bg-card">
+              <CardHeader className="p-0 flex-row items-center gap-4 space-y-0">
+                <Skeleton className="w-16 h-16 rounded-full shrink-0" />
+                <div className="flex flex-col gap-1.5 flex-1">
+                  <Skeleton className="h-6 w-36 rounded-md" />
+                  <Skeleton className="h-4 w-48 rounded-md" />
+                </div>
+                <Skeleton className="h-6 w-16 rounded-full" />
+              </CardHeader>
+              <div className="flex gap-2 pt-2">
+                <Skeleton className="h-9 w-28 rounded-md" />
+                <Skeleton className="h-9 w-32 rounded-md" />
+                <Skeleton className="h-11 w-11 rounded-full shrink-0" />
+              </div>
+            </Card>
           ))}
         </div>
       ) : (

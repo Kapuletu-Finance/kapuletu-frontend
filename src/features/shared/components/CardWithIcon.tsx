@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 
 interface CardWithIconProps {
   label: string;
-  value: number | string;
+  value: number | string | React.ReactNode;
   icon: React.ReactNode;
 }
 

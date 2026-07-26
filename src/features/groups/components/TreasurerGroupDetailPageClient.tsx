@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import CampaignCard, { type CampaignInfo } from "@/features/campaigns/components/CampaignCard";
 import { CampaignFormModal } from "@/features/campaigns/components/CampaignFormModal";
@@ -169,7 +170,26 @@ export const TreasurerGroupDetailPageClient = () => {
             )}
           >
             {["sk-1", "sk-2", "sk-3", "sk-4", "sk-5", "sk-6"].map((key) => (
-              <Skeleton key={key} className="h-64 rounded-3xl" />
+              <Card
+                key={key}
+                className="border border-border shadow-sm flex flex-col justify-between h-full"
+              >
+                <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0 p-5">
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+                    <div className="flex flex-col gap-1.5">
+                      <Skeleton className="h-5 w-36 rounded-md" />
+                      <Skeleton className="h-4 w-48 rounded-md" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                </CardHeader>
+                <CardFooter className="flex flex-row items-center gap-2 border-none bg-transparent p-5 pt-0">
+                  <Skeleton className="h-10 w-28 rounded-md" />
+                  <Skeleton className="h-10 w-36 rounded-md" />
+                  <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                </CardFooter>
+              </Card>
             ))}
           </div>
         ) : (
