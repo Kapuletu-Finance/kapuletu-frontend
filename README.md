@@ -1,2 +1,2 @@
 # Kapuletu
-Treasurer Assistant
+Treasurer Assistant Application
