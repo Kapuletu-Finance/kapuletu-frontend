@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import ManageGroupDialogForm from "@/features/groups/components/ManageGroupDialogForm";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { cn, getInitials } from "@/lib/utils";
 
@@ -38,7 +39,6 @@ export interface GroupCardProps {
   className?: string;
   variant?: "grid" | "list";
   onViewDetails?: () => void;
-  onManageGroup?: () => void;
   onToggleFavorite?: () => void;
 }
 
@@ -47,7 +47,6 @@ const GroupCard: React.FC<GroupCardProps> = ({
   className,
   variant = "grid",
   onViewDetails,
-  onManageGroup,
   onToggleFavorite,
 }) => {
   const campaigns = group.campaigns ?? [];
@@ -107,14 +106,15 @@ const GroupCard: React.FC<GroupCardProps> = ({
               View Details
             </Button>
           </Link>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={onManageGroup}
-            className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-9"
-          >
-            Manage Group
-          </Button>
+          <ManageGroupDialogForm group={group}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-9"
+            >
+              Manage Group
+            </Button>
+          </ManageGroupDialogForm>
           <Button
             variant="outline"
             size="icon"
@@ -211,13 +211,14 @@ const GroupCard: React.FC<GroupCardProps> = ({
             View Details
           </Button>
         </Link>
-        <Button
-          variant="outline"
-          onClick={onManageGroup}
-          className="border-primary text-primary hover:text-primary hover:bg-primary/5"
-        >
-          Manage Group
-        </Button>
+        <ManageGroupDialogForm group={group}>
+          <Button
+            variant="outline"
+            className="border-primary text-primary hover:text-primary hover:bg-primary/5"
+          >
+            Manage Group
+          </Button>
+        </ManageGroupDialogForm>
         <Button
           variant="outline"
           size="icon"
