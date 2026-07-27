@@ -107,12 +107,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
               Manage Group
             </Button>
           </ManageGroupDialogForm>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={onToggleFavorite}
-            className="rounded-full border border-border h-9 w-9 shrink-0 flex items-center justify-center"
-          >
+          <Button variant="outline" size="icon" onClick={onToggleFavorite}>
             <IconLibrary
               name="favorite"
               className={cn(
@@ -140,30 +135,32 @@ const GroupCard: React.FC<GroupCardProps> = ({
             {getInitials(group.name)}
           </div>
           <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-            <h3 className="text-xl font-bold tracking-tight text-foreground leading-tight">
-              {group.name}
-            </h3>
+            <div className="flex items-center gap-3">
+              <h3 className="text-xl font-bold tracking-tight text-foreground leading-tight truncate">
+                {group.name}
+              </h3>
+              {group.status && (
+                <Badge
+                  variant="secondary"
+                  className={cn(
+                    "font-semibold rounded-full px-3 py-1 text-xs gap-1.5 border-none shadow-none shrink-0",
+                    isArchived
+                      ? "bg-muted text-muted-foreground"
+                      : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full shrink-0",
+                      isArchived ? "bg-muted-foreground" : "bg-emerald-600 dark:bg-emerald-400",
+                    )}
+                  />
+                  {group.status}
+                </Badge>
+              )}
+            </div>
             <p className="text-sm text-muted-foreground">{group.description}</p>
           </div>
-          {group.status && (
-            <Badge
-              variant="secondary"
-              className={cn(
-                "font-semibold rounded-full px-3 py-1 text-xs gap-1.5 border-none shadow-none shrink-0 self-start",
-                isArchived
-                  ? "bg-muted text-muted-foreground"
-                  : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
-              )}
-            >
-              <span
-                className={cn(
-                  "w-1.5 h-1.5 rounded-full shrink-0",
-                  isArchived ? "bg-muted-foreground" : "bg-emerald-600 dark:bg-emerald-400",
-                )}
-              />
-              {group.status}
-            </Badge>
-          )}
         </div>
 
         {/* Campaigns Progress */}
@@ -194,7 +191,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
         <Link href={`/treasurer/groups/${group.id}`}>
           <Button
             onClick={onViewDetails}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 px-6"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 px-4"
           >
             View Details
           </Button>
@@ -208,12 +205,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
               Manage Group
             </Button>
           </ManageGroupDialogForm>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={onToggleFavorite}
-            className="rounded-full border border-border h-10 w-10 shrink-0 flex items-center justify-center"
-          >
+          <Button variant="outline" size="icon" onClick={onToggleFavorite}>
             <IconLibrary
               name="favorite"
               className={cn(

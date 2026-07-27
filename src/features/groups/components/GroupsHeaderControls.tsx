@@ -63,7 +63,9 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({
       <div className="flex items-center gap-3 sm:gap-4 shrink-0">
         <Select value={selectedFilter} onValueChange={(v) => handleSelectFilter(v as FilterValue)}>
           <SelectTrigger className="h-10 w-40 bg-background text-sm font-semibold text-foreground">
-            <SelectValue />
+            <SelectValue>
+              {filterOptions.find((o) => o.value === selectedFilter)?.label ?? "All Groups"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent align="end">
             {filterOptions.map((option) => (
