@@ -56,7 +56,7 @@ const StatCard: React.FC<StatCardProps> = ({
       </div>
       <div
         className={cn(
-          "w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-sm",
+          "w-14 h-14 rounded-md flex items-center justify-center shrink-0 shadow-sm",
           iconClassName || "bg-primary text-primary-foreground",
         )}
       >
