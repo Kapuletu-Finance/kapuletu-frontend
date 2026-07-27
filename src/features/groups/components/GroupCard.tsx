@@ -141,7 +141,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
         <CardHeader className="p-0 flex-row items-center gap-4 space-y-0">
           <div
             className={cn(
-              "w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold shrink-0",
+              "w-16 h-16 rounded-md flex items-center justify-center text-xl font-bold shrink-0",
               group.iconClassName ?? "bg-primary/15 text-primary",
             )}
           >

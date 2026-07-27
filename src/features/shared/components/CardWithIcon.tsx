@@ -14,7 +14,7 @@ const CardWithIcon: React.FC<CardWithIconProps> = ({ label, value, icon }) => {
         <p className="text-sm text-muted-foreground">{label}</p>
         <div className="text-xl text-foreground font-medium">{value}</div>
       </div>
-      <div className="bg-primary size-12 flex items-center justify-center rounded-full shrink-0">
+      <div className="bg-primary size-12 flex items-center justify-center rounded-md shrink-0">
         {icon}
       </div>
     </Card>
