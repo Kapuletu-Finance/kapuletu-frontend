@@ -168,7 +168,7 @@ export const TreasurerGroupsPageClient = () => {
               <div className="flex gap-2 pt-2">
                 <Skeleton className="h-9 w-28 rounded-md" />
                 <Skeleton className="h-9 w-32 rounded-md" />
-                <Skeleton className="h-11 w-11 rounded-full shrink-0" />
+                <Skeleton className="h-10 w-10 rounded-md shrink-0" />
               </div>
             </Card>
           ))}

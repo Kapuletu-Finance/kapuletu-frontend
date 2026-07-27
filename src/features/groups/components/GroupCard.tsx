@@ -57,14 +57,14 @@ const GroupCard: React.FC<GroupCardProps> = ({
     return (
       <Card
         className={cn(
-          "rounded-2xl border-none shadow-sm p-4 bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4",
+          "p-4 bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4",
           className,
         )}
       >
         <div className="flex items-center gap-4 w-full sm:w-auto">
           <div
             className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
+              "w-12 h-12 rounded-md flex items-center justify-center text-sm font-bold shrink-0",
               group.iconClassName ?? "bg-primary/15 text-primary",
             )}
           >
@@ -119,7 +119,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
             variant="outline"
             size="icon"
             onClick={onToggleFavorite}
-            className="rounded-full border border-border h-9 w-9 shrink-0 flex items-center justify-center"
+            className="rounded-md border border-border h-9 w-9 shrink-0 flex items-center justify-center"
           >
             <IconLibrary
               name="favorite"
@@ -135,12 +135,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
   }
 
   return (
-    <Card
-      className={cn(
-        "rounded-3xl border-none shadow-sm p-6 space-y-6 bg-card flex flex-col justify-between",
-        className,
-      )}
-    >
+    <Card className={cn("p-6 space-y-6 bg-card flex flex-col justify-between", className)}>
       <div className="space-y-6">
         {/* Header */}
         <CardHeader className="p-0 flex-row items-center gap-4 space-y-0">
@@ -207,7 +202,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
       </div>
 
       {/* Footer Actions */}
-      <CardFooter className="flex flex-row items-center gap-2 border-none bg-transparent">
+      <CardFooter className="flex flex-row flex-wrap items-center gap-2 border-none bg-transparent px-0 pb-6 pt-0">
         <Link href={`/treasurer/groups/${group.id}`}>
           <Button
             onClick={onViewDetails}
@@ -227,7 +222,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
           variant="outline"
           size="icon"
           onClick={onToggleFavorite}
-          className="rounded-full border border-border h-11 w-11 shrink-0 flex items-center justify-center"
+          className="rounded-md border border-border h-10 w-10 shrink-0 flex items-center justify-center"
         >
           <IconLibrary
             name="favorite"
