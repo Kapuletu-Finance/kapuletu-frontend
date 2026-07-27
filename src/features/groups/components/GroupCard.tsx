@@ -2,15 +2,7 @@ import Link from "next/link";
 import type * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import ManageGroupDialogForm from "@/features/groups/components/ManageGroupDialogForm";
 import IconLibrary from "@/features/shared/components/IconLibrary";
@@ -63,7 +55,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
         <div className="flex items-center gap-4 w-full sm:w-auto">
           <div
             className={cn(
-              "w-12 h-12 rounded-md flex items-center justify-center text-sm font-bold shrink-0",
+              "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
               group.iconClassName ?? "bg-primary/15 text-primary",
             )}
           >
@@ -119,7 +111,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
             variant="outline"
             size="icon"
             onClick={onToggleFavorite}
-            className="rounded-md border border-border h-9 w-9 shrink-0 flex items-center justify-center"
+            className="rounded-full border border-border h-9 w-9 shrink-0 flex items-center justify-center"
           >
             <IconLibrary
               name="favorite"
@@ -138,45 +130,41 @@ const GroupCard: React.FC<GroupCardProps> = ({
     <Card className={cn("p-6 space-y-6 bg-card flex flex-col justify-between", className)}>
       <div className="space-y-6">
         {/* Header */}
-        <CardHeader className="p-0 flex-row items-center gap-4 space-y-0">
+        <div className="flex flex-row items-start gap-4">
           <div
             className={cn(
-              "w-16 h-16 rounded-md flex items-center justify-center text-xl font-bold shrink-0",
+              "w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold shrink-0 mt-0.5",
               group.iconClassName ?? "bg-primary/15 text-primary",
             )}
           >
             {getInitials(group.name)}
           </div>
-          <div className="flex flex-col gap-1">
-            <CardTitle className="text-xl font-bold tracking-tight text-foreground">
+          <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+            <h3 className="text-xl font-bold tracking-tight text-foreground leading-tight">
               {group.name}
-            </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
-              {group.description}
-            </CardDescription>
+            </h3>
+            <p className="text-sm text-muted-foreground">{group.description}</p>
           </div>
           {group.status && (
-            <CardAction className="ml-auto self-start sm:self-center">
-              <Badge
-                variant="secondary"
+            <Badge
+              variant="secondary"
+              className={cn(
+                "font-semibold rounded-full px-3 py-1 text-xs gap-1.5 border-none shadow-none shrink-0 self-start",
+                isArchived
+                  ? "bg-muted text-muted-foreground"
+                  : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+              )}
+            >
+              <span
                 className={cn(
-                  "font-semibold rounded-full px-3 py-1 text-xs gap-1.5 border-none shadow-none",
-                  isArchived
-                    ? "bg-muted text-muted-foreground"
-                    : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+                  "w-1.5 h-1.5 rounded-full shrink-0",
+                  isArchived ? "bg-muted-foreground" : "bg-emerald-600 dark:bg-emerald-400",
                 )}
-              >
-                <span
-                  className={cn(
-                    "w-1.5 h-1.5 rounded-full shrink-0",
-                    isArchived ? "bg-muted-foreground" : "bg-emerald-600 dark:bg-emerald-400",
-                  )}
-                />
-                {group.status}
-              </Badge>
-            </CardAction>
+              />
+              {group.status}
+            </Badge>
           )}
-        </CardHeader>
+        </div>
 
         {/* Campaigns Progress */}
         {campaigns.length > 0 && (
@@ -202,7 +190,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
       </div>
 
       {/* Footer Actions */}
-      <CardFooter className="flex flex-row flex-wrap items-center gap-2 border-none bg-transparent px-0 pb-6 pt-0">
+      <CardFooter className="flex flex-row items-center justify-between gap-2 border-none bg-transparent px-0 pb-0 pt-0">
         <Link href={`/treasurer/groups/${group.id}`}>
           <Button
             onClick={onViewDetails}
@@ -211,28 +199,30 @@ const GroupCard: React.FC<GroupCardProps> = ({
             View Details
           </Button>
         </Link>
-        <ManageGroupDialogForm group={group}>
+        <div className="flex items-center gap-2">
+          <ManageGroupDialogForm group={group}>
+            <Button
+              variant="outline"
+              className="border-primary text-primary hover:text-primary hover:bg-primary/5"
+            >
+              Manage Group
+            </Button>
+          </ManageGroupDialogForm>
           <Button
             variant="outline"
-            className="border-primary text-primary hover:text-primary hover:bg-primary/5"
+            size="icon"
+            onClick={onToggleFavorite}
+            className="rounded-full border border-border h-10 w-10 shrink-0 flex items-center justify-center"
           >
-            Manage Group
+            <IconLibrary
+              name="favorite"
+              className={cn(
+                "w-5 h-5",
+                group.isFavorite ? "text-destructive fill-destructive" : "text-muted-foreground",
+              )}
+            />
           </Button>
-        </ManageGroupDialogForm>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={onToggleFavorite}
-          className="rounded-md border border-border h-10 w-10 shrink-0 flex items-center justify-center"
-        >
-          <IconLibrary
-            name="favorite"
-            className={cn(
-              "w-5 h-5",
-              group.isFavorite ? "text-destructive fill-destructive" : "text-muted-foreground",
-            )}
-          />
-        </Button>
+        </div>
       </CardFooter>
     </Card>
   );

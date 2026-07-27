@@ -4,17 +4,15 @@ import { parseAsString, useQueryState } from "nuqs";
 import type * as React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { cn } from "@/lib/utils";
 
 const filterOptions = [
   { label: "All Groups", value: "all" },
@@ -45,9 +43,6 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({
     onFilterChange?.(value);
   };
 
-  const selectedLabel =
-    filterOptions.find((o) => o.value === selectedFilter)?.label ?? "All Groups";
-
   return (
     <div className="flex flex-col sm:flex-row items-center w-full justify-between gap-4">
       {/* Search Bar */}
@@ -66,44 +61,18 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({
       </div>
 
       <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                type="button"
-                variant="outline"
-                className="flex h-10 cursor-pointer items-center gap-2 px-4 rounded-xl text-sm font-semibold text-foreground bg-background"
-              />
-            }
-          >
-            <span>{selectedLabel}</span>
-            <IconLibrary name="chevron-down" className="h-4 w-4 text-muted-foreground" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="w-48 rounded-2xl border border-border bg-popover p-2 shadow-xl"
-          >
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                Group Filters
-              </DropdownMenuLabel>
-              {filterOptions.map((option) => (
-                <DropdownMenuItem
-                  key={option.value}
-                  onClick={() => handleSelectFilter(option.value)}
-                  className={cn(
-                    "cursor-pointer rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                    selectedFilter === option.value
-                      ? "bg-primary/10 font-semibold text-primary"
-                      : "text-foreground hover:bg-muted",
-                  )}
-                >
-                  {option.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Select value={selectedFilter} onValueChange={(v) => handleSelectFilter(v as FilterValue)}>
+          <SelectTrigger className="h-10 w-40 bg-background text-sm font-semibold text-foreground">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent align="end">
+            {filterOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <Button
           variant="ghost"

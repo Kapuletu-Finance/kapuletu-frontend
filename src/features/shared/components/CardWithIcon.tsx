@@ -9,7 +9,7 @@ interface CardWithIconProps {
 
 const CardWithIcon: React.FC<CardWithIconProps> = ({ label, value, icon }) => {
   return (
-    <Card className="shadow-sm border-none bg-background p-5 rounded-2xl flex flex-row items-center justify-between">
+    <Card className="shadow-sm border-none bg-background p-5 flex flex-row items-center justify-between">
       <div className="flex flex-col gap-1 text-left">
         <p className="text-sm text-muted-foreground">{label}</p>
         <div className="text-xl text-foreground font-medium">{value}</div>

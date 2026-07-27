@@ -13,7 +13,7 @@ const GroupsListCard = () => {
 
   if (isLoading) {
     return (
-      <Card className="shadow-sm p-6 flex-1 flex flex-col rounded-2xl">
+      <Card className="shadow-sm p-6 flex-1 flex flex-col">
         <div className="flex flex-col gap-4">
           {["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((key) => (
             <div
@@ -40,7 +40,7 @@ const GroupsListCard = () => {
   const groups = data?.items ?? [];
 
   return (
-    <Card className="shadow-sm p-6 flex-1 flex flex-col rounded-2xl">
+    <Card className="shadow-sm p-6 flex-1 flex flex-col">
       <div className="flex flex-col">
         {groups.map((group) => (
           <Link

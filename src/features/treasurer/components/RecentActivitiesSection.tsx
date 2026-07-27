@@ -39,7 +39,7 @@ const RecentActivitiesSection = () => {
         RECENT ACTIVITIES
       </h2>
 
-      <Card className="shadow-sm p-6 rounded-3xl border-none flex-1 flex flex-col justify-between">
+      <Card className="shadow-sm p-6 border-none flex-1 flex flex-col justify-between">
         {isLoading ? (
           <div className="flex flex-col gap-4 py-2">
             {["sk-1", "sk-2", "sk-3", "sk-4"].map((key) => (

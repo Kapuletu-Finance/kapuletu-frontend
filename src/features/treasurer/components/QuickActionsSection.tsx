@@ -5,7 +5,7 @@ import ReviewTransactionButton from "@/features/transactions/components/ReviewTr
 
 const QuickActionsSection = () => {
   return (
-    <section className="bg-background p-6 rounded-3xl space-y-4 shadow-sm">
+    <section className="bg-background p-6 rounded-md space-y-4 shadow-sm">
       <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
         QUICK ACTIONS
       </h2>
