@@ -151,7 +151,7 @@ const EditGroupDialogForm: React.FC<EditGroupDialogFormProps> = ({ group, childr
                 <SelectContent>
                   <SelectItem value="Active">
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="w-2 h-2 rounded-full bg-primary" />
                       Active
                     </div>
                   </SelectItem>

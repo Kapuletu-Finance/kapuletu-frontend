@@ -23,6 +23,7 @@ import {
   useVerifyPhoneConfirmMutation,
 } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
+import { SuccessLoader } from "@/features/shared/components/SuccessLoader";
 import { cn } from "@/lib/utils";
 
 interface VerifyCardProps {
@@ -113,6 +114,36 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     }
   }, [user?.phone_number, isPhone, handleResend]);
 
+  if (verifyMutation.isPending) {
+    return (
+      <div className="w-full pb-4 flex flex-col items-center">
+        <div className="mb-6 mt-4">
+          <div className="w-12 h-12 border-[3.5px] border-transparent border-t-primary rounded-full animate-spin" />
+        </div>
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-[17px] font-bold text-foreground mb-1">Verifying</h1>
+          <p className="text-[13px] text-muted-foreground">Almost there...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (verifyMutation.isSuccess) {
+    return (
+      <div className="w-full pb-4 flex flex-col items-center">
+        <div className="mb-6 mt-4">
+          <SuccessLoader size={48} />
+        </div>
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-[17px] font-bold text-foreground mb-1">Verification complete!</h1>
+          <p className="text-[13px] text-muted-foreground">
+            Your {isPhone ? "phone number" : "email address"} has been verified.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full pb-4">
       <div className="flex flex-col items-center mb-8 text-center">
@@ -125,7 +156,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
         >
           {isError
             ? "The code you entered is wrong. Please try again"
-            : `We sent a 6-digit code to your ${isPhone ? "phone number" : "email address"}`}
+            : `We sent a 6-digit code to your ${isPhone ? "WhatsApp" : "email address"}`}
         </p>
       </div>
 
@@ -142,45 +173,45 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
                       <InputOTPSlot
                         index={0}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg rounded-md border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={1}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg rounded-md border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={2}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg rounded-md border-black border",
                           isError && "border-destructive",
                         )}
                       />
                     </InputOTPGroup>
-                    <InputOTPSeparator className="px-4" />
+                    <InputOTPSeparator className="px-2" />
                     <InputOTPGroup className="gap-2">
                       <InputOTPSlot
                         index={3}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg rounded-md border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={4}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg rounded-md border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={5}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg rounded-md border-black border",
                           isError && "border-destructive",
                         )}
                       />

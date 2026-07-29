@@ -15,7 +15,7 @@ const getActionIcon = (action: string) => {
     return <IconLibrary name="contribution" className="w-5 h-5 text-amber-500" />;
   }
   if (action.toLowerCase().includes("group")) {
-    return <IconLibrary name="group" className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />;
+    return <IconLibrary name="group" className="w-5 h-5 text-primary dark:text-primary" />;
   }
   return <IconLibrary name="add-circle" className="w-5 h-5 fill-primary text-background" />;
 };

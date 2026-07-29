@@ -7,8 +7,8 @@ export const proxy = (request: NextRequest) => {
 
   const isTreasurerRoute = pathname.startsWith("/treasurer");
   const isAdminRoute = pathname.startsWith("/admin");
-  const isAuthRoute = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password"].includes(
-    pathname,
+  const isAuthRoute = ["/sign-in", "/sign-up", "/forgot-password"].some((route) =>
+    pathname.startsWith(route),
   );
   // Routes that require authentication but are not role-scoped dashboard routes
   const isAuthenticatedOnlyRoute = ["/verify-email", "/verify-phone"].includes(pathname);
@@ -82,8 +82,7 @@ export const config = {
     "/",
     "/sign-in",
     "/sign-up",
-    "/forgot-password",
-    "/reset-password",
+    "/forgot-password/:path*",
     "/verify-email",
     "/verify-phone",
   ],

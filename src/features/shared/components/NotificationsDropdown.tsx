@@ -27,8 +27,8 @@ const mockNotifications: Notification[] = [
     message: "Ksh. 5000 has been received from John Doe for Medical Fund.",
     time: "Just now",
     icon: "transaction",
-    iconClassName: "text-emerald-600",
-    iconBgClassName: "bg-emerald-100 dark:bg-emerald-900/30",
+    iconClassName: "text-primary",
+    iconBgClassName: "bg-primary/10 dark:bg-primary/30",
     unread: true,
   },
   {
@@ -58,8 +58,8 @@ const mockNotifications: Notification[] = [
     message: "You've reached your target amount for campaign X.",
     time: "1h ago",
     icon: "campaign",
-    iconClassName: "text-emerald-600",
-    iconBgClassName: "bg-emerald-100 dark:bg-emerald-900/30",
+    iconClassName: "text-primary",
+    iconBgClassName: "bg-primary/10 dark:bg-primary/30",
     unread: false,
   },
   {
@@ -88,8 +88,8 @@ const mockNotifications: Notification[] = [
     message: "Ksh. 5000 has been received from John Doe for Medical Fund.",
     time: "2d ago",
     icon: "transaction",
-    iconClassName: "text-emerald-600",
-    iconBgClassName: "bg-emerald-100 dark:bg-emerald-900/30",
+    iconClassName: "text-primary",
+    iconBgClassName: "bg-primary/10 dark:bg-primary/30",
     unread: true,
   },
   {
@@ -109,8 +109,8 @@ const mockNotifications: Notification[] = [
     message: "You've reached your target amount for campaign X.",
     time: "2d ago",
     icon: "campaign",
-    iconClassName: "text-emerald-600",
-    iconBgClassName: "bg-emerald-100 dark:bg-emerald-900/30",
+    iconClassName: "text-primary",
+    iconBgClassName: "bg-primary/10 dark:bg-primary/30",
     unread: false,
   },
 ];

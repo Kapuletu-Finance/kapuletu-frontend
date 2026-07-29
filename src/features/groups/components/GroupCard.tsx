@@ -74,13 +74,13 @@ const GroupCard: React.FC<GroupCardProps> = ({
                 "ml-4 font-semibold rounded-full px-2.5 py-0.5 text-[10px] gap-1.5 border-none shadow-none hidden sm:inline-flex",
                 isArchived
                   ? "bg-muted text-muted-foreground"
-                  : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+                  : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
               )}
             >
               <span
                 className={cn(
                   "w-1 h-1 rounded-full shrink-0",
-                  isArchived ? "bg-muted-foreground" : "bg-emerald-600 dark:bg-emerald-400",
+                  isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
                 )}
               />
               {group.status}
@@ -146,13 +146,13 @@ const GroupCard: React.FC<GroupCardProps> = ({
                     "font-semibold rounded-full px-3 py-1 text-xs gap-1.5 border-none shadow-none shrink-0",
                     isArchived
                       ? "bg-muted text-muted-foreground"
-                      : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+                      : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
                   )}
                 >
                   <span
                     className={cn(
                       "w-1.5 h-1.5 rounded-full shrink-0",
-                      isArchived ? "bg-muted-foreground" : "bg-emerald-600 dark:bg-emerald-400",
+                      isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
                     )}
                   />
                   {group.status}

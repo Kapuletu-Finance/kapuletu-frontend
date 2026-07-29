@@ -47,9 +47,9 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
     <div className={cn("flex items-center gap-3 w-32 sm:w-40 shrink-0", className)}>
       <Progress
         value={campaign.progress}
-        className="w-full **:data-[slot=progress-track]:h-1.5 **:data-[slot=progress-track]:bg-emerald-500/20 **:data-[slot=progress-indicator]:bg-emerald-600"
+        className="w-full **:data-[slot=progress-track]:h-1.5 **:data-[slot=progress-track]:bg-primary/20 **:data-[slot=progress-indicator]:bg-primary"
       />
-      <span className="text-xs font-bold text-emerald-600 tabular-nums leading-none min-w-[3ch] text-right">
+      <span className="text-xs font-bold text-primary tabular-nums leading-none min-w-[3ch] text-right">
         {campaign.progress}%
       </span>
     </div>
@@ -89,13 +89,13 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
                 "ml-4 font-semibold px-2.5 py-0.5 text-[10px] gap-1.5 border-none shadow-none hidden sm:inline-flex shrink-0",
                 isArchived
                   ? "bg-muted text-muted-foreground"
-                  : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+                  : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
               )}
             >
               <span
                 className={cn(
                   "w-1 h-1 rounded-full shrink-0",
-                  isArchived ? "bg-muted-foreground" : "bg-emerald-600 dark:bg-emerald-400",
+                  isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
                 )}
               />
               {campaign.status}
@@ -181,13 +181,13 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
                 "font-medium px-3 py-1 text-xs gap-1.5 border-none shadow-none",
                 isArchived
                   ? "bg-muted text-muted-foreground"
-                  : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+                  : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
               )}
             >
               <span
                 className={cn(
                   "w-1.5 h-1.5 rounded-full shrink-0",
-                  isArchived ? "bg-muted-foreground" : "bg-emerald-600 dark:bg-emerald-400",
+                  isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
                 )}
               />
               {campaign.status}

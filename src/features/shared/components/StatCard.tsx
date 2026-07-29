@@ -36,14 +36,14 @@ const StatCard: React.FC<StatCardProps> = ({
           {trend && (
             <div className="flex items-center gap-1 text-xs mt-1 font-medium">
               {trendDirection === "up" && (
-                <IconLibrary name="arrow-right" className="w-3 h-3 text-emerald-500 -rotate-45" />
+                <IconLibrary name="arrow-right" className="w-3 h-3 text-primary -rotate-45" />
               )}
               {trendDirection === "down" && (
                 <IconLibrary name="arrow-right" className="w-3 h-3 text-destructive rotate-45" />
               )}
               <span
                 className={cn(
-                  trendDirection === "up" && "text-emerald-500",
+                  trendDirection === "up" && "text-primary",
                   trendDirection === "down" && "text-destructive",
                   trendDirection === "neutral" && "text-muted-foreground",
                 )}

@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -10,26 +11,33 @@ import { Input } from "@/components/ui/input";
 import { type ForgotPasswordFormData, forgotPasswordSchema } from "@/features/auth/schemas";
 import { useForgotPasswordMutation } from "@/features/auth/services/mutations";
 
-export const ForgotPasswordForm = () => {
+export const ForgotPasswordRequestForm = () => {
+  const router = useRouter();
+
   const form = useForm<ForgotPasswordFormData>({
     defaultValues: {
       identifier: "",
     },
     resolver: zodResolver(forgotPasswordSchema),
+    mode: "onChange",
   });
 
   const forgotPasswordMutation = useForgotPasswordMutation();
 
   const onSubmit = (data: ForgotPasswordFormData) => {
-    forgotPasswordMutation.mutate(data);
+    forgotPasswordMutation.mutate(data, {
+      onSuccess: () => {
+        router.push(`/forgot-password/verify?identifier=${encodeURIComponent(data.identifier)}`);
+      },
+    });
   };
 
   return (
     <div className="w-full max-w-md mx-auto pb-4">
       <div className="flex flex-col items-center mb-8">
-        <h1 className="text-xl font-bold mb-2">Reset password</h1>
+        <h1 className="text-xl font-bold mb-2">Reset your password</h1>
         <p className="text-sm text-center text-muted-foreground px-4">
-          Enter your phone number and we&apos;ll send you a link to reset your password.
+          Enter the phone number or email address linked to your Kapuletu account.
         </p>
       </div>
 
@@ -65,17 +73,13 @@ export const ForgotPasswordForm = () => {
                 className="w-full font-medium py-6"
                 isLoading={forgotPasswordMutation.isPending}
               >
-                Send Reset Link
+                Get Verification Code
               </Button>
             </div>
 
-            <div className="text-center text-[13px] text-muted-foreground pt-2 leading-tight">
-              Remember your password?{" "}
-              <Link
-                href="/sign-in"
-                className="text-sm font-medium text-refined-blue hover:underline"
-              >
-                Sign in
+            <div className="text-center text-[13px] pt-4 leading-tight">
+              <Link href="/sign-in" className="text-sm font-medium text-primary hover:underline">
+                Back to sign in
               </Link>
             </div>
           </fieldset>

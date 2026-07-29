@@ -45,13 +45,13 @@ export const TreasurerCampaignDetailPageClient: React.FC<
                       "font-medium px-3 py-1 text-xs gap-1.5 border-none shadow-none",
                       isArchived
                         ? "bg-muted text-muted-foreground"
-                        : "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+                        : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
                     )}
                   >
                     <span
                       className={cn(
                         "w-1.5 h-1.5 rounded-full shrink-0",
-                        isArchived ? "bg-muted-foreground" : "bg-emerald-600 dark:bg-emerald-400",
+                        isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
                       )}
                     />
                     {campaign.status}

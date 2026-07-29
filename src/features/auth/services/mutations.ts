@@ -91,7 +91,7 @@ export const useSignUpMutation = () => {
       );
     },
     onSuccess: () => {
-      toast.success("Account created! Please verify your phone number.");
+      toast.success("Account created! Verification code sent to your email and WhatsApp.");
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
       // Redirect to phone verification page
       window.location.href = "/verify-phone";
@@ -116,7 +116,7 @@ export const useForgotPasswordMutation = () => {
       toast.error(error instanceof Error ? error.message : "Failed to request password reset.");
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Instructions sent!");
+      toast.success(data.message || "Verification code sent to your email and WhatsApp!");
     },
   });
 };
@@ -222,7 +222,7 @@ export const useVerifyEmailRequestMutation = () => {
       );
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Email verification code sent successfully!");
+      toast.success(data.message || "Verification code sent to your email and WhatsApp!");
     },
   });
 };
@@ -264,7 +264,7 @@ export const useResendCodeMutation = () => {
       );
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Verification code sent successfully!");
+      toast.success(data.message || "Verification code sent to your email and WhatsApp!");
     },
   });
 };
