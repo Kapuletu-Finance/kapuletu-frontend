@@ -28,7 +28,7 @@ export interface CampaignCardProps {
   className?: string;
   variant?: "grid" | "list";
   onViewDetails?: () => void;
-  onManageCampaign?: () => void;
+  onEditCampaign?: () => void;
   onToggleFavorite?: () => void;
 }
 
@@ -38,7 +38,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
   className,
   variant = "grid",
   onViewDetails,
-  onManageCampaign,
+  onEditCampaign,
   onToggleFavorite,
 }) => {
   const isArchived = campaign.status === "Archived";
@@ -119,10 +119,10 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
             <Button
               size="sm"
               variant="outline"
-              onClick={onManageCampaign}
+              onClick={onEditCampaign}
               className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-9"
             >
-              Manage Campaign
+              Edit Campaign
             </Button>
             <Button
               variant="outline"
@@ -207,10 +207,10 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
         </Link>
         <Button
           variant="outline"
-          onClick={onManageCampaign}
+          onClick={onEditCampaign}
           className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-10 px-5 text-sm font-medium"
         >
-          Manage Campaign
+          Edit Campaign
         </Button>
         <Button
           variant="outline"

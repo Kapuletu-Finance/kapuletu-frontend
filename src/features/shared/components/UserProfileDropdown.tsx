@@ -74,7 +74,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ role }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center cursor-pointer hover:bg-primary/30 transition-colors relative overflow-hidden border border-border shrink-0">
+        <div className="h-10 w-10 rounded-md bg-primary/20 flex items-center justify-center cursor-pointer hover:bg-primary/30 transition-colors relative overflow-hidden border border-border shrink-0">
           <IconLibrary name="member" className="size-5 text-primary" />
           {user && !user.email_verified && isAlertDismissed && (
             <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />

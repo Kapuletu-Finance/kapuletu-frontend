@@ -45,7 +45,8 @@ export const proxy = (request: NextRequest) => {
     if (isRootRoute || isAuthRoute || isAuthenticatedOnlyRoute) {
       if (userRole === "treasurer")
         return NextResponse.redirect(new URL("/treasurer", request.url));
-      if (userRole === "admin") return NextResponse.redirect(new URL("/admin", request.url));
+      if (userRole === "admin" || userRole === "super_admin")
+        return NextResponse.redirect(new URL("/admin", request.url));
       return NextResponse.next();
     }
 
@@ -54,7 +55,7 @@ export const proxy = (request: NextRequest) => {
       return NextResponse.redirect(new URL("/treasurer", request.url));
     }
 
-    if (userRole === "admin" && isTreasurerRoute) {
+    if ((userRole === "admin" || userRole === "super_admin") && isTreasurerRoute) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
 

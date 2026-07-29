@@ -18,6 +18,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
 import AppBreadcrumb from "@/features/shared/components/AppBreadcrumb";
@@ -33,8 +34,6 @@ import { cn } from "@/lib/utils";
 
 const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin", icon: "dashboard", label: "Dashboard" },
-  { href: "/admin/groups", icon: "group", label: "Groups" },
-  { href: "/admin/audit/logs", icon: "audit", label: "Audit Logs" },
 ];
 
 const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
@@ -49,9 +48,10 @@ const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
 interface AppSidebarProps {
   links: { href: string; label: string; icon: IconName }[];
   onOpenFaqs?: () => void;
+  role: UserRole;
 }
 
-const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs }) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs, role }) => {
   const pathname = usePathname();
   const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -121,10 +121,12 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs }) => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="gap-2">
-        <CurrentPlanCard plan="bronze" />
-        <NeedAssistanceCard onOpenFaqs={onOpenFaqs} />
-      </SidebarFooter>
+      {role !== "admin" && role !== "super_admin" && (
+        <SidebarFooter className="gap-2">
+          <CurrentPlanCard />
+          <NeedAssistanceCard onOpenFaqs={onOpenFaqs} />
+        </SidebarFooter>
+      )}
       <SidebarRail />
     </Sidebar>
   );
@@ -141,8 +143,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 
 export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
-  const links = role === "admin" ? ADMIN_LINKS : TREASURER_LINKS;
-  const { data: user } = useGetMeQuery();
+  const isAdminOrSuperAdmin = role === "admin" || role === "super_admin";
+  const links = isAdminOrSuperAdmin ? ADMIN_LINKS : TREASURER_LINKS;
+  const { data: user, isLoading } = useGetMeQuery();
   const [isFaqsOpen, setIsFaqsOpen] = useState(false);
 
   const hour = new Date().getHours();
@@ -151,7 +154,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   return (
     <>
       <SidebarProvider>
-        <AppSidebar links={links} onOpenFaqs={() => setIsFaqsOpen(true)} />
+        <AppSidebar links={links} onOpenFaqs={() => setIsFaqsOpen(true)} role={role} />
 
         <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">
           {/* Header */}
@@ -160,10 +163,17 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
               <SidebarTrigger className="-ml-1" />
               <div className="hidden sm:flex sm:flex-col">
                 <h2 className="text-base tracking-tight uppercase">
-                  {greeting}, {user ? user.first_name : "USER"}.
+                  {greeting},{" "}
+                  {isLoading ? (
+                    <Skeleton className="h-5 w-24 inline-block align-middle" />
+                  ) : user ? (
+                    `${user.first_name}.`
+                  ) : (
+                    "USER."
+                  )}
                 </h2>
                 <span className="text-[10px] font-semibold text-refined-blue border border-refined-blue/30 bg-refined-blue/5 rounded-full px-2 py-0.5 w-fit mt-0.5">
-                  {role === "admin" ? "Admin Workspace" : "Treasurer Workspace"}
+                  {isAdminOrSuperAdmin ? "Admin Workspace" : "Treasurer Workspace"}
                 </span>
               </div>
             </div>

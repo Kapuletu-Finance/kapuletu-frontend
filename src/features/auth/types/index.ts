@@ -95,3 +95,13 @@ export type ResendCodeRequest = {
   /** Email address or phone number — backend IdentifierBase */
   identifier: string;
 };
+
+export type SubscriptionResponse = {
+  active_plan: string;
+  status: string;
+  expiry_date: string | null;
+  usage: {
+    groups: string;
+    campaigns: string;
+  };
+};

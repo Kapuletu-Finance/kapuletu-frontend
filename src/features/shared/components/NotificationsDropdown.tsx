@@ -129,10 +129,10 @@ const NotificationsDropdown: React.FC = () => {
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger className="relative rounded-full shrink-0 size-9 inline-flex items-center justify-center hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <DropdownMenuTrigger className="relative rounded-md shrink-0 size-9 inline-flex items-center justify-center hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring">
         <IconLibrary name="notification" className="h-5 w-5 text-muted-foreground" />
         {unreadCount > 0 && (
-          <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-background">
+          <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 bg-primary text-primary-foreground text-[9px] font-bold rounded-md flex items-center justify-center border-2 border-background">
             {unreadCount}
           </span>
         )}

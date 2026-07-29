@@ -206,7 +206,7 @@ export const TreasurerGroupDetailPageClient = () => {
                 campaign={campaign}
                 groupId={groupId}
                 variant={view as "grid" | "list"}
-                onManageCampaign={() => setEditingCampaign(campaign)}
+                onEditCampaign={() => setEditingCampaign(campaign)}
               />
             ))}
             {campaigns.length === 0 && (
