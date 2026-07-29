@@ -25,35 +25,35 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import type { GroupInfo } from "@/features/groups/components/GroupCard";
 import { useUpdateGroupMutation } from "@/features/groups/services/mutations";
-import IconLibrary from "@/features/shared/components/IconLibrary";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
-const manageGroupSchema = z.object({
+const editGroupSchema = z.object({
   name: z.string().min(1, "Group name is required"),
   description: z.string().max(300, "Description cannot exceed 300 characters").optional(),
 });
 
-type ManageGroupFormData = z.infer<typeof manageGroupSchema>;
+type EditGroupFormData = z.infer<typeof editGroupSchema>;
 
-interface ManageGroupDialogFormProps {
+interface EditGroupDialogFormProps {
   group: GroupInfo;
   children?: React.ReactNode;
 }
 
-const ManageGroupDialogForm: React.FC<ManageGroupDialogFormProps> = ({ group, children }) => {
+const EditGroupDialogForm: React.FC<EditGroupDialogFormProps> = ({ group, children }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const updateGroupMutation = useUpdateGroupMutation(group.id);
 
-  const form = useForm<ManageGroupFormData>({
+  const form = useForm<EditGroupFormData>({
     defaultValues: {
       name: group.name,
       description: group.description || "",
     },
-    resolver: zodResolver(manageGroupSchema),
+    resolver: zodResolver(editGroupSchema),
   });
 
   const descriptionValue = form.watch("description") ?? "";
 
-  const onSubmit = (data: ManageGroupFormData) => {
+  const onSubmit = (data: EditGroupFormData) => {
     updateGroupMutation.mutate(
       {
         name: data.name,
@@ -78,9 +78,9 @@ const ManageGroupDialogForm: React.FC<ManageGroupDialogFormProps> = ({ group, ch
       <DialogContent className="rounded-3xl sm:max-w-112.5 p-6">
         <DialogHeader className="items-center space-y-4">
           <div className="rounded-full bg-primary/10 p-3">
-            <IconLibrary name="group" className="w-8 h-8 text-primary" />
+            <SiteLogo variant="icon" logoClassName="w-8 h-8 text-primary" />
           </div>
-          <DialogTitle className="text-xl font-medium">Manage My Group</DialogTitle>
+          <DialogTitle className="text-xl font-medium">Edit My Group</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -93,6 +93,7 @@ const ManageGroupDialogForm: React.FC<ManageGroupDialogFormProps> = ({ group, ch
                   <FieldLabel
                     htmlFor={field.name}
                     className="text-sm font-semibold text-foreground"
+                    isRequired
                   >
                     Group Name
                   </FieldLabel>
@@ -178,4 +179,4 @@ const ManageGroupDialogForm: React.FC<ManageGroupDialogFormProps> = ({ group, ch
   );
 };
 
-export default ManageGroupDialogForm;
+export default EditGroupDialogForm;

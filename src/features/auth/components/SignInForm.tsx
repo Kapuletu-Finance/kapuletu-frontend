@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { type SignInFormData, signInSchema } from "@/features/auth/schemas";
 import { useSignInMutation } from "@/features/auth/services/mutations";
 
@@ -34,10 +35,7 @@ export const SignInForm = () => {
         </h1>
         <p className="text-sm text-muted-foreground px-4">
           Don&apos;t have an account?{" "}
-          <Link
-            href="/sign-up"
-            className="text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground"
-          >
+          <Link href="/sign-up" className="text-sm font-medium text-refined-blue hover:underline">
             Sign up
           </Link>
         </p>
@@ -51,7 +49,11 @@ export const SignInForm = () => {
               name="identifier"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.identifier}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-foreground"
+                    isRequired
+                  >
                     Email or Phone Number
                   </FieldLabel>
                   <Input
@@ -75,19 +77,22 @@ export const SignInForm = () => {
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.password}>
                   <div className="flex items-center justify-between w-full">
-                    <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-xs font-bold text-foreground"
+                      isRequired
+                    >
                       Password
                     </FieldLabel>
                     <Link
                       href="/forgot-password"
-                      className="text-sm font-medium text-refined-blue hover:underline"
+                      className="text-sm font-normal text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground"
                     >
                       Forgot password?
                     </Link>
                   </div>
-                  <Input
+                  <PasswordInput
                     id={field.name}
-                    type="password"
                     placeholder="**********"
                     className="bg-muted/50"
                     {...field}

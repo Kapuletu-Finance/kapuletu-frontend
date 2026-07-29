@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useSidebar } from "@/components/ui/sidebar";
 import type { IconName } from "@/features/shared/components/IconLibrary";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
@@ -12,6 +13,13 @@ interface CurrentPlanCardProps {
 
 const CurrentPlanCard: React.FC<CurrentPlanCardProps> = ({ plan }) => {
   const config = PLAN_CONFIG[plan];
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   return (
     <>
@@ -35,20 +43,24 @@ const CurrentPlanCard: React.FC<CurrentPlanCardProps> = ({ plan }) => {
             Next billing date: 22 July 2026
           </p>
 
-          <Link href="/subscriptions" className="w-full">
+          <Link href="/subscriptions" className="w-full" onClick={handleClick}>
             <Button className="w-full font-semibold">{config.buttonText}</Button>
           </Link>
         </CardContent>
       </Card>
 
       {/* Collapsed Icon View */}
-      <div className="hidden group-data-[collapsible=icon]:flex justify-center shrink-0">
+      <Button
+        variant="ghost"
+        className="hidden group-data-[collapsible=icon]:flex justify-center shrink-0 w-full hover:bg-transparent h-auto p-0"
+        onClick={handleClick}
+      >
         <div className="cursor-pointer hover:opacity-80 transition-opacity">
           <div className={config.iconWrapperClass}>
             <IconLibrary name={config.icon} className={config.iconClass} />
           </div>
         </div>
-      </div>
+      </Button>
     </>
   );
 };

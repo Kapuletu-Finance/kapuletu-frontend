@@ -73,7 +73,7 @@ export const ForgotPasswordForm = () => {
               Remember your password?{" "}
               <Link
                 href="/sign-in"
-                className="text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground"
+                className="text-sm font-medium text-refined-blue hover:underline"
               >
                 Sign in
               </Link>

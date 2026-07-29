@@ -78,7 +78,7 @@ export const LandingFooter = () => {
                 </Link>
               </li>
               <li>
-                <Link href="#faqs" className="hover:text-primary-foreground transition-colors">
+                <Link href="/#faqs" className="hover:text-primary-foreground transition-colors">
                   FAQs
                 </Link>
               </li>

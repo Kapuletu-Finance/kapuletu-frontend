@@ -5,6 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import IconLibrary, { type IconName } from "@/features/shared/components/IconLibrary";
 import { cn } from "@/lib/utils";
 
@@ -138,7 +139,7 @@ const NotificationsDropdown: React.FC = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-105 p-0 rounded-3xl overflow-hidden shadow-xl border-border bg-background"
+        className="w-[85vw] max-w-sm sm:max-w-none sm:w-105 p-0 rounded-3xl overflow-hidden shadow-xl border-border bg-background"
       >
         <div className="p-6 pb-2">
           <div className="flex items-center justify-between mb-4">
@@ -154,50 +155,52 @@ const NotificationsDropdown: React.FC = () => {
             )}
           </div>
 
-          <div className="space-y-1 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin">
-            {displayedNotifications.map((notification, index) => (
-              <div key={notification.id}>
-                <div
-                  className={cn(
-                    "flex gap-4 items-start p-4 rounded-2xl transition-colors",
-                    notification.unread ? "bg-muted/40" : "hover:bg-muted/20",
-                  )}
-                >
+          <ScrollArea className="max-h-[60vh] pr-4">
+            <div className="space-y-1">
+              {displayedNotifications.map((notification, index) => (
+                <div key={notification.id}>
                   <div
                     className={cn(
-                      "h-10 w-10 rounded-full flex items-center justify-center shrink-0",
-                      notification.iconBgClassName || "bg-muted",
+                      "flex gap-4 items-start p-4 rounded-2xl transition-colors",
+                      notification.unread ? "bg-muted/40" : "hover:bg-muted/20",
                     )}
                   >
-                    <IconLibrary
-                      name={notification.icon}
+                    <div
                       className={cn(
-                        "h-5 w-5",
-                        notification.iconClassName || "text-muted-foreground",
+                        "h-10 w-10 rounded-full flex items-center justify-center shrink-0",
+                        notification.iconBgClassName || "bg-muted",
                       )}
-                    />
-                  </div>
-                  <div className="flex-1 space-y-1.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-semibold leading-none">{notification.title}</p>
-                      {notification.unread && (
-                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                      )}
+                    >
+                      <IconLibrary
+                        name={notification.icon}
+                        className={cn(
+                          "h-5 w-5",
+                          notification.iconClassName || "text-muted-foreground",
+                        )}
+                      />
                     </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed pr-4">
-                      {notification.message}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground/70 font-medium pt-1">
-                      {notification.time}
-                    </p>
+                    <div className="flex-1 space-y-1.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-semibold leading-none">{notification.title}</p>
+                        {notification.unread && (
+                          <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed pr-4">
+                        {notification.message}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground/70 font-medium pt-1">
+                        {notification.time}
+                      </p>
+                    </div>
                   </div>
+                  {index < displayedNotifications.length - 1 && (
+                    <div className="h-px w-full bg-border/40 my-1 mx-auto max-w-[90%]" />
+                  )}
                 </div>
-                {index < displayedNotifications.length - 1 && (
-                  <div className="h-px w-full bg-border/40 my-1 mx-auto max-w-[90%]" />
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
 
         {notifications.length > 5 && (

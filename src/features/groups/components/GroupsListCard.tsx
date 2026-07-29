@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGroupsQuery } from "@/features/groups/services/queries";
 import EmptyState from "@/features/shared/components/EmptyState";
@@ -41,40 +42,42 @@ const GroupsListCard = () => {
 
   return (
     <Card className="shadow-sm p-6 flex-1 flex flex-col">
-      <div className="flex flex-col">
-        {groups.map((group) => (
-          <Link
-            key={group.id}
-            href={`/treasurer/groups/${group.id}`}
-            className="flex items-center justify-between gap-4 py-4 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors rounded-lg -mx-2 px-2"
-          >
-            <div className="flex items-center gap-4">
-              <div
-                className={`size-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${getAvatarColor(group.name)}`}
-              >
-                {getInitials(group.name)}
+      <ScrollArea className="h-87.5 pr-4">
+        <div className="flex flex-col">
+          {groups.map((group) => (
+            <Link
+              key={group.id}
+              href={`/treasurer/groups/${group.id}`}
+              className="flex items-center justify-between gap-4 py-4 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors rounded-lg -mx-2 px-2"
+            >
+              <div className="flex items-center gap-4">
+                <div
+                  className={`size-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${getAvatarColor(group.name)}`}
+                >
+                  {getInitials(group.name)}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-foreground font-semibold text-sm sm:text-base">
+                    {group.name}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {group.description || "No description"}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-foreground font-semibold text-sm sm:text-base">
-                  {group.name}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {group.description || "No description"}
-                </span>
-              </div>
+              <span className="text-sm text-muted-foreground whitespace-nowrap">
+                <span className="font-semibold text-foreground">{group.total_campaigns_count}</span>{" "}
+                campaigns
+              </span>
+            </Link>
+          ))}
+          {groups.length === 0 && (
+            <div className="py-4">
+              <EmptyState message="No groups yet." />
             </div>
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              <span className="font-semibold text-foreground">{group.total_campaigns_count}</span>{" "}
-              campaigns
-            </span>
-          </Link>
-        ))}
-        {groups.length === 0 && (
-          <div className="py-4">
-            <EmptyState message="No groups yet." />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </ScrollArea>
     </Card>
   );
 };

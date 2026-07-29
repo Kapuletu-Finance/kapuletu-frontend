@@ -16,6 +16,8 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
+import { PasswordRequirements } from "@/features/auth/components/PasswordRequirements";
 import { type ResetPasswordFormData, resetPasswordSchema } from "@/features/auth/schemas";
 import { useResetPasswordMutation } from "@/features/auth/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
@@ -99,20 +101,18 @@ const ResetPasswordForm = () => {
                 name="password"
                 render={({ field }) => (
                   <Field className="space-y-2" data-invalid={!!form.formState.errors.password}>
-                    <FieldLabel htmlFor={field.name}>New Password</FieldLabel>
+                    <FieldLabel htmlFor={field.name} isRequired>
+                      New Password
+                    </FieldLabel>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <IconLibrary name="lock" className="h-4 w-4" />
-                      </div>
-                      <Input
+                      <PasswordInput
                         id={field.name}
-                        type="password"
                         placeholder="••••••••"
-                        className="pl-10"
                         {...field}
                         aria-invalid={!!form.formState.errors.password}
                       />
                     </div>
+                    <PasswordRequirements password={form.watch("password")} />
                     {form.formState.errors.password && (
                       <FieldError>{form.formState.errors.password.message}</FieldError>
                     )}
@@ -128,16 +128,13 @@ const ResetPasswordForm = () => {
                     className="space-y-2"
                     data-invalid={!!form.formState.errors.confirmPassword}
                   >
-                    <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
+                    <FieldLabel htmlFor={field.name} isRequired>
+                      Confirm Password
+                    </FieldLabel>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <IconLibrary name="lock" className="h-4 w-4" />
-                      </div>
-                      <Input
+                      <PasswordInput
                         id={field.name}
-                        type="password"
                         placeholder="••••••••"
-                        className="pl-10"
                         {...field}
                         aria-invalid={!!form.formState.errors.confirmPassword}
                       />

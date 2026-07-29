@@ -8,10 +8,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { PasswordInput } from "@/components/ui/password-input";
+import { PasswordRequirements } from "@/features/auth/components/PasswordRequirements";
 import { type SignUpFormData, signUpSchema } from "@/features/auth/schemas";
 import { useSignUpMutation } from "@/features/auth/services/mutations";
-import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const SignUpForm = () => {
   const signUpMutation = useSignUpMutation();
@@ -25,7 +25,6 @@ export const SignUpForm = () => {
       lastName: "",
       password: "",
       phoneNumber: "",
-      showPassword: false,
     },
     resolver: zodResolver(signUpSchema),
   });
@@ -43,10 +42,7 @@ export const SignUpForm = () => {
         </h1>
         <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link
-            href="/sign-in"
-            className="text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground"
-          >
+          <Link href="/sign-in" className="text-sm font-medium text-refined-blue hover:underline">
             Sign in
           </Link>
         </p>
@@ -61,7 +57,11 @@ export const SignUpForm = () => {
                 name="firstName"
                 render={({ field }) => (
                   <Field data-invalid={!!form.formState.errors.firstName}>
-                    <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-xs font-bold text-foreground"
+                      isRequired
+                    >
                       First Name
                     </FieldLabel>
                     <Input
@@ -83,7 +83,11 @@ export const SignUpForm = () => {
                 name="lastName"
                 render={({ field }) => (
                   <Field data-invalid={!!form.formState.errors.lastName}>
-                    <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-xs font-bold text-foreground"
+                      isRequired
+                    >
                       Last Name
                     </FieldLabel>
                     <Input
@@ -106,7 +110,11 @@ export const SignUpForm = () => {
               name="email"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.email}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-foreground"
+                    isRequired
+                  >
                     Email Address
                   </FieldLabel>
                   <Input
@@ -129,7 +137,11 @@ export const SignUpForm = () => {
               name="phoneNumber"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.phoneNumber}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-foreground"
+                    isRequired
+                  >
                     Phone Number
                   </FieldLabel>
                   <Input
@@ -152,37 +164,23 @@ export const SignUpForm = () => {
               name="password"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.password}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-foreground"
+                    isRequired
+                  >
                     Password
                   </FieldLabel>
                   <div className="relative">
-                    <Input
+                    <PasswordInput
                       id={field.name}
-                      type="password"
                       placeholder="Enter password"
-                      className="bg-muted/50 pr-10"
+                      className="bg-muted/50"
                       {...field}
                       aria-invalid={!!form.formState.errors.password}
                     />
-                    <div className="absolute right-0 top-0 h-full flex items-center justify-center">
-                      <Tooltip>
-                        <TooltipTrigger
-                          type="button"
-                          className="px-3 py-2 text-muted-foreground hover:text-foreground focus:outline-none flex items-center justify-center"
-                        >
-                          <IconLibrary name="info" className="h-4 w-4" />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="bg-refined-blue text-primary-foreground [&_.fill-foreground]:bg-refined-blue [&_.fill-foreground]:fill-refined-blue"
-                          side="top"
-                          align="center"
-                          sideOffset={8}
-                        >
-                          <p>Password must be at least 8 characters</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
                   </div>
+                  <PasswordRequirements password={form.watch("password")} />
                   {form.formState.errors.password && (
                     <FieldError>{form.formState.errors.password.message}</FieldError>
                   )}
@@ -195,12 +193,15 @@ export const SignUpForm = () => {
               name="confirmPassword"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.confirmPassword}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-foreground"
+                    isRequired
+                  >
                     Confirm Password
                   </FieldLabel>
-                  <Input
+                  <PasswordInput
                     id={field.name}
-                    type="password"
                     placeholder="Enter password"
                     className="bg-muted/50"
                     {...field}
@@ -212,16 +213,6 @@ export const SignUpForm = () => {
                 </Field>
               )}
             />
-            <div className="pt-2">
-              <Button
-                type="submit"
-                className="w-full font-medium py-6"
-                isLoading={signUpMutation.isPending}
-              >
-                Create Account
-              </Button>
-            </div>
-
             <FormField
               control={form.control}
               name="consent"
@@ -266,6 +257,16 @@ export const SignUpForm = () => {
                 </Field>
               )}
             />
+
+            <div className="pt-2">
+              <Button
+                type="submit"
+                className="w-full font-medium py-6"
+                isLoading={signUpMutation.isPending}
+              >
+                Create Account
+              </Button>
+            </div>
           </fieldset>
         </form>
       </Form>

@@ -11,6 +11,7 @@ export const PublicThemeToggle = () => {
     pathname.startsWith("/admin") ||
     pathname.startsWith("/treasurer") ||
     pathname.startsWith("/subscriptions") ||
+    pathname.startsWith("/blogs") ||
     pathname === "/"
   ) {
     return null;

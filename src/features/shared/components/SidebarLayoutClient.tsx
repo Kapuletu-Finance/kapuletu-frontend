@@ -48,11 +48,12 @@ const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
 
 interface AppSidebarProps {
   links: { href: string; label: string; icon: IconName }[];
+  onOpenFaqs?: () => void;
 }
 
-const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs }) => {
   const pathname = usePathname();
-  const { state, isMobile } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
@@ -80,6 +81,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
                   <SidebarMenuButton
                     tooltip={link.label}
                     size="lg"
+                    onClick={() => {
+                      if (isMobile) {
+                        setOpenMobile(false);
+                      }
+                    }}
                     className={cn(
                       "transition-all duration-300 py-7 px-4 group-data-[collapsible=icon]:p-2 rounded-lg group",
                       isActive
@@ -117,7 +123,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links }) => {
 
       <SidebarFooter className="gap-2">
         <CurrentPlanCard plan="bronze" />
-        <NeedAssistanceCard />
+        <NeedAssistanceCard onOpenFaqs={onOpenFaqs} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
@@ -129,47 +135,68 @@ interface SidebarLayoutClientProps {
   role: UserRole;
 }
 
+import { useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
+
 export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
   const links = role === "admin" ? ADMIN_LINKS : TREASURER_LINKS;
   const { data: user } = useGetMeQuery();
+  const [isFaqsOpen, setIsFaqsOpen] = useState(false);
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "GOOD MORNING" : hour < 18 ? "GOOD AFTERNOON" : "GOOD EVENING";
 
   return (
-    <SidebarProvider>
-      <AppSidebar links={links} />
+    <>
+      <SidebarProvider>
+        <AppSidebar links={links} onOpenFaqs={() => setIsFaqsOpen(true)} />
 
-      <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">
-        {/* Header */}
-        <header className="h-20 shrink-0 flex items-center justify-between px-6 bg-background border-b border-border z-10 sticky top-0 transition-colors">
-          <div className="flex items-center gap-4">
-            <SidebarTrigger className="-ml-1" />
-            <div className="hidden sm:flex sm:flex-col">
-              <h2 className="text-base tracking-tight uppercase">
-                {greeting}, {user ? user.first_name : "USER"}.
-              </h2>
-              <span className="text-[10px] font-semibold text-refined-blue border border-refined-blue/30 bg-refined-blue/5 rounded-full px-2 py-0.5 w-fit mt-0.5">
-                {role === "admin" ? "Admin Workspace" : "Treasurer Workspace"}
-              </span>
+        <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">
+          {/* Header */}
+          <header className="h-20 shrink-0 flex items-center justify-between px-6 bg-background border-b border-border z-10 sticky top-0 transition-colors">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="-ml-1" />
+              <div className="hidden sm:flex sm:flex-col">
+                <h2 className="text-base tracking-tight uppercase">
+                  {greeting}, {user ? user.first_name : "USER"}.
+                </h2>
+                <span className="text-[10px] font-semibold text-refined-blue border border-refined-blue/30 bg-refined-blue/5 rounded-full px-2 py-0.5 w-fit mt-0.5">
+                  {role === "admin" ? "Admin Workspace" : "Treasurer Workspace"}
+                </span>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-4">
-            <NotificationsDropdown />
-            <UserProfileDropdown role={role} />
-          </div>
-        </header>
+            <div className="flex items-center gap-4">
+              <NotificationsDropdown />
+              <UserProfileDropdown role={role} />
+            </div>
+          </header>
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-muted transition-colors">
-          <div className="max-w-6xl mx-auto space-y-4">
-            <VerifyEmailAlert />
-            <AppBreadcrumb role={role} />
-            {children}
-          </div>
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+          {/* Page Content */}
+          <ScrollArea className="flex-1 bg-muted transition-colors">
+            <main className="p-4 md:p-6 lg:p-8">
+              <div className="max-w-6xl mx-auto space-y-4">
+                <VerifyEmailAlert />
+                <AppBreadcrumb role={role} />
+                {children}
+              </div>
+            </main>
+          </ScrollArea>
+        </SidebarInset>
+      </SidebarProvider>
+
+      <Dialog open={isFaqsOpen} onOpenChange={setIsFaqsOpen}>
+        <DialogContent
+          className="max-w-4xl p-0 border-none bg-transparent shadow-none"
+          showCloseButton={false}
+        >
+          <ScrollArea className="relative bg-background rounded-3xl overflow-hidden max-h-[85vh]">
+            <FaqsSection />
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

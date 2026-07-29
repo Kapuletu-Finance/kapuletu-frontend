@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,6 +18,7 @@ import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateGroupMutation } from "@/features/groups/services/mutations";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const createGroupSchema = z.object({
   currency: z.string(),
@@ -31,6 +33,8 @@ interface CreateGroupDialogFormProps {
 }
 
 const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children }) => {
+  const router = useRouter();
+  const [isOpen, setIsOpen] = React.useState(false);
   const createGroupMutation = useCreateGroupMutation();
 
   const form = useForm<CreateGroupFormData>({
@@ -52,15 +56,19 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
         currency: data.currency as "KES",
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           form.reset();
+          setIsOpen(false);
+          if (data?.id) {
+            router.push(`/treasurer/groups/${data.id}`);
+          }
         },
       },
     );
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {children && React.isValidElement(children) ? (
         <DialogTrigger render={children} />
       ) : children ? (
@@ -70,7 +78,7 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
       <DialogContent className="rounded-3xl sm:max-w-112.5">
         <DialogHeader className="items-center space-y-4">
           <div className="rounded-full bg-primary/10 p-3">
-            <div className="text-2xl text-primary">🔒</div>
+            <SiteLogo variant="icon" logoClassName="w-8 h-8 text-primary" />
           </div>
           <DialogTitle className="text-xl">Create A New Group</DialogTitle>
         </DialogHeader>
@@ -85,6 +93,7 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
                   <FieldLabel
                     htmlFor={field.name}
                     className="text-sm font-semibold text-foreground"
+                    isRequired
                   >
                     Group Name
                   </FieldLabel>
@@ -132,7 +141,9 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
             />
 
             <Field>
-              <FieldLabel className="text-sm font-semibold text-foreground">Currency</FieldLabel>
+              <FieldLabel className="text-sm font-semibold text-foreground" isRequired>
+                Currency
+              </FieldLabel>
               <Button
                 type="button"
                 variant="outline"

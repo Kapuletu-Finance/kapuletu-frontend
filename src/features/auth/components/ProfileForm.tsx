@@ -7,7 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PasswordRequirements } from "@/features/auth/components/PasswordRequirements";
 import {
   type ChangePasswordFormData,
   changePasswordSchema,
@@ -188,17 +190,12 @@ export const ProfileForm = () => {
                       name="oldPassword"
                       render={({ field, fieldState }) => (
                         <Field className="space-y-2" data-invalid={!!fieldState.error}>
-                          <FieldLabel htmlFor={field.name} required>
+                          <FieldLabel htmlFor={field.name} isRequired>
                             Current Password
                           </FieldLabel>
                           <div className="relative max-w-sm">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                              <IconLibrary name="lock" className="h-4 w-4" />
-                            </div>
-                            <Input
+                            <PasswordInput
                               id={field.name}
-                              type="password"
-                              className="pl-10"
                               {...field}
                               aria-invalid={!!fieldState.error}
                             />
@@ -213,21 +210,17 @@ export const ProfileForm = () => {
                       name="newPassword"
                       render={({ field, fieldState }) => (
                         <Field className="space-y-2" data-invalid={!!fieldState.error}>
-                          <FieldLabel htmlFor={field.name} required>
+                          <FieldLabel htmlFor={field.name} isRequired>
                             New Password
                           </FieldLabel>
                           <div className="relative max-w-sm">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                              <IconLibrary name="refresh" className="h-4 w-4" />
-                            </div>
-                            <Input
+                            <PasswordInput
                               id={field.name}
-                              type="password"
-                              className="pl-10"
                               {...field}
                               aria-invalid={!!fieldState.error}
                             />
                           </div>
+                          <PasswordRequirements password={passwordForm.watch("newPassword")} />
                           <FieldError>{fieldState.error?.message}</FieldError>
                         </Field>
                       )}
@@ -238,17 +231,12 @@ export const ProfileForm = () => {
                       name="confirmNewPassword"
                       render={({ field, fieldState }) => (
                         <Field className="space-y-2" data-invalid={!!fieldState.error}>
-                          <FieldLabel htmlFor={field.name} required>
+                          <FieldLabel htmlFor={field.name} isRequired>
                             Confirm New Password
                           </FieldLabel>
                           <div className="relative max-w-sm">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                              <IconLibrary name="lock" className="h-4 w-4" />
-                            </div>
-                            <Input
+                            <PasswordInput
                               id={field.name}
-                              type="password"
-                              className="pl-10"
                               {...field}
                               aria-invalid={!!fieldState.error}
                             />

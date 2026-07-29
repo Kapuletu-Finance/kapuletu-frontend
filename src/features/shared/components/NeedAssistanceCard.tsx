@@ -1,13 +1,26 @@
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
+import { useSidebar } from "@/components/ui/sidebar";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { cn } from "@/lib/utils";
 
-const NeedAssistanceCard = () => {
+interface NeedAssistanceCardProps {
+  onOpenFaqs?: () => void;
+}
+
+const NeedAssistanceCard = ({ onOpenFaqs }: NeedAssistanceCardProps) => {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleClick = () => {
+    if (onOpenFaqs) {
+      onOpenFaqs();
+    }
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
-    <Dialog>
+    <>
       {/* Full Card View */}
       <Card className="bg-primary border-none shadow-lg text-primary-foreground relative overflow-hidden group-data-[collapsible=icon]:hidden">
         {/* Decorative background arcs */}
@@ -29,33 +42,27 @@ const NeedAssistanceCard = () => {
             FAQ center.
           </p>
 
-          <DialogTrigger
-            className={cn(
-              buttonVariants({ variant: "secondary" }),
-              "font-semibold text-primary hover:bg-background",
-            )}
+          <Button
+            variant="secondary"
+            onClick={handleClick}
+            className="font-semibold text-primary hover:bg-background"
           >
             Visit our FAQs Page
-          </DialogTrigger>
+          </Button>
         </CardContent>
       </Card>
 
       {/* Collapsed Icon View */}
-      <DialogTrigger className="hidden group-data-[collapsible=icon]:flex justify-center shrink-0 outline-none">
+      <Button
+        variant="ghost"
+        onClick={handleClick}
+        className="hidden group-data-[collapsible=icon]:flex justify-center shrink-0 outline-none w-full hover:bg-transparent h-auto p-0"
+      >
         <div className="flex items-center justify-center size-10 rounded-sm bg-primary text-primary-foreground cursor-pointer hover:opacity-80 transition-opacity">
           <IconLibrary name="help" className="size-5" />
         </div>
-      </DialogTrigger>
-
-      <DialogContent
-        className="max-w-4xl p-0 border-none bg-transparent shadow-none"
-        showCloseButton={false}
-      >
-        <div className="relative bg-background rounded-3xl overflow-hidden max-h-[85vh] overflow-y-auto">
-          <FaqsSection />
-        </div>
-      </DialogContent>
-    </Dialog>
+      </Button>
+    </>
   );
 };
 

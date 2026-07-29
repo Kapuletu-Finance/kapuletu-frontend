@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -46,6 +47,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
   onOpenChange,
 }) => {
   const isEditing = !!campaign;
+  const router = useRouter();
 
   const createMutation = useCreateCampaignMutation(groupId);
   const updateMutation = useUpdateCampaignMutation(campaign?.id ?? "");
@@ -95,9 +97,12 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
       });
     } else {
       createMutation.mutate(payload, {
-        onSuccess: () => {
+        onSuccess: (data) => {
           form.reset();
           onOpenChange(false);
+          if (data?.id) {
+            router.push(`/treasurer/groups/${groupId}/campaigns/${data.id}`);
+          }
         },
       });
     }

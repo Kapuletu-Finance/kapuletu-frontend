@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import ManageGroupDialogForm from "@/features/groups/components/ManageGroupDialogForm";
+import EditGroupDialogForm from "@/features/groups/components/EditGroupDialogForm";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { cn, getInitials } from "@/lib/utils";
 
@@ -98,15 +98,15 @@ const GroupCard: React.FC<GroupCardProps> = ({
               View Details
             </Button>
           </Link>
-          <ManageGroupDialogForm group={group}>
+          <EditGroupDialogForm group={group}>
             <Button
               size="sm"
               variant="outline"
               className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-9"
             >
-              Manage Group
+              Edit Group
             </Button>
-          </ManageGroupDialogForm>
+          </EditGroupDialogForm>
           <Button variant="outline" size="icon" onClick={onToggleFavorite}>
             <IconLibrary
               name="favorite"
@@ -122,8 +122,8 @@ const GroupCard: React.FC<GroupCardProps> = ({
   }
 
   return (
-    <Card className={cn("p-6 space-y-6 bg-card flex flex-col justify-between", className)}>
-      <div className="space-y-6">
+    <Card className={cn("p-6 bg-card flex flex-col h-full", className)}>
+      <div className="flex flex-col gap-6 flex-1">
         {/* Header */}
         <div className="flex flex-row items-start gap-4">
           <div
@@ -165,7 +165,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
 
         {/* Campaigns Progress */}
         {campaigns.length > 0 && (
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 px-0 py-0">
             <div className="flex flex-col gap-4">
               {campaigns.map((c) => (
                 <div key={c.name} className="flex items-center justify-between gap-4 text-sm">
@@ -187,7 +187,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
       </div>
 
       {/* Footer Actions */}
-      <CardFooter className="flex flex-row items-center justify-between gap-2 border-none bg-transparent px-0 pb-0 pt-0">
+      <CardFooter className="flex flex-row items-center justify-between gap-2 border-none bg-transparent px-0 pb-6 pt-6 mt-auto">
         <Link href={`/treasurer/groups/${group.id}`}>
           <Button
             onClick={onViewDetails}
@@ -197,14 +197,14 @@ const GroupCard: React.FC<GroupCardProps> = ({
           </Button>
         </Link>
         <div className="flex items-center gap-2">
-          <ManageGroupDialogForm group={group}>
+          <EditGroupDialogForm group={group}>
             <Button
               variant="outline"
               className="border-primary text-primary hover:text-primary hover:bg-primary/5"
             >
-              Manage Group
+              Edit Group
             </Button>
-          </ManageGroupDialogForm>
+          </EditGroupDialogForm>
           <Button variant="outline" size="icon" onClick={onToggleFavorite}>
             <IconLibrary
               name="favorite"
