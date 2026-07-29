@@ -79,31 +79,33 @@ const PLAN_CONFIG: Record<PlanType, PlanConfig> = {
   free: {
     name: "FREE",
     icon: "gift",
-    iconWrapperClass: "flex items-center justify-center",
-    iconClass: "w-5 h-5 text-muted-foreground",
+    iconWrapperClass:
+      "flex items-center justify-center p-1.5 rounded-md bg-secondary shadow-inner border border-white/20",
+    iconClass: "w-4 h-4 text-secondary-foreground",
     buttonText: "Unlock all premium features free for 14 days",
   },
   bronze: {
     name: "BRONZE",
     icon: "star",
     iconWrapperClass:
-      "flex items-center justify-center p-1.5 rounded-md bg-gradient-to-br from-plan-bronze-from to-plan-bronze-to shadow-inner border border-white/20",
-    iconClass: "w-4 h-4 text-plan-bronze-fg fill-plan-bronze-fg",
+      "flex items-center justify-center p-1.5 rounded-md bg-primary shadow-inner border border-white/20",
+    iconClass: "w-4 h-4 text-primary-foreground fill-primary-foreground",
     buttonText: "Manage Subscription",
   },
   silver: {
     name: "SILVER",
     icon: "star",
-    iconWrapperClass: "flex items-center justify-center",
-    iconClass: "w-6 h-6 text-plan-silver fill-plan-silver",
+    iconWrapperClass:
+      "flex items-center justify-center p-1.5 rounded-md bg-primary shadow-inner border border-white/20",
+    iconClass: "w-4 h-4 text-primary-foreground fill-primary-foreground",
     buttonText: "Manage Subscription",
   },
   gold: {
     name: "GOLD",
     icon: "star",
     iconWrapperClass:
-      "flex items-center justify-center p-1.5 rounded-md bg-gradient-to-br from-plan-gold-from to-plan-gold-to shadow-inner border border-white/20",
-    iconClass: "w-4 h-4 text-plan-gold-fg fill-plan-gold-fg",
+      "flex items-center justify-center p-1.5 rounded-md bg-primary shadow-inner border border-white/20",
+    iconClass: "w-4 h-4 text-primary-foreground fill-primary-foreground",
     buttonText: "Manage Subscription",
   },
 };

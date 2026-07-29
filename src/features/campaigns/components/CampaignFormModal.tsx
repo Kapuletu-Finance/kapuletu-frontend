@@ -20,7 +20,7 @@ import {
   useCreateCampaignMutation,
   useUpdateCampaignMutation,
 } from "@/features/campaigns/services/mutations";
-import IconLibrary from "@/features/shared/components/IconLibrary";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import type { CampaignInfo } from "./CampaignCard";
 
 const campaignSchema = z.object({
@@ -114,9 +114,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-100 p-6 gap-6">
         <DialogHeader className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0">
-            <IconLibrary name="campaign" className="w-8 h-8 text-primary" />
-          </div>
+          <SiteLogo variant="icon" href={null} logoClassName="w-12 h-12 text-primary" />
           <DialogTitle className="text-center text-xl font-semibold">
             {isEditing ? "Campaign Settings" : "Create A New Campaign"}
           </DialogTitle>
