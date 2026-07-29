@@ -48,6 +48,12 @@ export const useSignInMutation = () => {
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
+      // If phone number is not yet verified, redirect to the verify-phone page
+      if (!data.phone_number_verified) {
+        window.location.href = "/verify-phone";
+        return;
+      }
+
       const params = new URLSearchParams(window.location.search);
       const from = params.get("from");
 
@@ -237,6 +243,7 @@ export const useVerifyPhoneConfirmMutation = () => {
     },
     onSuccess: (data) => {
       toast.success(data.message || "Phone number verified successfully!");
+      setCookie("phone_verified", "true", { path: "/" });
     },
   });
 };

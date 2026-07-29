@@ -29,11 +29,20 @@ export const proxy = (request: NextRequest) => {
 
   const accessToken = request.cookies.get(accessTokenCookieName)?.value;
   const userRole = request.cookies.get(roleCookieName)?.value;
+  const phoneVerified = request.cookies.get("phone_verified")?.value;
 
   // Signed-in user logic
   if (accessToken && userRole) {
+    // If phone is not verified, restrict access to only the verify-phone page
+    if (phoneVerified === "false") {
+      if (!isAuthenticatedOnlyRoute && !isAuthRoute) {
+        return NextResponse.redirect(new URL("/verify-phone", request.url));
+      }
+      return NextResponse.next();
+    }
+
     // Redirect away from root and auth pages to their dashboard
-    if (isRootRoute || isAuthRoute) {
+    if (isRootRoute || isAuthRoute || isAuthenticatedOnlyRoute) {
       if (userRole === "treasurer")
         return NextResponse.redirect(new URL("/treasurer", request.url));
       if (userRole === "admin") return NextResponse.redirect(new URL("/admin", request.url));

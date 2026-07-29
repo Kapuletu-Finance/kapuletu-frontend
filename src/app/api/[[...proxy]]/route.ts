@@ -148,21 +148,31 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
 
       // Fetch /auth/me with the new token to get the user's role
       let role = "treasurer"; // safe default
+      let phone_number_verified = false; // safe default
       try {
         const meResponse = await axios.get(`${BACKEND_URL}/auth/me`, {
           headers: { Authorization: `Bearer ${access_token}` },
           validateStatus: () => true,
         });
-        if (meResponse.status >= 200 && meResponse.status < 300 && meResponse.data?.role) {
-          role = meResponse.data.role;
+        if (meResponse.status >= 200 && meResponse.status < 300) {
+          if (meResponse.data?.role) {
+            role = meResponse.data.role;
+          }
+          if (typeof meResponse.data?.phone_number_verified === "boolean") {
+            phone_number_verified = meResponse.data.phone_number_verified;
+          }
         }
       } catch {
         // If /auth/me fails, fall back to default role
       }
 
       cookieStore.set(ROLE_COOKIE_NAME, role, PUBLIC_COOKIE_OPTIONS);
+      cookieStore.set("phone_verified", String(phone_number_verified), PUBLIC_COOKIE_OPTIONS);
 
-      return NextResponse.json({ ...rest, role }, { status: axiosResponse.status });
+      return NextResponse.json(
+        { ...rest, role, phone_number_verified },
+        { status: axiosResponse.status },
+      );
     }
 
     // Handle Auth Logout Interception
@@ -170,6 +180,7 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
       cookieStore.delete(ACCESS_TOKEN_COOKIE_NAME);
       cookieStore.delete(REFRESH_TOKEN_COOKIE_NAME);
       cookieStore.delete(ROLE_COOKIE_NAME);
+      cookieStore.delete("phone_verified");
       return NextResponse.json(
         { message: "Logged out successfully" },
         { status: axiosResponse.status },

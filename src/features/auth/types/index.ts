@@ -38,6 +38,7 @@ export type RegisterOut = {
  */
 export type SignInResponse = {
   role: string;
+  phone_number_verified?: boolean;
 };
 
 export type SignInRequest = {

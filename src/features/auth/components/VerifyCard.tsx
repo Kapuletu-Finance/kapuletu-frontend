@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -75,7 +75,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
         { ...data, identifier: finalIdentifier },
         {
           onSuccess: () => {
-            setTimeout(() => router.push("/sign-in"), 2000);
+            setTimeout(() => router.push("/treasurer"), 2000);
           },
         },
       );
@@ -88,7 +88,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     }
   };
 
-  const handleResend = () => {
+  const handleResend = useCallback(() => {
     const finalIdentifier = user?.phone_number || "";
 
     if (isPhone) {
@@ -100,7 +100,18 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     } else {
       emailRequestMutation.mutate();
     }
-  };
+  }, [user?.phone_number, isPhone, phoneRequestMutation, emailRequestMutation]);
+
+  const hasRequestedRef = useRef(false);
+
+  useEffect(() => {
+    if (isPhone && !user?.phone_number) return;
+
+    if (!hasRequestedRef.current) {
+      hasRequestedRef.current = true;
+      handleResend();
+    }
+  }, [user?.phone_number, isPhone, handleResend]);
 
   return (
     <div className="w-full pb-4">
