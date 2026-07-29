@@ -8,16 +8,27 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 import { useWorkspaceOverviewQuery } from "@/features/treasurer/services/queries";
 
 const getActionIcon = (action: string) => {
-  if (action.toLowerCase().includes("campaign")) {
-    return <IconLibrary name="add-circle" className="w-5 h-5 fill-primary text-background" />;
+  switch (action) {
+    case "CAMPAIGN_CREATED":
+    case "CAMPAIGN_UPDATED":
+    case "CAMPAIGN_ARCHIVED":
+      return <IconLibrary name="add-circle" className="w-5 h-5 fill-primary text-background" />;
+
+    case "TXN_APPROVED":
+    case "TXN_SPLIT_APPROVED":
+    case "MANUAL_ENTRY":
+      return <IconLibrary name="contribution" className="w-5 h-5 text-amber-500" />;
+
+    case "GROUP_CREATED":
+    case "GROUP_UPDATED":
+    case "GROUP_ARCHIVED":
+      return (
+        <IconLibrary name="group" className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />
+      );
+
+    default:
+      return <IconLibrary name="add-circle" className="w-5 h-5 fill-primary text-background" />;
   }
-  if (action.toLowerCase().includes("approved") || action.toLowerCase().includes("transaction")) {
-    return <IconLibrary name="contribution" className="w-5 h-5 text-amber-500" />;
-  }
-  if (action.toLowerCase().includes("group")) {
-    return <IconLibrary name="group" className="w-5 h-5 text-primary dark:text-primary" />;
-  }
-  return <IconLibrary name="add-circle" className="w-5 h-5 fill-primary text-background" />;
 };
 
 const formatTimestamp = (iso: string) => {
@@ -70,7 +81,11 @@ const RecentActivitiesSection = () => {
 
                   <div className="flex flex-col gap-1">
                     <p className="font-medium text-foreground text-sm sm:text-base leading-snug">
-                      {activity.action}
+                      {activity.details?.message ||
+                        activity.action
+                          .split("_")
+                          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                          .join(" ")}
                     </p>
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       {formatTimestamp(activity.created_at)}

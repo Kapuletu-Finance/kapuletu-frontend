@@ -77,6 +77,10 @@ export interface WorkspaceActivity {
   action: string;
   entity_type: string;
   created_at: string;
+  details?: {
+    message?: string;
+    [key: string]: unknown;
+  };
 }
 
 export interface WorkspaceOverviewOut {
