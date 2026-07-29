@@ -57,12 +57,14 @@ const CurrentPlanCard = () => {
             </div>
           </div>
 
-          <p className="text-xs sm:text-sm text-muted-foreground font-medium h-5">
+          <div className="text-xs sm:text-sm text-muted-foreground font-medium h-5">
             {isLoading ? <Skeleton className="h-4 w-40" /> : `Next billing date: ${formattedDate}`}
-          </p>
+          </div>
 
           <Link href="/subscriptions" className="w-full" onClick={handleClick}>
-            <Button className="w-full font-semibold">{config.buttonText}</Button>
+            <Button className="w-full font-semibold h-auto whitespace-normal py-2">
+              {config.buttonText}
+            </Button>
           </Link>
         </CardContent>
       </Card>

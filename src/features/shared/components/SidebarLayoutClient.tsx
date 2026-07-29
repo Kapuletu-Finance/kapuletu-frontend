@@ -185,7 +185,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
           </header>
 
           {/* Page Content */}
-          <ScrollArea className="flex-1 bg-muted transition-colors">
+          <ScrollArea className="flex-1 min-h-0 bg-muted transition-colors">
             <main className="p-4 md:p-6 lg:p-8">
               <div className="max-w-6xl mx-auto space-y-4">
                 <VerifyEmailAlert />
