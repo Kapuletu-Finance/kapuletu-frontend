@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 const mapCampaignToInfo = (campaign: CampaignOut): CampaignInfo => ({
   id: campaign.id,
   group_id: campaign.group_id,
+  slug: campaign.slug || undefined,
   name: campaign.title,
   description: campaign.description || "",
   iconClassName: getAvatarColor(campaign.title),
@@ -44,10 +45,10 @@ export const TreasurerGroupDetailPageClient = () => {
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(0));
 
   const params = useParams();
-  const groupId = typeof params.groupId === "string" ? params.groupId : "";
+  const groupSlug = typeof params.groupSlug === "string" ? params.groupSlug : "";
   const limit = 12;
 
-  const { data, isLoading } = useCampaignsQuery(groupId, {
+  const { data, isLoading } = useCampaignsQuery(groupSlug, {
     skip: page * limit,
     limit,
     search: search || undefined,
@@ -91,27 +92,9 @@ export const TreasurerGroupDetailPageClient = () => {
         }
         stats={
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            <StatCard
-              label="Total campaigns"
-              count={totalItems}
-              trend="- 0% vs last month"
-              trendDirection="neutral"
-              iconName="group"
-            />
-            <StatCard
-              label="Active campaigns"
-              count={activeCampaigns}
-              trend="- 0% vs last month"
-              trendDirection="neutral"
-              iconName="check-circle"
-            />
-            <StatCard
-              label="Archived campaigns"
-              count={archivedCampaigns}
-              trend="- 0% vs last month"
-              trendDirection="neutral"
-              iconName="lock"
-            />
+            <StatCard label="Total campaigns" count={totalItems} iconName="group" />
+            <StatCard label="Active campaigns" count={activeCampaigns} iconName="check-circle" />
+            <StatCard label="Archived campaigns" count={archivedCampaigns} iconName="lock" />
           </div>
         }
         controls={
@@ -204,7 +187,7 @@ export const TreasurerGroupDetailPageClient = () => {
               <CampaignCard
                 key={campaign.id}
                 campaign={campaign}
-                groupId={groupId}
+                groupId={groupSlug}
                 variant={view as "grid" | "list"}
                 onEditCampaign={() => setEditingCampaign(campaign)}
               />
@@ -218,12 +201,12 @@ export const TreasurerGroupDetailPageClient = () => {
         )}
       </PageLayout>
       <CampaignFormModal
-        groupId={groupId}
+        groupId={groupSlug}
         isOpen={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
       />
       <CampaignFormModal
-        groupId={groupId}
+        groupId={groupSlug}
         campaign={editingCampaign}
         isOpen={!!editingCampaign}
         onOpenChange={(open) => {

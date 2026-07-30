@@ -15,6 +15,7 @@ export interface CampaignProgress {
 
 export interface GroupInfo {
   id: string;
+  slug?: string;
   name: string;
   description: string;
   iconClassName?: string;
@@ -89,7 +90,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <Link href={`/treasurer/groups/${group.id}`}>
+          <Link href={`/treasurer/groups/${group.slug || group.id}`}>
             <Button
               size="sm"
               onClick={onViewDetails}
@@ -188,7 +189,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
 
       {/* Footer Actions */}
       <CardFooter className="flex flex-row items-center justify-between gap-2 border-none bg-transparent px-0 pb-6 pt-6 mt-auto">
-        <Link href={`/treasurer/groups/${group.id}`}>
+        <Link href={`/treasurer/groups/${group.slug || group.id}`}>
           <Button
             onClick={onViewDetails}
             className="bg-primary text-primary-foreground hover:bg-primary/90 px-4"

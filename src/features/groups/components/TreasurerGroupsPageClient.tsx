@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 
 const mapGroupToInfo = (group: GroupOut): GroupInfo => ({
   id: group.id,
+  slug: group.slug || undefined,
   name: group.name,
   description: group.description || "",
   iconClassName: getAvatarColor(group.name),
@@ -77,27 +78,9 @@ export const TreasurerGroupsPageClient = () => {
       actionButton={<CreateGroupButtonDialogForm />}
       stats={
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          <StatCard
-            label="Total number of groups"
-            count={totalItems}
-            trend="+5% vs last month"
-            trendDirection="up"
-            iconName="group"
-          />
-          <StatCard
-            label="Active groups"
-            count={activeGroups}
-            trend="+5% vs last month"
-            trendDirection="up"
-            iconName="check-circle"
-          />
-          <StatCard
-            label="Archived groups"
-            count={archivedGroups}
-            trend="- 0% vs last month"
-            trendDirection="neutral"
-            iconName="lock"
-          />
+          <StatCard label="Total number of groups" count={totalItems} iconName="group" />
+          <StatCard label="Active groups" count={activeGroups} iconName="check-circle" />
+          <StatCard label="Archived groups" count={archivedGroups} iconName="lock" />
         </div>
       }
       controls={

@@ -17,7 +17,7 @@ const Home = () => {
         <AboutUsSection />
         <HowItWorksSection />
         <FeaturesSection />
-        <PricingSection />1
+        <PricingSection />
         <FaqsSection />
         <CtaSection />
       </main>

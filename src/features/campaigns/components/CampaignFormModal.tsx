@@ -26,7 +26,7 @@ import type { CampaignInfo } from "./CampaignCard";
 const campaignSchema = z.object({
   name: z.string().min(1, "Campaign name is required"),
   description: z.string().optional(),
-  target: z.string().optional(),
+  target: z.string().min(1, "Target amount is required"),
   instructions: z.string().optional(),
   status: z.string().optional(),
 });
@@ -100,8 +100,8 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
         onSuccess: (data) => {
           form.reset();
           onOpenChange(false);
-          if (data?.id) {
-            router.push(`/treasurer/groups/${groupId}/campaigns/${data.id}`);
+          if (data?.slug) {
+            router.push(`/treasurer/groups/${groupId}/campaigns/${data.slug}`);
           }
         },
       });
@@ -127,7 +127,11 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
               name="name"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.name}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-medium text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-medium text-foreground"
+                    isRequired
+                  >
                     Campaign Name
                   </FieldLabel>
                   <Input
@@ -171,7 +175,11 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
               name="target"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.target}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-medium text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-medium text-foreground"
+                    isRequired
+                  >
                     Target Amount
                   </FieldLabel>
                   <Input

@@ -10,6 +10,7 @@ import { cn, getInitials } from "@/lib/utils";
 export interface CampaignInfo {
   id: string;
   group_id: string;
+  slug?: string;
   name: string;
   description: string;
   iconClassName?: string;
@@ -56,8 +57,8 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
   );
 
   const detailHref = groupId
-    ? `/treasurer/groups/${groupId}/campaigns/${campaign.id}`
-    : `/treasurer/campaigns/${campaign.id}`;
+    ? `/treasurer/groups/${groupId}/campaigns/${campaign.slug || campaign.id}`
+    : `/treasurer/campaigns/${campaign.slug || campaign.id}`;
 
   if (variant === "list") {
     return (

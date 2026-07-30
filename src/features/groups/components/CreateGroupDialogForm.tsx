@@ -59,8 +59,8 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
         onSuccess: (data) => {
           form.reset();
           setIsOpen(false);
-          if (data?.id) {
-            router.push(`/treasurer/groups/${data.id}`);
+          if (data?.slug) {
+            router.push(`/treasurer/groups/${data.slug}`);
           }
         },
       },

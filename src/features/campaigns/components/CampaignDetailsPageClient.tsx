@@ -41,16 +41,16 @@ const CampaignDetailSkeleton = () => (
 
 const CampaignDetailsPageClient = () => {
   const params = useParams();
-  const groupId = typeof params.groupId === "string" ? params.groupId : "";
-  const campaignId = typeof params.campaignId === "string" ? params.campaignId : "";
+  const groupSlug = typeof params.groupSlug === "string" ? params.groupSlug : "";
+  const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
 
-  const { data, isLoading } = useCampaignsQuery(groupId, { limit: 100 });
+  const { data, isLoading } = useCampaignsQuery(groupSlug, { limit: 100 });
 
   if (isLoading) {
     return <CampaignDetailSkeleton />;
   }
 
-  const campaignData = data?.items?.find((c) => c.id === campaignId);
+  const campaignData = data?.items?.find((c) => c.slug === campaignSlug);
 
   if (!campaignData) {
     return (
@@ -63,6 +63,7 @@ const CampaignDetailsPageClient = () => {
   const campaign = {
     id: campaignData.id,
     group_id: campaignData.group_id,
+    slug: campaignData.slug || undefined,
     name: campaignData.title,
     description: campaignData.description || "",
     iconClassName: getAvatarColor(campaignData.title),

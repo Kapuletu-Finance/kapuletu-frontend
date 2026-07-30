@@ -59,7 +59,9 @@ const formatSegment = (segment: string): string => {
 
 const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
   const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = pathname
+    .split("/")
+    .filter((segment) => Boolean(segment) && segment.toLowerCase() !== "campaigns");
 
   if (segments.length === 0) {
     return null;
