@@ -103,3 +103,51 @@ export const useToggleCampaignFavoriteMutation = (campaignId: string) => {
     },
   });
 };
+
+export const useExportCampaignPdfMutation = (campaignId: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.get(CAMPAIGNS_URLS.campaignExportPdf(campaignId), {
+        responseType: "blob",
+      });
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to download PDF.");
+    },
+    onSuccess: (data) => {
+      const url = window.URL.createObjectURL(new Blob([data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `campaign-${campaignId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    },
+  });
+};
+
+export const useExportCampaignExcelMutation = (campaignId: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.get(CAMPAIGNS_URLS.campaignExportExcel(campaignId), {
+        responseType: "blob",
+      });
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to download Excel.");
+    },
+    onSuccess: (data) => {
+      const url = window.URL.createObjectURL(new Blob([data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `campaign-${campaignId}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    },
+  });
+};

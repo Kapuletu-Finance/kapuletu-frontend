@@ -1,8 +1,6 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { Children, isValidElement, useCallback, useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,10 +9,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useUpdateCampaignMutation } from "@/features/campaigns/services/mutations";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
-import { CAMPAIGNS_URLS } from "@/features/campaigns/urls";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { apiClient } from "@/lib/api-client";
 
 interface DisableCampaignAccessPinDialogProps {
   campaignSlug: string;
@@ -26,27 +23,21 @@ const DisableCampaignAccessPinDialog = ({
   children,
 }: DisableCampaignAccessPinDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isPending, setIsPending] = useState(false);
-  const queryClient = useQueryClient();
   const { data: campaign } = useCampaignQuery(campaignSlug);
+  const { mutateAsync: updateCampaign, isPending } = useUpdateCampaignMutation(campaignSlug);
   const childrenArray = Children.toArray(children);
   const triggerElement = childrenArray.find((child) => isValidElement(child)) || null;
 
   const handleDisable = useCallback(async () => {
-    setIsPending(true);
     try {
-      await apiClient.patch(CAMPAIGNS_URLS.campaignDetail(campaignSlug), {
+      await updateCampaign({
         settings: { require_pin: false },
       });
-      queryClient.invalidateQueries({ queryKey: ["campaign", campaignSlug] });
-      toast.success("Access PIN disabled.");
       setIsOpen(false);
     } catch {
-      toast.error("Failed to disable access PIN.");
-    } finally {
-      setIsPending(false);
+      // Error is handled in the mutation
     }
-  }, [campaignSlug, queryClient]);
+  }, [updateCampaign]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Children, isValidElement, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,8 +16,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { TRANSACTIONS_URLS } from "@/features/transactions/urls";
-import { apiClient } from "@/lib/api-client";
+import { useAddManualContributionMutation } from "@/features/transactions/services/mutations";
 
 const addContributionSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -30,13 +28,12 @@ const addContributionSchema = z.object({
 type AddContributionFormData = z.infer<typeof addContributionSchema>;
 
 interface AddContributionDialogProps {
-  campaignSlug: string;
+  campaignSlug?: string;
   children?: React.ReactNode;
 }
 
-const AddContributionDialog = ({ campaignSlug, children }: AddContributionDialogProps) => {
+const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isPending, setIsPending] = useState(false);
   const childrenArray = Children.toArray(children);
   const triggerElement = childrenArray.find((child) => isValidElement(child)) || null;
 
@@ -49,28 +46,21 @@ const AddContributionDialog = ({ campaignSlug, children }: AddContributionDialog
     },
     resolver: zodResolver(addContributionSchema),
   });
+  const { mutateAsync: addContribution, isPending } = useAddManualContributionMutation();
 
   const onSubmit = useCallback(
     async (data: AddContributionFormData) => {
-      setIsPending(true);
-      try {
-        await apiClient.post(TRANSACTIONS_URLS.MANUAL_ENTRY, {
-          sender_name: data.name,
-          sender_phone: data.phone,
-          amount: Number.parseFloat(data.amount.replace(/,/g, "")),
-          payment_method: data.paymentType || "Cash",
-          campaign_id: campaignSlug,
-        });
-        toast.success("Contribution added successfully!");
-        form.reset();
-        setIsOpen(false);
-      } catch {
-        toast.error("Failed to add contribution.");
-      } finally {
-        setIsPending(false);
-      }
+      await addContribution({
+        sender_name: data.name,
+        sender_phone: data.phone,
+        amount: Number.parseFloat(data.amount.replace(/,/g, "")),
+        payment_method: data.paymentType || "Cash",
+        ...(campaignSlug ? { campaign_id: campaignSlug } : {}),
+      });
+      form.reset();
+      setIsOpen(false);
     },
-    [campaignSlug, form],
+    [campaignSlug, form, addContribution],
   );
 
   return (
@@ -186,4 +176,4 @@ const AddContributionDialog = ({ campaignSlug, children }: AddContributionDialog
   );
 };
 
-export default AddContributionDialog;
+export default AddContributionFormDialog;

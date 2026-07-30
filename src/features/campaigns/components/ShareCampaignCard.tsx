@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { env } from "@/env";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
@@ -23,7 +24,7 @@ const ShareCampaignCard = () => {
   const target_amount = campaignData?.target_amount ?? 0;
   const remaining = Math.max(0, target_amount - total_raised);
   const publicSlug = campaignData?.slug || campaignSlug;
-  const publicUrl = `https://app.kapuletu.co.ke/report/${publicSlug}`;
+  const publicUrl = `${env.NEXT_PUBLIC_APP_URL}/report/${publicSlug}`;
   const settings = campaignData?.settings_override;
   const accessPin = settings?.access_pin;
 

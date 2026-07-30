@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { env } from "@/env";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
@@ -13,7 +14,7 @@ const PublicReportLinkCard = () => {
   const { data: campaignData } = useCampaignQuery(campaignSlug);
 
   const publicSlug = campaignData?.slug || campaignSlug;
-  const publicUrl = `https://app.kapuletu.co.ke/report/${publicSlug}`;
+  const publicUrl = `${env.NEXT_PUBLIC_APP_URL}/report/${publicSlug}`;
   const settings = campaignData?.settings_override;
   const accessPin = settings?.access_pin;
   const pinDigits = accessPin ? accessPin.split("") : ["-", "-", "-", "-"];

@@ -7,7 +7,7 @@ import ShareCampaignCard from "@/features/campaigns/components/ShareCampaignCard
 export default function CampaignOverviewPage() {
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-stretch">
         <div className="xl:col-span-2">
           <CampaignProgressCard />
         </div>

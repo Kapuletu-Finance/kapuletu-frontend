@@ -48,7 +48,7 @@ const CampaignProgressCard = () => {
   const yTicks = [0, Math.round(maxValue / 2), Math.round(maxValue)];
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-xl font-bold text-foreground font-sans">Progress</CardTitle>
 

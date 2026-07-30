@@ -1,3 +1,5 @@
+"use client";
+
 import type React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -7,125 +9,96 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  useMarkAllNotificationsReadMutation,
+  useNotificationsQuery,
+} from "@/features/notifications/services/queries";
 import IconLibrary, { type IconName } from "@/features/shared/components/IconLibrary";
+import type { NotificationOut } from "@/features/shared/types";
 import { cn } from "@/lib/utils";
 
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  icon: IconName;
-  iconClassName?: string;
-  iconBgClassName?: string;
-  unread: boolean;
+function timeAgo(dateString: string): string {
+  const now = Date.now();
+  const then = new Date(dateString).getTime();
+  const seconds = Math.floor((now - then) / 1000);
+
+  if (seconds < 60) return "Just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }
 
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    title: "New contribution received",
-    message: "Ksh. 5000 has been received from John Doe for Medical Fund.",
-    time: "Just now",
-    icon: "transaction",
-    iconClassName: "text-primary",
-    iconBgClassName: "bg-primary/10 dark:bg-primary/30",
-    unread: true,
-  },
-  {
-    id: "2",
-    title: "Password reset successful",
-    message:
-      "Your password has been successfully reset. You can use your new password when logging in.",
-    time: "2m ago",
-    icon: "key",
-    iconClassName: "text-blue-600",
-    iconBgClassName: "bg-blue-100 dark:bg-blue-900/30",
-    unread: true,
-  },
-  {
-    id: "3",
-    title: "Monthly report is ready",
-    message: "June 2026 report has been generated and is ready to view.",
-    time: "20m ago",
-    icon: "report",
-    iconClassName: "text-orange-600",
-    iconBgClassName: "bg-orange-100 dark:bg-orange-900/30",
-    unread: false,
-  },
-  {
-    id: "4",
-    title: "Campaign goal achieved.",
-    message: "You've reached your target amount for campaign X.",
-    time: "1h ago",
-    icon: "campaign",
-    iconClassName: "text-primary",
-    iconBgClassName: "bg-primary/10 dark:bg-primary/30",
-    unread: false,
-  },
-  {
-    id: "5",
-    title: "New contribution received",
-    message: "Ksh. 5000 has been received from John Doe for Medical Fund.",
-    time: "1d ago",
-    icon: "transaction",
-    iconClassName: "text-blue-600",
-    iconBgClassName: "bg-blue-100 dark:bg-blue-900/30",
-    unread: false,
-  },
-  {
-    id: "6",
-    title: "Monthly report is ready",
-    message: "June 2026 report has been generated and is ready to view.",
-    time: "1d ago",
-    icon: "report",
-    iconClassName: "text-orange-600",
-    iconBgClassName: "bg-orange-100 dark:bg-orange-900/30",
-    unread: false,
-  },
-  {
-    id: "7",
-    title: "New contribution received",
-    message: "Ksh. 5000 has been received from John Doe for Medical Fund.",
-    time: "2d ago",
-    icon: "transaction",
-    iconClassName: "text-primary",
-    iconBgClassName: "bg-primary/10 dark:bg-primary/30",
-    unread: true,
-  },
-  {
-    id: "8",
-    title: "Password reset successful",
-    message:
-      "Your password has been successfully reset. You can use your new password when logging in.",
-    time: "2d ago",
-    icon: "key",
-    iconClassName: "text-blue-600",
-    iconBgClassName: "bg-blue-100 dark:bg-blue-900/30",
-    unread: true,
-  },
-  {
-    id: "9",
-    title: "Campaign goal achieved.",
-    message: "You've reached your target amount for campaign X.",
-    time: "2d ago",
-    icon: "campaign",
-    iconClassName: "text-primary",
-    iconBgClassName: "bg-primary/10 dark:bg-primary/30",
-    unread: false,
-  },
-];
+function notificationToDisplay(n: NotificationOut) {
+  const typeIconMap: Record<
+    string,
+    { icon: IconName; iconClassName: string; iconBgClassName: string }
+  > = {
+    transaction_approved: {
+      icon: "transaction",
+      iconClassName: "text-primary",
+      iconBgClassName: "bg-primary/10 dark:bg-primary/30",
+    },
+    transaction_rejected: {
+      icon: "transaction",
+      iconClassName: "text-destructive",
+      iconBgClassName: "bg-destructive/10 dark:bg-destructive/30",
+    },
+    campaign_created: {
+      icon: "campaign",
+      iconClassName: "text-primary",
+      iconBgClassName: "bg-primary/10 dark:bg-primary/30",
+    },
+    campaign_goal_reached: {
+      icon: "campaign",
+      iconClassName: "text-primary",
+      iconBgClassName: "bg-primary/10 dark:bg-primary/30",
+    },
+    report_ready: {
+      icon: "report",
+      iconClassName: "text-orange-600",
+      iconBgClassName: "bg-orange-100 dark:bg-orange-900/30",
+    },
+    password_reset: {
+      icon: "key",
+      iconClassName: "text-blue-600",
+      iconBgClassName: "bg-blue-100 dark:bg-blue-900/30",
+    },
+  };
+
+  const fallback = {
+    icon: "notification" as IconName,
+    iconClassName: "text-muted-foreground",
+    iconBgClassName: "bg-muted",
+  };
+  const mapped = typeIconMap[n.type] || fallback;
+
+  return {
+    id: n.notification_id,
+    title: n.title,
+    message: n.message,
+    time: timeAgo(n.created_at),
+    icon: mapped.icon,
+    iconClassName: mapped.iconClassName,
+    iconBgClassName: mapped.iconBgClassName,
+    unread: !n.is_read,
+  };
+}
 
 const NotificationsDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const { data } = useNotificationsQuery();
+  const markAllRead = useMarkAllNotificationsReadMutation();
 
-  const unreadCount = notifications.filter((n) => n.unread).length;
+  const notifications = (data?.notifications ?? []).map(notificationToDisplay);
+  const unreadCount = data?.unread_count ?? 0;
   const displayedNotifications = showAll ? notifications : notifications.slice(0, 5);
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, unread: false })));
+  const handleMarkAllRead = () => {
+    markAllRead.mutate();
   };
 
   return (
@@ -149,7 +122,8 @@ const NotificationsDropdown: React.FC = () => {
               <Button
                 variant="link"
                 size="sm"
-                onClick={markAllAsRead}
+                onClick={handleMarkAllRead}
+                disabled={markAllRead.isPending}
                 className="text-sm font-medium"
               >
                 Mark all as read
@@ -159,48 +133,54 @@ const NotificationsDropdown: React.FC = () => {
 
           <ScrollArea className="max-h-[60vh] pr-4">
             <div className="space-y-1">
-              {displayedNotifications.map((notification, index) => (
-                <div key={notification.id}>
-                  <div
-                    className={cn(
-                      "flex gap-4 items-start p-4 rounded-2xl transition-colors",
-                      notification.unread ? "bg-muted/40" : "hover:bg-muted/20",
-                    )}
-                  >
+              {notifications.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No notifications yet.
+                </p>
+              ) : (
+                displayedNotifications.map((notification, index) => (
+                  <div key={notification.id}>
                     <div
                       className={cn(
-                        "h-10 w-10 rounded-full flex items-center justify-center shrink-0",
-                        notification.iconBgClassName || "bg-muted",
+                        "flex gap-4 items-start p-4 rounded-2xl transition-colors",
+                        notification.unread ? "bg-muted/40" : "hover:bg-muted/20",
                       )}
                     >
-                      <IconLibrary
-                        name={notification.icon}
+                      <div
                         className={cn(
-                          "h-5 w-5",
-                          notification.iconClassName || "text-muted-foreground",
+                          "h-10 w-10 rounded-full flex items-center justify-center shrink-0",
+                          notification.iconBgClassName || "bg-muted",
                         )}
-                      />
-                    </div>
-                    <div className="flex-1 space-y-1.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm font-semibold leading-none">{notification.title}</p>
-                        {notification.unread && (
-                          <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                        )}
+                      >
+                        <IconLibrary
+                          name={notification.icon}
+                          className={cn(
+                            "h-5 w-5",
+                            notification.iconClassName || "text-muted-foreground",
+                          )}
+                        />
                       </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed pr-4">
-                        {notification.message}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground/70 font-medium pt-1">
-                        {notification.time}
-                      </p>
+                      <div className="flex-1 space-y-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-sm font-semibold leading-none">{notification.title}</p>
+                          {notification.unread && (
+                            <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground leading-relaxed pr-4">
+                          {notification.message}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground/70 font-medium pt-1">
+                          {notification.time}
+                        </p>
+                      </div>
                     </div>
+                    {index < displayedNotifications.length - 1 && (
+                      <div className="h-px w-full bg-border/40 my-1 mx-auto max-w-[90%]" />
+                    )}
                   </div>
-                  {index < displayedNotifications.length - 1 && (
-                    <div className="h-px w-full bg-border/40 my-1 mx-auto max-w-[90%]" />
-                  )}
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </ScrollArea>
         </div>

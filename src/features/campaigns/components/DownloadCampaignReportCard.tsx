@@ -3,10 +3,12 @@
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  useExportCampaignExcelMutation,
+  useExportCampaignPdfMutation,
+} from "@/features/campaigns/services/mutations";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
-import { CAMPAIGNS_URLS } from "@/features/campaigns/urls";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { apiClient } from "@/lib/api-client";
 
 const PdfIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 48 48" className={className} xmlns="http://www.w3.org/2000/svg">
@@ -49,19 +51,12 @@ const DownloadCampaignReportCard = () => {
   const { data: campaignData } = useCampaignQuery(campaignSlug);
   const campaignId = campaignData?.id || campaignSlug;
 
+  const { mutateAsync: exportPdf } = useExportCampaignPdfMutation(campaignId);
+  const { mutateAsync: exportExcel } = useExportCampaignExcelMutation(campaignId);
+
   const handleDownloadPdf = async () => {
     try {
-      const response = await apiClient.get(CAMPAIGNS_URLS.campaignExportPdf(campaignId), {
-        responseType: "blob",
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `campaign-${campaignId}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      await exportPdf();
     } catch {
       // silently fail
     }
@@ -69,17 +64,7 @@ const DownloadCampaignReportCard = () => {
 
   const handleDownloadExcel = async () => {
     try {
-      const response = await apiClient.get(CAMPAIGNS_URLS.campaignExportExcel(campaignId), {
-        responseType: "blob",
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `campaign-${campaignId}.xlsx`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      await exportExcel();
     } catch {
       // silently fail
     }

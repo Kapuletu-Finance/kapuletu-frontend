@@ -88,7 +88,23 @@ export const TreasurerCampaignDetailPageClient: React.FC<
               <Skeleton className="h-6 w-24" />
             ) : (
               <>
-                <span className="text-sm text-muted-foreground font-medium">15 days left</span>
+                {campaign.end_date &&
+                  (() => {
+                    const daysLeft = Math.ceil(
+                      (new Date(campaign.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+                    );
+                    if (daysLeft <= 0)
+                      return (
+                        <span className="text-sm text-muted-foreground font-medium">
+                          Deadline passed
+                        </span>
+                      );
+                    return (
+                      <span className="text-sm text-muted-foreground font-medium">
+                        {daysLeft} days left
+                      </span>
+                    );
+                  })()}
                 {campaign.status && (
                   <Badge
                     variant="secondary"

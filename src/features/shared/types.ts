@@ -226,3 +226,18 @@ export interface CampaignSettingsOverride {
   remove_watermark?: boolean;
   auto_send_reports?: boolean;
 }
+
+export interface NotificationOut {
+  notification_id: string;
+  title: string;
+  message: string;
+  type: string;
+  is_read: boolean;
+  related_entity_id?: string | null;
+  created_at: string;
+}
+
+export interface NotificationListOut {
+  notifications: NotificationOut[];
+  unread_count: number;
+}
