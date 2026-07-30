@@ -1,6 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams } from "next/navigation";
+import type React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,8 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useUpdateCampaignMutation } from "@/features/campaigns/services/mutations";
+import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const editCampaignSchema = z.object({
@@ -27,30 +31,53 @@ const editCampaignSchema = z.object({
 
 type EditCampaignFormData = z.infer<typeof editCampaignSchema>;
 
-const EditCampaignFormDialog = () => {
+interface EditCampaignFormDialogProps {
+  children?: React.ReactElement;
+}
+
+const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
+  const params = useParams();
+  const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
+  const { data: campaign } = useCampaignQuery(campaignSlug);
+  const updateCampaign = useUpdateCampaignMutation(campaignSlug);
+
   const form = useForm<EditCampaignFormData>({
     defaultValues: {
-      campaignName: "VBS",
-      description: "Bible school for children",
-      targetAmount: "10,000",
-      paymentInstructions: "Paybill 12345, Account 6789",
-      fundraisingDeadline: "01/01/2025",
+      campaignName: campaign?.title ?? "",
+      description: campaign?.description ?? "",
+      targetAmount: String(campaign?.target_amount ?? ""),
+      paymentInstructions: campaign?.payment_instructions ?? "",
+      fundraisingDeadline: campaign?.end_date
+        ? new Date(campaign.end_date).toISOString().split("T")[0]
+        : "",
     },
     resolver: zodResolver(editCampaignSchema),
   });
 
   const onSubmit = (data: EditCampaignFormData) => {
-    // TODO: wire up to API mutation
-    console.log(data);
+    updateCampaign.mutate(
+      {
+        title: data.campaignName,
+        description: data.description || null,
+        target_amount: Number.parseFloat(data.targetAmount.replace(/,/g, "")) || 0,
+        payment_instructions: data.paymentInstructions || null,
+        end_date: data.fundraisingDeadline
+          ? new Date(data.fundraisingDeadline).toISOString()
+          : null,
+      },
+      {},
+    );
   };
 
   return (
     <Dialog>
       <DialogTrigger
         render={
-          <Button className="gap-2">
-            <IconLibrary name="edit" className="w-4 h-4" /> Edit Campaign
-          </Button>
+          children ?? (
+            <Button className="gap-2">
+              <IconLibrary name="edit" className="w-4 h-4" /> Edit Campaign
+            </Button>
+          )
         }
       />
 
@@ -157,23 +184,6 @@ const EditCampaignFormDialog = () => {
               )}
             />
 
-            <div className="space-y-2">
-              <FieldLabel className="text-sm font-semibold text-foreground">
-                Group Status
-              </FieldLabel>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full justify-between font-normal"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-primary" />
-                  <span>Active</span>
-                </div>
-                <IconLibrary name="chevron-down" className="w-4 h-4 text-muted-foreground" />
-              </Button>
-            </div>
-
             <FormField
               control={form.control}
               name="fundraisingDeadline"
@@ -190,18 +200,14 @@ const EditCampaignFormDialog = () => {
                       name="calendar"
                       className="absolute left-3 w-4 h-4 text-muted-foreground"
                     />
-                    <Input id={field.name} readOnly className="pl-10" {...field} />
-                    <IconLibrary
-                      name="close"
-                      className="absolute right-3 w-4 h-4 text-muted-foreground"
-                    />
+                    <Input id={field.name} type="date" className="pl-10" {...field} />
                   </div>
                 </Field>
               )}
             />
 
-            <Button type="submit" className="w-full mt-4">
-              Save Changes
+            <Button type="submit" className="w-full mt-4" disabled={updateCampaign.isPending}>
+              {updateCampaign.isPending ? "Saving..." : "Save Changes"}
             </Button>
           </form>
         </Form>

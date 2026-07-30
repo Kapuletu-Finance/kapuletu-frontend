@@ -6,6 +6,26 @@ import { GROUPS_URLS } from "@/features/groups/urls";
 import type { CampaignCreate, CampaignOut, CampaignUpdate } from "@/features/shared/types";
 import { apiClient } from "@/lib/api-client";
 
+export const useRegenerateCampaignPinMutation = (campaignId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.post<{ pin: string }>(
+        CAMPAIGNS_URLS.campaignRegeneratePin(campaignId),
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to regenerate PIN.");
+    },
+    onSuccess: () => {
+      toast.success("PIN regenerated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["campaign", campaignId] });
+    },
+  });
+};
+
 export const useCreateCampaignMutation = (groupId: string) => {
   const queryClient = useQueryClient();
 

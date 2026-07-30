@@ -1,10 +1,17 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCampaignReportPreviewQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const WhatsappUpdatePreviewCard = () => {
+  const params = useParams();
+  const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
+  const { data: preview, isLoading } = useCampaignReportPreviewQuery(campaignSlug);
+
   return (
     <Card className="border-none bg-card overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between border-b border-border">
@@ -40,56 +47,65 @@ const WhatsappUpdatePreviewCard = () => {
       </CardHeader>
 
       <CardContent>
-        <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 font-mono text-xs md:text-sm text-foreground space-y-4 max-w-2xl mx-auto leading-relaxed">
-          <div>
-            <p className="font-bold underline">Medical Fund Update</p>
-            <p className="text-muted-foreground">
-              Raising funds to support John Doe’s medical treatment and recovery.
-            </p>
+        {isLoading ? (
+          <div className="space-y-4 max-w-2xl mx-auto">
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-64" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-56" />
           </div>
+        ) : preview ? (
+          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 font-mono text-xs md:text-sm text-foreground space-y-4 max-w-2xl mx-auto leading-relaxed">
+            <div>
+              <p className="font-bold underline">{preview.title}</p>
+              <p className="text-muted-foreground">{preview.description}</p>
+            </div>
 
-          <div>
-            <p>Raised so far: Ksh 20,000 of Ksh 50,000</p>
-            <p className="font-bold">
-              PAYBILL:{" "}
-              <span className="bg-background px-1.5 py-0.5 rounded border border-border">
-                123456
-              </span>{" "}
-              ACCOUNT:{" "}
-              <span className="bg-background px-1.5 py-0.5 rounded border border-border">John</span>
-            </p>
-          </div>
+            <div>
+              <p>
+                Raised so far: Ksh {preview.raised.toLocaleString("en-KE")} of Ksh{" "}
+                {preview.target.toLocaleString("en-KE")}
+              </p>
+              <p className="font-bold">
+                PAYBILL:{" "}
+                <span className="bg-background px-1.5 py-0.5 rounded border border-border">
+                  {preview.payment_instructions?.split(",")[0]?.trim() || "------"}
+                </span>{" "}
+                ACCOUNT:{" "}
+                <span className="bg-background px-1.5 py-0.5 rounded border border-border">
+                  {preview.payment_instructions?.split(",")[1]?.trim() || "------"}
+                </span>
+              </p>
+            </div>
 
-          <div className="space-y-1">
-            <p>1. John Doe - Ksh 5,000 ✓</p>
-            <p>2. Jane Doe - Ksh 6,000 ✓</p>
-            <p>3. Samuel M. - Ksh 900 ✓</p>
-            <p>4. Joan Doe - Ksh 500 ✓</p>
-            <p>5. John Doe - Ksh 500 ✓</p>
-            <p className="text-muted-foreground">6.</p>
-            <p className="text-muted-foreground">7.</p>
-            <p className="text-muted-foreground">8.</p>
-            <p className="text-muted-foreground">9.</p>
-            <p className="text-muted-foreground">10.</p>
-          </div>
+            <div className="space-y-1">
+              {preview.contributors.map((c, i) => (
+                <p key={`contrib-${i}-${c.name}`}>
+                  {i + 1}. {c.name} - Ksh {c.amount.toLocaleString("en-KE")} ✓
+                </p>
+              ))}
+            </div>
 
-          <div>
-            <p>We still need Ksh 30,000 to reach our goal. Every contribution counts.</p>
-            <p>
-              View the full report at:{" "}
-              <a
-                href="https://app.kapuletu.co.ke/report/medical-fund"
-                className="text-refined-blue underline"
-              >
-                app.kapuletu.co.ke/report/medical-fund
-              </a>
-            </p>
-          </div>
+            <div>
+              <p>{preview.footer}</p>
+              <p>
+                View the full report at:{" "}
+                <a href={preview.public_url} className="text-refined-blue underline">
+                  {preview.public_url.replace("https://", "")}
+                </a>
+              </p>
+            </div>
 
-          <div className="pt-2 font-sans font-bold text-xs text-muted-foreground">
-            Powered by KapuLetu
+            <div className="pt-2 font-sans font-bold text-xs text-muted-foreground">
+              Powered by KapuLetu
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="py-8 text-center text-sm text-muted-foreground">
+            No preview available.
+          </div>
+        )}
       </CardContent>
     </Card>
   );

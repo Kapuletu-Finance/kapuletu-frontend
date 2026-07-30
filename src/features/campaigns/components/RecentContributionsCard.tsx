@@ -3,62 +3,37 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCampaignTransactionsQuery } from "@/features/campaigns/services/queries";
+import { getInitials } from "@/lib/utils";
 
-interface Contribution {
-  id: string;
-  name: string;
-  amount: string;
-  date: string;
-  paymentMethod: "M-pesa" | "Cash";
-  avatarBg: string;
-}
+const paymentMethodColors: Record<string, string> = {
+  "M-pesa": "bg-primary/10 text-primary hover:bg-primary/15",
+  "M-PESA": "bg-primary/10 text-primary hover:bg-primary/15",
+  MPESA: "bg-primary/10 text-primary hover:bg-primary/15",
+};
 
-const contributions: Contribution[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    amount: "Ksh. 500",
-    date: "13 Jul 2026, 10:55 AM",
-    paymentMethod: "M-pesa",
-    avatarBg: "bg-burnt-amber text-white",
-  },
-  {
-    id: "2",
-    name: "Jane Doe",
-    amount: "Ksh. 500",
-    date: "13 Jul 2026, 10:55 AM",
-    paymentMethod: "Cash",
-    avatarBg: "bg-primary text-primary-foreground",
-  },
-  {
-    id: "3",
-    name: "John Doe",
-    amount: "Ksh. 500",
-    date: "13 Jul 2026, 10:55 AM",
-    paymentMethod: "M-pesa",
-    avatarBg: "bg-refined-blue text-white",
-  },
-  {
-    id: "4",
-    name: "John Doe",
-    amount: "Ksh. 500",
-    date: "13 Jul 2026, 10:55 AM",
-    paymentMethod: "M-pesa",
-    avatarBg: "bg-burnt-amber text-white",
-  },
+const avatarColors = [
+  "bg-burnt-amber text-white",
+  "bg-primary text-primary-foreground",
+  "bg-refined-blue text-white",
+  "bg-emerald-600 text-white",
 ];
 
 const RecentContributionsCard = () => {
   const params = useParams();
   const groupSlug = params?.groupSlug;
-  const campaignSlug = params?.campaignSlug;
+  const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
 
   const contributionsLink =
     groupSlug && campaignSlug
       ? `/treasurer/groups/${groupSlug}/campaigns/${campaignSlug}/contributions`
       : "#";
+
+  const { data, isLoading } = useCampaignTransactionsQuery(campaignSlug, { limit: 5 });
+
+  const transactions = data?.items ?? [];
 
   return (
     <Card className="border-none bg-card overflow-hidden h-full">
@@ -75,7 +50,6 @@ const RecentContributionsCard = () => {
       </CardHeader>
 
       <CardContent>
-        {/* Table Header */}
         <div className="grid grid-cols-4 text-xs font-semibold text-muted-foreground pb-4 px-2">
           <span>Name</span>
           <span>Amount</span>
@@ -83,41 +57,71 @@ const RecentContributionsCard = () => {
           <span className="text-right">Payment method</span>
         </div>
 
-        {/* Table Rows */}
         <div className="divide-y divide-border">
-          {contributions.map((item) => (
-            <div key={item.id} className="grid grid-cols-4 items-center py-4 px-2 text-sm">
-              {/* Name & Avatar */}
-              <div className="flex items-center gap-3">
-                <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${item.avatarBg}`}
-                >
-                  JD
+          {isLoading ? (
+            ["sk-1", "sk-2", "sk-3", "sk-4"].map((key) => (
+              <div key={key} className="grid grid-cols-4 items-center py-4 px-2 text-sm">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="w-9 h-9 rounded-full" />
+                  <Skeleton className="h-4 w-24" />
                 </div>
-                <span className="font-semibold text-foreground truncate">{item.name}</span>
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-5 w-16 ml-auto" />
               </div>
-
-              {/* Amount */}
-              <span className="font-medium text-foreground">{item.amount}</span>
-
-              {/* Date */}
-              <span className="text-muted-foreground text-xs">{item.date}</span>
-
-              {/* Payment Method Badge */}
-              <div className="text-right">
-                <Badge
-                  variant="secondary"
-                  className={`px-3 py-1 font-medium text-xs ${
-                    item.paymentMethod === "M-pesa"
-                      ? "bg-primary/10 text-primary hover:bg-primary/15"
-                      : "bg-secondary text-secondary-foreground"
-                  }`}
-                >
-                  {item.paymentMethod}
-                </Badge>
-              </div>
+            ))
+          ) : transactions.length === 0 ? (
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              No contributions yet.
             </div>
-          ))}
+          ) : (
+            transactions.map((item, index) => {
+              const avatarColor = avatarColors[index % avatarColors.length];
+              return (
+                <div
+                  key={item.transaction_id || `tx-${index}`}
+                  className="grid grid-cols-4 items-center py-4 px-2 text-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${avatarColor}`}
+                    >
+                      {getInitials(item.name || "")}
+                    </div>
+                    <span className="font-semibold text-foreground truncate">
+                      {item.name || "Unknown"}
+                    </span>
+                  </div>
+
+                  <span className="font-medium text-foreground">
+                    Ksh. {item.amount.toLocaleString("en-KE")}
+                  </span>
+
+                  <span className="text-muted-foreground text-xs">
+                    {new Date(item.date).toLocaleDateString("en-KE", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+
+                  <div className="text-right">
+                    <Badge
+                      variant="secondary"
+                      className={`px-3 py-1 font-medium text-xs ${
+                        paymentMethodColors[item.payment_method] ||
+                        "bg-secondary text-secondary-foreground"
+                      }`}
+                    >
+                      {item.payment_method}
+                    </Badge>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </CardContent>
     </Card>

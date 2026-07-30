@@ -1,19 +1,38 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { useRegenerateCampaignPinMutation } from "@/features/campaigns/services/mutations";
+import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const CampaignTemplateCard = () => {
-  const pinDigits = ["7", "1", "1", "5"];
+  const params = useParams();
+  const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
+  const { data: campaignData } = useCampaignQuery(campaignSlug);
+  const regeneratePin = useRegenerateCampaignPinMutation(campaignSlug);
+
+  const settings = campaignData?.settings_override;
+  const reportTitle = settings?.report_title ?? "Campaign Update";
+  const reportFooter = settings?.report_footer ?? "Thank you for your support.";
+  const blankSlots = settings?.blank_slots ?? 3;
+  const removeWatermark = settings?.remove_watermark ?? false;
+  const requirePin = settings?.require_pin ?? true;
+  const accessPin = settings?.access_pin;
+
+  const pinDigits = accessPin ? accessPin.split("") : ["-", "-", "-", "-"];
+
+  const handleRegeneratePin = () => {
+    regeneratePin.mutate();
+  };
 
   return (
     <Card className="border-none bg-card space-y-8">
-      {/* Header */}
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-1">
           <h2 className="font-bold text-foreground text-xl">Campaign Template</h2>
@@ -35,14 +54,13 @@ const CampaignTemplateCard = () => {
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Form Fields */}
         <div className="lg:col-span-7 space-y-6">
           <div className="space-y-2">
             <Label className="text-sm font-semibold text-foreground">Report Title</Label>
             <p className="text-xs text-muted-foreground">
               This title will appear at the top of your WhatsApp updates and reports
             </p>
-            <Input readOnly value="Medical Bill" className="border-border bg-background py-5" />
+            <Input readOnly value={reportTitle} className="border-border bg-background py-5" />
           </div>
 
           <div className="space-y-2">
@@ -52,7 +70,7 @@ const CampaignTemplateCard = () => {
             </p>
             <Textarea
               readOnly
-              value="We still need Ksh 30,000 to reach our goal. Every contribution counts. View full report at: app.kapuletu.co.ke/report/medical-fund"
+              value={reportFooter}
               className="border-border bg-background min-h-22.5 resize-none"
             />
           </div>
@@ -72,7 +90,9 @@ const CampaignTemplateCard = () => {
               >
                 <IconLibrary name="minus" className="w-4 h-4" />
               </Button>
-              <span className="font-bold text-foreground text-sm w-4 text-center">3</span>
+              <span className="font-bold text-foreground text-sm w-4 text-center">
+                {blankSlots}
+              </span>
               <Button
                 variant="ghost"
                 size="icon"
@@ -84,7 +104,6 @@ const CampaignTemplateCard = () => {
           </div>
         </div>
 
-        {/* Right Column: Toggles & Access PIN Box */}
         <div className="lg:col-span-5 space-y-6">
           <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-background">
             <div className="space-y-0.5 pr-4">
@@ -98,9 +117,9 @@ const CampaignTemplateCard = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-bold tracking-wider bg-primary/15 text-primary px-2 py-0.5 rounded uppercase">
-                YES
+                {removeWatermark ? "NO" : "YES"}
               </span>
-              <Switch defaultChecked />
+              <Switch checked={!removeWatermark} />
             </div>
           </div>
 
@@ -113,17 +132,16 @@ const CampaignTemplateCard = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-bold tracking-wider bg-primary/15 text-primary px-2 py-0.5 rounded uppercase">
-                YES
+                {requirePin ? "YES" : "NO"}
               </span>
-              <Switch defaultChecked />
+              <Switch checked={requirePin} />
             </div>
           </div>
 
-          {/* Access PIN Box */}
           <div className="p-5 rounded-2xl border border-dashed border-primary/40 bg-primary/5 space-y-4">
             <div>
               <h4 className="text-sm font-bold text-foreground">Access PIN</h4>
-              <p className="text-xs text-muted-foreground">This protects you campaign data.</p>
+              <p className="text-xs text-muted-foreground">This protects your campaign data.</p>
             </div>
 
             <div className="flex items-center justify-between pt-1">
@@ -140,8 +158,11 @@ const CampaignTemplateCard = () => {
               <Button
                 size="sm"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9"
+                onClick={handleRegeneratePin}
+                disabled={regeneratePin.isPending}
               >
-                <IconLibrary name="refresh" className="w-3.5 h-3.5" /> Regenerate PIN
+                <IconLibrary name="refresh" className="w-3.5 h-3.5" />{" "}
+                {regeneratePin.isPending ? "Regenerating..." : "Regenerate PIN"}
               </Button>
             </div>
           </div>

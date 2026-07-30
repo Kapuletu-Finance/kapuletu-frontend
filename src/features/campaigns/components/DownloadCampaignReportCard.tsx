@@ -1,6 +1,12 @@
+"use client";
+
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useCampaignQuery } from "@/features/campaigns/services/queries";
+import { CAMPAIGNS_URLS } from "@/features/campaigns/urls";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { apiClient } from "@/lib/api-client";
 
 const PdfIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 48 48" className={className} xmlns="http://www.w3.org/2000/svg">
@@ -38,6 +44,47 @@ const ExcelIcon = ({ className }: { className?: string }) => (
 );
 
 const DownloadCampaignReportCard = () => {
+  const params = useParams();
+  const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
+  const { data: campaignData } = useCampaignQuery(campaignSlug);
+  const campaignId = campaignData?.id || campaignSlug;
+
+  const handleDownloadPdf = async () => {
+    try {
+      const response = await apiClient.get(CAMPAIGNS_URLS.campaignExportPdf(campaignId), {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `campaign-${campaignId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      // silently fail
+    }
+  };
+
+  const handleDownloadExcel = async () => {
+    try {
+      const response = await apiClient.get(CAMPAIGNS_URLS.campaignExportExcel(campaignId), {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `campaign-${campaignId}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      // silently fail
+    }
+  };
+
   return (
     <Card className="border-none bg-card space-y-6">
       <CardHeader className="space-y-1">
@@ -48,7 +95,6 @@ const DownloadCampaignReportCard = () => {
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* PDF Option */}
         <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-background hover:border-primary/50 transition-colors">
           <div className="flex items-center gap-4">
             <PdfIcon className="w-10 h-10 shrink-0" />
@@ -63,12 +109,12 @@ const DownloadCampaignReportCard = () => {
             variant="ghost"
             size="icon"
             className="text-muted-foreground hover:text-foreground shrink-0"
+            onClick={handleDownloadPdf}
           >
             <IconLibrary name="download" className="w-5 h-5" />
           </Button>
         </div>
 
-        {/* Excel Option */}
         <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-background hover:border-primary/50 transition-colors">
           <div className="flex items-center gap-4">
             <ExcelIcon className="w-10 h-10 shrink-0" />
@@ -83,6 +129,7 @@ const DownloadCampaignReportCard = () => {
             variant="ghost"
             size="icon"
             className="text-muted-foreground hover:text-foreground shrink-0"
+            onClick={handleDownloadExcel}
           >
             <IconLibrary name="download" className="w-5 h-5" />
           </Button>

@@ -33,6 +33,7 @@ export interface CampaignOut {
   total_raised: number;
   progress_percentage: number;
   contributor_count: number;
+  settings_override?: CampaignSettingsOverride | null;
 }
 
 export interface PaginatedGroupResponse {
@@ -162,4 +163,54 @@ export interface CampaignUpdate {
   target_amount?: number | null;
   payment_instructions?: string | null;
   end_date?: string | null;
+}
+
+export interface TransactionOut {
+  transaction_id: string;
+  date: string;
+  amount: number;
+  name: string | null;
+  payment_method: string;
+}
+
+export interface PaginatedTransactionResponse {
+  items: TransactionOut[];
+  total_items: number;
+  total_pages: number;
+  page: number;
+  limit: number;
+}
+
+export interface CampaignActivity {
+  log_id: string;
+  action: string;
+  date: string;
+  details?: Record<string, unknown> | null;
+}
+
+export interface ChartDataPoint {
+  date: string;
+  amount: number;
+}
+
+export interface CampaignReportPreview {
+  title: string;
+  description: string;
+  raised: number;
+  target: number;
+  contributors: { name: string; amount: number }[];
+  payment_instructions: string | null;
+  footer: string;
+  public_url: string;
+}
+
+export interface CampaignSettingsOverride {
+  report_title?: string;
+  report_footer?: string;
+  blank_slots?: number;
+  paid_indicator?: string;
+  require_pin?: boolean;
+  access_pin?: string | null;
+  remove_watermark?: boolean;
+  auto_send_reports?: boolean;
 }
