@@ -1,135 +1,122 @@
 "use client";
 
-import { useQueryState } from "nuqs";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { CampaignInfo } from "@/features/campaigns/components/CampaignCard";
+import IconLibrary, { type IconName } from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import { cn, getInitials } from "@/lib/utils";
 
 interface TreasurerCampaignDetailPageClientProps {
   campaign: CampaignInfo;
+  children?: React.ReactNode;
 }
 
 export const TreasurerCampaignDetailPageClient: React.FC<
   TreasurerCampaignDetailPageClientProps
-> = ({ campaign }) => {
+> = ({ campaign, children }) => {
   const isArchived = campaign.status === "Archived";
-  const [tab, setTab] = useQueryState("tab", { defaultValue: "overview" });
+  const pathname = usePathname();
+  const params = useParams();
+  const groupSlug = typeof params.groupSlug === "string" ? params.groupSlug : "";
+
+  const baseUrl = `/treasurer/groups/${groupSlug}/campaigns/${campaign.slug}`;
+
+  const tabs: { value: string; label: string; icon: IconName; href: string }[] = [
+    { value: "overview", label: "Overview", icon: "panel-left", href: baseUrl },
+    {
+      value: "contributions",
+      label: "Contributions",
+      icon: "transaction",
+      href: `${baseUrl}/contributions`,
+    },
+    { value: "reports", label: "Reports", icon: "report", href: `${baseUrl}/reports` },
+    { value: "settings", label: "Settings", icon: "settings", href: `${baseUrl}/settings` },
+  ];
+
+  const getIsActive = (value: string) => {
+    if (value === "overview") {
+      return pathname === baseUrl || pathname === `${baseUrl}/`;
+    }
+    return pathname.startsWith(`${baseUrl}/${value}`);
+  };
 
   return (
     <PageLayout>
       <div className="flex flex-col gap-8">
         {/* Campaign Header Profile */}
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-2">
+          <div className="flex items-center gap-5">
             <div
               className={cn(
-                "w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold shrink-0",
-                campaign.iconClassName ?? "bg-[#1E3A8A] text-white",
+                "w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl font-bold shrink-0",
+                campaign.iconClassName ?? "bg-primary text-primary-foreground",
               )}
             >
               {getInitials(campaign.name)}
             </div>
 
-            <div className="flex flex-col justify-center gap-2">
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">{campaign.name}</h1>
-
-              <div className="flex items-center gap-4 text-sm">
-                {campaign.status && (
-                  <Badge
-                    variant="secondary"
-                    className={cn(
-                      "font-medium px-3 py-1 text-xs gap-1.5 border-none shadow-none",
-                      isArchived
-                        ? "bg-muted text-muted-foreground"
-                        : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "w-1.5 h-1.5 rounded-full shrink-0",
-                        isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
-                      )}
-                    />
-                    {campaign.status}
-                  </Badge>
-                )}
-
-                <span className="text-muted-foreground font-medium">15 days left.</span>
-              </div>
+            <div className="flex flex-col justify-center gap-1.5">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                {campaign.name}
+              </h1>
+              <p className="text-sm sm:text-base text-muted-foreground">{campaign.description}</p>
             </div>
           </div>
 
-          <p className="text-muted-foreground">{campaign.description}</p>
+          <div className="flex items-center gap-4 self-start sm:self-center ml-21 sm:ml-0">
+            <span className="text-sm text-muted-foreground font-medium">15 days left</span>
+            {campaign.status && (
+              <Badge
+                variant="secondary"
+                className={cn(
+                  "font-medium px-3 py-1 text-xs gap-1.5 border-none shadow-none",
+                  isArchived
+                    ? "bg-muted text-muted-foreground"
+                    : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
+                )}
+              >
+                <span
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full shrink-0",
+                    isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
+                  )}
+                />
+                {campaign.status}
+              </Badge>
+            )}
+          </div>
         </div>
 
         {/* Tabs and Content */}
-        <Tabs value={tab} onValueChange={(val) => setTab(val as string)} className="w-full">
+        <div className="w-full">
           <div className="border-b mb-6">
-            <TabsList className="w-full justify-start h-auto p-0 bg-transparent gap-8 border-none">
-              <TabsTrigger
-                value="overview"
-                className="border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold"
-              >
-                Overview
-              </TabsTrigger>
-              <TabsTrigger
-                value="contributions"
-                className="border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold text-muted-foreground data-[state=active]:text-foreground"
-              >
-                Contributions
-              </TabsTrigger>
-              <TabsTrigger
-                value="activity"
-                className="border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold text-muted-foreground data-[state=active]:text-foreground"
-              >
-                Activity
-              </TabsTrigger>
-              <TabsTrigger
-                value="settings"
-                className="border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent px-2 py-3 font-semibold text-muted-foreground data-[state=active]:text-foreground"
-              >
-                Settings
-              </TabsTrigger>
-            </TabsList>
+            <nav className="w-full flex flex-wrap justify-between sm:justify-start h-auto p-0 bg-transparent gap-4 sm:gap-12 border-none">
+              {tabs.map((tab) => {
+                const isActive = getIsActive(tab.value);
+                return (
+                  <Link
+                    key={tab.value}
+                    href={tab.href}
+                    className={cn(
+                      "flex items-center gap-2 border-b-2 px-1 py-3 font-medium transition-colors",
+                      isActive
+                        ? "border-primary text-primary"
+                        : "border-transparent text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <IconLibrary name={tab.icon} className="w-4 h-4" />
+                    {tab.label}
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
 
-          <TabsContent value="overview" className="mt-0 outline-none">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Empty Card 1 */}
-              <Card className="min-h-100 bg-muted/30 border-muted" />
-
-              {/* Campaign Summary Card */}
-              <Card className="min-h-100 bg-muted/30 border-muted p-6">
-                <h3 className="font-semibold text-foreground">Campaign Summary</h3>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="contributions" className="mt-0">
-            {/* Placeholder for Contributions */}
-            <Card className="min-h-100 bg-muted/30 border-muted p-6 flex items-center justify-center text-muted-foreground">
-              Contributions Content
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="activity" className="mt-0">
-            {/* Placeholder for Activity */}
-            <Card className="min-h-100 bg-muted/30 border-muted p-6 flex items-center justify-center text-muted-foreground">
-              Activity Content
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="settings" className="mt-0">
-            {/* Placeholder for Settings */}
-            <Card className="min-h-100 bg-muted/30 border-muted p-6 flex items-center justify-center text-muted-foreground">
-              Settings Content
-            </Card>
-          </TabsContent>
-        </Tabs>
+          <div className="mt-0 outline-none">{children}</div>
+        </div>
       </div>
     </PageLayout>
   );

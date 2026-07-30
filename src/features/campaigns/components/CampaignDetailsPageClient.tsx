@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import type React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TreasurerCampaignDetailPageClient } from "@/features/campaigns/components/TreasurerCampaignDetailPageClient";
 import { useCampaignsQuery } from "@/features/campaigns/services/queries";
@@ -40,7 +41,11 @@ const CampaignDetailSkeleton = () => (
   </div>
 );
 
-const CampaignDetailsPageClient = () => {
+interface CampaignDetailsPageClientProps {
+  children?: React.ReactNode;
+}
+
+const CampaignDetailsPageClient: React.FC<CampaignDetailsPageClientProps> = ({ children }) => {
   const params = useParams();
   const groupSlug = typeof params.groupSlug === "string" ? params.groupSlug : "";
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
@@ -82,7 +87,11 @@ const CampaignDetailsPageClient = () => {
     end_date: campaignData.end_date,
   };
 
-  return <TreasurerCampaignDetailPageClient campaign={campaign} />;
+  return (
+    <TreasurerCampaignDetailPageClient campaign={campaign}>
+      {children}
+    </TreasurerCampaignDetailPageClient>
+  );
 };
 
 export default CampaignDetailsPageClient;
