@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TreasurerCampaignDetailPageClient } from "@/features/campaigns/components/TreasurerCampaignDetailPageClient";
 import { useCampaignsQuery } from "@/features/campaigns/services/queries";
+import { useGroupsQuery } from "@/features/groups/services/queries";
 import { getAvatarColor } from "@/lib/colors";
 
 const CampaignDetailSkeleton = () => (
@@ -44,7 +45,12 @@ const CampaignDetailsPageClient = () => {
   const groupSlug = typeof params.groupSlug === "string" ? params.groupSlug : "";
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
 
-  const { data, isLoading } = useCampaignsQuery(groupSlug, { limit: 100 });
+  // Resolve group UUID from slug
+  const { data: groupsData } = useGroupsQuery({ limit: 100 });
+  const currentGroup = groupsData?.items?.find((g) => g.slug === groupSlug);
+  const groupId = currentGroup?.id || "";
+
+  const { data, isLoading } = useCampaignsQuery(groupId, { limit: 100 });
 
   if (isLoading) {
     return <CampaignDetailSkeleton />;

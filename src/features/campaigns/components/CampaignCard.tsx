@@ -197,7 +197,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
         )}
       </CardHeader>
 
-      <CardFooter className="flex flex-row items-center gap-2 border-none bg-transparent p-5 pt-0">
+      <CardFooter className="flex flex-row flex-wrap items-center gap-2 border-none bg-transparent p-5 pt-0">
         <Link href={detailHref}>
           <Button
             onClick={onViewDetails}

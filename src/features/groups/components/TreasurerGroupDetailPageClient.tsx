@@ -12,6 +12,7 @@ import CampaignsHeaderControls, {
   type FilterValue,
 } from "@/features/campaigns/components/CampaignsHeaderControls";
 import { useCampaignsQuery } from "@/features/campaigns/services/queries";
+import { useGroupsQuery } from "@/features/groups/services/queries";
 import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
@@ -48,7 +49,12 @@ export const TreasurerGroupDetailPageClient = () => {
   const groupSlug = typeof params.groupSlug === "string" ? params.groupSlug : "";
   const limit = 12;
 
-  const { data, isLoading } = useCampaignsQuery(groupSlug, {
+  // Resolve group UUID from slug
+  const { data: groupsData } = useGroupsQuery({ limit: 100 });
+  const currentGroup = groupsData?.items?.find((g) => g.slug === groupSlug);
+  const groupId = currentGroup?.id || "";
+
+  const { data, isLoading } = useCampaignsQuery(groupId, {
     skip: page * limit,
     limit,
     search: search || undefined,
@@ -201,12 +207,12 @@ export const TreasurerGroupDetailPageClient = () => {
         )}
       </PageLayout>
       <CampaignFormModal
-        groupId={groupSlug}
+        groupId={groupId}
         isOpen={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
       />
       <CampaignFormModal
-        groupId={groupSlug}
+        groupId={groupId}
         campaign={editingCampaign}
         isOpen={!!editingCampaign}
         onOpenChange={(open) => {
