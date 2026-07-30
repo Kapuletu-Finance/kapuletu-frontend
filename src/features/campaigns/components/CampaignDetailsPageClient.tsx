@@ -2,44 +2,11 @@
 
 import { useParams } from "next/navigation";
 import type React from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { TreasurerCampaignDetailPageClient } from "@/features/campaigns/components/TreasurerCampaignDetailPageClient";
 import { useCampaignsQuery } from "@/features/campaigns/services/queries";
 import { useGroupsQuery } from "@/features/groups/services/queries";
 import { getAvatarColor } from "@/lib/colors";
-
-const CampaignDetailSkeleton = () => (
-  <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto pb-12">
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-6">
-        <Skeleton className="w-24 h-24 rounded-full shrink-0" />
-        <div className="flex flex-col justify-center gap-2">
-          <Skeleton className="h-9 w-56 rounded-md" />
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-6 w-20 rounded-full" />
-            <Skeleton className="h-4 w-24 rounded-md" />
-          </div>
-        </div>
-      </div>
-      <Skeleton className="h-4 w-full rounded-md" />
-      <Skeleton className="h-4 w-3/4 rounded-md" />
-    </div>
-
-    <div className="border-b mb-6">
-      <div className="flex gap-8">
-        <Skeleton className="h-10 w-24 rounded-md" />
-        <Skeleton className="h-10 w-28 rounded-md" />
-        <Skeleton className="h-10 w-20 rounded-md" />
-        <Skeleton className="h-10 w-20 rounded-md" />
-      </div>
-    </div>
-
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <Skeleton className="min-h-100 rounded-xl" />
-      <Skeleton className="min-h-100 rounded-xl" />
-    </div>
-  </div>
-);
 
 interface CampaignDetailsPageClientProps {
   children?: React.ReactNode;
@@ -51,19 +18,28 @@ const CampaignDetailsPageClient: React.FC<CampaignDetailsPageClientProps> = ({ c
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
 
   // Resolve group UUID from slug
-  const { data: groupsData } = useGroupsQuery({ limit: 100 });
+  const {
+    data: groupsData,
+    isLoading: isGroupsLoading,
+    isFetching: isGroupsFetching,
+  } = useGroupsQuery({ limit: 100 });
   const currentGroup = groupsData?.items?.find((g) => g.slug === groupSlug);
   const groupId = currentGroup?.id || "";
 
-  const { data, isLoading } = useCampaignsQuery(groupId, { limit: 100 });
-
-  if (isLoading) {
-    return <CampaignDetailSkeleton />;
-  }
+  const {
+    data,
+    isLoading: isCampaignsLoading,
+    isFetching: isCampaignsFetching,
+  } = useCampaignsQuery(groupId, { limit: 100 });
 
   const campaignData = data?.items?.find((c) => c.slug === campaignSlug);
 
-  if (!campaignData) {
+  // We are loading if there's no campaignData YET and we are currently fetching either groups or campaigns
+  const isLoading =
+    !campaignData &&
+    (isGroupsLoading || isCampaignsLoading || isGroupsFetching || isCampaignsFetching);
+
+  if (!isLoading && !campaignData) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
         Campaign not found.
@@ -71,24 +47,39 @@ const CampaignDetailsPageClient: React.FC<CampaignDetailsPageClientProps> = ({ c
     );
   }
 
-  const campaign = {
-    id: campaignData.id,
-    group_id: campaignData.group_id,
-    slug: campaignData.slug || undefined,
-    name: campaignData.title,
-    description: campaignData.description || "",
-    iconClassName: getAvatarColor(campaignData.title),
-    status: campaignData.status === "active" ? "Active" : "Archived",
-    isFavorite: campaignData.is_favorite,
-    progress: campaignData.progress_percentage ?? 0,
-    target_amount: campaignData.target_amount,
-    total_raised: campaignData.total_raised,
-    contributor_count: campaignData.contributor_count,
-    end_date: campaignData.end_date,
-  };
+  const campaign = campaignData
+    ? {
+        id: campaignData.id,
+        group_id: campaignData.group_id,
+        slug: campaignData.slug || undefined,
+        name: campaignData.title,
+        description: campaignData.description || "",
+        iconClassName: getAvatarColor(campaignData.title),
+        status: campaignData.status === "active" ? "Active" : "Archived",
+        isFavorite: campaignData.is_favorite,
+        progress: campaignData.progress_percentage ?? 0,
+        target_amount: campaignData.target_amount,
+        total_raised: campaignData.total_raised,
+        contributor_count: campaignData.contributor_count,
+        end_date: campaignData.end_date,
+      }
+    : {
+        id: "loading",
+        group_id: "loading",
+        name: "",
+        description: "",
+        iconClassName: "bg-muted",
+        status: "Active",
+        isFavorite: false,
+        progress: 0,
+        target_amount: 0,
+        total_raised: 0,
+        contributor_count: 0,
+        end_date: "",
+      };
 
   return (
-    <TreasurerCampaignDetailPageClient campaign={campaign}>
+    <TreasurerCampaignDetailPageClient campaign={campaign} isLoading={isLoading}>
       {children}
     </TreasurerCampaignDetailPageClient>
   );

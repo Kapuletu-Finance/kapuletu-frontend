@@ -11,8 +11,8 @@ const CampaignSummaryCard = () => {
         </CardTitle>
       </CardHeader>
 
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="flex flex-col flex-1 pb-8">
+        <div className="space-y-6 flex-1">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2 text-muted-foreground">
               <IconLibrary name="target" className="w-4 h-4" />
@@ -46,7 +46,7 @@ const CampaignSummaryCard = () => {
           </div>
         </div>
 
-        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl py-6 font-semibold gap-2">
+        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl py-6 font-semibold gap-2 mt-8">
           <IconLibrary name="add" className="w-5 h-5" /> Add a contribution
         </Button>
       </CardContent>

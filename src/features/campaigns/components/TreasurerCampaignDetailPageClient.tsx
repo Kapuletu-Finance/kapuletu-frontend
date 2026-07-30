@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { CampaignInfo } from "@/features/campaigns/components/CampaignCard";
 import IconLibrary, { type IconName } from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
@@ -11,18 +12,19 @@ import { cn, getInitials } from "@/lib/utils";
 
 interface TreasurerCampaignDetailPageClientProps {
   campaign: CampaignInfo;
+  isLoading?: boolean;
   children?: React.ReactNode;
 }
 
 export const TreasurerCampaignDetailPageClient: React.FC<
   TreasurerCampaignDetailPageClientProps
-> = ({ campaign, children }) => {
+> = ({ campaign, isLoading, children }) => {
   const isArchived = campaign.status === "Archived";
   const pathname = usePathname();
   const params = useParams();
   const groupSlug = typeof params.groupSlug === "string" ? params.groupSlug : "";
 
-  const baseUrl = `/treasurer/groups/${groupSlug}/campaigns/${campaign.slug}`;
+  const baseUrl = `/treasurer/groups/${groupSlug}/campaigns/${campaign.slug || ""}`;
 
   const tabs: { value: string; label: string; icon: IconName; href: string }[] = [
     { value: "overview", label: "Overview", icon: "panels-top-left", href: baseUrl },
@@ -49,43 +51,64 @@ export const TreasurerCampaignDetailPageClient: React.FC<
         {/* Campaign Header Profile */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-2">
           <div className="flex items-center gap-5">
-            <div
-              className={cn(
-                "w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl font-bold shrink-0",
-                campaign.iconClassName ?? "bg-primary text-primary-foreground",
-              )}
-            >
-              {getInitials(campaign.name)}
-            </div>
+            {isLoading ? (
+              <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 rounded-full shrink-0" />
+            ) : (
+              <div
+                className={cn(
+                  "w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl font-bold shrink-0",
+                  campaign.iconClassName ?? "bg-primary text-primary-foreground",
+                )}
+              >
+                {getInitials(campaign.name)}
+              </div>
+            )}
 
             <div className="flex flex-col justify-center gap-1.5">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                {campaign.name}
-              </h1>
-              <p className="text-sm sm:text-base text-muted-foreground">{campaign.description}</p>
+              {isLoading ? (
+                <>
+                  <Skeleton className="h-8 sm:h-9 w-48 sm:w-64 rounded-md" />
+                  <Skeleton className="h-5 sm:h-6 w-32 sm:w-48 rounded-md mt-1" />
+                </>
+              ) : (
+                <>
+                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                    {campaign.name}
+                  </h1>
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    {campaign.description}
+                  </p>
+                </>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-4 self-start sm:self-center ml-21 sm:ml-0">
-            <span className="text-sm text-muted-foreground font-medium">15 days left</span>
-            {campaign.status && (
-              <Badge
-                variant="secondary"
-                className={cn(
-                  "font-medium px-3 py-1 text-xs gap-1.5 border-none shadow-none",
-                  isArchived
-                    ? "bg-muted text-muted-foreground"
-                    : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
+            {isLoading ? (
+              <Skeleton className="h-6 w-24 rounded-full" />
+            ) : (
+              <>
+                <span className="text-sm text-muted-foreground font-medium">15 days left</span>
+                {campaign.status && (
+                  <Badge
+                    variant="secondary"
+                    className={cn(
+                      "font-medium px-3 py-1 text-xs gap-1.5 border-none shadow-none",
+                      isArchived
+                        ? "bg-muted text-muted-foreground"
+                        : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "w-1.5 h-1.5 rounded-full shrink-0",
+                        isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
+                      )}
+                    />
+                    {campaign.status}
+                  </Badge>
                 )}
-              >
-                <span
-                  className={cn(
-                    "w-1.5 h-1.5 rounded-full shrink-0",
-                    isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
-                  )}
-                />
-                {campaign.status}
-              </Badge>
+              </>
             )}
           </div>
         </div>

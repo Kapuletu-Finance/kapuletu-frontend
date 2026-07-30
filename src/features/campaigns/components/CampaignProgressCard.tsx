@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Area, AreaChart, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -22,15 +23,24 @@ const chartData = [
 ];
 
 const CampaignProgressCard = () => {
+  const [timeRange, setTimeRange] = useState("this-year");
+
+  const timeRangeLabel =
+    {
+      "this-year": "This year",
+      "last-year": "Last year",
+      "all-time": "All time",
+    }[timeRange] || "This year";
+
   return (
     <Card className="p-8">
       <CardHeader className="flex flex-row items-center justify-between p-0 pb-6">
         <CardTitle className="text-xl font-bold text-foreground font-sans">Progress</CardTitle>
 
-        <Select defaultValue="this-year">
+        <Select value={timeRange} onValueChange={(val) => val && setTimeRange(val)}>
           <SelectTrigger className="rounded-xl border-border font-medium gap-2 w-auto h-auto py-2">
             <IconLibrary name="calendar" className="w-4 h-4 text-muted-foreground" />
-            <SelectValue placeholder="This year" />
+            <SelectValue>{timeRangeLabel}</SelectValue>
           </SelectTrigger>
           <SelectContent align="end" className="rounded-xl">
             <SelectItem value="this-year" label="This year">

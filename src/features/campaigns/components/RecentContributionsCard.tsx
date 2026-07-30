@@ -1,3 +1,7 @@
+"use client";
+
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
@@ -46,15 +50,27 @@ const contributions: Contribution[] = [
 ];
 
 const RecentContributionsCard = () => {
+  const params = useParams();
+  const groupSlug = params?.groupSlug;
+  const campaignSlug = params?.campaignSlug;
+
+  const contributionsLink =
+    groupSlug && campaignSlug
+      ? `/treasurer/groups/${groupSlug}/campaigns/${campaignSlug}/contributions`
+      : "#";
+
   return (
     <Card className="rounded-3xl border-none shadow-sm bg-card overflow-hidden h-full">
       <CardHeader className="flex flex-row items-center justify-between p-6 pb-4 border-b border-border">
         <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
           RECENT CONTRIBUTIONS
         </h2>
-        <button type="button" className="text-sm font-semibold text-primary hover:underline">
+        <Link
+          href={contributionsLink}
+          className="text-sm font-semibold text-primary hover:underline"
+        >
           View All
-        </button>
+        </Link>
       </CardHeader>
 
       <CardContent className="p-6">
