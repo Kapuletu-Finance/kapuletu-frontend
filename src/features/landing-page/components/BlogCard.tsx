@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
 import type { BlogPost } from "@/features/landing-page/data/posts";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
@@ -9,7 +10,7 @@ interface BlogCardProps {
 export const BlogCard = ({ post }: BlogCardProps) => {
   return (
     <Link href={`/blogs/${post.slug}`} className="group block">
-      <article className="rounded-xl border border-border bg-card p-6 transition-all hover:shadow-md hover:border-primary/30">
+      <Card className="transition-all hover:border-primary/30">
         <div className="flex items-center gap-2 mb-3">
           <span className="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
             {post.category}
@@ -36,7 +37,7 @@ export const BlogCard = ({ post }: BlogCardProps) => {
             Read more <IconLibrary name="arrow-right" className="h-4 w-4" />
           </span>
         </div>
-      </article>
+      </Card>
     </Link>
   );
 };

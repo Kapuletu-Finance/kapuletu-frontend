@@ -97,7 +97,7 @@ export const TreasurerGroupsPageClient = () => {
             <Button
               variant="outline"
               size="icon"
-              className="rounded-full text-muted-foreground"
+              className="text-muted-foreground"
               disabled={page === 0}
               onClick={() => setPage(Math.max(0, page - 1))}
             >
@@ -109,7 +109,7 @@ export const TreasurerGroupsPageClient = () => {
                 variant={page === i ? "default" : "outline"}
                 size="icon"
                 className={cn(
-                  "rounded-full font-semibold shadow-sm",
+                  "font-semibold shadow-sm",
                   page !== i && "text-foreground font-medium",
                 )}
                 onClick={() => setPage(i)}
@@ -120,7 +120,7 @@ export const TreasurerGroupsPageClient = () => {
             <Button
               variant="outline"
               size="icon"
-              className="rounded-full text-muted-foreground"
+              className="text-muted-foreground"
               disabled={page >= totalPages - 1}
               onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
             >
@@ -139,19 +139,19 @@ export const TreasurerGroupsPageClient = () => {
           )}
         >
           {["sk-1", "sk-2", "sk-3", "sk-4", "sk-5", "sk-6"].map((key) => (
-            <Card key={key} className="rounded-3xl border-none shadow-sm p-6 space-y-6 bg-card">
-              <CardHeader className="p-0 flex-row items-center gap-4 space-y-0">
-                <Skeleton className="w-16 h-16 rounded-full shrink-0" />
+            <Card key={key} className="border-none space-y-6 bg-card">
+              <CardHeader className="flex-row items-center gap-4 space-y-0">
+                <Skeleton className="w-16 h-16 shrink-0" />
                 <div className="flex flex-col gap-1.5 flex-1">
-                  <Skeleton className="h-6 w-36 rounded-md" />
-                  <Skeleton className="h-4 w-48 rounded-md" />
+                  <Skeleton className="h-6 w-36" />
+                  <Skeleton className="h-4 w-48" />
                 </div>
-                <Skeleton className="h-6 w-16 rounded-full" />
+                <Skeleton className="h-6 w-16" />
               </CardHeader>
               <div className="flex gap-2 pt-2">
-                <Skeleton className="h-9 w-28 rounded-md" />
-                <Skeleton className="h-9 w-32 rounded-md" />
-                <Skeleton className="h-10 w-10 rounded-md shrink-0" />
+                <Skeleton className="h-9 w-28" />
+                <Skeleton className="h-9 w-32" />
+                <Skeleton className="h-10 w-10 shrink-0" />
               </div>
             </Card>
           ))}

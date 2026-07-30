@@ -1,5 +1,6 @@
 import type React from "react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -129,7 +130,7 @@ const NotificationsDropdown: React.FC = () => {
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger className="relative rounded-md shrink-0 size-9 inline-flex items-center justify-center hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <DropdownMenuTrigger className="relative shrink-0 size-9 inline-flex items-center justify-center hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring">
         <IconLibrary name="notification" className="h-5 w-5 text-muted-foreground" />
         {unreadCount > 0 && (
           <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 bg-primary text-primary-foreground text-[9px] font-bold rounded-md flex items-center justify-center border-2 border-background">
@@ -139,19 +140,20 @@ const NotificationsDropdown: React.FC = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[85vw] max-w-sm sm:max-w-none sm:w-105 p-0 rounded-3xl overflow-hidden shadow-xl border-border bg-background"
+        className="w-[85vw] max-w-sm sm:max-w-none sm:w-105 overflow-hidden border-border bg-background"
       >
         <div className="p-6 pb-2">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-xl">Notifications</h3>
             {unreadCount > 0 && (
-              <button
-                type="button"
+              <Button
+                variant="link"
+                size="sm"
                 onClick={markAllAsRead}
-                className="text-sm font-medium text-primary hover:underline"
+                className="text-sm font-medium"
               >
                 Mark all as read
-              </button>
+              </Button>
             )}
           </div>
 
@@ -205,13 +207,14 @@ const NotificationsDropdown: React.FC = () => {
 
         {notifications.length > 5 && (
           <div className="p-4 pt-2 text-center bg-background sticky bottom-0">
-            <button
-              type="button"
+            <Button
+              variant="link"
+              size="sm"
               onClick={() => setShowAll(!showAll)}
-              className="text-sm font-bold text-primary hover:underline py-2"
+              className="text-sm font-bold"
             >
               {showAll ? "View less" : "View all"}
-            </button>
+            </Button>
           </div>
         )}
       </DropdownMenuContent>

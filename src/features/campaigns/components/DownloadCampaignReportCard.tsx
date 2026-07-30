@@ -39,15 +39,15 @@ const ExcelIcon = ({ className }: { className?: string }) => (
 
 const DownloadCampaignReportCard = () => {
   return (
-    <Card className="rounded-3xl border-none shadow-sm p-6 bg-card space-y-6">
-      <CardHeader className="p-0 space-y-1">
+    <Card className="border-none bg-card space-y-6">
+      <CardHeader className="space-y-1">
         <h2 className="font-bold text-foreground text-base">Download Report</h2>
         <p className="text-xs text-muted-foreground">
           Download a detailed report for this campaign.
         </p>
       </CardHeader>
 
-      <CardContent className="p-0 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* PDF Option */}
         <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-background hover:border-primary/50 transition-colors">
           <div className="flex items-center gap-4">

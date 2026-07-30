@@ -117,7 +117,7 @@ export const TreasurerGroupDetailPageClient = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full text-muted-foreground"
+                className="text-muted-foreground"
                 disabled={page === 0}
                 onClick={() => setPage(Math.max(0, page - 1))}
               >
@@ -129,7 +129,7 @@ export const TreasurerGroupDetailPageClient = () => {
                   variant={page === i ? "default" : "outline"}
                   size="icon"
                   className={cn(
-                    "rounded-full font-semibold shadow-sm",
+                    "font-semibold shadow-sm",
                     page !== i && "text-foreground font-medium",
                   )}
                   onClick={() => setPage(i)}
@@ -140,7 +140,7 @@ export const TreasurerGroupDetailPageClient = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full text-muted-foreground"
+                className="text-muted-foreground"
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
               >
@@ -159,24 +159,21 @@ export const TreasurerGroupDetailPageClient = () => {
             )}
           >
             {["sk-1", "sk-2", "sk-3", "sk-4", "sk-5", "sk-6"].map((key) => (
-              <Card
-                key={key}
-                className="border border-border shadow-sm flex flex-col justify-between h-full"
-              >
-                <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0 p-5">
+              <Card key={key} className="border border-border flex flex-col justify-between h-full">
+                <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
                   <div className="flex items-center gap-4">
-                    <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+                    <Skeleton className="w-12 h-12 shrink-0" />
                     <div className="flex flex-col gap-1.5">
-                      <Skeleton className="h-5 w-36 rounded-md" />
-                      <Skeleton className="h-4 w-48 rounded-md" />
+                      <Skeleton className="h-5 w-36" />
+                      <Skeleton className="h-4 w-48" />
                     </div>
                   </div>
-                  <Skeleton className="h-6 w-16 rounded-full" />
+                  <Skeleton className="h-6 w-16" />
                 </CardHeader>
-                <CardFooter className="flex flex-row items-center gap-2 border-none bg-transparent p-5 pt-0">
-                  <Skeleton className="h-10 w-28 rounded-md" />
-                  <Skeleton className="h-10 w-36 rounded-md" />
-                  <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                <CardFooter className="flex flex-row items-center gap-2 border-none bg-transparent">
+                  <Skeleton className="h-10 w-28" />
+                  <Skeleton className="h-10 w-36" />
+                  <Skeleton className="h-10 w-10 shrink-0" />
                 </CardFooter>
               </Card>
             ))}

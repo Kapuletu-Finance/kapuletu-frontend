@@ -5,8 +5,8 @@ import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const UpgradeDialog = () => {
   return (
-    <Card className="max-w-md w-full mx-auto p-8 rounded-3xl border-none shadow-lg">
-      <CardContent className="flex flex-col items-center text-center space-y-6 p-0">
+    <Card className="max-w-md w-full mx-auto border-none">
+      <CardContent className="flex flex-col items-center text-center space-y-6">
         <SiteLogo />
 
         <div className="bg-primary/10 p-4 rounded-full">
@@ -24,12 +24,12 @@ const UpgradeDialog = () => {
         </div>
 
         <div className="w-full space-y-3">
-          <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl py-6 font-semibold">
+          <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 font-semibold">
             Upgrade Now
           </Button>
           <Button
             variant="ghost"
-            className="w-full rounded-xl py-6 text-muted-foreground hover:text-foreground"
+            className="w-full py-6 text-muted-foreground hover:text-foreground"
           >
             Dismiss
           </Button>

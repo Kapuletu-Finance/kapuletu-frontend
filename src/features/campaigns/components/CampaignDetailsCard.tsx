@@ -4,18 +4,18 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const CampaignDetailsCard = () => {
   return (
-    <Card className="p-8">
-      <CardHeader className="flex flex-row items-start justify-between p-0 pb-6">
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between">
         <div className="space-y-1">
           <h2 className="font-bold text-foreground text-xl">Campaign Details</h2>
           <p className="text-xs text-muted-foreground">View and update your campaign details</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl gap-2 font-semibold">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-semibold">
           <IconLibrary name="edit" className="w-4 h-4" /> Edit
         </Button>
       </CardHeader>
 
-      <CardContent className="p-0 space-y-6">
+      <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-4 items-center py-2">
           <span className="text-sm font-medium text-muted-foreground">Name</span>
           <span className="md:col-span-3 text-sm font-semibold text-foreground">Medical Fund</span>

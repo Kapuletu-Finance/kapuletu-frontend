@@ -173,21 +173,21 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
                       <InputOTPSlot
                         index={0}
                         className={cn(
-                          "w-12 h-14 text-lg rounded-md border-black border",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={1}
                         className={cn(
-                          "w-12 h-14 text-lg rounded-md border-black border",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={2}
                         className={cn(
-                          "w-12 h-14 text-lg rounded-md border-black border",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
@@ -197,21 +197,21 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
                       <InputOTPSlot
                         index={3}
                         className={cn(
-                          "w-12 h-14 text-lg rounded-md border-black border",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={4}
                         className={cn(
-                          "w-12 h-14 text-lg rounded-md border-black border",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={5}
                         className={cn(
-                          "w-12 h-14 text-lg rounded-md border-black border",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
@@ -240,7 +240,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
             <div className="pt-2">
               <Button
                 type="submit"
-                className="w-full rounded-xl font-medium py-6"
+                className="w-full font-medium py-6"
                 isLoading={verifyMutation.isPending}
               >
                 Verify

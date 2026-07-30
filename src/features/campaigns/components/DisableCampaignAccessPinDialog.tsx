@@ -24,7 +24,7 @@ const DisableCampaignAccessPinDialog = () => {
         }
       />
 
-      <DialogContent className="sm:max-w-md rounded-3xl p-8 space-y-6">
+      <DialogContent className="sm:max-w-md p-8 space-y-6">
         <div className="flex items-start gap-4">
           <div className="p-3 rounded-2xl bg-destructive/10 text-destructive shrink-0">
             <IconLibrary name="triangle-alert" className="w-6 h-6" />
@@ -43,13 +43,13 @@ const DisableCampaignAccessPinDialog = () => {
         <DialogFooter className="flex flex-row gap-3 sm:justify-end pt-2">
           <Button
             variant="default"
-            className="flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl py-6 font-semibold"
+            className="flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-primary-foreground py-6 font-semibold"
           >
             Cancel
           </Button>
           <Button
             variant="outline"
-            className="flex-1 sm:flex-initial border-primary text-primary hover:bg-primary/10 rounded-xl py-6 font-semibold"
+            className="flex-1 sm:flex-initial border-primary text-primary hover:bg-primary/10 py-6 font-semibold"
           >
             Yes, disable PIN
           </Button>

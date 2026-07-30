@@ -202,7 +202,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
           className="max-w-4xl p-0 border-none bg-transparent shadow-none"
           showCloseButton={false}
         >
-          <ScrollArea className="relative bg-background rounded-3xl overflow-hidden max-h-[85vh]">
+          <ScrollArea className="relative bg-background overflow-hidden max-h-[85vh]">
             <FaqsSection />
           </ScrollArea>
         </DialogContent>

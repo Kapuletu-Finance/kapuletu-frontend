@@ -9,8 +9,8 @@ const PublicReportLinkCard = () => {
   const pinDigits = ["7", "1", "1", "5"];
 
   return (
-    <Card className="rounded-3xl border-none shadow-sm p-6 bg-card">
-      <CardContent className="p-0 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+    <Card className="border-none bg-card">
+      <CardContent className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         {/* Left Side: Info & URL Input */}
         <div className="space-y-4 flex-1 w-full">
           <div className="flex items-center gap-3">
@@ -36,7 +36,7 @@ const PublicReportLinkCard = () => {
             <Button
               size="sm"
               variant="outline"
-              className="rounded-lg gap-1 border-primary/30 text-primary hover:bg-primary/10 shrink-0 h-9 px-4 font-semibold"
+              className="gap-1 border-primary/30 text-primary hover:bg-primary/10 shrink-0 h-9 px-4 font-semibold"
             >
               <IconLibrary name="copy" className="w-3.5 h-3.5" /> Copy Link
             </Button>

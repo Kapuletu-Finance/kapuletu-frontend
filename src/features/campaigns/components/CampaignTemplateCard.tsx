@@ -12,9 +12,9 @@ const CampaignTemplateCard = () => {
   const pinDigits = ["7", "1", "1", "5"];
 
   return (
-    <Card className="rounded-3xl border-none shadow-sm p-8 bg-card space-y-8">
+    <Card className="border-none bg-card space-y-8">
       {/* Header */}
-      <CardHeader className="flex flex-row items-center justify-between p-0">
+      <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-1">
           <h2 className="font-bold text-foreground text-xl">Campaign Template</h2>
           <p className="text-xs text-muted-foreground">
@@ -24,17 +24,17 @@ const CampaignTemplateCard = () => {
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
-            className="border-border text-foreground hover:bg-secondary rounded-xl gap-2 font-semibold"
+            className="border-border text-foreground hover:bg-secondary gap-2 font-semibold"
           >
             <IconLibrary name="rotate-ccw" className="w-4 h-4" /> Reset to default
           </Button>
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl gap-2 font-semibold">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-semibold">
             <IconLibrary name="edit" className="w-4 h-4" /> Edit
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Form Fields */}
         <div className="lg:col-span-7 space-y-6">
           <div className="space-y-2">
@@ -42,11 +42,7 @@ const CampaignTemplateCard = () => {
             <p className="text-xs text-muted-foreground">
               This title will appear at the top of your WhatsApp updates and reports
             </p>
-            <Input
-              readOnly
-              value="Medical Bill"
-              className="rounded-xl border-border bg-background py-5"
-            />
+            <Input readOnly value="Medical Bill" className="border-border bg-background py-5" />
           </div>
 
           <div className="space-y-2">
@@ -57,7 +53,7 @@ const CampaignTemplateCard = () => {
             <Textarea
               readOnly
               value="We still need Ksh 30,000 to reach our goal. Every contribution counts. View full report at: app.kapuletu.co.ke/report/medical-fund"
-              className="rounded-xl border-border bg-background min-h-22.5 resize-none"
+              className="border-border bg-background min-h-22.5 resize-none"
             />
           </div>
 
@@ -143,7 +139,7 @@ const CampaignTemplateCard = () => {
               </div>
               <Button
                 size="sm"
-                className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9"
               >
                 <IconLibrary name="refresh" className="w-3.5 h-3.5" /> Regenerate PIN
               </Button>

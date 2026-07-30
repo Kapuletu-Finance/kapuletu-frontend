@@ -31,10 +31,10 @@ export const PricingSection = ({ hideLogo, className }: PricingSectionProps) => 
           return (
             <Card
               key={pricing.id}
-              className="flex flex-col justify-between border border-border bg-card shadow-sm rounded-2xl p-4 transition-all hover:shadow-md"
+              className="flex flex-col justify-between border border-border bg-card transition-all"
             >
               <div>
-                <CardHeader className="p-0 space-y-4">
+                <CardHeader className="space-y-4">
                   <div className="text-xl font-bold font-sans tracking-tight">
                     {pricing.currency} <span className="text-2xl">{pricing.price}</span>
                     <span className="text-sm font-normal text-muted-foreground">
@@ -56,7 +56,7 @@ export const PricingSection = ({ hideLogo, className }: PricingSectionProps) => 
 
                 <hr className="my-6 border-border" />
 
-                <CardContent className="p-0">
+                <CardContent>
                   <ul className="space-y-4">
                     {pricing.features.map((feature) => (
                       <li
@@ -75,8 +75,8 @@ export const PricingSection = ({ hideLogo, className }: PricingSectionProps) => 
                 </CardContent>
               </div>
 
-              <CardFooter className="p-4">
-                <Button className={`rounded-xl py-6 uppercase ${styles.btnClass}`}>
+              <CardFooter>
+                <Button className={`py-6 uppercase ${styles.btnClass}`}>
                   <Link href={pricing.id === "basic" ? "/sign-up" : `/checkout?tier=${pricing.id}`}>
                     {pricing.ctaText}
                   </Link>

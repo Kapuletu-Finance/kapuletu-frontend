@@ -95,21 +95,21 @@ export const ForgotPasswordVerifyForm = () => {
                         <InputOTPSlot
                           index={0}
                           className={cn(
-                            "w-12 h-14 text-lg rounded-md border-black border",
+                            "w-12 h-14 text-lg border-black border",
                             !!form.formState.errors.code && "border-destructive",
                           )}
                         />
                         <InputOTPSlot
                           index={1}
                           className={cn(
-                            "w-12 h-14 text-lg rounded-md border-black border",
+                            "w-12 h-14 text-lg border-black border",
                             !!form.formState.errors.code && "border-destructive",
                           )}
                         />
                         <InputOTPSlot
                           index={2}
                           className={cn(
-                            "w-12 h-14 text-lg rounded-md border-black border",
+                            "w-12 h-14 text-lg border-black border",
                             !!form.formState.errors.code && "border-destructive",
                           )}
                         />
@@ -119,21 +119,21 @@ export const ForgotPasswordVerifyForm = () => {
                         <InputOTPSlot
                           index={3}
                           className={cn(
-                            "w-12 h-14 text-lg rounded-md border-black border",
+                            "w-12 h-14 text-lg border-black border",
                             !!form.formState.errors.code && "border-destructive",
                           )}
                         />
                         <InputOTPSlot
                           index={4}
                           className={cn(
-                            "w-12 h-14 text-lg rounded-md border-black border",
+                            "w-12 h-14 text-lg border-black border",
                             !!form.formState.errors.code && "border-destructive",
                           )}
                         />
                         <InputOTPSlot
                           index={5}
                           className={cn(
-                            "w-12 h-14 text-lg rounded-md border-black border",
+                            "w-12 h-14 text-lg border-black border",
                             !!form.formState.errors.code && "border-destructive",
                           )}
                         />
@@ -151,14 +151,15 @@ export const ForgotPasswordVerifyForm = () => {
 
             <div className="text-center text-sm pt-4">
               <span className="text-muted-foreground">Didn&apos;t receive the code? </span>
-              <button
+              <Button
+                variant="link"
+                size="sm"
                 type="button"
                 onClick={handleResend}
                 disabled={forgotPasswordMutation.isPending}
-                className="font-medium text-primary hover:underline bg-transparent border-none p-0 cursor-pointer"
               >
                 Resend
-              </button>
+              </Button>
             </div>
 
             <div className="pt-2">

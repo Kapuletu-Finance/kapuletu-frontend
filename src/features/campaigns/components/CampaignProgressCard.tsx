@@ -33,16 +33,16 @@ const CampaignProgressCard = () => {
     }[timeRange] || "This year";
 
   return (
-    <Card className="p-8">
-      <CardHeader className="flex flex-row items-center justify-between p-0 pb-6">
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-xl font-bold text-foreground font-sans">Progress</CardTitle>
 
         <Select value={timeRange} onValueChange={(val) => val && setTimeRange(val)}>
-          <SelectTrigger className="rounded-xl border-border font-medium gap-2 w-auto h-auto py-2">
+          <SelectTrigger className="border-border font-medium gap-2 w-auto h-auto py-2">
             <IconLibrary name="calendar" className="w-4 h-4 text-muted-foreground" />
             <SelectValue>{timeRangeLabel}</SelectValue>
           </SelectTrigger>
-          <SelectContent align="end" className="rounded-xl">
+          <SelectContent align="end" className="">
             <SelectItem value="this-year" label="This year">
               This year
             </SelectItem>
@@ -56,7 +56,7 @@ const CampaignProgressCard = () => {
         </Select>
       </CardHeader>
 
-      <CardContent className="p-0 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         {/* Radial Progress Representation */}
         <div className="lg:col-span-4 flex flex-col items-center justify-center p-6 bg-secondary/30 rounded-2xl">
           <div className="relative w-40 h-40 flex items-center justify-center">

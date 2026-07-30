@@ -64,7 +64,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
     return (
       <Card
         className={cn(
-          "border-none shadow-sm p-4 bg-card flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4",
+          "border-none bg-card flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4",
           className,
         )}
       >
@@ -148,13 +148,8 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
   }
 
   return (
-    <Card
-      className={cn(
-        "border border-border shadow-sm flex flex-col justify-between h-full",
-        className,
-      )}
-    >
-      <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0 p-5">
+    <Card className={cn("border border-border flex flex-col justify-between h-full", className)}>
+      <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
         <div className="flex items-center gap-4 overflow-hidden">
           <div
             className={cn(
@@ -197,7 +192,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
         )}
       </CardHeader>
 
-      <CardFooter className="flex flex-row flex-wrap items-center gap-2 border-none bg-transparent p-5 pt-0">
+      <CardFooter className="flex flex-row flex-wrap items-center gap-2 border-none bg-transparent">
         <Link href={detailHref}>
           <Button
             onClick={onViewDetails}

@@ -18,7 +18,7 @@ export const CtaSection = () => {
           <Button
             size="lg"
             variant="secondary"
-            className="rounded-full text-base h-14 px-10 shadow-lg hover:shadow-xl transition-all"
+            className="text-base h-14 px-10 shadow-lg hover:shadow-xl transition-all"
           >
             Create Your Workspace Now
           </Button>

@@ -6,7 +6,7 @@ import { SiteLogo } from "@/features/shared/components/SiteLogo";
 const TermsPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 bg-muted/50">
-      <Card className="w-full max-w-3xl p-4 md:p-8">
+      <Card className="w-full max-w-3xl">
         <CardHeader className="flex flex-col items-center mb-4">
           <SiteLogo width={48} height={48} className="mb-6" />
           <h1 className="text-3xl font-bold tracking-tight">Terms of Service</h1>

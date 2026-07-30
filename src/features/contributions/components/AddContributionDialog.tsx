@@ -1,5 +1,8 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,22 +11,47 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
+const addContributionSchema = z.object({
+  name: z.string().min(1, "Name is required."),
+  phone: z.string().min(1, "Phone number is required."),
+  amount: z.string().min(1, "Amount is required."),
+  paymentType: z.string().optional(),
+});
+
+type AddContributionFormData = z.infer<typeof addContributionSchema>;
+
 const AddContributionDialog = () => {
+  const form = useForm<AddContributionFormData>({
+    defaultValues: {
+      name: "",
+      phone: "",
+      amount: "",
+      paymentType: "Cash",
+    },
+    resolver: zodResolver(addContributionSchema),
+  });
+
+  const onSubmit = (data: AddContributionFormData) => {
+    // TODO: wire up to API mutation
+    console.log(data);
+  };
+
   return (
     <Dialog>
       <DialogTrigger
         render={
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-6 font-semibold gap-2">
+          <Button className="gap-2">
             <IconLibrary name="add" className="w-5 h-5" /> Add a contribution
           </Button>
         }
       />
 
-      <DialogContent className="sm:max-w-112.5 rounded-3xl p-8">
+      <DialogContent className="sm:max-w-112.5">
         <DialogHeader className="items-center space-y-4">
           <div className="bg-primary/10 p-3 rounded-full text-primary">🔒</div>
           <DialogTitle className="text-xl font-bold text-foreground">
@@ -31,61 +59,102 @@ const AddContributionDialog = () => {
           </DialogTitle>
         </DialogHeader>
 
-        <form className="space-y-5 pt-2">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-semibold text-foreground">
-              Name
-            </Label>
-            <Input
-              id="name"
-              placeholder="e.g. John Doe"
-              className="rounded-xl border-border bg-background py-5"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <Field data-invalid={!!form.formState.errors.name}>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-sm font-semibold text-foreground"
+                    isRequired
+                  >
+                    Name
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    placeholder="e.g. John Doe"
+                    {...field}
+                    aria-invalid={!!form.formState.errors.name}
+                  />
+                  {form.formState.errors.name && (
+                    <FieldError>{form.formState.errors.name.message}</FieldError>
+                  )}
+                </Field>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-semibold text-foreground">
-              Phone Number
-            </Label>
-            <Input
-              id="phone"
-              placeholder="e.g +2547 1234 5678"
-              className="rounded-xl border-border bg-background py-5"
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <Field data-invalid={!!form.formState.errors.phone}>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-sm font-semibold text-foreground"
+                    isRequired
+                  >
+                    Phone Number
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    placeholder="e.g +2547 1234 5678"
+                    {...field}
+                    aria-invalid={!!form.formState.errors.phone}
+                  />
+                  {form.formState.errors.phone && (
+                    <FieldError>{form.formState.errors.phone.message}</FieldError>
+                  )}
+                </Field>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="amount" className="text-sm font-semibold text-foreground">
-              Amount
-            </Label>
-            <Input
-              id="amount"
-              placeholder="e.g. 10,000"
-              className="rounded-xl border-border bg-background py-5"
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <Field data-invalid={!!form.formState.errors.amount}>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-sm font-semibold text-foreground"
+                    isRequired
+                  >
+                    Amount
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    placeholder="e.g. 10,000"
+                    {...field}
+                    aria-invalid={!!form.formState.errors.amount}
+                  />
+                  {form.formState.errors.amount && (
+                    <FieldError>{form.formState.errors.amount.message}</FieldError>
+                  )}
+                </Field>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-semibold text-foreground">Payment Type</Label>
-            <div className="relative">
+            <div className="space-y-2">
+              <FieldLabel className="text-sm font-semibold text-foreground">
+                Payment Type
+              </FieldLabel>
               <Button
                 type="button"
                 variant="outline"
-                className="w-full justify-between rounded-xl border-border bg-background text-foreground font-normal py-5 px-4"
+                className="w-full justify-between font-normal"
               >
                 Cash
                 <IconLibrary name="chevron-down" className="w-4 h-4 text-muted-foreground" />
               </Button>
             </div>
-          </div>
 
-          <Button
-            type="submit"
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl py-6 font-semibold mt-2"
-          >
-            Create Campaign
-          </Button>
-        </form>
+            <Button type="submit" className="w-full mt-2">
+              Create Contribution
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

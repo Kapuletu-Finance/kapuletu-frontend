@@ -24,10 +24,7 @@ const StatCard: React.FC<StatCardProps> = ({
 }) => {
   return (
     <Card
-      className={cn(
-        "p-6 flex flex-row items-center justify-between border-none shadow-sm rounded-2xl bg-card",
-        className,
-      )}
+      className={cn("flex flex-row items-center justify-between border-none bg-card", className)}
     >
       <div className="flex flex-col gap-2">
         <span className="text-muted-foreground font-medium text-sm sm:text-base">{label}</span>

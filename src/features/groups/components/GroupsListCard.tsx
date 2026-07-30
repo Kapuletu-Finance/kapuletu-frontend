@@ -14,7 +14,7 @@ const GroupsListCard = () => {
 
   if (isLoading) {
     return (
-      <Card className="shadow-sm p-6 flex-1 flex flex-col">
+      <Card className="flex-1 flex flex-col">
         <div className="flex flex-col gap-4">
           {["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((key) => (
             <div
@@ -26,11 +26,11 @@ const GroupsListCard = () => {
                   --
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Skeleton className="h-4 w-32 rounded-md" />
-                  <Skeleton className="h-3 w-48 rounded-md" />
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-48" />
                 </div>
               </div>
-              <Skeleton className="h-4 w-20 rounded-md" />
+              <Skeleton className="h-4 w-20" />
             </div>
           ))}
         </div>
@@ -41,7 +41,7 @@ const GroupsListCard = () => {
   const groups = data?.items ?? [];
 
   return (
-    <Card className="shadow-sm p-6 flex-1 flex flex-col">
+    <Card className="flex-1 flex flex-col">
       <ScrollArea className="h-87.5 pr-4">
         <div className="flex flex-col">
           {groups.map((group) => (

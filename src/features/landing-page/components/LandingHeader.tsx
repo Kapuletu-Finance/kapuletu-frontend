@@ -107,7 +107,7 @@ export const LandingHeader = () => {
                 </Link>
                 <div className="flex items-center justify-between px-1 pt-4 mt-2 border-t border-border/50">
                   <span className="text-sm font-medium text-muted-foreground">Appearance</span>
-                  <ThemeToggle variant="outline" className="rounded-full" />
+                  <ThemeToggle variant="outline" />
                 </div>
               </div>
             </SheetContent>
@@ -121,7 +121,7 @@ export const LandingHeader = () => {
               Sign In
             </Link>
             <Link href="/sign-up" className="whitespace-nowrap">
-              <Button size="sm" className="rounded-full px-3 sm:px-4">
+              <Button size="sm" className="px-3 sm:px-4">
                 Get Started
               </Button>
             </Link>

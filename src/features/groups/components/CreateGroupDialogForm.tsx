@@ -75,7 +75,7 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
         <DialogTrigger>{children}</DialogTrigger>
       ) : null}
 
-      <DialogContent className="rounded-3xl sm:max-w-112.5">
+      <DialogContent className="sm:max-w-112.5">
         <DialogHeader className="items-center space-y-4">
           <SiteLogo variant="icon" href={null} logoClassName="w-12 h-12 text-primary" />
           <DialogTitle className="text-xl">Create A New Group</DialogTitle>

@@ -6,8 +6,8 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const WhatsappUpdatePreviewCard = () => {
   return (
-    <Card className="rounded-3xl border-none shadow-sm bg-card overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between p-6 pb-4 border-b border-border">
+    <Card className="border-none bg-card overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-border">
         <div className="flex items-center gap-3">
           <div className="bg-emerald-500/10 p-2 rounded-xl text-emerald-600">
             <IconLibrary
@@ -26,20 +26,20 @@ const WhatsappUpdatePreviewCard = () => {
         <div className="flex items-center gap-3">
           <Button
             variant="default"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl gap-2 font-semibold"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-semibold"
           >
             <IconLibrary name="copy" className="w-4 h-4" /> Copy message
           </Button>
           <Button
             variant="outline"
-            className="border-primary text-primary hover:bg-primary/10 rounded-xl gap-2 font-semibold"
+            className="border-primary text-primary hover:bg-primary/10 gap-2 font-semibold"
           >
             <IconLibrary name="share" className="w-4 h-4" /> Share
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent>
         <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 font-mono text-xs md:text-sm text-foreground space-y-4 max-w-2xl mx-auto leading-relaxed">
           <div>
             <p className="font-bold underline">Medical Fund Update</p>

@@ -37,7 +37,7 @@ const CurrentPlanCard = () => {
         <CardContent className="flex flex-col items-center space-y-2">
           <div className="flex items-center gap-2">
             {isLoading ? (
-              <Skeleton className="w-8 h-8 rounded-md" />
+              <Skeleton className="w-8 h-8" />
             ) : (
               <div className={config.iconWrapperClass}>
                 <IconLibrary name={config.icon} className={config.iconClass} />

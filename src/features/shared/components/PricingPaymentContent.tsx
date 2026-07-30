@@ -101,8 +101,8 @@ const PricingPaymentModal = () => {
           <Label>Account Details</Label>
           <Input placeholder="0712345678" className="bg-muted/50 border-none" />
 
-          <Card className={`border-2 ${styles.borderColor} bg-accent/5 shadow-sm rounded-2xl`}>
-            <CardContent className="p-6 space-y-6">
+          <Card className={`border-2 ${styles.borderColor} bg-accent/5`}>
+            <CardContent className="space-y-6">
               <h3 className="font-bold text-center">Payment Details</h3>
 
               <div className="flex items-center gap-2 bg-background p-2 rounded-lg border">
@@ -133,7 +133,7 @@ const PricingPaymentModal = () => {
                 </div>
               </div>
 
-              <Button className={`w-full rounded-xl py-6 ${styles.btnClass}`}>
+              <Button className={`w-full py-6 ${styles.btnClass}`}>
                 Upgrade to {capitalizedTier}
               </Button>
             </CardContent>

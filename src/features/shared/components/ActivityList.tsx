@@ -30,8 +30,8 @@ const ActivityList: React.FC<ActivityListProps> = ({
               <IconLibrary name="add-circle" className="w-5 h-5 text-muted-foreground/40" />
             </div>
             <div className="flex flex-col gap-1.5 flex-1">
-              <Skeleton className="h-4 w-full max-w-48 rounded-md" />
-              <Skeleton className="h-3 w-24 rounded-md" />
+              <Skeleton className="h-4 w-full max-w-48" />
+              <Skeleton className="h-3 w-24" />
             </div>
           </div>
         ))}

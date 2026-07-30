@@ -112,7 +112,7 @@ const CampaignContributions = () => {
             />
             <Input
               placeholder="Search contribution..."
-              className="pl-10 h-12 rounded-2xl bg-muted/30 border-muted text-sm shadow-sm"
+              className="pl-10 h-12 bg-muted/30 border-muted text-sm shadow-sm"
             />
           </div>
 
@@ -122,7 +122,7 @@ const CampaignContributions = () => {
               render={
                 <Button
                   variant="outline"
-                  className="h-12 px-6 rounded-2xl border-border bg-transparent font-medium gap-2 shadow-sm w-full sm:w-auto shrink-0"
+                  className="h-12 px-6 border-border bg-transparent font-medium gap-2 shadow-sm w-full sm:w-auto shrink-0"
                 >
                   <IconLibrary name="calendar" className="w-4 h-4 text-muted-foreground" />
                   This year
@@ -130,7 +130,7 @@ const CampaignContributions = () => {
                 </Button>
               }
             />
-            <DropdownMenuContent align="end" className="rounded-xl">
+            <DropdownMenuContent align="end" className="">
               <DropdownMenuItem>This year</DropdownMenuItem>
               <DropdownMenuItem>Last year</DropdownMenuItem>
               <DropdownMenuItem>All time</DropdownMenuItem>
@@ -141,7 +141,7 @@ const CampaignContributions = () => {
       pagination={<Pagination currentPage={1} totalPages={10} />}
     >
       <div className="bg-transparent rounded-2xl overflow-hidden mt-6">
-        <CardContent className="p-0">
+        <CardContent>
           {/* Table Header */}
           <div className="grid grid-cols-4 text-sm font-semibold text-muted-foreground pb-4 px-6 border-b border-border">
             <span>Name</span>
@@ -177,7 +177,7 @@ const CampaignContributions = () => {
                 <div className="text-right sm:text-center">
                   <Badge
                     variant="secondary"
-                    className={`px-4 py-1.5 rounded-full font-medium shadow-sm ${
+                    className={`px-4 py-1.5 font-medium shadow-sm ${
                       item.paymentMethod === "M-pesa"
                         ? "bg-primary/10 text-primary hover:bg-primary/15"
                         : "bg-secondary text-secondary-foreground"

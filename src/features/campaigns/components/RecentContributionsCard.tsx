@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface Contribution {
@@ -60,8 +61,8 @@ const RecentContributionsCard = () => {
       : "#";
 
   return (
-    <Card className="rounded-3xl border-none shadow-sm bg-card overflow-hidden h-full">
-      <CardHeader className="flex flex-row items-center justify-between p-6 pb-4 border-b border-border">
+    <Card className="border-none bg-card overflow-hidden h-full">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-border">
         <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
           RECENT CONTRIBUTIONS
         </h2>
@@ -73,7 +74,7 @@ const RecentContributionsCard = () => {
         </Link>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent>
         {/* Table Header */}
         <div className="grid grid-cols-4 text-xs font-semibold text-muted-foreground pb-4 px-2">
           <span>Name</span>
@@ -106,7 +107,7 @@ const RecentContributionsCard = () => {
               <div className="text-right">
                 <Badge
                   variant="secondary"
-                  className={`px-3 py-1 rounded-full font-medium text-xs ${
+                  className={`px-3 py-1 font-medium text-xs ${
                     item.paymentMethod === "M-pesa"
                       ? "bg-primary/10 text-primary hover:bg-primary/15"
                       : "bg-secondary text-secondary-foreground"

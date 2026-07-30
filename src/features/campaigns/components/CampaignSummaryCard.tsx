@@ -4,14 +4,14 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const CampaignSummaryCard = () => {
   return (
-    <Card className="shadow-sm h-full flex flex-col justify-between">
+    <Card className="h-full flex flex-col justify-between">
       <CardHeader>
         <CardTitle className="text-xl font-bold text-foreground font-sans">
           Campaign Summary
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-col flex-1 pb-8">
+      <CardContent className="flex flex-col flex-1">
         <div className="space-y-6 flex-1">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2 text-muted-foreground">
@@ -46,7 +46,7 @@ const CampaignSummaryCard = () => {
           </div>
         </div>
 
-        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl py-6 font-semibold gap-2 mt-8">
+        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 font-semibold gap-2 mt-8">
           <IconLibrary name="add" className="w-5 h-5" /> Add a contribution
         </Button>
       </CardContent>

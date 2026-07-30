@@ -69,7 +69,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <Button
         variant="outline"
         size="icon"
-        className="rounded-full w-10 h-10 border-border bg-transparent shadow-sm text-muted-foreground"
+        className="w-10 h-10 border-border bg-transparent shadow-sm text-muted-foreground"
         disabled={currentPage <= 1}
         onClick={() => onPageChange?.(currentPage - 1)}
       >
@@ -95,7 +95,7 @@ const Pagination: React.FC<PaginationProps> = ({
               key={pageNumber}
               variant={isCurrent ? "default" : "outline"}
               className={cn(
-                "rounded-full w-10 h-10 shadow-sm font-semibold",
+                "w-10 h-10 shadow-sm font-semibold",
                 !isCurrent &&
                   "border-border bg-transparent text-muted-foreground hover:bg-muted/50",
               )}
@@ -110,7 +110,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <Button
         variant="outline"
         size="icon"
-        className="rounded-full w-10 h-10 border-border bg-transparent shadow-sm text-muted-foreground"
+        className="w-10 h-10 border-border bg-transparent shadow-sm text-muted-foreground"
         disabled={currentPage >= totalPages}
         onClick={() => onPageChange?.(currentPage + 1)}
       >

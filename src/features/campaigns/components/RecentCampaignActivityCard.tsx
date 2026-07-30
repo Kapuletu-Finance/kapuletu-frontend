@@ -31,14 +31,14 @@ const activities: ActivityItem[] = [
 
 const RecentCampaignActivityCard = () => {
   return (
-    <Card className="rounded-3xl border-none shadow-sm bg-card overflow-hidden h-full">
-      <CardHeader className="flex flex-row items-center justify-between p-6 pb-4 border-b border-border">
+    <Card className="border-none bg-card overflow-hidden h-full">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-border">
         <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
           RECENT ACTIVITIES
         </h2>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent>
         <ActivityList activities={activities} emptyMessage="No activity yet." />
       </CardContent>
     </Card>

@@ -49,7 +49,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
     return (
       <Card
         className={cn(
-          "p-4 bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4",
+          "bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4",
           className,
         )}
       >
@@ -72,7 +72,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
             <Badge
               variant="secondary"
               className={cn(
-                "ml-4 font-semibold rounded-full px-2.5 py-0.5 text-[10px] gap-1.5 border-none shadow-none hidden sm:inline-flex",
+                "ml-4 font-semibold px-2.5 py-0.5 text-[10px] gap-1.5 border-none shadow-none hidden sm:inline-flex",
                 isArchived
                   ? "bg-muted text-muted-foreground"
                   : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
@@ -123,7 +123,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
   }
 
   return (
-    <Card className={cn("p-6 bg-card flex flex-col h-full", className)}>
+    <Card className={cn("bg-card flex flex-col h-full", className)}>
       <div className="flex flex-col gap-6 flex-1">
         {/* Header */}
         <div className="flex flex-row items-start gap-4">
@@ -144,7 +144,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
                 <Badge
                   variant="secondary"
                   className={cn(
-                    "font-semibold rounded-full px-3 py-1 text-xs gap-1.5 border-none shadow-none shrink-0",
+                    "font-semibold px-3 py-1 text-xs gap-1.5 border-none shadow-none shrink-0",
                     isArchived
                       ? "bg-muted text-muted-foreground"
                       : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
@@ -166,7 +166,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
 
         {/* Campaigns Progress */}
         {campaigns.length > 0 && (
-          <CardContent className="space-y-4 px-0 py-0">
+          <CardContent className="space-y-4">
             <div className="flex flex-col gap-4">
               {campaigns.map((c) => (
                 <div key={c.name} className="flex items-center justify-between gap-4 text-sm">
@@ -188,7 +188,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
       </div>
 
       {/* Footer Actions */}
-      <CardFooter className="flex flex-row items-center justify-between gap-2 border-none bg-transparent px-0 pb-6 pt-6 mt-auto">
+      <CardFooter className="flex flex-row items-center justify-between gap-2 border-none bg-transparent mt-auto">
         <Link href={`/treasurer/groups/${group.slug || group.id}`}>
           <Button
             onClick={onViewDetails}

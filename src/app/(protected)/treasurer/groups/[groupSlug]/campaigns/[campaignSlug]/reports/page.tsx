@@ -8,7 +8,7 @@ export default function CampaignReportsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-end">
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-5 font-semibold gap-2">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 font-semibold gap-2">
           <IconLibrary name="edit" className="w-4 h-4" /> Customize your report
         </Button>
       </div>

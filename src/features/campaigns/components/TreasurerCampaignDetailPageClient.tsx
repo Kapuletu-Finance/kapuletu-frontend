@@ -52,7 +52,7 @@ export const TreasurerCampaignDetailPageClient: React.FC<
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-2">
           <div className="flex items-center gap-5">
             {isLoading ? (
-              <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 rounded-full shrink-0" />
+              <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 shrink-0" />
             ) : (
               <div
                 className={cn(
@@ -67,8 +67,8 @@ export const TreasurerCampaignDetailPageClient: React.FC<
             <div className="flex flex-col justify-center gap-1.5">
               {isLoading ? (
                 <>
-                  <Skeleton className="h-8 sm:h-9 w-48 sm:w-64 rounded-md" />
-                  <Skeleton className="h-5 sm:h-6 w-32 sm:w-48 rounded-md mt-1" />
+                  <Skeleton className="h-8 sm:h-9 w-48 sm:w-64" />
+                  <Skeleton className="h-5 sm:h-6 w-32 sm:w-48 mt-1" />
                 </>
               ) : (
                 <>
@@ -85,7 +85,7 @@ export const TreasurerCampaignDetailPageClient: React.FC<
 
           <div className="flex items-center gap-4 self-start sm:self-center ml-21 sm:ml-0">
             {isLoading ? (
-              <Skeleton className="h-6 w-24 rounded-full" />
+              <Skeleton className="h-6 w-24" />
             ) : (
               <>
                 <span className="text-sm text-muted-foreground font-medium">15 days left</span>

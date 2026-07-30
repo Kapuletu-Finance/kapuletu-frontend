@@ -1,4 +1,5 @@
 import type React from "react";
+import { Card } from "@/components/ui/card";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
@@ -12,13 +13,13 @@ const FeatureCard = ({
   description: string;
 }) => {
   return (
-    <div className="bg-card text-card-foreground p-8 rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-shadow">
+    <Card>
       <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
         {icon}
       </div>
       <h3 className="text-xl font-semibold mb-3">{title}</h3>
       <p className="text-muted-foreground leading-relaxed">{description}</p>
-    </div>
+    </Card>
   );
 };
 

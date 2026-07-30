@@ -15,7 +15,7 @@ const ButtonWithIcon = React.forwardRef<HTMLButtonElement, ButtonWithIconProps>(
       <Button
         ref={ref}
         variant="outline"
-        className={`h-auto py-4 px-4 border-border border rounded-xl flex items-center justify-start gap-4 w-full hover:bg-primary/5 transition-colors bg-background ${className || ""}`}
+        className={`h-auto py-4 px-4 border-border border flex items-center justify-start gap-4 w-full hover:bg-primary/5 transition-colors bg-background ${className || ""}`}
         {...props}
       >
         <IconLibrary

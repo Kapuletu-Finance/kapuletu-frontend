@@ -62,7 +62,7 @@ const RecentActivitiesSection = () => {
         RECENT ACTIVITIES
       </h2>
 
-      <Card className="shadow-sm p-6 border-none flex-1 flex flex-col justify-between">
+      <Card className="border-none flex-1 flex flex-col justify-between">
         {isLoading || activityItems.length === 0 ? (
           <ActivityList
             activities={activityItems}
