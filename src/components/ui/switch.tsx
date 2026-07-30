@@ -1,3 +1,1 @@
-const Component = () => { return null; }
-
-export default Component;
+export const Switch = (props: React.InputHTMLAttributes<HTMLInputElement>) => { return null; }

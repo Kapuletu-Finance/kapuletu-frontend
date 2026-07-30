@@ -1,15 +1,31 @@
-import { Card } from "@/components/ui/card";
+import CampaignProgressCard from "@/features/campaigns/components/CampaignProgressCard";
+import CampaignSummaryCard from "@/features/campaigns/components/CampaignSummaryCard";
+import RecentActivitiesCard from "@/features/campaigns/components/RecentCampaignActivityCard";
+import RecentContributionsCard from "@/features/campaigns/components/RecentContributionsCard";
+import ShareCampaignCard from "@/features/campaigns/components/ShareCampaignCard";
 
 export default function CampaignOverviewPage() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Empty Card 1 */}
-      <Card className="min-h-100 bg-muted/30 border-muted" />
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="xl:col-span-2">
+          <CampaignProgressCard />
+        </div>
+        <div className="xl:col-span-1">
+          <CampaignSummaryCard />
+        </div>
+      </div>
 
-      {/* Campaign Summary Card */}
-      <Card className="min-h-100 bg-muted/30 border-muted p-6">
-        <h3 className="font-semibold text-foreground">Campaign Summary</h3>
-      </Card>
+      <ShareCampaignCard />
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="xl:col-span-2">
+          <RecentContributionsCard />
+        </div>
+        <div className="xl:col-span-1">
+          <RecentActivitiesCard />
+        </div>
+      </div>
     </div>
   );
 }

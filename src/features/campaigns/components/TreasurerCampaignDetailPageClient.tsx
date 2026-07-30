@@ -25,7 +25,7 @@ export const TreasurerCampaignDetailPageClient: React.FC<
   const baseUrl = `/treasurer/groups/${groupSlug}/campaigns/${campaign.slug}`;
 
   const tabs: { value: string; label: string; icon: IconName; href: string }[] = [
-    { value: "overview", label: "Overview", icon: "panel-left", href: baseUrl },
+    { value: "overview", label: "Overview", icon: "panels-top-left", href: baseUrl },
     {
       value: "contributions",
       label: "Contributions",
