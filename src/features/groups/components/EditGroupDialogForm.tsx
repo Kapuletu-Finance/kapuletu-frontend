@@ -166,9 +166,9 @@ const EditGroupDialogForm: React.FC<EditGroupDialogFormProps> = ({ group, childr
             <Button
               type="submit"
               className="w-full bg-primary py-6 text-base font-semibold text-primary-foreground hover:bg-primary/90"
-              disabled={updateGroupMutation.isPending}
+              isLoading={updateGroupMutation.isPending}
             >
-              {updateGroupMutation.isPending ? "Saving..." : "Save Changes"}
+              Save Changes
             </Button>
           </form>
         </Form>

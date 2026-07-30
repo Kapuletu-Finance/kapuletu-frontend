@@ -1,7 +1,7 @@
-import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { buttonVariants } from "@/components/ui/button";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +20,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             "text-muted-foreground font-semibold",
           )}
         >
-          <ChevronLeft className="mr-2 h-4 w-4" />
+          <IconLibrary name="chevron-left" className="mr-2 h-4 w-4" />
           GO BACK
         </Link>
       </div>

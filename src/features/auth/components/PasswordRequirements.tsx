@@ -1,5 +1,5 @@
-import { Check, X } from "lucide-react";
 import type * as React from "react";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { cn } from "@/lib/utils";
 
 interface PasswordRequirementProps {
@@ -16,7 +16,11 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({ label, meets 
           meets ? "bg-primary/15 text-primary" : "bg-destructive/15 text-destructive",
         )}
       >
-        {meets ? <Check className="w-3 h-3 stroke-3" /> : <X className="w-3 h-3 stroke-3" />}
+        {meets ? (
+          <IconLibrary name="check" className="w-3 h-3 stroke-3" />
+        ) : (
+          <IconLibrary name="close" className="w-3 h-3 stroke-3" />
+        )}
       </div>
       <span className={cn("text-xs font-medium", meets ? "text-primary" : "text-destructive")}>
         {label}

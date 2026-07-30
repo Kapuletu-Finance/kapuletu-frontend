@@ -154,9 +154,9 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
             <Button
               type="submit"
               className="w-full bg-primary py-6 text-base font-semibold text-primary-foreground hover:bg-primary/90"
-              disabled={createGroupMutation.isPending}
+              isLoading={createGroupMutation.isPending}
             >
-              {createGroupMutation.isPending ? "Creating..." : "Create Group"}
+              Create Group
             </Button>
           </form>
         </Form>

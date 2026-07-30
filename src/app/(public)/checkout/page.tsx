@@ -1,6 +1,6 @@
-import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import PricingPaymentContent from "@/features/shared/components/PricingPaymentContent";
 
 const CheckoutPage = () => {
@@ -11,7 +11,7 @@ const CheckoutPage = () => {
           href="/treasurer"
           className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors hover:bg-muted/50 hover:text-foreground h-9 px-4 py-2 text-muted-foreground"
         >
-          <ChevronLeft className="mr-2 h-4 w-4" />
+          <IconLibrary name="chevron-left" className="mr-2 h-4 w-4" />
           GO BACK
         </Link>
       </div>

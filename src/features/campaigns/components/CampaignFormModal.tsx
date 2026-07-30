@@ -254,9 +254,9 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
             <Button
               type="submit"
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-11 text-sm font-medium mt-2"
-              disabled={isPending}
+              isLoading={isPending}
             >
-              {isPending ? "Saving..." : isEditing ? "Save Changes" : "Create Campaign"}
+              {isEditing ? "Save Changes" : "Create Campaign"}
             </Button>
           </form>
         </Form>

@@ -48,8 +48,12 @@ const SignOutDropdownItem = () => {
       onClick={() => logoutMutation.mutate()}
       disabled={logoutMutation.isPending}
     >
-      <IconLibrary name="log-out" className="w-4 h-4 mr-2" />
-      {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+      {logoutMutation.isPending ? (
+        <IconLibrary name="loading" className="w-4 h-4 mr-2" />
+      ) : (
+        <IconLibrary name="log-out" className="w-4 h-4 mr-2" />
+      )}
+      Sign Out
     </DropdownMenuItem>
   );
 };
