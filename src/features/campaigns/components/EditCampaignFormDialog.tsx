@@ -11,18 +11,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar as CalendarIcon, ChevronDown, X, Edit } from "lucide-react";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const EditCampaignFormDialog = () => {
   return (
     <Dialog>
-      <DialogTrigger render={
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-6 font-semibold gap-2">
-          <Edit className="w-4 h-4" /> Edit Campaign
-        </Button>
-      } />
+      <DialogTrigger
+        render={
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-6 font-semibold gap-2">
+            <IconLibrary name="edit" className="w-4 h-4" /> Edit Campaign
+          </Button>
+        }
+      />
 
-      <DialogContent className="sm:max-w-[480px] rounded-3xl p-8 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-120 rounded-3xl p-8 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="items-center space-y-4">
           <div className="bg-primary/10 p-3 rounded-full text-primary text-xl">🔒</div>
           <DialogTitle className="text-xl font-bold text-foreground">Campaign Settings</DialogTitle>
@@ -47,7 +49,7 @@ const EditCampaignFormDialog = () => {
             <Textarea
               id="description"
               defaultValue="Bible school for children"
-              className="rounded-xl border-border bg-background min-h-[100px] resize-none"
+              className="rounded-xl border-border bg-background min-h-25 resize-none"
             />
           </div>
 
@@ -84,20 +86,26 @@ const EditCampaignFormDialog = () => {
                 <span className="w-2 h-2 rounded-full bg-primary" />
                 <span>Active</span>
               </div>
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              <IconLibrary name="chevron-down" className="w-4 h-4 text-muted-foreground" />
             </Button>
           </div>
 
           <div className="space-y-2">
             <Label className="text-sm font-semibold text-foreground">Fundraising Deadline</Label>
             <div className="relative flex items-center">
-              <CalendarIcon className="absolute left-3 w-4 h-4 text-muted-foreground" />
+              <IconLibrary
+                name="calendar"
+                className="absolute left-3 w-4 h-4 text-muted-foreground"
+              />
               <Input
                 readOnly
                 defaultValue="01/01/2025"
                 className="rounded-xl border-border bg-background py-5 pl-10 pr-10 text-foreground font-medium"
               />
-              <X className="absolute right-3 w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground" />
+              <IconLibrary
+                name="close"
+                className="absolute right-3 w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground"
+              />
             </div>
           </div>
 

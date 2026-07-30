@@ -1,12 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { RotateCcw, Edit, Plus, Minus, RefreshCw } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const CampaignTemplateCard = () => {
   const pinDigits = ["7", "1", "1", "5"];
@@ -26,10 +26,10 @@ const CampaignTemplateCard = () => {
             variant="outline"
             className="border-border text-foreground hover:bg-secondary rounded-xl gap-2 font-semibold"
           >
-            <RotateCcw className="w-4 h-4" /> Reset to default
+            <IconLibrary name="rotate-ccw" className="w-4 h-4" /> Reset to default
           </Button>
           <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl gap-2 font-semibold">
-            <Edit className="w-4 h-4" /> Edit
+            <IconLibrary name="edit" className="w-4 h-4" /> Edit
           </Button>
         </div>
       </CardHeader>
@@ -57,7 +57,7 @@ const CampaignTemplateCard = () => {
             <Textarea
               readOnly
               value="We still need Ksh 30,000 to reach our goal. Every contribution counts. View full report at: app.kapuletu.co.ke/report/medical-fund"
-              className="rounded-xl border-border bg-background min-h-[90px] resize-none"
+              className="rounded-xl border-border bg-background min-h-22.5 resize-none"
             />
           </div>
 
@@ -74,7 +74,7 @@ const CampaignTemplateCard = () => {
                 size="icon"
                 className="h-7 w-7 text-muted-foreground hover:text-foreground"
               >
-                <Minus className="w-4 h-4" />
+                <IconLibrary name="minus" className="w-4 h-4" />
               </Button>
               <span className="font-bold text-foreground text-sm w-4 text-center">3</span>
               <Button
@@ -82,7 +82,7 @@ const CampaignTemplateCard = () => {
                 size="icon"
                 className="h-7 w-7 text-muted-foreground hover:text-foreground"
               >
-                <Plus className="w-4 h-4" />
+                <IconLibrary name="add" className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -134,7 +134,7 @@ const CampaignTemplateCard = () => {
               <div className="flex items-center gap-2">
                 {pinDigits.map((digit, index) => (
                   <div
-                    key={index}
+                    key={`pin-${index}-${digit}`}
                     className="w-12 h-12 rounded-xl border border-border bg-background flex items-center justify-center font-bold text-foreground shadow-xs text-lg"
                   >
                     {digit}
@@ -145,7 +145,7 @@ const CampaignTemplateCard = () => {
                 size="sm"
                 className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9"
               >
-                <RefreshCw className="w-3.5 h-3.5" /> Regenerate PIN
+                <IconLibrary name="refresh" className="w-3.5 h-3.5" /> Regenerate PIN
               </Button>
             </div>
           </div>

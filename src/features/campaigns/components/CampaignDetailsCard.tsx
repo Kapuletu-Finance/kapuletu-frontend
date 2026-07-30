@@ -1,17 +1,17 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const CampaignDetailsCard = () => {
   return (
-    <Card className="rounded-3xl border-none shadow-sm p-8 bg-card">
+    <Card className="p-8">
       <CardHeader className="flex flex-row items-start justify-between p-0 pb-6">
         <div className="space-y-1">
           <h2 className="font-bold text-foreground text-xl">Campaign Details</h2>
           <p className="text-xs text-muted-foreground">View and update your campaign details</p>
         </div>
         <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl gap-2 font-semibold">
-          <Edit className="w-4 h-4" /> Edit
+          <IconLibrary name="edit" className="w-4 h-4" /> Edit
         </Button>
       </CardHeader>
 

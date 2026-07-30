@@ -10,18 +10,20 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronDown, Plus } from "lucide-react";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const AddContributionDialog = () => {
   return (
     <Dialog>
-      <DialogTrigger render={
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-6 font-semibold gap-2">
-          <Plus className="w-5 h-5" /> Add a contribution
-        </Button>
-      } />
+      <DialogTrigger
+        render={
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-6 font-semibold gap-2">
+            <IconLibrary name="add" className="w-5 h-5" /> Add a contribution
+          </Button>
+        }
+      />
 
-      <DialogContent className="sm:max-w-[450px] rounded-3xl p-8">
+      <DialogContent className="sm:max-w-112.5 rounded-3xl p-8">
         <DialogHeader className="items-center space-y-4">
           <div className="bg-primary/10 p-3 rounded-full text-primary">🔒</div>
           <DialogTitle className="text-xl font-bold text-foreground">
@@ -72,7 +74,7 @@ const AddContributionDialog = () => {
                 className="w-full justify-between rounded-xl border-border bg-background text-foreground font-normal py-5 px-4"
               >
                 Cash
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                <IconLibrary name="chevron-down" className="w-4 h-4 text-muted-foreground" />
               </Button>
             </div>
           </div>

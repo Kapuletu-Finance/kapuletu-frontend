@@ -1,37 +1,49 @@
 "use client";
 
+import { Area, AreaChart, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Calendar, ChevronDown } from "lucide-react";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import IconLibrary from "@/features/shared/components/IconLibrary";
+
+const chartData = [
+  { date: "1 Jul", raised: 6000 },
+  { date: "5 Jul", raised: 24000 },
+  { date: "12 Jul", raised: 30000 },
+  { date: "15 Jul", raised: 42000 },
+  { date: "19 Jul", raised: 45000 },
+  { date: "22 Jul", raised: 60000 },
+];
 
 const CampaignProgressCard = () => {
   return (
-    <Card className="rounded-3xl border-none shadow-sm p-6 bg-card">
+    <Card className="p-8">
       <CardHeader className="flex flex-row items-center justify-between p-0 pb-6">
-        <CardTitle className="text-xl font-bold text-foreground font-sans">
-          Progress
-        </CardTitle>
+        <CardTitle className="text-xl font-bold text-foreground font-sans">Progress</CardTitle>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger render={
-            <Button variant="outline" className="rounded-xl border-border font-medium gap-2">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
+        <Select defaultValue="this-year">
+          <SelectTrigger className="rounded-xl border-border font-medium gap-2 w-auto h-auto py-2">
+            <IconLibrary name="calendar" className="w-4 h-4 text-muted-foreground" />
+            <SelectValue placeholder="This year" />
+          </SelectTrigger>
+          <SelectContent align="end" className="rounded-xl">
+            <SelectItem value="this-year" label="This year">
               This year
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            </Button>
-          } />
-          <DropdownMenuContent align="end" className="rounded-xl">
-            <DropdownMenuItem>This year</DropdownMenuItem>
-            <DropdownMenuItem>Last year</DropdownMenuItem>
-            <DropdownMenuItem>All time</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </SelectItem>
+            <SelectItem value="last-year" label="Last year">
+              Last year
+            </SelectItem>
+            <SelectItem value="all-time" label="All time">
+              All time
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </CardHeader>
 
       <CardContent className="p-0 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -40,6 +52,7 @@ const CampaignProgressCard = () => {
           <div className="relative w-40 h-40 flex items-center justify-center">
             {/* SVG Circular Progress Ring */}
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <title>Progress Ring</title>
               <path
                 className="text-secondary"
                 strokeWidth="3.5"
@@ -59,74 +72,87 @@ const CampaignProgressCard = () => {
             </svg>
             <div className="absolute text-center flex flex-col items-center">
               <span className="text-3xl font-extrabold text-foreground tracking-tight">70%</span>
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Raised</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Raised
+              </span>
             </div>
           </div>
         </div>
 
         {/* Linear Trend Graph Visual Representation */}
-        <div className="lg:col-span-8 bg-secondary/20 p-6 rounded-2xl flex flex-col justify-between h-52 relative">
-          {/* Y-Axis Labels */}
-          <div className="absolute left-6 top-6 bottom-12 flex flex-col justify-between text-xs font-medium text-muted-foreground pointer-events-none">
-            <span>60k</span>
-            <span>30k</span>
-            <span>0</span>
-          </div>
-
-          {/* SVG Line Chart Viewport */}
-          <div className="ml-10 h-full relative flex items-end">
-            <svg className="w-full h-36 overflow-visible" viewBox="0 0 400 120" preserveAspectRatio="none">
-              {/* Area Gradient Fill */}
+        <div className="lg:col-span-8 bg-secondary/20 p-6 rounded-2xl flex flex-col justify-between h-52 relative w-full">
+          <ChartContainer
+            config={{
+              raised: {
+                label: "Raised",
+                color: "var(--primary)",
+              },
+            }}
+            className="w-full h-full min-h-37.5"
+          >
+            <AreaChart
+              data={chartData}
+              margin={{
+                left: -20,
+                right: 12,
+                top: 24,
+                bottom: 0,
+              }}
+            >
               <defs>
-                <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.0" />
+                <linearGradient id="fillRaised" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--color-raised)" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="var(--color-raised)" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-
-              <path
-                d="M 0 110 L 40 80 L 120 70 L 220 50 L 300 45 L 380 20 L 380 120 L 0 120 Z"
-                fill="url(#chartGradient)"
+              <YAxis
+                dataKey="raised"
+                tickLine={false}
+                axisLine={{ stroke: "hsl(var(--border))" }}
+                ticks={[0, 30000, 60000]}
+                tickMargin={12}
+                tickFormatter={(value) => (value === 0 ? "0" : `${value / 1000}k`)}
+                className="text-xs font-medium text-muted-foreground"
               />
-
-              {/* Trend Line */}
-              <path
-                d="M 0 110 L 40 80 L 120 70 L 220 50 L 300 45 L 380 20"
-                fill="none"
-                stroke="var(--primary)"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={{ stroke: "hsl(var(--border))" }}
+                tickMargin={12}
+                className="text-xs font-medium text-muted-foreground"
               />
-
-              {/* Data Points with Halos */}
-              <g>
-                <circle cx="40" cy="80" r="10" fill="var(--primary)" fillOpacity="0.2" />
-                <circle cx="40" cy="80" r="4" fill="var(--primary)" />
-
-                <circle cx="120" cy="70" r="10" fill="var(--primary)" fillOpacity="0.2" />
-                <circle cx="120" cy="70" r="4" fill="var(--primary)" />
-
-                <circle cx="220" cy="50" r="10" fill="var(--primary)" fillOpacity="0.2" />
-                <circle cx="220" cy="50" r="4" fill="var(--primary)" />
-
-                <circle cx="300" cy="45" r="10" fill="var(--primary)" fillOpacity="0.2" />
-                <circle cx="300" cy="45" r="4" fill="var(--primary)" />
-
-                <circle cx="380" cy="20" r="12" fill="var(--primary)" fillOpacity="0.2" />
-                <circle cx="380" cy="20" r="5" fill="var(--primary)" />
-              </g>
-            </svg>
-          </div>
-
-          {/* X-Axis Labels */}
-          <div className="ml-10 flex justify-between text-xs font-medium text-muted-foreground pt-2 border-t border-border">
-            <span>1 Jul</span>
-            <span>5 Jul</span>
-            <span>12 Jul</span>
-            <span>15 Jul</span>
-            <span>19 Jul</span>
-          </div>
+              <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
+              <Area
+                type="linear"
+                dataKey="raised"
+                fill="url(#fillRaised)"
+                fillOpacity={1}
+                stroke="var(--color-raised)"
+                strokeWidth={2}
+                activeDot={{
+                  r: 8,
+                  strokeWidth: 0,
+                  fill: "var(--color-raised)",
+                }}
+                dot={(props) => {
+                  const { cx, cy, key } = props;
+                  return (
+                    <g key={key}>
+                      <circle cx={cx} cy={cy} r={12} fill="var(--color-raised)" fillOpacity={0.2} />
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={4.5}
+                        fill="var(--color-raised)"
+                        stroke="hsl(var(--background))"
+                        strokeWidth={1.5}
+                      />
+                    </g>
+                  );
+                }}
+              />
+            </AreaChart>
+          </ChartContainer>
         </div>
       </CardContent>
     </Card>

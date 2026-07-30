@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface Contribution {
   id: string;
@@ -52,7 +52,9 @@ const RecentContributionsCard = () => {
         <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
           RECENT CONTRIBUTIONS
         </h2>
-        <button className="text-sm font-semibold text-primary hover:underline">View All</button>
+        <button type="button" className="text-sm font-semibold text-primary hover:underline">
+          View All
+        </button>
       </CardHeader>
 
       <CardContent className="p-6">

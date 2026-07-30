@@ -11,18 +11,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar as CalendarIcon, X, Plus } from "lucide-react";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const CreateCampaignFormDialog = () => {
   return (
     <Dialog>
-      <DialogTrigger render={
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-6 font-semibold gap-2">
-          <Plus className="w-5 h-5" /> Create New Campaign
-        </Button>
-      } />
+      <DialogTrigger
+        render={
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-6 font-semibold gap-2">
+            <IconLibrary name="add" className="w-5 h-5" /> Create New Campaign
+          </Button>
+        }
+      />
 
-      <DialogContent className="sm:max-w-[480px] rounded-3xl p-8 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-120 rounded-3xl p-8 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="items-center space-y-4">
           <div className="bg-primary/10 p-3 rounded-full text-primary text-xl">🔒</div>
           <DialogTitle className="text-xl font-bold text-foreground">
@@ -49,7 +51,7 @@ const CreateCampaignFormDialog = () => {
             <Textarea
               id="description"
               placeholder="e.g. support, savings, or fundraising purposes"
-              className="rounded-xl border-border bg-background min-h-[100px] resize-none"
+              className="rounded-xl border-border bg-background min-h-25 resize-none"
             />
           </div>
 
@@ -78,13 +80,19 @@ const CreateCampaignFormDialog = () => {
           <div className="space-y-2">
             <Label className="text-sm font-semibold text-foreground">Fundraising Deadline</Label>
             <div className="relative flex items-center">
-              <CalendarIcon className="absolute left-3 w-4 h-4 text-muted-foreground" />
+              <IconLibrary
+                name="calendar"
+                className="absolute left-3 w-4 h-4 text-muted-foreground"
+              />
               <Input
                 readOnly
                 value="Choose Date"
                 className="rounded-xl border-border bg-background py-5 pl-10 pr-10 text-muted-foreground"
               />
-              <X className="absolute right-3 w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground" />
+              <IconLibrary
+                name="close"
+                className="absolute right-3 w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground"
+              />
             </div>
           </div>
 

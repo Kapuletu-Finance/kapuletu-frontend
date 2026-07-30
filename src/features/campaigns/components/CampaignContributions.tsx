@@ -1,18 +1,18 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import { Button } from "@/components/ui/button";
+import { CardContent } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
-import { Search, Calendar, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import Pagination from "@/features/shared/components/Pagination";
 
 interface Contribution {
   id: string;
@@ -106,22 +106,30 @@ const CampaignContributions = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
           {/* Search Input */}
           <div className="relative w-full max-w-2xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search contribution..." 
+            <IconLibrary
+              name="search"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+            />
+            <Input
+              placeholder="Search contribution..."
               className="pl-10 h-12 rounded-2xl bg-muted/30 border-muted text-sm shadow-sm"
             />
           </div>
 
           {/* Time Filter */}
           <DropdownMenu>
-            <DropdownMenuTrigger render={
-              <Button variant="outline" className="h-12 px-6 rounded-2xl border-border bg-transparent font-medium gap-2 shadow-sm w-full sm:w-auto shrink-0">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                This year
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              </Button>
-            } />
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="outline"
+                  className="h-12 px-6 rounded-2xl border-border bg-transparent font-medium gap-2 shadow-sm w-full sm:w-auto shrink-0"
+                >
+                  <IconLibrary name="calendar" className="w-4 h-4 text-muted-foreground" />
+                  This year
+                  <IconLibrary name="chevron-down" className="w-4 h-4 text-muted-foreground" />
+                </Button>
+              }
+            />
             <DropdownMenuContent align="end" className="rounded-xl">
               <DropdownMenuItem>This year</DropdownMenuItem>
               <DropdownMenuItem>Last year</DropdownMenuItem>
@@ -130,31 +138,7 @@ const CampaignContributions = () => {
           </DropdownMenu>
         </div>
       }
-      pagination={
-        <div className="flex justify-center items-center gap-2 pt-6">
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full w-10 h-10 border-border bg-transparent shadow-sm text-muted-foreground"
-            disabled
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="default"
-            className="rounded-full w-10 h-10 shadow-sm font-semibold"
-          >
-            1
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full w-10 h-10 border-border bg-transparent shadow-sm text-muted-foreground"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
-      }
+      pagination={<Pagination currentPage={1} totalPages={10} />}
     >
       <div className="bg-transparent rounded-2xl overflow-hidden mt-6">
         <CardContent className="p-0">
@@ -169,7 +153,10 @@ const CampaignContributions = () => {
           {/* Table Rows */}
           <div className="divide-y divide-border">
             {contributions.map((item) => (
-              <div key={item.id} className="grid grid-cols-4 items-center py-5 px-6 text-sm transition-colors hover:bg-muted/20">
+              <div
+                key={item.id}
+                className="grid grid-cols-4 items-center py-5 px-6 text-sm transition-colors hover:bg-muted/20"
+              >
                 {/* Name & Avatar */}
                 <div className="flex items-center gap-4">
                   <div
