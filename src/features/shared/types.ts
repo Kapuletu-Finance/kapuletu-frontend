@@ -157,12 +157,24 @@ export interface CampaignCreate {
   end_date?: string | null;
 }
 
+export interface CampaignSettings {
+  report_title?: string;
+  report_footer?: string;
+  blank_slots?: number;
+  paid_indicator?: string;
+  require_pin?: boolean;
+  access_pin?: string | null;
+  remove_watermark?: boolean;
+  auto_send_reports?: boolean;
+}
+
 export interface CampaignUpdate {
   title?: string | null;
   description?: string | null;
   target_amount?: number | null;
   payment_instructions?: string | null;
   end_date?: string | null;
+  settings?: CampaignSettings;
 }
 
 export interface TransactionOut {

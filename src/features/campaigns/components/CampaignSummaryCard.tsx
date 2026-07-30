@@ -1,9 +1,10 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
+import AddContributionDialog from "@/features/contributions/components/AddContributionDialog";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const formatCurrency = (value: number) =>
@@ -11,8 +12,6 @@ const formatCurrency = (value: number) =>
 
 const CampaignSummaryCard = () => {
   const params = useParams();
-  const router = useRouter();
-  const groupSlug = params?.groupSlug;
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
 
   const { data: campaign } = useCampaignQuery(campaignSlug);
@@ -65,14 +64,11 @@ const CampaignSummaryCard = () => {
           </div>
         </div>
 
-        <Button
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 font-semibold gap-2 mt-8"
-          onClick={() =>
-            router.push(`/treasurer/groups/${groupSlug}/campaigns/${campaignSlug}/contributions`)
-          }
-        >
-          <IconLibrary name="add" className="w-5 h-5" /> Add a contribution
-        </Button>
+        <AddContributionDialog campaignSlug={campaignSlug}>
+          <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 font-semibold gap-2 mt-8">
+            <IconLibrary name="add" className="w-5 h-5" /> Add a contribution
+          </Button>
+        </AddContributionDialog>
       </CardContent>
     </Card>
   );

@@ -1,7 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Children, isValidElement, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +17,8 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { TRANSACTIONS_URLS } from "@/features/transactions/urls";
+import { apiClient } from "@/lib/api-client";
 
 const addContributionSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -25,7 +29,17 @@ const addContributionSchema = z.object({
 
 type AddContributionFormData = z.infer<typeof addContributionSchema>;
 
-const AddContributionDialog = () => {
+interface AddContributionDialogProps {
+  campaignSlug: string;
+  children?: React.ReactNode;
+}
+
+const AddContributionDialog = ({ campaignSlug, children }: AddContributionDialogProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const childrenArray = Children.toArray(children);
+  const triggerElement = childrenArray.find((child) => isValidElement(child)) || null;
+
   const form = useForm<AddContributionFormData>({
     defaultValues: {
       name: "",
@@ -36,20 +50,32 @@ const AddContributionDialog = () => {
     resolver: zodResolver(addContributionSchema),
   });
 
-  const onSubmit = (data: AddContributionFormData) => {
-    // TODO: wire up to API mutation
-    console.log(data);
-  };
+  const onSubmit = useCallback(
+    async (data: AddContributionFormData) => {
+      setIsPending(true);
+      try {
+        await apiClient.post(TRANSACTIONS_URLS.MANUAL_ENTRY, {
+          sender_name: data.name,
+          sender_phone: data.phone,
+          amount: Number.parseFloat(data.amount.replace(/,/g, "")),
+          payment_method: data.paymentType || "Cash",
+          campaign_id: campaignSlug,
+        });
+        toast.success("Contribution added successfully!");
+        form.reset();
+        setIsOpen(false);
+      } catch {
+        toast.error("Failed to add contribution.");
+      } finally {
+        setIsPending(false);
+      }
+    },
+    [campaignSlug, form],
+  );
 
   return (
-    <Dialog>
-      <DialogTrigger
-        render={
-          <Button className="gap-2">
-            <IconLibrary name="add" className="w-5 h-5" /> Add a contribution
-          </Button>
-        }
-      />
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      {triggerElement && <DialogTrigger render={triggerElement} />}
 
       <DialogContent className="sm:max-w-112.5">
         <DialogHeader className="items-center space-y-4">
@@ -150,7 +176,7 @@ const AddContributionDialog = () => {
               </Button>
             </div>
 
-            <Button type="submit" className="w-full mt-2">
+            <Button type="submit" className="w-full mt-2" isLoading={isPending}>
               Create Contribution
             </Button>
           </form>

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import DisableCampaignAccessPinDialog from "@/features/campaigns/components/DisableCampaignAccessPinDialog";
 import { useRegenerateCampaignPinMutation } from "@/features/campaigns/services/mutations";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
@@ -155,15 +156,28 @@ const CampaignTemplateCard = () => {
                   </div>
                 ))}
               </div>
-              <Button
-                size="sm"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9"
-                onClick={handleRegeneratePin}
-                disabled={regeneratePin.isPending}
-              >
-                <IconLibrary name="refresh" className="w-3.5 h-3.5" />{" "}
-                {regeneratePin.isPending ? "Regenerating..." : "Regenerate PIN"}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9"
+                  onClick={handleRegeneratePin}
+                  disabled={regeneratePin.isPending}
+                >
+                  <IconLibrary name="refresh" className="w-3.5 h-3.5" />{" "}
+                  {regeneratePin.isPending ? "Regenerating..." : "Regenerate PIN"}
+                </Button>
+                {requirePin && (
+                  <DisableCampaignAccessPinDialog campaignSlug={campaignSlug}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="gap-1.5 text-xs font-semibold h-9 border-destructive/30 text-destructive hover:bg-destructive/10"
+                    >
+                      <IconLibrary name="lock" className="w-3.5 h-3.5" /> Disable PIN
+                    </Button>
+                  </DisableCampaignAccessPinDialog>
+                )}
+              </div>
             </div>
           </div>
         </div>
