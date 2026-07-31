@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { env } from "@/env";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const ShareCampaignCard = () => {
   const params = useParams();
@@ -61,11 +62,14 @@ const ShareCampaignCard = () => {
         />
 
         <DialogContent className="sm:max-w-lg">
-          <DialogHeader className="space-y-2 text-center relative">
-            <DialogTitle className="text-xl font-bold">Share Campaign Report</DialogTitle>
-            <p className="text-sm text-muted-foreground">
-              Anyone with this link can view the report
-            </p>
+          <DialogHeader className="items-center space-y-3 text-center relative">
+            <SiteLogo variant="icon" href={null} logoClassName="w-12 h-12 text-primary" />
+            <div className="space-y-1">
+              <DialogTitle className="text-xl font-bold">Share Campaign Report</DialogTitle>
+              <p className="text-sm text-muted-foreground">
+                Anyone with this link can view the report
+              </p>
+            </div>
           </DialogHeader>
 
           <div className="space-y-6 pt-4">
@@ -99,9 +103,13 @@ const ShareCampaignCard = () => {
                 <Button
                   variant="ghost"
                   className="flex flex-col items-center gap-2 h-auto p-2 bg-transparent hover:bg-transparent group"
+                  onClick={() => {
+                    const text = `Check out this campaign report: ${publicUrl}`;
+                    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+                  }}
                 >
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    <IconLibrary name="mail" className="w-5 h-5" />
+                    <IconLibrary name="message-circle" className="w-5 h-5" />
                   </div>
                   <span className="text-xs text-muted-foreground">WhatsApp</span>
                 </Button>
@@ -109,6 +117,13 @@ const ShareCampaignCard = () => {
                 <Button
                   variant="ghost"
                   className="flex flex-col items-center gap-2 h-auto p-2 bg-transparent hover:bg-transparent group"
+                  onClick={() => {
+                    const subject = "Campaign Report";
+                    const body = `Check out this campaign report:\n\n${publicUrl}`;
+                    window.open(
+                      `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+                    );
+                  }}
                 >
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     <IconLibrary name="mail" className="w-5 h-5" />

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import DisableCampaignAccessPinDialog from "@/features/campaigns/components/DisableCampaignAccessPinDialog";
 import { useRegenerateCampaignPinMutation } from "@/features/campaigns/services/mutations";
@@ -83,21 +82,19 @@ const CampaignTemplateCard = () => {
                 Adds numbered empty lines to motivate more people to contribute.
               </p>
             </div>
-            <div className="flex items-center gap-3 border border-border rounded-xl px-2 py-1 bg-secondary/30">
+            <div className="flex items-center gap-3 border border-primary rounded-full px-2 py-1 text-primary">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary rounded-full"
               >
                 <IconLibrary name="minus" className="w-4 h-4" />
               </Button>
-              <span className="font-bold text-foreground text-sm w-4 text-center">
-                {blankSlots}
-              </span>
+              <span className="font-bold text-sm w-4 text-center">{blankSlots}</span>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary rounded-full"
               >
                 <IconLibrary name="add" className="w-4 h-4" />
               </Button>
@@ -106,36 +103,43 @@ const CampaignTemplateCard = () => {
         </div>
 
         <div className="lg:col-span-5 space-y-6">
-          <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-background">
-            <div className="space-y-0.5 pr-4">
+          <div className="flex items-center justify-between py-2">
+            <div className="space-y-1 pr-4">
               <Label className="text-sm font-semibold text-foreground">
                 Include KapuLetu watermark
               </Label>
               <p className="text-xs text-muted-foreground">
-                Includes a &quot;Powered by KapuLetu&quot; watermark across all public updates and
-                reports.
+                Includes a "Powered by KapuLetu" watermark across all public updates and reports.
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold tracking-wider bg-primary/15 text-primary px-2 py-0.5 rounded uppercase">
-                {removeWatermark ? "NO" : "YES"}
+            <div
+              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors ${!removeWatermark ? "bg-primary" : "bg-muted"}`}
+            >
+              <span
+                className={`text-[11px] font-bold ${!removeWatermark ? "text-primary-foreground" : "text-muted-foreground"}`}
+              >
+                {!removeWatermark ? "YES" : "NO"}
               </span>
-              <Switch checked={!removeWatermark} />
+              <div className="w-6 h-6 bg-white rounded-full shadow-sm" />
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-background">
-            <div className="space-y-0.5 pr-4">
+          <div className="flex items-center justify-between py-2">
+            <div className="space-y-1 pr-4">
               <Label className="text-sm font-semibold text-foreground">Require PIN to view</Label>
               <p className="text-xs text-muted-foreground">
                 Members will need a 4-digit PIN to access the campaign report.
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold tracking-wider bg-primary/15 text-primary px-2 py-0.5 rounded uppercase">
+            <div
+              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors ${requirePin ? "bg-primary" : "bg-muted"}`}
+            >
+              <span
+                className={`text-[11px] font-bold ${requirePin ? "text-primary-foreground" : "text-muted-foreground"}`}
+              >
                 {requirePin ? "YES" : "NO"}
               </span>
-              <Switch checked={requirePin} />
+              <div className="w-6 h-6 bg-white rounded-full shadow-sm" />
             </div>
           </div>
 
@@ -145,7 +149,7 @@ const CampaignTemplateCard = () => {
               <p className="text-xs text-muted-foreground">This protects your campaign data.</p>
             </div>
 
-            <div className="flex items-center justify-between pt-1">
+            <div className="flex flex-col gap-4 pt-1">
               <div className="flex items-center gap-2">
                 {pinDigits.map((digit, index) => (
                   <div
@@ -159,7 +163,7 @@ const CampaignTemplateCard = () => {
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9 rounded-full px-4"
                   onClick={handleRegeneratePin}
                   disabled={regeneratePin.isPending}
                 >
@@ -171,7 +175,7 @@ const CampaignTemplateCard = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="gap-1.5 text-xs font-semibold h-9 border-destructive/30 text-destructive hover:bg-destructive/10"
+                      className="gap-1.5 text-xs font-semibold h-9 rounded-full px-4 border-destructive/30 text-destructive hover:bg-destructive/10"
                     >
                       <IconLibrary name="lock" className="w-3.5 h-3.5" /> Disable PIN
                     </Button>

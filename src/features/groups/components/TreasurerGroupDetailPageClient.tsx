@@ -50,16 +50,18 @@ export const TreasurerGroupDetailPageClient = () => {
   const limit = 12;
 
   // Resolve group UUID from slug
-  const { data: groupsData } = useGroupsQuery({ limit: 100 });
+  const { data: groupsData, isLoading: isGroupsLoading } = useGroupsQuery({ limit: 100 });
   const currentGroup = groupsData?.items?.find((g) => g.slug === groupSlug);
   const groupId = currentGroup?.id || "";
 
-  const { data, isLoading } = useCampaignsQuery(groupId, {
+  const { data, isLoading: isCampaignsLoading } = useCampaignsQuery(groupId, {
     skip: page * limit,
     limit,
     search: search || undefined,
     campaign_status: filter === "all" ? undefined : (filter as FilterValue),
   });
+
+  const isLoading = isGroupsLoading || isCampaignsLoading;
 
   const campaigns = (data?.items ?? []).map(mapCampaignToInfo);
   const totalPages = data?.total_pages ?? 1;

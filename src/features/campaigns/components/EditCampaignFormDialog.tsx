@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useUpdateCampaignMutation } from "@/features/campaigns/services/mutations";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const editCampaignSchema = z.object({
   campaignName: z.string().min(1, "Campaign name is required."),
@@ -83,7 +84,7 @@ const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
 
       <DialogContent className="sm:max-w-120 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="items-center space-y-4">
-          <div className="bg-primary/10 p-3 rounded-full text-primary text-xl">🔒</div>
+          <SiteLogo variant="icon" href={null} logoClassName="w-12 h-12 text-primary" />
           <DialogTitle className="text-xl font-bold text-foreground">Campaign Settings</DialogTitle>
         </DialogHeader>
 

@@ -20,6 +20,7 @@ import {
   useCreateCampaignMutation,
   useUpdateCampaignMutation,
 } from "@/features/campaigns/services/mutations";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import type { CampaignInfo } from "./CampaignCard";
 
@@ -28,6 +29,7 @@ const campaignSchema = z.object({
   description: z.string().optional(),
   target: z.string().min(1, "Target amount is required"),
   instructions: z.string().optional(),
+  fundraisingDeadline: z.string().optional(),
   status: z.string().optional(),
 });
 
@@ -59,6 +61,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
       description: campaign?.description || "",
       target: "",
       instructions: "",
+      fundraisingDeadline: "",
       status: campaign?.status || "Active",
     },
   });
@@ -70,6 +73,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
         description: campaign.description || "",
         target: campaign.target_amount ? String(campaign.target_amount) : "",
         instructions: "",
+        fundraisingDeadline: campaign.end_date || "",
         status: campaign.status || "Active",
       });
     } else {
@@ -78,6 +82,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
         description: "",
         target: "",
         instructions: "",
+        fundraisingDeadline: "",
         status: "Active",
       });
     }
@@ -89,6 +94,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
       description: data.description || null,
       target_amount: data.target ? Number.parseFloat(data.target) : 0,
       payment_instructions: data.instructions || null,
+      end_date: data.fundraisingDeadline || null,
     };
 
     if (isEditing && campaign?.id) {
@@ -214,6 +220,30 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                   {form.formState.errors.instructions && (
                     <FieldError>{form.formState.errors.instructions.message}</FieldError>
                   )}
+                </Field>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="fundraisingDeadline"
+              render={({ field }) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name} className="text-xs font-medium text-foreground">
+                    Fundraising Deadline
+                  </FieldLabel>
+                  <div className="relative flex items-center">
+                    <IconLibrary
+                      name="calendar"
+                      className="absolute left-3 w-4 h-4 text-muted-foreground"
+                    />
+                    <Input
+                      id={field.name}
+                      type="date"
+                      className="pl-10 bg-muted/30 border-muted"
+                      {...field}
+                    />
+                  </div>
                 </Field>
               )}
             />

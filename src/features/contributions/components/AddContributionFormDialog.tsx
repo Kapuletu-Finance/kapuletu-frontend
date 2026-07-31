@@ -16,6 +16,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { useAddManualContributionMutation } from "@/features/transactions/services/mutations";
 
 const addContributionSchema = z.object({
@@ -69,7 +70,7 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
 
       <DialogContent className="sm:max-w-112.5">
         <DialogHeader className="items-center space-y-4">
-          <div className="bg-primary/10 p-3 rounded-full text-primary">🔒</div>
+          <SiteLogo variant="icon" href={null} logoClassName="w-12 h-12 text-primary" />
           <DialogTitle className="text-xl font-bold text-foreground">
             Add A Contribution
           </DialogTitle>
