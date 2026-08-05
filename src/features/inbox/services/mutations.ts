@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { pendingInboxKey } from "@/features/inbox/services/queries";
 import { INBOX_URLS } from "@/features/inbox/urls";
 import { apiClient } from "@/lib/api-client";
 
@@ -25,8 +26,14 @@ export const useAddManualContributionMutation = () => {
     },
     onSuccess: () => {
       toast.success("Contribution added successfully!");
-      // We will invalidate campaigns to update stats
+      // Refresh campaign stats card (total_raised, contributor_count)
       queryClient.invalidateQueries({ queryKey: ["campaign"] });
+      // Refresh the Contributions tab & Recent Contributions card
+      queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
+      // Refresh the activity feed
+      queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
+      // Refresh the progress chart
+      queryClient.invalidateQueries({ queryKey: ["campaign-chart-data"] });
     },
   });
 };
@@ -45,8 +52,16 @@ export const useApproveMutation = () => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["inbox-pending"] });
+      // Fix: use the correct structural key ["inbox", "pending"]
+      queryClient.invalidateQueries({ queryKey: pendingInboxKey });
+      // Refresh campaign stats
       queryClient.invalidateQueries({ queryKey: ["campaign"] });
+      // Refresh the Contributions tab & Recent Contributions card
+      queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
+      // Refresh the activity feed
+      queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
+      // Refresh the progress chart
+      queryClient.invalidateQueries({ queryKey: ["campaign-chart-data"] });
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to approve contribution.");
@@ -62,7 +77,12 @@ export const useRejectMutation = () => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["inbox-pending"] });
+      // Fix: use the correct structural key ["inbox", "pending"]
+      queryClient.invalidateQueries({ queryKey: pendingInboxKey });
+      // Refresh campaign stats in case a campaign was associated
+      queryClient.invalidateQueries({ queryKey: ["campaign"] });
+      // Refresh the activity feed
+      queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to reject contribution.");
@@ -85,8 +105,16 @@ export const useBulkApproveMutation = () => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["inbox-pending"] });
+      // Fix: use the correct structural key ["inbox", "pending"]
+      queryClient.invalidateQueries({ queryKey: pendingInboxKey });
+      // Refresh campaign stats
       queryClient.invalidateQueries({ queryKey: ["campaign"] });
+      // Refresh the Contributions tab & Recent Contributions card
+      queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
+      // Refresh the activity feed
+      queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
+      // Refresh the progress chart
+      queryClient.invalidateQueries({ queryKey: ["campaign-chart-data"] });
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to bulk approve contributions.");
@@ -102,7 +130,12 @@ export const useBulkRejectMutation = () => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["inbox-pending"] });
+      // Fix: use the correct structural key ["inbox", "pending"]
+      queryClient.invalidateQueries({ queryKey: pendingInboxKey });
+      // Refresh campaign stats in case items were campaign-linked
+      queryClient.invalidateQueries({ queryKey: ["campaign"] });
+      // Refresh the activity feed
+      queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to bulk reject contributions.");
