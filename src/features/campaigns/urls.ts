@@ -4,6 +4,7 @@ export const CAMPAIGNS_URLS = {
     `/public/workspaces/${workspaceId}/groups/${groupId}/campaigns/${campaignId}/verify` as const,
   campaignFavorite: (id: string) => `/campaigns/${id}/favorite` as const,
   campaignInbox: (id: string) => `/campaigns/${id}/inbox` as const,
+  campaignTransactions: (id: string) => `/campaigns/${id}/transactions` as const,
   campaignActivities: (id: string) => `/campaigns/${id}/activities` as const,
   campaignChartData: (id: string) => `/campaigns/${id}/chart-data` as const,
   campaignReportPreview: (id: string) => `/campaigns/${id}/report-preview` as const,

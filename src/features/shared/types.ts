@@ -193,6 +193,25 @@ export interface PaginatedInboxResponse {
   limit: number;
 }
 
+export interface TransactionOut {
+  transaction_id: string;
+  transaction_code: string;
+  amount: number;
+  sender_name: string | null;
+  sender_phone: string | null;
+  payment_method: string;
+  status: string;
+  created_at: string;
+}
+
+export interface PaginatedTransactionResponse {
+  items: TransactionOut[];
+  total_items: number;
+  total_pages: number;
+  page: number;
+  limit: number;
+}
+
 export interface CampaignActivity {
   log_id: string;
   action: string;

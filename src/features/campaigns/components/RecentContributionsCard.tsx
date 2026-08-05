@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCampaignInboxQuery } from "@/features/campaigns/services/queries";
+import { useCampaignTransactionsQuery } from "@/features/campaigns/services/queries";
 import { getInitials } from "@/lib/utils";
 
 const paymentMethodColors: Record<string, string> = {
@@ -31,9 +31,9 @@ const RecentContributionsCard = () => {
       ? `/treasurer/groups/${groupSlug}/campaigns/${campaignSlug}/contributions`
       : "#";
 
-  const { data, isLoading } = useCampaignInboxQuery(campaignSlug, { limit: 5 });
+  const { data, isLoading } = useCampaignTransactionsQuery(campaignSlug, { limit: 5 });
 
-  const inbox = data?.items ?? [];
+  const contributions = data?.items ?? [];
 
   return (
     <Card className="border-none bg-card overflow-hidden h-full">
@@ -70,26 +70,26 @@ const RecentContributionsCard = () => {
                 <Skeleton className="h-5 w-16 ml-auto" />
               </div>
             ))
-          ) : inbox.length === 0 ? (
+          ) : contributions.length === 0 ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
               No contributions yet.
             </div>
           ) : (
-            inbox.map((item, index) => {
+            contributions.map((item, index) => {
               const avatarColor = avatarColors[index % avatarColors.length];
               return (
                 <div
-                  key={item.inbox_id || `tx-${index}`}
+                  key={item.transaction_id || `tx-${index}`}
                   className="grid grid-cols-4 items-center py-4 px-2 text-sm"
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${avatarColor}`}
                     >
-                      {getInitials(item.name || "")}
+                      {getInitials(item.sender_name || "")}
                     </div>
                     <span className="font-semibold text-foreground truncate">
-                      {item.name || "Unknown"}
+                      {item.sender_name || "Unknown"}
                     </span>
                   </div>
 
@@ -98,7 +98,7 @@ const RecentContributionsCard = () => {
                   </span>
 
                   <span className="text-muted-foreground text-xs">
-                    {new Date(item.date).toLocaleDateString("en-KE", {
+                    {new Date(item.created_at).toLocaleDateString("en-KE", {
                       day: "numeric",
                       month: "short",
                       year: "numeric",

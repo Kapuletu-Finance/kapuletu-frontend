@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCampaignInboxQuery } from "@/features/campaigns/services/queries";
+import { useCampaignTransactionsQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import Pagination from "@/features/shared/components/Pagination";
@@ -41,13 +41,13 @@ const CampaignContributions = () => {
   const [timeFilter, setTimeFilter] = useState("This year");
   const limit = 10;
 
-  const { data, isLoading } = useCampaignInboxQuery(campaignSlug, {
+  const { data, isLoading } = useCampaignTransactionsQuery(campaignSlug, {
     skip: (page - 1) * limit,
     limit,
     search: debouncedSearch || undefined,
   });
 
-  const inbox = data?.items ?? [];
+  const contributions = data?.items ?? [];
   const totalPages = data?.total_pages ?? 1;
 
   const handleSearchChange = (value: string) => {
@@ -130,26 +130,26 @@ const CampaignContributions = () => {
                   <Skeleton className="h-6 w-20 ml-auto sm:mx-auto" />
                 </div>
               ))
-            ) : inbox.length === 0 ? (
+            ) : contributions.length === 0 ? (
               <div className="py-12 text-center text-sm text-muted-foreground">
                 No contributions found.
               </div>
             ) : (
-              inbox.map((item, index) => {
+              contributions.map((item, index) => {
                 const avatarColor = avatarColors[index % avatarColors.length];
                 return (
                   <div
-                    key={item.inbox_id || `tx-${index}`}
+                    key={item.transaction_id || `tx-${index}`}
                     className="grid grid-cols-4 items-center py-5 px-6 text-sm transition-colors hover:bg-muted/20"
                   >
                     <div className="flex items-center gap-4">
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarColor}`}
                       >
-                        {getInitials(item.name || "")}
+                        {getInitials(item.sender_name || "")}
                       </div>
                       <span className="font-semibold text-foreground truncate">
-                        {item.name || "Unknown"}
+                        {item.sender_name || "Unknown"}
                       </span>
                     </div>
 
@@ -158,7 +158,7 @@ const CampaignContributions = () => {
                     </span>
 
                     <span className="text-muted-foreground">
-                      {new Date(item.date).toLocaleDateString("en-KE", {
+                      {new Date(item.created_at).toLocaleDateString("en-KE", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",

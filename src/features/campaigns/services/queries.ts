@@ -93,6 +93,20 @@ export const useCampaignInboxQuery = (campaignId: string, params: InboxQueryPara
   });
 };
 
+export const useCampaignTransactionsQuery = (campaignId: string, params: InboxQueryParams = {}) => {
+  return useQuery({
+    queryFn: async () => {
+      // Assuming you import PaginatedTransactionResponse in types.ts
+      const response = await apiClient.get<
+        import("@/features/shared/types").PaginatedTransactionResponse
+      >(CAMPAIGNS_URLS.campaignTransactions(campaignId), { params });
+      return response.data;
+    },
+    queryKey: ["campaign-transactions", campaignId, params],
+    enabled: !!campaignId,
+  });
+};
+
 export const useCampaignActivitiesQuery = (campaignId: string) => {
   return useQuery({
     queryFn: async () => {
