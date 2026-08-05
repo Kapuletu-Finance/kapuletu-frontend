@@ -12,7 +12,7 @@ export const PublicThemeToggle = () => {
     pathname.startsWith("/treasurer") ||
     pathname.startsWith("/subscriptions") ||
     pathname.startsWith("/blogs") ||
-    pathname.startsWith("/campaign-report") ||
+    pathname.startsWith("/report") ||
     pathname === "/"
   ) {
     return null;

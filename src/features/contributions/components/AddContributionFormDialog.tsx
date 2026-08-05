@@ -21,8 +21,8 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const addContributionSchema = z.object({
-  groupId: z.string().min(1, "Group is required."),
-  campaignId: z.string().min(1, "Campaign is required."),
+  groupId: z.string().uuid("Invalid group ID").optional(),
+  campaignId: z.string().uuid("Invalid campaign ID").optional(),
   name: z.string().min(1, "Name is required."),
   phone: z.string().optional(),
   amount: z.string().min(1, "Amount is required."),
@@ -50,8 +50,8 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
 
   const form = useForm<AddContributionFormData>({
     defaultValues: {
-      groupId: "",
-      campaignId: "",
+      groupId: undefined,
+      campaignId: undefined,
       name: "",
       phone: "",
       amount: "",
@@ -132,7 +132,7 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
                         value={field.value}
                         onChange={(val) => {
                           field.onChange(val);
-                          form.setValue("campaignId", ""); // reset campaign when group changes
+                          form.setValue("campaignId", undefined); // reset campaign when group changes
                         }}
                         error={form.formState.errors.groupId?.message}
                       />
