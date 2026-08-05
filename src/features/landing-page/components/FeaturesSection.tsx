@@ -1,28 +1,6 @@
-import type React from "react";
-import { Card } from "@/components/ui/card";
+import { FeatureCard } from "@/features/shared/components/FeatureCard";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
-
-const FeatureCard = ({
-  icon,
-  title,
-  description,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) => {
-  return (
-    <Card>
-      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-        {icon}
-      </div>
-      <h3 className="text-xl font-semibold mb-3">{title}</h3>
-      <p className="text-muted-foreground leading-relaxed">{description}</p>
-    </Card>
-  );
-};
-
 export const FeaturesSection = () => {
   return (
     <section id="features" className="w-full py-24 bg-muted/50">
