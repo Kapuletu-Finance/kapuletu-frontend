@@ -12,8 +12,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { env } from "@/env";
-import { useCampaignQuery } from "@/features/campaigns/services/queries";
+import {
+  useCampaignQuery,
+  useCampaignReportPreviewQuery,
+} from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
@@ -21,12 +23,13 @@ const ShareCampaignCard = () => {
   const params = useParams();
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
   const { data: campaignData } = useCampaignQuery(campaignSlug);
+  const { data: previewData, isLoading: isPreviewLoading } =
+    useCampaignReportPreviewQuery(campaignSlug);
 
   const total_raised = campaignData?.total_raised ?? 0;
   const target_amount = campaignData?.target_amount ?? 0;
   const remaining = Math.max(0, target_amount - total_raised);
-  const publicSlug = campaignData?.slug || campaignSlug;
-  const publicUrl = `${env.NEXT_PUBLIC_APP_URL}/report/${publicSlug}`;
+  const publicUrl = previewData?.public_url ?? "";
   const settings = campaignData?.settings_override;
   const accessPin = settings?.access_pin;
 
@@ -81,12 +84,17 @@ const ShareCampaignCard = () => {
           <div className="space-y-6 pt-4">
             <div className="flex items-center gap-2 bg-muted/50 border border-border p-2 rounded-xl">
               <IconLibrary name="link" className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
-              <Input readOnly value={publicUrl} className="text-sm text-foreground truncate" />
+              <Input
+                readOnly
+                value={isPreviewLoading ? "Loading link..." : publicUrl}
+                className="text-sm text-foreground truncate"
+              />
               <Button
                 size="sm"
                 variant="outline"
                 className="gap-1 border-primary/30 text-primary hover:bg-primary/10 shrink-0"
                 onClick={handleCopyLink}
+                disabled={!publicUrl || isPreviewLoading}
               >
                 <IconLibrary name="copy" className="w-3.5 h-3.5" /> Copy Link
               </Button>
