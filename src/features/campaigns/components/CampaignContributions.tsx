@@ -146,10 +146,10 @@ const CampaignContributions = () => {
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarColor}`}
                       >
-                        {getInitials(item.sender_name || "")}
+                        {getInitials(item.name || "")}
                       </div>
                       <span className="font-semibold text-foreground truncate">
-                        {item.sender_name || "Unknown"}
+                        {item.name || "Unknown"}
                       </span>
                     </div>
 
@@ -158,7 +158,7 @@ const CampaignContributions = () => {
                     </span>
 
                     <span className="text-muted-foreground">
-                      {new Date(item.created_at).toLocaleDateString("en-KE", {
+                      {new Date(item.date).toLocaleDateString("en-KE", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",

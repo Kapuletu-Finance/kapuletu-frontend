@@ -197,11 +197,11 @@ export interface TransactionOut {
   transaction_id: string;
   transaction_code: string;
   amount: number;
-  sender_name: string | null;
+  name: string | null;
   sender_phone: string | null;
   payment_method: string;
   status: string;
-  created_at: string;
+  date: string;
 }
 
 export interface PaginatedTransactionResponse {

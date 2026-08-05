@@ -86,10 +86,10 @@ const RecentContributionsCard = () => {
                     <div
                       className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${avatarColor}`}
                     >
-                      {getInitials(item.sender_name || "")}
+                      {getInitials(item.name || "")}
                     </div>
                     <span className="font-semibold text-foreground truncate">
-                      {item.sender_name || "Unknown"}
+                      {item.name || "Unknown"}
                     </span>
                   </div>
 
@@ -98,7 +98,7 @@ const RecentContributionsCard = () => {
                   </span>
 
                   <span className="text-muted-foreground text-xs">
-                    {new Date(item.created_at).toLocaleDateString("en-KE", {
+                    {new Date(item.date).toLocaleDateString("en-KE", {
                       day: "numeric",
                       month: "short",
                       year: "numeric",
