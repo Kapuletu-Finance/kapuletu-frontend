@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/features/shared/components/FeatureCard";
 import IconLibrary, { type IconName } from "@/features/shared/components/IconLibrary";
@@ -65,9 +66,11 @@ const PublicCampaignReportBottom = () => {
           </p>
         </div>
 
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-8 py-6 text-base font-semibold shadow-sm">
-          Get started
-        </Button>
+        <Link href="/sign-up">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-8 py-6 text-base font-semibold shadow-sm">
+            Get started
+          </Button>
+        </Link>
       </div>
 
       {/* Right Column: Feature Cards Grid */}
