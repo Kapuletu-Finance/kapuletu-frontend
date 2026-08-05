@@ -8,7 +8,8 @@ interface AddContributionData {
   sender_phone?: string;
   amount: number;
   payment_method: string;
-  campaign_id?: string;
+  campaign_id: string;
+  group_id: string;
 }
 
 export const useAddManualContributionMutation = () => {

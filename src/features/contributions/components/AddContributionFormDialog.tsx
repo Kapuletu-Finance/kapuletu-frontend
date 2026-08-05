@@ -79,12 +79,18 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
         return;
       }
 
+      if (!data.groupId) {
+        form.setError("groupId", { message: "Group is required" });
+        return;
+      }
+
       await addContribution({
         sender_name: data.name,
         sender_phone: data.phone,
         amount: Number.parseFloat(data.amount.replace(/,/g, "")),
         payment_method: data.paymentType || "Cash",
         campaign_id: finalCampaignId,
+        group_id: data.groupId,
       });
       form.reset();
       setIsOpen(false);
