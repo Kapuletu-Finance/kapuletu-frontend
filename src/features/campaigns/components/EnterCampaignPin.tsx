@@ -1,13 +1,30 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { useVerifyCampaignPinMutation } from "@/features/campaigns/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const EnterCampaignPin = () => {
   const [pin, setPin] = useState("");
+  const params = useParams();
+  const router = useRouter();
+  const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
+
+  const verifyMutation = useVerifyCampaignPinMutation(campaignSlug);
+
+  const handleVerify = () => {
+    if (pin.length !== 4) return;
+    verifyMutation.mutate(pin, {
+      onSuccess: () => {
+        sessionStorage.setItem(`campaign_auth_${campaignSlug}`, "true");
+        router.push(`/campaign-report/${campaignSlug}`);
+      },
+    });
+  };
 
   return (
     <div className="flex items-center justify-center p-4">
@@ -51,8 +68,12 @@ const EnterCampaignPin = () => {
           </div>
 
           {/* Action Button */}
-          <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl py-6 font-semibold text-base shadow-sm">
-            View Report
+          <Button
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl py-6 font-semibold text-base shadow-sm"
+            onClick={handleVerify}
+            disabled={pin.length !== 4 || verifyMutation.isPending}
+          >
+            {verifyMutation.isPending ? "Verifying..." : "View Report"}
           </Button>
 
           {/* Footer Help */}

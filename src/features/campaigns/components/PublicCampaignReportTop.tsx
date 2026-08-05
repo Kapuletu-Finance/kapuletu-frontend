@@ -1,6 +1,7 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,9 +14,26 @@ import { cn, getInitials } from "@/lib/utils";
 
 const PublicCampaignReportTop = () => {
   const params = useParams();
+  const router = useRouter();
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
 
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    if (!campaignSlug) return;
+    const authFlag = sessionStorage.getItem(`campaign_auth_${campaignSlug}`);
+    if (authFlag !== "true") {
+      router.replace(`/campaign-report/${campaignSlug}/auth`);
+    } else {
+      setIsAuthorized(true);
+    }
+  }, [campaignSlug, router]);
+
   const { data: campaign, isLoading } = useCampaignQuery(campaignSlug);
+
+  if (!isAuthorized) {
+    return null; // or a loading spinner
+  }
 
   const title = campaign?.title || "";
   const description = campaign?.description || "";

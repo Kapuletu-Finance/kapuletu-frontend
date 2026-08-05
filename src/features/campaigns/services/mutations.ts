@@ -26,6 +26,25 @@ export const useRegenerateCampaignPinMutation = (campaignId: string) => {
   });
 };
 
+export const useVerifyCampaignPinMutation = (campaignId: string) => {
+  return useMutation({
+    mutationFn: async (pin: string) => {
+      const response = await apiClient.post<CampaignOut>(
+        CAMPAIGNS_URLS.publicCampaignVerify(campaignId),
+        undefined,
+        { params: { pin } },
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Invalid PIN.");
+    },
+    onSuccess: () => {
+      toast.success("Access granted!");
+    },
+  });
+};
+
 export const useCreateCampaignMutation = (groupId: string) => {
   const queryClient = useQueryClient();
 
