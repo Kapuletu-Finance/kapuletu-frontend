@@ -34,10 +34,11 @@ export const BulkRejectDialog: React.FC<BulkRejectDialogProps> = ({
       <DialogContent className="max-w-md w-full p-6 bg-card border-none sm:rounded-2xl">
         <DialogHeader className="mb-2 text-center items-center justify-center">
           <DialogTitle className="text-xl font-semibold mt-2">
-            Bulk Reject Contributions
+            {selectedCount === 1 ? "Reject Contribution" : "Bulk Reject Contributions"}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground mt-1">
-            You are about to reject {selectedCount} contributions
+            You are about to reject{" "}
+            {selectedCount === 1 ? "this contribution" : `${selectedCount} contributions`}
           </DialogDescription>
         </DialogHeader>
 

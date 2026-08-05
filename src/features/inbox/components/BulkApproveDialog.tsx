@@ -11,15 +11,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useCampaignsQuery } from "@/features/campaigns/services/queries";
-import { useGroupsQuery } from "@/features/groups/services/queries";
+import { CampaignSelect } from "@/features/contributions/components/CampaignSelect";
+import { GroupSelect } from "@/features/contributions/components/GroupSelect";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export interface BulkApproveDialogProps {
@@ -38,12 +31,6 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>("");
 
-  const { data: groupsData } = useGroupsQuery({ limit: 100 });
-  const groups = groupsData?.items ?? [];
-
-  const { data: campaignsData } = useCampaignsQuery(selectedGroupId, { limit: 100 });
-  const campaigns = campaignsData?.items ?? [];
-
   const handleApprove = () => {
     onConfirm(selectedGroupId, selectedCampaignId);
     onOpenChange(false);
@@ -54,10 +41,12 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
       <DialogContent className="max-w-md w-full p-6 bg-card border-none sm:rounded-2xl">
         <DialogHeader className="mb-2 text-center items-center justify-center">
           <DialogTitle className="text-xl font-semibold mt-2">
-            Bulk Approve Contributions
+            {selectedCount === 1 ? "Approve Contribution" : "Bulk Approve Contributions"}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground mt-1">
-            You are about to add {selectedCount} contributions to your records
+            You are about to add{" "}
+            {selectedCount === 1 ? "this contribution" : `${selectedCount} contributions`} to your
+            records
           </DialogDescription>
         </DialogHeader>
 
@@ -80,43 +69,19 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
               <Label className="text-sm text-foreground">
                 Select Group <span className="text-destructive">*</span>
               </Label>
-              <Select
-                value={selectedGroupId}
-                onValueChange={(val) => setSelectedGroupId(val || "")}
-              >
-                <SelectTrigger className="w-full bg-background border-border h-11">
-                  <SelectValue placeholder="Select a group" />
-                </SelectTrigger>
-                <SelectContent>
-                  {groups.map((group) => (
-                    <SelectItem key={group.id} value={group.id}>
-                      {group.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <GroupSelect value={selectedGroupId} onChange={setSelectedGroupId} />
             </div>
 
             <div className="flex flex-col gap-2">
               <Label className="text-sm text-foreground">
                 Select Campaign <span className="text-destructive">*</span>
               </Label>
-              <Select
+              <CampaignSelect
+                groupId={selectedGroupId}
                 value={selectedCampaignId}
-                onValueChange={(val) => setSelectedCampaignId(val || "")}
+                onChange={setSelectedCampaignId}
                 disabled={!selectedGroupId}
-              >
-                <SelectTrigger className="w-full bg-background border-border h-11">
-                  <SelectValue placeholder="Select a campaign" />
-                </SelectTrigger>
-                <SelectContent>
-                  {campaigns.map((campaign) => (
-                    <SelectItem key={campaign.id} value={campaign.id}>
-                      {campaign.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              />
             </div>
           </div>
 

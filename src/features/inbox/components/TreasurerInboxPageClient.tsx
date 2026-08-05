@@ -35,6 +35,8 @@ export const TreasurerInboxPageClient = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkApproveOpen, setIsBulkApproveOpen] = useState(false);
   const [isBulkRejectOpen, setIsBulkRejectOpen] = useState(false);
+  const [singleApproveId, setSingleApproveId] = useState<string | null>(null);
+  const [singleRejectId, setSingleRejectId] = useState<string | null>(null);
 
   const { data, isLoading } = usePendingInboxQuery({
     skip: page * limit,
@@ -79,6 +81,10 @@ export const TreasurerInboxPageClient = () => {
   const bulkRejectMutation = useBulkRejectMutation();
 
   const handleApprove = (id: string, groupId?: string, campaignId?: string, notes?: string) => {
+    if (!groupId || !campaignId) {
+      setSingleApproveId(id);
+      return;
+    }
     approveMutation.mutate(
       { id, data: { group_id: groupId, campaign_id: campaignId, internal_note: notes } },
       { onSuccess: () => toast.success("Contribution approved!") },
@@ -86,9 +92,7 @@ export const TreasurerInboxPageClient = () => {
   };
 
   const handleReject = (id: string) => {
-    rejectMutation.mutate(id, {
-      onSuccess: () => toast.success("Contribution rejected!"),
-    });
+    setSingleRejectId(id);
   };
 
   const handleBulkApprove = (groupId: string, campaignId: string) => {
@@ -230,17 +234,52 @@ export const TreasurerInboxPageClient = () => {
       </div>
 
       <BulkApproveDialog
-        open={isBulkApproveOpen}
-        onOpenChange={setIsBulkApproveOpen}
-        selectedCount={selectedIds.size}
-        onConfirm={handleBulkApprove}
+        open={isBulkApproveOpen || singleApproveId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsBulkApproveOpen(false);
+            setSingleApproveId(null);
+          }
+        }}
+        selectedCount={singleApproveId ? 1 : selectedIds.size}
+        onConfirm={(groupId, campaignId) => {
+          if (singleApproveId) {
+            approveMutation.mutate(
+              { id: singleApproveId, data: { group_id: groupId, campaign_id: campaignId } },
+              {
+                onSuccess: () => {
+                  toast.success("Contribution approved!");
+                  setSingleApproveId(null);
+                },
+              },
+            );
+          } else {
+            handleBulkApprove(groupId, campaignId);
+          }
+        }}
       />
 
       <BulkRejectDialog
-        open={isBulkRejectOpen}
-        onOpenChange={setIsBulkRejectOpen}
-        selectedCount={selectedIds.size}
-        onConfirm={handleBulkReject}
+        open={isBulkRejectOpen || singleRejectId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsBulkRejectOpen(false);
+            setSingleRejectId(null);
+          }
+        }}
+        selectedCount={singleRejectId ? 1 : selectedIds.size}
+        onConfirm={() => {
+          if (singleRejectId) {
+            rejectMutation.mutate(singleRejectId, {
+              onSuccess: () => {
+                toast.success("Contribution rejected!");
+                setSingleRejectId(null);
+              },
+            });
+          } else {
+            handleBulkReject();
+          }
+        }}
       />
     </PageLayout>
   );

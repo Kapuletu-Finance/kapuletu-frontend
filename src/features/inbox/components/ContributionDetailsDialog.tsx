@@ -5,16 +5,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useCampaignsQuery } from "@/features/campaigns/services/queries";
-import { useGroupsQuery } from "@/features/groups/services/queries";
+import { CampaignSelect } from "@/features/contributions/components/CampaignSelect";
+import { GroupSelect } from "@/features/contributions/components/GroupSelect";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { PendingInboxOut } from "@/features/shared/types";
 import { getAvatarColor } from "@/lib/colors";
@@ -38,12 +31,6 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
-
-  const { data: groupsData } = useGroupsQuery({ limit: 100 });
-  const groups = groupsData?.items ?? [];
-
-  const { data: campaignsData } = useCampaignsQuery(selectedGroupId, { limit: 100 });
-  const campaigns = campaignsData?.items ?? [];
 
   if (!item) return null;
 
@@ -147,43 +134,19 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
               <Label className="text-sm text-foreground">
                 Select Group <span className="text-destructive">*</span>
               </Label>
-              <Select
-                value={selectedGroupId}
-                onValueChange={(val) => setSelectedGroupId(val || "")}
-              >
-                <SelectTrigger className="w-full bg-background border-border">
-                  <SelectValue placeholder="Select a group" />
-                </SelectTrigger>
-                <SelectContent>
-                  {groups.map((group) => (
-                    <SelectItem key={group.id} value={group.id}>
-                      {group.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <GroupSelect value={selectedGroupId} onChange={setSelectedGroupId} />
             </div>
 
             <div className="flex flex-col gap-2">
               <Label className="text-sm text-foreground">
                 Select Campaign <span className="text-destructive">*</span>
               </Label>
-              <Select
+              <CampaignSelect
+                groupId={selectedGroupId}
                 value={selectedCampaignId}
-                onValueChange={(val) => setSelectedCampaignId(val || "")}
+                onChange={setSelectedCampaignId}
                 disabled={!selectedGroupId}
-              >
-                <SelectTrigger className="w-full bg-background border-border">
-                  <SelectValue placeholder="Select a campaign" />
-                </SelectTrigger>
-                <SelectContent>
-                  {campaigns.map((campaign) => (
-                    <SelectItem key={campaign.id} value={campaign.id}>
-                      {campaign.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              />
             </div>
 
             <div className="flex flex-col gap-2">
