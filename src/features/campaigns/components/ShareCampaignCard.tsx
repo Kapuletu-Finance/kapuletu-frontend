@@ -118,7 +118,7 @@ const ShareCampaignCard = () => {
                   variant="ghost"
                   className="flex flex-col items-center gap-2 h-auto p-2 bg-transparent hover:bg-transparent group"
                   onClick={() => {
-                    const text = `Check out this campaign report: ${publicUrl}`;
+                    const text = `Check out the "${campaignData?.title}" campaign report: ${publicUrl}`;
                     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
                   }}
                 >
@@ -132,8 +132,8 @@ const ShareCampaignCard = () => {
                   variant="ghost"
                   className="flex flex-col items-center gap-2 h-auto p-2 bg-transparent hover:bg-transparent group"
                   onClick={() => {
-                    const subject = "Campaign Report";
-                    const body = `Check out this campaign report:\n\n${publicUrl}`;
+                    const subject = `${campaignData?.title} – Campaign Report`;
+                    const body = `Check out the "${campaignData?.title}" campaign report:\n\n${publicUrl}`;
                     window.open(
                       `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
                     );
