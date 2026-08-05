@@ -21,13 +21,13 @@ export function notificationToDisplay(n: NotificationOut): DisplayNotification {
     string,
     { icon: IconName; iconClassName: string; iconBgClassName: string }
   > = {
-    transaction_approved: {
-      icon: "transaction",
+    inbox_approved: {
+      icon: "inbox",
       iconClassName: "text-primary",
       iconBgClassName: "bg-primary/10 dark:bg-primary/30",
     },
-    transaction_rejected: {
-      icon: "transaction",
+    inbox_rejected: {
+      icon: "inbox",
       iconClassName: "text-destructive",
       iconBgClassName: "bg-destructive/10 dark:bg-destructive/30",
     },

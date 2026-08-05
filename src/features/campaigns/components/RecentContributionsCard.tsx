@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCampaignTransactionsQuery } from "@/features/campaigns/services/queries";
+import { useCampaignInboxQuery } from "@/features/campaigns/services/queries";
 import { getInitials } from "@/lib/utils";
 
 const paymentMethodColors: Record<string, string> = {
@@ -31,9 +31,9 @@ const RecentContributionsCard = () => {
       ? `/treasurer/groups/${groupSlug}/campaigns/${campaignSlug}/contributions`
       : "#";
 
-  const { data, isLoading } = useCampaignTransactionsQuery(campaignSlug, { limit: 5 });
+  const { data, isLoading } = useCampaignInboxQuery(campaignSlug, { limit: 5 });
 
-  const transactions = data?.items ?? [];
+  const inbox = data?.items ?? [];
 
   return (
     <Card className="border-none bg-card overflow-hidden h-full">
@@ -70,16 +70,16 @@ const RecentContributionsCard = () => {
                 <Skeleton className="h-5 w-16 ml-auto" />
               </div>
             ))
-          ) : transactions.length === 0 ? (
+          ) : inbox.length === 0 ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
               No contributions yet.
             </div>
           ) : (
-            transactions.map((item, index) => {
+            inbox.map((item, index) => {
               const avatarColor = avatarColors[index % avatarColors.length];
               return (
                 <div
-                  key={item.transaction_id || `tx-${index}`}
+                  key={item.inbox_id || `tx-${index}`}
                   className="grid grid-cols-4 items-center py-4 px-2 text-sm"
                 >
                   <div className="flex items-center gap-3">

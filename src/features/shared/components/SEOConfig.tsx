@@ -10,7 +10,7 @@ export const metadataConfig: Metadata = {
   category: "finance",
   creator: "KapuLetu Systems",
   description:
-    "Streamline treasury operations, member tracking, and group finance with KapuLetu. Automatically ingest transaction records, split member deposits, manage crowdfunding campaigns, and generate instant immutable ledger updates.",
+    "Streamline treasury operations, member tracking, and group finance with KapuLetu. Automatically ingest inbox records, split member deposits, manage crowdfunding campaigns, and generate instant immutable ledger updates.",
   keywords: [
     "KapuLetu Treasury",
     "Treasury Finance Management",

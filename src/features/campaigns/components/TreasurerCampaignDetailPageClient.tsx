@@ -31,7 +31,7 @@ export const TreasurerCampaignDetailPageClient: React.FC<
     {
       value: "contributions",
       label: "Contributions",
-      icon: "transaction",
+      icon: "inbox",
       href: `${baseUrl}/contributions`,
     },
     { value: "reports", label: "Reports", icon: "report", href: `${baseUrl}/reports` },

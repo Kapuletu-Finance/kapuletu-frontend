@@ -16,9 +16,9 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAddManualContributionMutation } from "@/features/inbox/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
-import { useAddManualContributionMutation } from "@/features/transactions/services/mutations";
 
 const addContributionSchema = z.object({
   groupId: z.string().optional(),

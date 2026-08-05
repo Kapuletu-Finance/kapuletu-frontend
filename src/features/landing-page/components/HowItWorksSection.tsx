@@ -46,8 +46,8 @@ export const HowItWorksSection = () => {
             </div>
             <h3 className="text-xl font-bold mb-4">Track and report</h3>
             <p className="text-primary-foreground/80 leading-relaxed max-w-xs text-balance">
-              Easily record transactions, monitor campaign balances, automate reminders, and
-              generate instant reports.
+              Easily record inbox, monitor campaign balances, automate reminders, and generate
+              instant reports.
             </p>
           </div>
         </div>

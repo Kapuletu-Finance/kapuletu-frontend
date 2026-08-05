@@ -64,7 +64,7 @@ export const pricings = [
       "Bulk-forward WhatsApp messages",
       "Edit, split, & adjust contributions",
       "Daily / weekly digests",
-      "AI auto-approval for transactions",
+      "AI auto-approval for inbox",
       "Custom PDF/Excel reports",
       "Priority email and live chat support",
     ],

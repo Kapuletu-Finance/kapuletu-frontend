@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCampaignTransactionsQuery } from "@/features/campaigns/services/queries";
+import { useCampaignInboxQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import Pagination from "@/features/shared/components/Pagination";
@@ -41,13 +41,13 @@ const CampaignContributions = () => {
   const [timeFilter, setTimeFilter] = useState("This year");
   const limit = 10;
 
-  const { data, isLoading } = useCampaignTransactionsQuery(campaignSlug, {
+  const { data, isLoading } = useCampaignInboxQuery(campaignSlug, {
     skip: (page - 1) * limit,
     limit,
     search: debouncedSearch || undefined,
   });
 
-  const transactions = data?.items ?? [];
+  const inbox = data?.items ?? [];
   const totalPages = data?.total_pages ?? 1;
 
   const handleSearchChange = (value: string) => {
@@ -130,16 +130,16 @@ const CampaignContributions = () => {
                   <Skeleton className="h-6 w-20 ml-auto sm:mx-auto" />
                 </div>
               ))
-            ) : transactions.length === 0 ? (
+            ) : inbox.length === 0 ? (
               <div className="py-12 text-center text-sm text-muted-foreground">
                 No contributions found.
               </div>
             ) : (
-              transactions.map((item, index) => {
+              inbox.map((item, index) => {
                 const avatarColor = avatarColors[index % avatarColors.length];
                 return (
                   <div
-                    key={item.transaction_id || `tx-${index}`}
+                    key={item.inbox_id || `tx-${index}`}
                     className="grid grid-cols-4 items-center py-5 px-6 text-sm transition-colors hover:bg-muted/20"
                   >
                     <div className="flex items-center gap-4">

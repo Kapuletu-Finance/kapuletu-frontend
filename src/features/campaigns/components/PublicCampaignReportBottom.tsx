@@ -60,8 +60,8 @@ const PublicCampaignReportBottom = () => {
           </h1>
           <p className="text-muted-foreground text-base leading-relaxed">
             KapuLetu simplifies treasury management by enabling financial leaders to track
-            contributions, monitor expenses, reconcile transactions, and maintain secure financial
-            records, all in one place.
+            contributions, monitor expenses, reconcile inbox, and maintain secure financial records,
+            all in one place.
           </p>
         </div>
 

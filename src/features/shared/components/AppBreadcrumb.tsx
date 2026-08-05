@@ -26,7 +26,7 @@ const formatSegment = (segment: string): string => {
     admin: "Home",
     treasurer: "Home",
     groups: "Groups",
-    transactions: "Transactions",
+    inbox: "Inbox",
     reports: "Reports",
     analytics: "Analytics",
     settings: "Settings",

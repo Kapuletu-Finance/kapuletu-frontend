@@ -2,7 +2,7 @@
 
 import ButtonWithIcon from "@/features/shared/components/ButtonWithIcon";
 
-const ReviewTransactionButton = () => {
+const ReviewInboxButton = () => {
   return (
     <ButtonWithIcon
       label="Review payments"
@@ -13,4 +13,4 @@ const ReviewTransactionButton = () => {
   );
 };
 
-export default ReviewTransactionButton;
+export default ReviewInboxButton;

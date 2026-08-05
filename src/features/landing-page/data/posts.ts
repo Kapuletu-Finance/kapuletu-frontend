@@ -32,7 +32,7 @@ KapuLetu is a secure, modern platform built specifically for the way Kenyan grou
 - A transparent ledger that tracks every contribution and expense in real time
 - Automated reminders via SMS and email so members never miss payments
 - Campaign management for fundraising goals with progress tracking
-- Evidence management so every transaction has a receipt or proof attached
+- Evidence management so every inbox has a receipt or proof attached
 - WhatsApp integration to share summaries directly with group members
 
 ## Why "KapuLetu"?
@@ -70,7 +70,7 @@ What connects us is a passion for building tools that make a real difference in 
 
 We build KapuLetu with three principles:
 
-1. Security first — Group finances are sensitive. We use bank-grade encryption, secure authentication, and role-based access controls to protect every transaction.
+1. Security first — Group finances are sensitive. We use bank-grade encryption, secure authentication, and role-based access controls to protect every inbox.
 
 2. Simplicity — A treasurer should not need to be a tech expert to use our platform. We design for the person who manages a chama on their phone between work and family commitments.
 
@@ -105,7 +105,7 @@ Sign up at kapuletu.co.ke and create your group. You will set up your group name
 
 KapuLetu lets you import your current member balances so you do not have to start from zero. Enter each member's standing, and the platform picks up from there.
 
-## Step 3: Start Logging Transactions
+## Step 3: Start Logging Inbox
 
 Every contribution, expense, and payout gets recorded in the ledger. Attach receipts, add descriptions, and categorize entries. The ledger updates in real time, and every member can view their own balance.
 
@@ -119,13 +119,13 @@ Need to raise funds for a specific project? Create a campaign with a target amou
 
 ## Step 6: Generate Reports
 
-At the end of every month or quarter, generate a summary report of all transactions. Export it or share it directly with your group for full accountability.
+At the end of every month or quarter, generate a summary report of all inbox. Export it or share it directly with your group for full accountability.
 
 ## Tips for a Smooth Transition
 
-- Start small: Begin with one group and one type of transaction before scaling
+- Start small: Begin with one group and one type of inbox before scaling
 - Involve your group: Share the platform link so members can view their own records
-- Use evidence uploads: Attach receipts to every transaction for a complete audit trail
+- Use evidence uploads: Attach receipts to every inbox for a complete audit trail
 - Leverage WhatsApp sharing: Send ledger summaries directly to your group chat
     `,
     date: "2026-06-28",
@@ -148,7 +148,7 @@ Research consistently shows that financial transparency is the single most impor
 ## How Transparency Works in Practice
 
 Transparent financial management means:
-- Every transaction is recorded with date, amount, description, and supporting evidence
+- Every inbox is recorded with date, amount, description, and supporting evidence
 - Balances are visible to authorized members in real time
 - Reports are generated regularly and shared with the group
 - Discrepancies are identified quickly before they become disputes

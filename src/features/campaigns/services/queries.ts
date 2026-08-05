@@ -7,7 +7,7 @@ import type {
   CampaignReportPreview,
   ChartDataPoint,
   PaginatedCampaignResponse,
-  PaginatedTransactionResponse,
+  PaginatedInboxResponse,
   PublicWebReportOut,
 } from "@/features/shared/types";
 import { apiClient } from "@/lib/api-client";
@@ -46,7 +46,7 @@ export interface CampaignsQueryParams {
   campaign_status?: "active" | "archived" | "all";
 }
 
-export interface TransactionsQueryParams {
+export interface InboxQueryParams {
   skip?: number;
   limit?: number;
   search?: string;
@@ -79,19 +79,16 @@ export const useCampaignQuery = (campaignId: string) => {
   });
 };
 
-export const useCampaignTransactionsQuery = (
-  campaignId: string,
-  params: TransactionsQueryParams = {},
-) => {
+export const useCampaignInboxQuery = (campaignId: string, params: InboxQueryParams = {}) => {
   return useQuery({
     queryFn: async () => {
-      const response = await apiClient.get<PaginatedTransactionResponse>(
-        CAMPAIGNS_URLS.campaignTransactions(campaignId),
+      const response = await apiClient.get<PaginatedInboxResponse>(
+        CAMPAIGNS_URLS.campaignInbox(campaignId),
         { params },
       );
       return response.data;
     },
-    queryKey: ["campaign-transactions", campaignId, params],
+    queryKey: ["campaign-inbox", campaignId, params],
     enabled: !!campaignId,
   });
 };

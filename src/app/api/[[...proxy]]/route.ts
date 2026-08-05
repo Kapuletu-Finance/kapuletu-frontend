@@ -14,11 +14,11 @@ import {
 } from "@/features/auth/utils";
 import { campaignsSecurityRules } from "@/features/campaigns/security";
 import { groupsSecurityRules } from "@/features/groups/security";
-import { transactionsSecurityRules } from "@/features/transactions/security";
+import { inboxSecurityRules } from "@/features/inbox/security";
 
 const securityRegistry = [
   ...authSecurityRules,
-  ...transactionsSecurityRules,
+  ...inboxSecurityRules,
   ...campaignsSecurityRules,
   ...groupsSecurityRules,
 ];
@@ -30,7 +30,13 @@ const BACKEND_URL = env.NEXT_PUBLIC_BACKEND_URL;
  */
 const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promise<NextResponse> => {
   const url = new URL(request.url);
-  const backendPath = url.pathname.replace(/^\/api/, "");
+  let backendPath = url.pathname.replace(/^\/api/, "");
+
+  // Forward /inbox API requests to the backend as /transactions
+  if (backendPath.startsWith("/inbox")) {
+    backendPath = backendPath.replace(/^\/inbox/, "/transactions");
+  }
+
   const targetUrl = `${BACKEND_URL}${backendPath}${url.search}`;
 
   if (!validateCsrfShield(request)) {

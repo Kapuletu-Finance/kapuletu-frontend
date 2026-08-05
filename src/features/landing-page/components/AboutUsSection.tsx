@@ -18,7 +18,7 @@ export const AboutUsSection = () => {
           </p>
           <p>
             We simplify treasury management by helping financial leaders track contributions,
-            monitor expenses, reconcile transactions, and maintain secure records all in one place.
+            monitor expenses, reconcile inbox, and maintain secure records all in one place.
           </p>
           <p>
             Whether you are the treasurer of an association, charity, investment club, or community

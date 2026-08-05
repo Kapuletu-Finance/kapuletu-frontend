@@ -95,13 +95,13 @@ export interface WorkspaceOverviewOut {
   recent_activities: WorkspaceActivity[];
 }
 
-export interface PendingTransactionOut {
+export interface PendingInboxOut {
   pending_id: string;
   raw_message: string;
   sender_name: string | null;
   amount: number | null;
   currency: string | null;
-  transaction_code: string | null;
+  inbox_code: string | null;
   sender_phone: string | null;
   purpose: string | null;
   confidence_score: number;
@@ -110,7 +110,7 @@ export interface PendingTransactionOut {
 }
 
 export interface PaginatedPendingResponse {
-  items: PendingTransactionOut[];
+  items: PendingInboxOut[];
   total_items: number;
   total_pages: number;
   page: number;
@@ -118,7 +118,7 @@ export interface PaginatedPendingResponse {
 }
 
 export interface RecentActivity {
-  transaction_id: string;
+  inbox_id: string;
   sender_name: string;
   amount: number;
   campaign_title: string | null;
@@ -132,7 +132,7 @@ export interface DailyCollection {
 
 export interface DashboardOverviewOut {
   total_collected: number;
-  transaction_count: number;
+  inbox_count: number;
   campaign_breakdown: CampaignSummary[];
   recent_activity: RecentActivity[];
   daily_collections_7_days: DailyCollection[];
@@ -177,16 +177,16 @@ export interface CampaignUpdate {
   settings?: CampaignSettings;
 }
 
-export interface TransactionOut {
-  transaction_id: string;
+export interface InboxOut {
+  inbox_id: string;
   date: string;
   amount: number;
   name: string | null;
   payment_method: string;
 }
 
-export interface PaginatedTransactionResponse {
-  items: TransactionOut[];
+export interface PaginatedInboxResponse {
+  items: InboxOut[];
   total_items: number;
   total_pages: number;
   page: number;

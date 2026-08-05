@@ -39,7 +39,7 @@ const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
 const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/treasurer", icon: "home", label: "Dashboard" },
   { href: "/treasurer/groups", icon: "group", label: "Groups" },
-  { href: "/treasurer/transactions", icon: "transaction", label: "Transactions" },
+  { href: "/treasurer/inbox", icon: "inbox", label: "Inbox" },
   { href: "/treasurer/reports", icon: "report", label: "Reports" },
   { href: "/treasurer/analytics", icon: "analytics", label: "Analytics" },
   { href: "/treasurer/settings", icon: "settings", label: "Settings" },

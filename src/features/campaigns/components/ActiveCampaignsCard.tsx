@@ -10,7 +10,7 @@ const ActiveCampaignsCard = ({ value = 0 }: ActiveCampaignsCardProps) => {
     <CardWithIcon
       label="Total campaigns"
       value={value}
-      icon={<IconLibrary name="transaction" className="w-5 h-5 text-primary-foreground" />}
+      icon={<IconLibrary name="inbox" className="w-5 h-5 text-primary-foreground" />}
     />
   );
 };

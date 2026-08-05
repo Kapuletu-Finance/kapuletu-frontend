@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { TRANSACTIONS_URLS } from "@/features/transactions/urls";
+import { INBOX_URLS } from "@/features/inbox/urls";
 import { apiClient } from "@/lib/api-client";
 
 interface AddContributionData {
@@ -16,7 +16,7 @@ export const useAddManualContributionMutation = () => {
 
   return useMutation({
     mutationFn: async (data: AddContributionData) => {
-      const response = await apiClient.post(TRANSACTIONS_URLS.MANUAL_ENTRY, data);
+      const response = await apiClient.post(INBOX_URLS.MANUAL_ENTRY, data);
       return response.data;
     },
     onError: (error) => {

@@ -139,7 +139,7 @@ const ICON_MAP = {
   star: <Star />,
   sun: <Sun />,
   target: <Target />,
-  transaction: <Banknote />,
+  inbox: <Banknote />,
   "triangle-alert": <TriangleAlert />,
 } as const;
 
