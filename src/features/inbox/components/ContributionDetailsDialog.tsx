@@ -165,6 +165,7 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
             <Button
               className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-11"
               onClick={handleApprove}
+              disabled={!selectedGroupId || !selectedCampaignId}
             >
               <IconLibrary name="check" className="w-5 h-5" />
               Approve

@@ -21,8 +21,8 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const addContributionSchema = z.object({
-  groupId: z.string().optional(),
-  campaignId: z.string().optional(),
+  groupId: z.string().min(1, "Group is required."),
+  campaignId: z.string().min(1, "Campaign is required."),
   name: z.string().min(1, "Name is required."),
   phone: z.string().optional(),
   amount: z.string().min(1, "Amount is required."),
@@ -79,12 +79,18 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
         return;
       }
 
+      if (!data.groupId) {
+        form.setError("groupId", { message: "Group is required" });
+        return;
+      }
+
       await addContribution({
         sender_name: data.name,
         sender_phone: data.phone,
         amount: Number.parseFloat(data.amount.replace(/,/g, "")),
         payment_method: data.paymentType || "Cash",
         campaign_id: finalCampaignId,
+        group_id: data.groupId,
       });
       form.reset();
       setIsOpen(false);
