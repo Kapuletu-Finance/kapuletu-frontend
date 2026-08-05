@@ -1,8 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Children, isValidElement, useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { Children, isValidElement, useCallback, useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,8 @@ import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { useAddManualContributionMutation } from "@/features/transactions/services/mutations";
 
 const addContributionSchema = z.object({
+  groupId: z.string().optional(),
+  campaignId: z.string().optional(),
   name: z.string().min(1, "Name is required."),
   phone: z.string().optional(),
   amount: z.string().min(1, "Amount is required."),
@@ -33,13 +36,22 @@ interface AddContributionDialogProps {
   children?: React.ReactNode;
 }
 
+import { useCampaignQuery } from "@/features/campaigns/services/queries";
+import { CampaignSelect } from "./CampaignSelect";
+import { GroupSelect } from "./GroupSelect";
+
 const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
   const childrenArray = Children.toArray(children);
   const triggerElement = childrenArray.find((child) => isValidElement(child)) || null;
 
+  const { data: campaignData } = useCampaignQuery(campaignSlug || "");
+
   const form = useForm<AddContributionFormData>({
     defaultValues: {
+      groupId: "",
+      campaignId: "",
       name: "",
       phone: "",
       amount: "",
@@ -49,19 +61,41 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
   });
   const { mutateAsync: addContribution, isPending } = useAddManualContributionMutation();
 
+  const selectedGroupId = useWatch({ control: form.control, name: "groupId" });
+
+  useEffect(() => {
+    if (campaignSlug && campaignData) {
+      form.setValue("groupId", campaignData.group_id);
+      form.setValue("campaignId", campaignData.id);
+    }
+  }, [campaignSlug, campaignData, form]);
+
   const onSubmit = useCallback(
     async (data: AddContributionFormData) => {
+      const finalCampaignId = campaignSlug || data.campaignId;
+
+      if (!finalCampaignId) {
+        form.setError("campaignId", { message: "Campaign is required" });
+        return;
+      }
+
       await addContribution({
         sender_name: data.name,
         sender_phone: data.phone,
         amount: Number.parseFloat(data.amount.replace(/,/g, "")),
         payment_method: data.paymentType || "Cash",
-        ...(campaignSlug ? { campaign_id: campaignSlug } : {}),
+        campaign_id: finalCampaignId,
       });
       form.reset();
       setIsOpen(false);
+
+      if (!campaignSlug && data.groupId && data.campaignId) {
+        // Assuming we only have the IDs, routing directly by ID might work or we need slugs.
+        // Wait, the backend router expects slugs OR IDs.
+        router.push(`/treasurer/groups/${data.groupId}/campaigns/${data.campaignId}`);
+      }
     },
-    [campaignSlug, form, addContribution],
+    [campaignSlug, form, addContribution, router],
   );
 
   return (
@@ -78,6 +112,48 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            {!campaignSlug && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="groupId"
+                  render={({ field }) => (
+                    <Field data-invalid={!!form.formState.errors.groupId}>
+                      <FieldLabel className="text-sm font-semibold text-foreground" isRequired>
+                        Group
+                      </FieldLabel>
+                      <GroupSelect
+                        value={field.value}
+                        onChange={(val) => {
+                          field.onChange(val);
+                          form.setValue("campaignId", ""); // reset campaign when group changes
+                        }}
+                        error={form.formState.errors.groupId?.message}
+                      />
+                    </Field>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="campaignId"
+                  render={({ field }) => (
+                    <Field data-invalid={!!form.formState.errors.campaignId}>
+                      <FieldLabel className="text-sm font-semibold text-foreground" isRequired>
+                        Campaign
+                      </FieldLabel>
+                      <CampaignSelect
+                        groupId={selectedGroupId}
+                        value={field.value}
+                        onChange={field.onChange}
+                        error={form.formState.errors.campaignId?.message}
+                      />
+                    </Field>
+                  )}
+                />
+              </>
+            )}
+
             <FormField
               control={form.control}
               name="name"
