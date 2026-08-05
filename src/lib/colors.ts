@@ -2,17 +2,16 @@ const AVATAR_COLORS = [
   "bg-primary text-primary-foreground",
   "bg-burnt-amber text-white",
   "bg-refined-blue text-white",
-  "bg-secondary text-secondary-foreground",
-  "bg-muted text-muted-foreground",
 ];
 
 function hashString(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    hash |= 0;
+    hash = (Math.imul(31, hash) + str.charCodeAt(i)) | 0;
   }
-  return Math.abs(hash);
+  hash = Math.imul(hash ^ (hash >>> 16), 2246822507);
+  hash = Math.imul(hash ^ (hash >>> 13), 3266489909);
+  return Math.abs(hash ^ (hash >>> 16));
 }
 
 export function getAvatarColor(name: string): string {
