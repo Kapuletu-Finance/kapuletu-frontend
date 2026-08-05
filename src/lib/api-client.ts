@@ -1,5 +1,6 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { deleteCookie } from "cookies-next";
+import { toast } from "sonner";
 import { env } from "@/env";
 import type { ApiErrorResponse } from "@/types/api";
 
@@ -54,8 +55,8 @@ apiClient.interceptors.response.use(
           // Clear any non-HTTP-only client cookies explicitly if needed
           deleteCookie("user_role", { path: "/" });
 
-          // Force route to sign in, appending the attempted URL
-          window.location.href = `/sign-in?from=${encodeURIComponent(window.location.pathname)}`;
+          // Show a toast instead of forcibly redirecting the user
+          toast.error("You don't have access to this feature");
         }
       }
     }

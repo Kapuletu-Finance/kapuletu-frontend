@@ -21,7 +21,7 @@ import { useAddManualContributionMutation } from "@/features/transactions/servic
 
 const addContributionSchema = z.object({
   name: z.string().min(1, "Name is required."),
-  phone: z.string().min(1, "Phone number is required."),
+  phone: z.string().optional(),
   amount: z.string().min(1, "Amount is required."),
   paymentType: z.string().optional(),
 });
@@ -111,7 +111,6 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
                   <FieldLabel
                     htmlFor={field.name}
                     className="text-sm font-semibold text-foreground"
-                    isRequired
                   >
                     Phone Number
                   </FieldLabel>
@@ -142,7 +141,8 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
                   </FieldLabel>
                   <Input
                     id={field.name}
-                    placeholder="e.g. 10,000"
+                    type="number"
+                    placeholder="e.g. 10000"
                     {...field}
                     aria-invalid={!!form.formState.errors.amount}
                   />

@@ -241,3 +241,27 @@ export interface NotificationListOut {
   notifications: NotificationOut[];
   unread_count: number;
 }
+
+export interface PublicContributor {
+  name: string;
+  amount: number;
+  date: string;
+}
+
+export interface PublicWebReportOut {
+  campaign_title: string;
+  campaign_description: string | null;
+  raised_amount: number;
+  target_amount: number;
+  progress_percentage: number;
+  total_contributors: number;
+  page: number;
+  total_pages: number;
+  contributors: PublicContributor[];
+  blank_slots_count: number;
+  payment_instructions: string | null;
+  remaining_message: string;
+  footer_message: string | null;
+  watermark: string | null;
+  public_url: string;
+}

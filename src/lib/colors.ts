@@ -1,12 +1,9 @@
 const AVATAR_COLORS = [
-  "bg-[#E67E22]",
-  "bg-[#34495E]",
-  "bg-[#16A085]",
-  "bg-[#8E44AD]",
-  "bg-[#283593]",
-  "bg-[#C0392B]",
-  "bg-[#1E3A8A]",
-  "bg-[#0E7C61]",
+  "bg-primary text-primary-foreground",
+  "bg-burnt-amber text-white",
+  "bg-refined-blue text-white",
+  "bg-secondary text-secondary-foreground",
+  "bg-muted text-muted-foreground",
 ];
 
 function hashString(str: string): number {

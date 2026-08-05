@@ -22,6 +22,7 @@ const CampaignTemplateCard = () => {
   const reportFooter = settings?.report_footer ?? "Thank you for your support.";
   const blankSlots = settings?.blank_slots ?? 3;
   const removeWatermark = settings?.remove_watermark ?? false;
+  const useEmoji = settings?.paid_indicator === "✔" || settings?.paid_indicator === "✅";
   const requirePin = settings?.require_pin ?? true;
   const accessPin = settings?.access_pin;
 
@@ -126,6 +127,27 @@ const CampaignTemplateCard = () => {
 
           <div className="flex items-center justify-between py-2">
             <div className="space-y-1 pr-4">
+              <Label className="text-sm font-semibold text-foreground">
+                Use Emoji for Paid Status
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Use a tick emoji instead of the text (PAID).
+              </p>
+            </div>
+            <div
+              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors ${useEmoji ? "bg-primary" : "bg-muted"}`}
+            >
+              <span
+                className={`text-[11px] font-bold ${useEmoji ? "text-primary-foreground" : "text-muted-foreground"}`}
+              >
+                {useEmoji ? "YES" : "NO"}
+              </span>
+              <div className="w-6 h-6 bg-white rounded-full shadow-sm" />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between py-2">
+            <div className="space-y-1 pr-4">
               <Label className="text-sm font-semibold text-foreground">Require PIN to view</Label>
               <p className="text-xs text-muted-foreground">
                 Members will need a 4-digit PIN to access the campaign report.
@@ -165,10 +187,9 @@ const CampaignTemplateCard = () => {
                   size="sm"
                   className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9 rounded-full px-4"
                   onClick={handleRegeneratePin}
-                  disabled={regeneratePin.isPending}
+                  isLoading={regeneratePin.isPending}
                 >
-                  <IconLibrary name="refresh" className="w-3.5 h-3.5" />{" "}
-                  {regeneratePin.isPending ? "Regenerating..." : "Regenerate PIN"}
+                  <IconLibrary name="refresh" className="w-3.5 h-3.5" /> Regenerate PIN
                 </Button>
                 {requirePin && (
                   <DisableCampaignAccessPinDialog campaignSlug={campaignSlug}>

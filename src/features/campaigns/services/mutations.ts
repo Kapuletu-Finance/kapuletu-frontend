@@ -3,7 +3,12 @@ import { toast } from "sonner";
 import { campaignsQueryKey } from "@/features/campaigns/services/queries";
 import { CAMPAIGNS_URLS } from "@/features/campaigns/urls";
 import { GROUPS_URLS } from "@/features/groups/urls";
-import type { CampaignCreate, CampaignOut, CampaignUpdate } from "@/features/shared/types";
+import type {
+  CampaignCreate,
+  CampaignOut,
+  CampaignUpdate,
+  PublicWebReportOut,
+} from "@/features/shared/types";
 import { apiClient } from "@/lib/api-client";
 
 export const useRegenerateCampaignPinMutation = (campaignId: string) => {
@@ -26,13 +31,16 @@ export const useRegenerateCampaignPinMutation = (campaignId: string) => {
   });
 };
 
-export const useVerifyCampaignPinMutation = (campaignId: string) => {
+export const useVerifyCampaignPinMutation = (
+  workspaceId: string,
+  groupId: string,
+  campaignId: string,
+) => {
   return useMutation({
     mutationFn: async (pin: string) => {
-      const response = await apiClient.post<CampaignOut>(
-        CAMPAIGNS_URLS.publicCampaignVerify(campaignId),
-        undefined,
-        { params: { pin } },
+      const response = await apiClient.post<PublicWebReportOut>(
+        CAMPAIGNS_URLS.publicCampaignVerify(workspaceId, groupId, campaignId),
+        { pin, page: 1, limit: 1 },
       );
       return response.data;
     },

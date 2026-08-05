@@ -8,8 +8,36 @@ import type {
   ChartDataPoint,
   PaginatedCampaignResponse,
   PaginatedTransactionResponse,
+  PublicWebReportOut,
 } from "@/features/shared/types";
 import { apiClient } from "@/lib/api-client";
+
+export interface PublicVerifyRequest {
+  pin?: string;
+  page?: number;
+  limit?: number;
+}
+
+export const usePublicCampaignReportQuery = (
+  workspaceId: string,
+  groupId: string,
+  campaignSlug: string,
+  data: PublicVerifyRequest,
+  enabled: boolean,
+) => {
+  return useQuery({
+    queryFn: async () => {
+      const response = await apiClient.post<PublicWebReportOut>(
+        CAMPAIGNS_URLS.publicCampaignVerify(workspaceId, groupId, campaignSlug),
+        data,
+      );
+      return response.data;
+    },
+    queryKey: ["public-campaign-report", workspaceId, groupId, campaignSlug, data],
+    enabled: enabled && !!workspaceId && !!groupId && !!campaignSlug,
+    retry: false, // Don't retry on 403
+  });
+};
 
 export interface CampaignsQueryParams {
   skip?: number;

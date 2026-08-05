@@ -2,13 +2,12 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import CampaignContributions from "@/features/campaigns/components/CampaignContributions";
-import CampaignProgressCard from "@/features/campaigns/components/CampaignProgressCard";
-import CampaignSummaryCard from "@/features/campaigns/components/CampaignSummaryCard";
-import { useCampaignQuery } from "@/features/campaigns/services/queries";
+import PublicCampaignContributions from "@/features/campaigns/components/PublicCampaignContributions";
+import PublicCampaignProgressCard from "@/features/campaigns/components/PublicCampaignProgressCard";
+import PublicCampaignSummaryCard from "@/features/campaigns/components/PublicCampaignSummaryCard";
+import { usePublicCampaignReportQuery } from "@/features/campaigns/services/queries";
 import { getAvatarColor } from "@/lib/colors";
 import { cn, getInitials } from "@/lib/utils";
 
@@ -16,28 +15,50 @@ const PublicCampaignReportTop = () => {
   const params = useParams();
   const router = useRouter();
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
+  const workspaceId = typeof params.workspaceId === "string" ? params.workspaceId : "";
+  const groupId = typeof params.groupId === "string" ? params.groupId : "";
 
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [pin, setPin] = useState<string | undefined>();
 
   useEffect(() => {
     if (!campaignSlug) return;
-    const authFlag = sessionStorage.getItem(`campaign_auth_${campaignSlug}`);
-    if (authFlag !== "true") {
-      router.replace(`/campaign-report/${campaignSlug}/auth`);
+    const storedPin = sessionStorage.getItem(`campaign_pin_${campaignSlug}`);
+    if (storedPin === null) {
+      router.replace(`/report/w/${workspaceId}/g/${groupId}/c/${campaignSlug}/auth`);
     } else {
+      setPin(storedPin);
       setIsAuthorized(true);
     }
-  }, [campaignSlug, router]);
+  }, [campaignSlug, workspaceId, groupId, router]);
 
-  const { data: campaign, isLoading } = useCampaignQuery(campaignSlug);
+  const {
+    data: report,
+    isLoading,
+    isError,
+    error,
+  } = usePublicCampaignReportQuery(
+    workspaceId,
+    groupId,
+    campaignSlug,
+    { pin: pin || "" },
+    isAuthorized,
+  );
+
+  useEffect(() => {
+    // If the query returns a 403, the PIN is invalid (maybe expired or changed)
+    if (isError && (error as { response?: { status?: number } })?.response?.status === 403) {
+      sessionStorage.removeItem(`campaign_pin_${campaignSlug}`);
+      router.replace(`/report/w/${workspaceId}/g/${groupId}/c/${campaignSlug}/auth`);
+    }
+  }, [isError, error, campaignSlug, workspaceId, groupId, router]);
 
   if (!isAuthorized) {
     return null; // or a loading spinner
   }
 
-  const title = campaign?.title || "";
-  const description = campaign?.description || "";
-  const isArchived = campaign?.status !== "active";
+  const title = report?.campaign_title || "";
+  const description = report?.campaign_description || "";
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-8 p-4 sm:p-6">
@@ -71,66 +92,26 @@ const PublicCampaignReportTop = () => {
               )}
             </div>
           </div>
-          <div className="flex items-center gap-4 shrink-0">
-            {isLoading ? (
-              <Skeleton className="h-6 w-24" />
-            ) : (
-              <>
-                {campaign?.end_date &&
-                  (() => {
-                    const daysLeft = Math.ceil(
-                      (new Date(campaign.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-                    );
-                    if (daysLeft <= 0)
-                      return (
-                        <span className="text-sm text-muted-foreground font-medium">
-                          Deadline passed
-                        </span>
-                      );
-                    return (
-                      <span className="text-sm text-muted-foreground font-medium">
-                        {daysLeft} days left
-                      </span>
-                    );
-                  })()}
-                {campaign?.status && (
-                  <Badge
-                    variant="secondary"
-                    className={cn(
-                      "font-medium px-3 py-1 text-xs gap-1.5 border-none shadow-none",
-                      isArchived
-                        ? "bg-muted text-muted-foreground"
-                        : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "w-1.5 h-1.5 rounded-full shrink-0",
-                        isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
-                      )}
-                    />
-                    {isArchived ? "Archived" : "Active"}
-                  </Badge>
-                )}
-              </>
-            )}
-          </div>
         </CardContent>
       </Card>
 
       {/* Campaign Detail Components */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-stretch">
-        <div className="xl:col-span-2">
-          <CampaignProgressCard />
-        </div>
-        <div className="xl:col-span-1">
-          <CampaignSummaryCard />
-        </div>
-      </div>
+      {report && (
+        <>
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-stretch">
+            <div className="xl:col-span-2">
+              <PublicCampaignProgressCard report={report} />
+            </div>
+            <div className="xl:col-span-1">
+              <PublicCampaignSummaryCard report={report} />
+            </div>
+          </div>
 
-      <div className="mt-8">
-        <CampaignContributions />
-      </div>
+          <div className="mt-8">
+            <PublicCampaignContributions contributors={report.contributors} />
+          </div>
+        </>
+      )}
     </div>
   );
 };

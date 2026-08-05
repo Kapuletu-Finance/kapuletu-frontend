@@ -59,9 +59,7 @@ const formatSegment = (segment: string): string => {
 
 const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
   const pathname = usePathname();
-  const segments = pathname
-    .split("/")
-    .filter((segment) => Boolean(segment) && segment.toLowerCase() !== "campaigns");
+  const segments = pathname.split("/").filter((segment) => Boolean(segment));
 
   if (segments.length === 0) {
     return null;
@@ -80,17 +78,20 @@ const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
     );
   }
 
-  const items = segments.map((segment, index) => {
-    const href = `/${segments.slice(0, index + 1).join("/")}`;
-    const isLast = index === segments.length - 1;
-    const label = formatSegment(segment);
+  const items = segments
+    .map((segment, index) => {
+      const href = `/${segments.slice(0, index + 1).join("/")}`;
+      const isLast = index === segments.length - 1;
+      const label = formatSegment(segment);
 
-    return {
-      href,
-      isLast,
-      label,
-    };
-  });
+      return {
+        href,
+        isLast,
+        label,
+        segment,
+      };
+    })
+    .filter((item) => item.segment.toLowerCase() !== "campaigns");
 
   return (
     <Breadcrumb className="py-1">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -29,8 +30,13 @@ const ShareCampaignCard = () => {
   const settings = campaignData?.settings_override;
   const accessPin = settings?.access_pin;
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(publicUrl);
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      toast.success("Link copied to clipboard!");
+    } catch {
+      toast.error("Failed to copy link");
+    }
   };
 
   return (

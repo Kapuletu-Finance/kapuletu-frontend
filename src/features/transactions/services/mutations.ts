@@ -5,7 +5,7 @@ import { apiClient } from "@/lib/api-client";
 
 interface AddContributionData {
   sender_name: string;
-  sender_phone: string;
+  sender_phone?: string;
   amount: number;
   payment_method: string;
   campaign_id?: string;

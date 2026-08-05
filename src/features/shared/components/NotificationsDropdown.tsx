@@ -81,17 +81,15 @@ const NotificationsDropdown: React.FC = () => {
           </ScrollArea>
         </div>
 
-        {notifications.length > 5 && (
-          <div className="p-4 pt-2 text-center bg-background sticky bottom-0">
-            <Link
-              href="/notifications"
-              onClick={() => setIsOpen(false)}
-              className="text-sm font-bold text-primary hover:underline"
-            >
-              View all
-            </Link>
-          </div>
-        )}
+        <div className="p-4 pt-2 text-center bg-background sticky bottom-0">
+          <Link
+            href="/notifications"
+            onClick={() => setIsOpen(false)}
+            className="text-sm font-bold text-primary hover:underline"
+          >
+            View all
+          </Link>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
