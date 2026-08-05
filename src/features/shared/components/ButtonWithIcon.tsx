@@ -23,12 +23,14 @@ const ButtonWithIcon = React.forwardRef<HTMLButtonElement, ButtonWithIconProps>(
           className="text-burnt-amber size-6 shrink-0"
           strokeWidth={1.5}
         />
-        <div className="flex flex-col items-start gap-0.5 text-left">
-          <span className="text-primary font-semibold text-sm leading-snug whitespace-normal wrap-break-word">
+        <div className="flex flex-col items-start gap-0.5 text-left min-w-0 flex-1">
+          <span className="text-primary font-semibold text-sm leading-snug whitespace-normal wrap-break-word w-full">
             {label}
           </span>
           {description && (
-            <span className="text-xs text-muted-foreground font-medium">{description}</span>
+            <span className="text-xs text-muted-foreground font-medium truncate w-full">
+              {description}
+            </span>
           )}
         </div>
       </Button>

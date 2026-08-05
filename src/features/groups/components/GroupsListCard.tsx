@@ -47,7 +47,7 @@ const GroupsListCard = () => {
           {groups.map((group) => (
             <Link
               key={group.id}
-              href={`/treasurer/groups/${group.id}`}
+              href={`/treasurer/groups/${group.slug || group.id}`}
               className="flex items-center justify-between gap-4 py-4 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors rounded-lg -mx-2 px-2"
             >
               <div className="flex items-center gap-4">

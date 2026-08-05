@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import DisableCampaignAccessPinDialog from "@/features/campaigns/components/DisableCampaignAccessPinDialog";
-import { useRegenerateCampaignPinMutation } from "@/features/campaigns/services/mutations";
+import EditCampaignSettingsDialog from "@/features/campaigns/components/EditCampaignSettingsDialog";
+import {
+  useRegenerateCampaignPinMutation,
+  useUpdateCampaignMutation,
+} from "@/features/campaigns/services/mutations";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
@@ -15,6 +19,7 @@ const CampaignTemplateCard = () => {
   const params = useParams();
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
   const { data: campaignData } = useCampaignQuery(campaignSlug);
+  const updateCampaign = useUpdateCampaignMutation(campaignSlug);
   const regeneratePin = useRegenerateCampaignPinMutation(campaignSlug);
 
   const settings = campaignData?.settings_override;
@@ -30,6 +35,10 @@ const CampaignTemplateCard = () => {
 
   const handleRegeneratePin = () => {
     regeneratePin.mutate();
+  };
+
+  const handleUpdateSetting = (newSettings: Partial<NonNullable<typeof settings>>) => {
+    updateCampaign.mutate({ settings: newSettings });
   };
 
   return (
@@ -48,9 +57,15 @@ const CampaignTemplateCard = () => {
           >
             <IconLibrary name="rotate-ccw" className="w-4 h-4" /> Reset to default
           </Button>
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-semibold">
-            <IconLibrary name="edit" className="w-4 h-4" /> Edit
-          </Button>
+          <EditCampaignSettingsDialog
+            campaignSlug={campaignSlug}
+            initialTitle={reportTitle}
+            initialFooter={reportFooter}
+          >
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-semibold">
+              <IconLibrary name="edit" className="w-4 h-4" /> Edit
+            </Button>
+          </EditCampaignSettingsDialog>
         </div>
       </CardHeader>
 
@@ -88,6 +103,8 @@ const CampaignTemplateCard = () => {
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary rounded-full"
+                onClick={() => handleUpdateSetting({ blank_slots: Math.max(0, blankSlots - 1) })}
+                disabled={updateCampaign.isPending}
               >
                 <IconLibrary name="minus" className="w-4 h-4" />
               </Button>
@@ -96,6 +113,8 @@ const CampaignTemplateCard = () => {
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary rounded-full"
+                onClick={() => handleUpdateSetting({ blank_slots: blankSlots + 1 })}
+                disabled={updateCampaign.isPending}
               >
                 <IconLibrary name="add" className="w-4 h-4" />
               </Button>
@@ -113,8 +132,11 @@ const CampaignTemplateCard = () => {
                 Includes a "Powered by KapuLetu" watermark across all public updates and reports.
               </p>
             </div>
-            <div
-              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors ${!removeWatermark ? "bg-primary" : "bg-muted"}`}
+            <button
+              type="button"
+              onClick={() => handleUpdateSetting({ remove_watermark: !removeWatermark })}
+              disabled={updateCampaign.isPending}
+              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors cursor-pointer ${!removeWatermark ? "bg-primary flex-row-reverse" : "bg-muted flex-row"}`}
             >
               <span
                 className={`text-[11px] font-bold ${!removeWatermark ? "text-primary-foreground" : "text-muted-foreground"}`}
@@ -122,7 +144,7 @@ const CampaignTemplateCard = () => {
                 {!removeWatermark ? "YES" : "NO"}
               </span>
               <div className="w-6 h-6 bg-white rounded-full shadow-sm" />
-            </div>
+            </button>
           </div>
 
           <div className="flex items-center justify-between py-2">
@@ -134,8 +156,11 @@ const CampaignTemplateCard = () => {
                 Use a tick emoji instead of the text (PAID).
               </p>
             </div>
-            <div
-              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors ${useEmoji ? "bg-primary" : "bg-muted"}`}
+            <button
+              type="button"
+              onClick={() => handleUpdateSetting({ paid_indicator: useEmoji ? "PAID" : "✔" })}
+              disabled={updateCampaign.isPending}
+              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors cursor-pointer ${useEmoji ? "bg-primary flex-row-reverse" : "bg-muted flex-row"}`}
             >
               <span
                 className={`text-[11px] font-bold ${useEmoji ? "text-primary-foreground" : "text-muted-foreground"}`}
@@ -143,26 +168,7 @@ const CampaignTemplateCard = () => {
                 {useEmoji ? "YES" : "NO"}
               </span>
               <div className="w-6 h-6 bg-white rounded-full shadow-sm" />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between py-2">
-            <div className="space-y-1 pr-4">
-              <Label className="text-sm font-semibold text-foreground">Require PIN to view</Label>
-              <p className="text-xs text-muted-foreground">
-                Members will need a 4-digit PIN to access the campaign report.
-              </p>
-            </div>
-            <div
-              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors ${requirePin ? "bg-primary" : "bg-muted"}`}
-            >
-              <span
-                className={`text-[11px] font-bold ${requirePin ? "text-primary-foreground" : "text-muted-foreground"}`}
-              >
-                {requirePin ? "YES" : "NO"}
-              </span>
-              <div className="w-6 h-6 bg-white rounded-full shadow-sm" />
-            </div>
+            </button>
           </div>
 
           <div className="p-5 rounded-2xl border border-dashed border-primary/40 bg-primary/5 space-y-4">

@@ -48,17 +48,29 @@ const NotificationsDropdown: React.FC = () => {
         <div className="p-6 pb-2">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-xl">Notifications</h3>
-            {unreadCount > 0 && (
-              <Button
-                variant="link"
-                size="sm"
-                onClick={handleMarkAllRead}
-                disabled={markAllRead.isPending}
-                className="text-sm font-medium"
+            <div className="flex items-center gap-2">
+              <Link
+                href="/notifications"
+                onClick={() => setIsOpen(false)}
+                className="text-sm font-bold text-primary hover:underline"
               >
-                Mark all as read
-              </Button>
-            )}
+                View all
+              </Link>
+              {unreadCount > 0 && (
+                <>
+                  <span className="text-muted-foreground text-xs">•</span>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={handleMarkAllRead}
+                    disabled={markAllRead.isPending}
+                    className="text-sm font-medium p-0 h-auto"
+                  >
+                    Mark all as read
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
 
           <ScrollArea className="max-h-[60vh] pr-4">
@@ -79,16 +91,6 @@ const NotificationsDropdown: React.FC = () => {
               )}
             </div>
           </ScrollArea>
-        </div>
-
-        <div className="p-4 pt-2 text-center bg-background sticky bottom-0">
-          <Link
-            href="/notifications"
-            onClick={() => setIsOpen(false)}
-            className="text-sm font-bold text-primary hover:underline"
-          >
-            View all
-          </Link>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

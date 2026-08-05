@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import AddContributionFormDialog from "@/features/contributions/components/AddContributionFormDialog";
 import BulkApproveDialog from "@/features/inbox/components/BulkApproveDialog";
 import BulkRejectDialog from "@/features/inbox/components/BulkRejectDialog";
 import InboxBulkActions from "@/features/inbox/components/InboxBulkActions";
@@ -124,10 +125,12 @@ export const TreasurerInboxPageClient = () => {
             Bulk Select
             <IconLibrary name="chevron-down" className="w-4 h-4" />
           </Button>
-          <Button className="gap-2">
-            <IconLibrary name="add" className="w-4 h-4" />
-            Add a contribution
-          </Button>
+          <AddContributionFormDialog>
+            <Button className="gap-2">
+              <IconLibrary name="add" className="w-4 h-4" />
+              Add a contribution
+            </Button>
+          </AddContributionFormDialog>
         </div>
       }
       controls={
