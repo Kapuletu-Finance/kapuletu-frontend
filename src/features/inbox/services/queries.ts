@@ -15,3 +15,25 @@ export const usePendingInboxCountQuery = () => {
     queryKey: pendingInboxKey,
   });
 };
+
+export const usePendingInboxQuery = (params: {
+  skip?: number;
+  limit?: number;
+  search?: string;
+  filter?: string;
+}) => {
+  return useQuery({
+    queryFn: async () => {
+      const response = await apiClient.get<PaginatedPendingResponse>("/inbox/pending", {
+        params: {
+          skip: params.skip,
+          limit: params.limit,
+          search: params.search,
+          filter: params.filter,
+        },
+      });
+      return response.data;
+    },
+    queryKey: [...pendingInboxKey, params],
+  });
+};

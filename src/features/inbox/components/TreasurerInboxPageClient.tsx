@@ -1,0 +1,246 @@
+"use client";
+
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import * as React from "react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import BulkApproveDialog from "@/features/inbox/components/BulkApproveDialog";
+import BulkRejectDialog from "@/features/inbox/components/BulkRejectDialog";
+import InboxBulkActions from "@/features/inbox/components/InboxBulkActions";
+import InboxHeaderControls, {
+  type TimeFilterValue,
+} from "@/features/inbox/components/InboxHeaderControls";
+import InboxListRow from "@/features/inbox/components/InboxListRow";
+import {
+  useApproveMutation,
+  useBulkApproveMutation,
+  useBulkRejectMutation,
+  useRejectMutation,
+} from "@/features/inbox/services/mutations";
+import { usePendingInboxQuery } from "@/features/inbox/services/queries";
+import EmptyState from "@/features/shared/components/EmptyState";
+import IconLibrary from "@/features/shared/components/IconLibrary";
+import PageLayout from "@/features/shared/components/PageLayout";
+import { cn } from "@/lib/utils";
+
+export const TreasurerInboxPageClient = () => {
+  const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
+  const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("this_year"));
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(0));
+  const limit = 10;
+
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isBulkApproveOpen, setIsBulkApproveOpen] = useState(false);
+  const [isBulkRejectOpen, setIsBulkRejectOpen] = useState(false);
+
+  const { data, isLoading } = usePendingInboxQuery({
+    skip: page * limit,
+    limit,
+    search: search || undefined,
+    filter: filter || undefined,
+  });
+
+  const inboxItems = data?.items ?? [];
+  const totalPages = data?.total_pages ?? 1;
+  const totalItems = data?.total_items ?? 0;
+
+  const handleSearchChange = React.useCallback(
+    (value: string) => {
+      setSearch(value);
+      setPage(0);
+    },
+    [setSearch, setPage],
+  );
+
+  const handleFilterChange = React.useCallback(
+    (value: TimeFilterValue) => {
+      setFilter(value);
+      setPage(0);
+    },
+    [setFilter, setPage],
+  );
+
+  const handleSelect = (id: string, checked: boolean) => {
+    const newSet = new Set(selectedIds);
+    if (checked) {
+      newSet.add(id);
+    } else {
+      newSet.delete(id);
+    }
+    setSelectedIds(newSet);
+  };
+
+  const approveMutation = useApproveMutation();
+  const rejectMutation = useRejectMutation();
+  const bulkApproveMutation = useBulkApproveMutation();
+  const bulkRejectMutation = useBulkRejectMutation();
+
+  const handleApprove = (id: string, groupId?: string, campaignId?: string, notes?: string) => {
+    approveMutation.mutate(
+      { id, data: { group_id: groupId, campaign_id: campaignId, internal_note: notes } },
+      { onSuccess: () => toast.success("Contribution approved!") },
+    );
+  };
+
+  const handleReject = (id: string) => {
+    rejectMutation.mutate(id, {
+      onSuccess: () => toast.success("Contribution rejected!"),
+    });
+  };
+
+  const handleBulkApprove = (groupId: string, campaignId: string) => {
+    bulkApproveMutation.mutate(
+      { pending_ids: Array.from(selectedIds), group_id: groupId, campaign_id: campaignId },
+      {
+        onSuccess: () => {
+          toast.success(`Approved ${selectedIds.size} contributions!`);
+          setSelectedIds(new Set());
+        },
+      },
+    );
+  };
+
+  const handleBulkReject = () => {
+    bulkRejectMutation.mutate(
+      { pending_ids: Array.from(selectedIds) },
+      {
+        onSuccess: () => {
+          toast.success(`Rejected ${selectedIds.size} contributions!`);
+          setSelectedIds(new Set());
+        },
+      },
+    );
+  };
+
+  return (
+    <PageLayout
+      title={`Inbox (${totalItems})`}
+      subtitle="Review new contributions before adding them to your records"
+      actionButton={
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="gap-2">
+            Bulk Select
+            <IconLibrary name="chevron-down" className="w-4 h-4" />
+          </Button>
+          <Button className="gap-2">
+            <IconLibrary name="add" className="w-4 h-4" />
+            Add a contribution
+          </Button>
+        </div>
+      }
+      controls={
+        <InboxHeaderControls
+          searchValue={search}
+          filterValue={filter as TimeFilterValue}
+          onSearchChange={handleSearchChange}
+          onFilterChange={handleFilterChange}
+        />
+      }
+      pagination={
+        totalPages > 1 ? (
+          <div className="flex justify-center items-center gap-2 pt-6">
+            <Button
+              variant="outline"
+              size="icon"
+              className="text-muted-foreground"
+              disabled={page === 0}
+              onClick={() => setPage(Math.max(0, page - 1))}
+            >
+              <IconLibrary name="chevron-left" className="w-4 h-4" />
+            </Button>
+            {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => (
+              <Button
+                key={String(i + 1)}
+                variant={page === i ? "default" : "outline"}
+                size="icon"
+                className={cn(
+                  "font-semibold shadow-sm",
+                  page !== i && "text-foreground font-medium",
+                )}
+                onClick={() => setPage(i)}
+              >
+                {i + 1}
+              </Button>
+            ))}
+            <Button
+              variant="outline"
+              size="icon"
+              className="text-muted-foreground"
+              disabled={page >= totalPages - 1}
+              onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+            >
+              <IconLibrary name="chevron-right" className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : undefined
+      }
+    >
+      <div className="flex flex-col w-full bg-card rounded-xl border border-border mt-6">
+        <InboxBulkActions
+          selectedCount={selectedIds.size}
+          onClearSelection={() => setSelectedIds(new Set())}
+          onApproveAll={() => setIsBulkApproveOpen(true)}
+          onRejectAll={() => setIsBulkRejectOpen(true)}
+        />
+
+        {isLoading ? (
+          <div className="flex flex-col w-full">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex items-center gap-4 py-4 px-4 border-b border-border">
+                <Skeleton className="w-4 h-4 rounded" />
+                <Skeleton className="w-10 h-10 rounded-full shrink-0" />
+                <div className="flex flex-col gap-2 w-32">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-3 w-2/3" />
+                </div>
+                <Skeleton className="h-4 w-24 ml-4" />
+                <Skeleton className="h-4 w-32 ml-4" />
+                <Skeleton className="h-4 w-24 ml-4" />
+                <Skeleton className="h-6 w-16 rounded-full ml-4" />
+                <div className="ml-auto flex gap-2">
+                  <Skeleton className="h-9 w-24" />
+                  <Skeleton className="h-9 w-24" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : inboxItems.length > 0 ? (
+          <div className="flex flex-col w-full">
+            {inboxItems.map((item) => (
+              <InboxListRow
+                key={item.pending_id}
+                item={item}
+                isSelected={selectedIds.has(item.pending_id)}
+                onSelect={handleSelect}
+                onApprove={handleApprove}
+                onReject={handleReject}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="py-16">
+            <EmptyState message="No new inbox items found." />
+          </div>
+        )}
+      </div>
+
+      <BulkApproveDialog
+        open={isBulkApproveOpen}
+        onOpenChange={setIsBulkApproveOpen}
+        selectedCount={selectedIds.size}
+        onConfirm={handleBulkApprove}
+      />
+
+      <BulkRejectDialog
+        open={isBulkRejectOpen}
+        onOpenChange={setIsBulkRejectOpen}
+        selectedCount={selectedIds.size}
+        onConfirm={handleBulkReject}
+      />
+    </PageLayout>
+  );
+};
+
+export default TreasurerInboxPageClient;

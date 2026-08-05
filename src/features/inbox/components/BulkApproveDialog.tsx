@@ -1,0 +1,146 @@
+"use client";
+
+import type * as React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useCampaignsQuery } from "@/features/campaigns/services/queries";
+import { useGroupsQuery } from "@/features/groups/services/queries";
+import IconLibrary from "@/features/shared/components/IconLibrary";
+
+export interface BulkApproveDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  selectedCount: number;
+  onConfirm: (groupId: string, campaignId: string) => void;
+}
+
+export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
+  open,
+  onOpenChange,
+  selectedCount,
+  onConfirm,
+}) => {
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string>("");
+
+  const { data: groupsData } = useGroupsQuery({ limit: 100 });
+  const groups = groupsData?.items ?? [];
+
+  const { data: campaignsData } = useCampaignsQuery(selectedGroupId, { limit: 100 });
+  const campaigns = campaignsData?.items ?? [];
+
+  const handleApprove = () => {
+    onConfirm(selectedGroupId, selectedCampaignId);
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md w-full p-6 bg-card border-none sm:rounded-2xl">
+        <DialogHeader className="mb-2 text-center items-center justify-center">
+          <DialogTitle className="text-xl font-semibold mt-2">
+            Bulk Approve Contributions
+          </DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground mt-1">
+            You are about to add {selectedCount} contributions to your records
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-6 mt-2">
+          {/* Info Alert Box */}
+          <div className="flex items-start gap-3 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-900/30 p-4 rounded-xl">
+            <IconLibrary
+              name="info"
+              className="w-5 h-5 text-green-700 dark:text-green-500 shrink-0 mt-0.5"
+            />
+            <p className="text-sm text-green-800 dark:text-green-400 font-medium leading-relaxed">
+              Approved contributions will be permanently added to the selected campaign and will
+              reflect in your reports.
+            </p>
+          </div>
+
+          {/* Form Section */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm text-foreground">
+                Select Group <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={selectedGroupId}
+                onValueChange={(val) => setSelectedGroupId(val || "")}
+              >
+                <SelectTrigger className="w-full bg-background border-border h-11">
+                  <SelectValue placeholder="Select a group" />
+                </SelectTrigger>
+                <SelectContent>
+                  {groups.map((group) => (
+                    <SelectItem key={group.id} value={group.id}>
+                      {group.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm text-foreground">
+                Select Campaign <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={selectedCampaignId}
+                onValueChange={(val) => setSelectedCampaignId(val || "")}
+                disabled={!selectedGroupId}
+              >
+                <SelectTrigger className="w-full bg-background border-border h-11">
+                  <SelectValue placeholder="Select a campaign" />
+                </SelectTrigger>
+                <SelectContent>
+                  {campaigns.map((campaign) => (
+                    <SelectItem key={campaign.id} value={campaign.id}>
+                      {campaign.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-4 mt-2">
+            <Button
+              variant="outline"
+              className="flex-1 border-primary text-primary hover:bg-primary/5 h-11"
+              onClick={() => onOpenChange(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground h-11"
+              onClick={handleApprove}
+              disabled={!selectedGroupId || !selectedCampaignId}
+            >
+              Approve
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default BulkApproveDialog;
