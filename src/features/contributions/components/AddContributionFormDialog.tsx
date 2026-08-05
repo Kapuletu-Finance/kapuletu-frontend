@@ -72,36 +72,40 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
 
   const onSubmit = useCallback(
     async (data: AddContributionFormData) => {
-      const finalCampaignId = campaignSlug || data.campaignId;
+      // When inside a campaign, always derive IDs directly from the
+      // server-fetched campaignData — never rely on form state which
+      // may still be mid-update via useEffect.
+      const finalGroupId =
+        campaignSlug && campaignData ? String(campaignData.group_id) : data.groupId;
+      const finalCampaignId =
+        campaignSlug && campaignData ? String(campaignData.id) : data.campaignId;
 
       if (!finalCampaignId) {
         form.setError("campaignId", { message: "Campaign is required" });
         return;
       }
 
-      if (!data.groupId) {
+      if (!finalGroupId) {
         form.setError("groupId", { message: "Group is required" });
         return;
       }
 
       await addContribution({
         sender_name: data.name,
-        sender_phone: data.phone,
+        sender_phone: data.phone || undefined,
         amount: Number.parseFloat(data.amount.replace(/,/g, "")),
         payment_method: data.paymentType || "Cash",
         campaign_id: finalCampaignId,
-        group_id: data.groupId,
+        group_id: finalGroupId,
       });
       form.reset();
       setIsOpen(false);
 
-      if (!campaignSlug && data.groupId && data.campaignId) {
-        // Assuming we only have the IDs, routing directly by ID might work or we need slugs.
-        // Wait, the backend router expects slugs OR IDs.
-        router.push(`/treasurer/groups/${data.groupId}/campaigns/${data.campaignId}`);
+      if (!campaignSlug && finalGroupId && finalCampaignId) {
+        router.push(`/treasurer/groups/${finalGroupId}/campaigns/${finalCampaignId}`);
       }
     },
-    [campaignSlug, form, addContribution, router],
+    [campaignSlug, campaignData, form, addContribution, router],
   );
 
   return (
