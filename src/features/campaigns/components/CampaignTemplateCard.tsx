@@ -14,6 +14,7 @@ import {
 } from "@/features/campaigns/services/mutations";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { LabeledSwitch } from "@/components/ui/labeled-switch";
 
 const CampaignTemplateCard = () => {
   const params = useParams();
@@ -132,19 +133,13 @@ const CampaignTemplateCard = () => {
                 Includes a "Powered by KapuLetu" watermark across all public updates and reports.
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => handleUpdateSetting({ remove_watermark: !removeWatermark })}
+            <LabeledSwitch
+              checked={!removeWatermark}
+              onCheckedChange={(checked) => handleUpdateSetting({ remove_watermark: !checked })}
               disabled={updateCampaign.isPending}
-              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors cursor-pointer ${!removeWatermark ? "bg-primary flex-row-reverse" : "bg-muted flex-row"}`}
-            >
-              <span
-                className={`text-[11px] font-bold ${!removeWatermark ? "text-primary-foreground" : "text-muted-foreground"}`}
-              >
-                {!removeWatermark ? "YES" : "NO"}
-              </span>
-              <div className="w-6 h-6 bg-white rounded-full shadow-sm" />
-            </button>
+              labelOn="YES"
+              labelOff="NO"
+            />
           </div>
 
           <div className="flex items-center justify-between py-2">
@@ -156,19 +151,13 @@ const CampaignTemplateCard = () => {
                 Use a tick emoji instead of the text (PAID).
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => handleUpdateSetting({ paid_indicator: useEmoji ? "PAID" : "✔" })}
+            <LabeledSwitch
+              checked={useEmoji}
+              onCheckedChange={(checked) => handleUpdateSetting({ paid_indicator: checked ? "✔" : "PAID" })}
               disabled={updateCampaign.isPending}
-              className={`flex items-center justify-between w-16 rounded-full px-1.5 h-8 shrink-0 transition-colors cursor-pointer ${useEmoji ? "bg-primary flex-row-reverse" : "bg-muted flex-row"}`}
-            >
-              <span
-                className={`text-[11px] font-bold ${useEmoji ? "text-primary-foreground" : "text-muted-foreground"}`}
-              >
-                {useEmoji ? "YES" : "NO"}
-              </span>
-              <div className="w-6 h-6 bg-white rounded-full shadow-sm" />
-            </button>
+              labelOn="YES"
+              labelOff="NO"
+            />
           </div>
 
           <div className="p-5 rounded-2xl border border-dashed border-primary/40 bg-primary/5 space-y-4">
