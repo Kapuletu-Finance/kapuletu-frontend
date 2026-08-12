@@ -1,11 +1,5 @@
-import { ProfileForm } from "@/features/auth/components/ProfileForm";
+import { redirect } from "next/navigation";
 
-const AdminProfilePage = () => {
-  return (
-    <div className="container mx-auto py-10">
-      <ProfileForm />
-    </div>
-  );
-};
-
-export default AdminProfilePage;
+export default function AdminProfilePage() {
+  redirect("/settings");
+}

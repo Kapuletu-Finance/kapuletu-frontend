@@ -1,11 +1,5 @@
-import { ProfileForm } from "@/features/auth/components/ProfileForm";
+import { redirect } from "next/navigation";
 
-const TreasurerProfilePage = () => {
-  return (
-    <div className="container mx-auto py-10">
-      <ProfileForm />
-    </div>
-  );
-};
-
-export default TreasurerProfilePage;
+export default function TreasurerProfilePage() {
+  redirect("/settings");
+}
