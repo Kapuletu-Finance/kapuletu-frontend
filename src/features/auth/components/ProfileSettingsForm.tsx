@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Upload, User as UserIcon, Lock, Diamond, Bell } from "lucide-react";
+import { Bell, Diamond, Loader2, Lock, Upload, User as UserIcon } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import {
   Select,
   SelectContent,
@@ -17,7 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import { ChangePasswordDialog } from "@/features/auth/components/ChangePasswordDialog";
 import { type UpdateProfileFormData, updateProfileSchema } from "@/features/auth/schemas";
 import { useUpdateProfileMutation } from "@/features/auth/services/mutations";
@@ -156,7 +156,12 @@ export const ProfileSettingsForm = () => {
                       <FieldLabel htmlFor="language" className="font-semibold text-sm">
                         Preferred Language
                       </FieldLabel>
-                      <Select value={language} onValueChange={setLanguage}>
+                      <Select
+                        value={language}
+                        onValueChange={(value) => {
+                          if (value !== null) setLanguage(value);
+                        }}
+                      >
                         <SelectTrigger id="language" className="bg-background border-border">
                           <SelectValue placeholder="Select Language" />
                         </SelectTrigger>
