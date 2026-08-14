@@ -184,53 +184,55 @@ export const TreasurerInboxPageClient = () => {
         ) : undefined
       }
     >
-      <div className="flex flex-col w-full bg-card rounded-xl border border-border mt-6">
-        <InboxBulkActions
-          selectedCount={selectedIds.size}
-          onClearSelection={() => setSelectedIds(new Set())}
-          onApproveAll={() => setIsBulkApproveOpen(true)}
-          onRejectAll={() => setIsBulkRejectOpen(true)}
-        />
+      <div className="w-full overflow-x-auto pb-4 mt-6">
+        <div className="flex flex-col min-w-[1000px] bg-card rounded-xl border border-border">
+          <InboxBulkActions
+            selectedCount={selectedIds.size}
+            onClearSelection={() => setSelectedIds(new Set())}
+            onApproveAll={() => setIsBulkApproveOpen(true)}
+            onRejectAll={() => setIsBulkRejectOpen(true)}
+          />
 
-        {isLoading ? (
-          <div className="flex flex-col w-full">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="flex items-center gap-4 py-4 px-4 border-b border-border">
-                <Skeleton className="w-4 h-4 rounded" />
-                <Skeleton className="w-10 h-10 rounded-full shrink-0" />
-                <div className="flex flex-col gap-2 w-32">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-3 w-2/3" />
+          {isLoading ? (
+            <div className="flex flex-col w-full">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex items-center gap-4 py-4 px-4 border-b border-border">
+                  <Skeleton className="w-4 h-4 rounded" />
+                  <Skeleton className="w-10 h-10 rounded-full shrink-0" />
+                  <div className="flex flex-col gap-2 w-32">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-3 w-2/3" />
+                  </div>
+                  <Skeleton className="h-4 w-24 ml-4" />
+                  <Skeleton className="h-4 w-32 ml-4" />
+                  <Skeleton className="h-4 w-24 ml-4" />
+                  <Skeleton className="h-6 w-16 rounded-full ml-4" />
+                  <div className="ml-auto flex gap-2">
+                    <Skeleton className="h-9 w-24" />
+                    <Skeleton className="h-9 w-24" />
+                  </div>
                 </div>
-                <Skeleton className="h-4 w-24 ml-4" />
-                <Skeleton className="h-4 w-32 ml-4" />
-                <Skeleton className="h-4 w-24 ml-4" />
-                <Skeleton className="h-6 w-16 rounded-full ml-4" />
-                <div className="ml-auto flex gap-2">
-                  <Skeleton className="h-9 w-24" />
-                  <Skeleton className="h-9 w-24" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : inboxItems.length > 0 ? (
-          <div className="flex flex-col w-full">
-            {inboxItems.map((item) => (
-              <InboxListRow
-                key={item.pending_id}
-                item={item}
-                isSelected={selectedIds.has(item.pending_id)}
-                onSelect={handleSelect}
-                onApprove={handleApprove}
-                onReject={handleReject}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="py-16">
-            <EmptyState message="No new inbox items found." />
-          </div>
-        )}
+              ))}
+            </div>
+          ) : inboxItems.length > 0 ? (
+            <div className="flex flex-col w-full">
+              {inboxItems.map((item) => (
+                <InboxListRow
+                  key={item.pending_id}
+                  item={item}
+                  isSelected={selectedIds.has(item.pending_id)}
+                  onSelect={handleSelect}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="py-16">
+              <EmptyState message="No new inbox items found." />
+            </div>
+          )}
+        </div>
       </div>
 
       <BulkApproveDialog
