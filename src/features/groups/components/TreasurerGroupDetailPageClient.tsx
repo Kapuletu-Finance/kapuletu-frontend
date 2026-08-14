@@ -100,9 +100,9 @@ export const TreasurerGroupDetailPageClient = () => {
         }
         stats={
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            <StatCard label="Total campaigns" count={totalItems} iconName="group" />
-            <StatCard label="Active campaigns" count={activeCampaigns} iconName="check-circle" />
-            <StatCard label="Archived campaigns" count={archivedCampaigns} iconName="lock" />
+            <StatCard label="Total campaigns" count={totalItems} iconName="group" isLoading={isLoading} />
+            <StatCard label="Active campaigns" count={activeCampaigns} iconName="check-circle" isLoading={isLoading} />
+            <StatCard label="Archived campaigns" count={archivedCampaigns} iconName="lock" isLoading={isLoading} />
           </div>
         }
         controls={

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { formatCurrency } from "@/lib/formatters";
 import { getTierStyles, pricings } from "@/features/shared/utils/pricing";
 
 const PricingPaymentModal = () => {
@@ -55,7 +56,7 @@ const PricingPaymentModal = () => {
               <RadioGroupItem value="monthly" id="monthly" className={styles.radioClass} />
               <Label htmlFor="monthly" className="flex-1 cursor-pointer">
                 <div className="font-semibold">Pay Monthly</div>
-                <div className="text-sm text-muted-foreground">Ksh. {monthlyPrice} / Month</div>
+                <div className="text-sm text-muted-foreground">Ksh. {formatCurrency(monthlyPrice)} / Month</div>
               </Label>
             </div>
 
@@ -69,7 +70,7 @@ const PricingPaymentModal = () => {
               <RadioGroupItem value="annual" id="annual" className={styles.radioClass} />
               <Label htmlFor="annual" className="flex-1 cursor-pointer">
                 <div className="font-semibold">Pay Annually</div>
-                <div className="text-sm text-muted-foreground">Ksh. {annualPrice} / Year</div>
+                <div className="text-sm text-muted-foreground">Ksh. {formatCurrency(annualPrice)} / Year</div>
               </Label>
             </div>
           </RadioGroup>
@@ -86,7 +87,7 @@ const PricingPaymentModal = () => {
                 />
                 <Label htmlFor="addons" className="cursor-pointer">
                   <div className="font-semibold">Need More Campaigns?</div>
-                  <div className="text-sm text-muted-foreground">Ksh. {addonPrice} / Month</div>
+                  <div className="text-sm text-muted-foreground">Ksh. {formatCurrency(addonPrice)} / Month</div>
                   <div className="text-xs text-muted-foreground mt-1">
                     Get an extra campaign for any group.
                   </div>
@@ -118,18 +119,18 @@ const PricingPaymentModal = () => {
                   <span>
                     {tierName} - {billingCycle === "annual" ? "Annual" : "Monthly"}
                   </span>
-                  <span>Ksh. {basePrice}</span>
+                  <span>Ksh. {formatCurrency(basePrice)}</span>
                 </div>
                 {hasAddons && (
                   <div className="flex justify-between text-muted-foreground">
                     <span>Add ons</span>
-                    <span>Ksh. {addonPrice}</span>
+                    <span>Ksh. {formatCurrency(addonPrice)}</span>
                   </div>
                 )}
                 <hr className="border-border" />
                 <div className="flex justify-between font-bold">
                   <span>TOTAL :</span>
-                  <span>Ksh. {totalPrice}</span>
+                  <span>Ksh. {formatCurrency(totalPrice)}</span>
                 </div>
               </div>
 

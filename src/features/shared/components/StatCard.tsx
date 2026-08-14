@@ -1,5 +1,6 @@
 import type * as React from "react";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import IconLibrary, { type IconName } from "@/features/shared/components/IconLibrary";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +12,7 @@ export interface StatCardProps {
   iconName: IconName;
   className?: string;
   iconClassName?: string;
+  isLoading?: boolean;
 }
 
 const StatCard: React.FC<StatCardProps> = ({
@@ -21,6 +23,7 @@ const StatCard: React.FC<StatCardProps> = ({
   iconName,
   className,
   iconClassName,
+  isLoading,
 }) => {
   return (
     <Card
@@ -29,7 +32,11 @@ const StatCard: React.FC<StatCardProps> = ({
       <div className="flex flex-col gap-2">
         <span className="text-muted-foreground font-medium text-sm sm:text-base">{label}</span>
         <div className="flex flex-col gap-1">
-          <span className="text-3xl font-bold text-foreground leading-none">{count}</span>
+          {isLoading ? (
+            <Skeleton className="h-8 w-16" />
+          ) : (
+            <span className="text-3xl font-bold text-foreground leading-none">{count}</span>
+          )}
           {trend && (
             <div className="flex items-center gap-1 text-xs mt-1 font-medium">
               {trendDirection === "up" && (

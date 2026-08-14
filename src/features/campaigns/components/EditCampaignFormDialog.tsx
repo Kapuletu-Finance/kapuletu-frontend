@@ -6,16 +6,12 @@ import type React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateCampaignMutation } from "@/features/campaigns/services/mutations";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
@@ -150,7 +146,7 @@ const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
                   >
                     Target Amount
                   </FieldLabel>
-                  <Input
+                  <NumericInput
                     id={field.name}
                     {...field}
                     aria-invalid={!!form.formState.errors.targetAmount}
@@ -196,13 +192,10 @@ const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
                   >
                     Fundraising Deadline
                   </FieldLabel>
-                  <div className="relative flex items-center">
-                    <IconLibrary
-                      name="calendar"
-                      className="absolute left-3 w-4 h-4 text-muted-foreground"
-                    />
-                    <Input id={field.name} type="date" className="pl-10" {...field} />
-                  </div>
+                  <DatePicker
+                    date={field.value ? new Date(field.value) : undefined}
+                    setDate={(date) => field.onChange(date ? date.toISOString().split("T")[0] : "")}
+                  />
                 </Field>
               )}
             />

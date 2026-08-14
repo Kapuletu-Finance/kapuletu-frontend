@@ -5,9 +5,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import {
   Select,
   SelectContent,
@@ -92,7 +94,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
     const payload = {
       title: data.name,
       description: data.description || null,
-      target_amount: data.target ? Number.parseFloat(data.target) : 0,
+      target_amount: data.target ? Number.parseFloat(data.target.replace(/,/g, "")) : 0,
       payment_instructions: data.instructions || null,
       end_date: data.fundraisingDeadline || null,
     };
@@ -188,7 +190,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                   >
                     Target Amount
                   </FieldLabel>
-                  <Input
+                  <NumericInput
                     id={field.name}
                     placeholder="e.g. 10,000"
                     {...field}
@@ -232,18 +234,10 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                   <FieldLabel htmlFor={field.name} className="text-xs font-medium text-foreground">
                     Fundraising Deadline
                   </FieldLabel>
-                  <div className="relative flex items-center">
-                    <IconLibrary
-                      name="calendar"
-                      className="absolute left-3 w-4 h-4 text-muted-foreground"
-                    />
-                    <Input
-                      id={field.name}
-                      type="date"
-                      className="pl-10 bg-muted/30 border-muted"
-                      {...field}
-                    />
-                  </div>
+                  <DatePicker
+                    date={field.value ? new Date(field.value) : undefined}
+                    setDate={(date) => field.onChange(date ? date.toISOString().split("T")[0] : "")}
+                  />
                 </Field>
               )}
             />

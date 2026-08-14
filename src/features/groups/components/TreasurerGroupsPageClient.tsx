@@ -78,9 +78,9 @@ export const TreasurerGroupsPageClient = () => {
       actionButton={<CreateGroupButtonDialogForm />}
       stats={
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          <StatCard label="Total number of groups" count={totalItems} iconName="group" />
-          <StatCard label="Active groups" count={activeGroups} iconName="check-circle" />
-          <StatCard label="Archived groups" count={archivedGroups} iconName="lock" />
+          <StatCard label="Total number of groups" count={totalItems} iconName="group" isLoading={isLoading} />
+          <StatCard label="Active groups" count={activeGroups} iconName="check-circle" isLoading={isLoading} />
+          <StatCard label="Archived groups" count={archivedGroups} iconName="lock" isLoading={isLoading} />
         </div>
       }
       controls={

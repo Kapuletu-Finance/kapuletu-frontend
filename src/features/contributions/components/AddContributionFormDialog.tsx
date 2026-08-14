@@ -16,6 +16,7 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { useAddManualContributionMutation } from "@/features/inbox/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
@@ -225,10 +226,9 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
                   >
                     Amount
                   </FieldLabel>
-                  <Input
+                  <NumericInput
                     id={field.name}
-                    type="number"
-                    placeholder="e.g. 10000"
+                    placeholder="e.g. 10,000"
                     {...field}
                     aria-invalid={!!form.formState.errors.amount}
                   />
