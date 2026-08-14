@@ -50,7 +50,7 @@ export const ChangePasswordDialog = ({ children }: { children: React.ReactNode }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={children} />
+      <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
