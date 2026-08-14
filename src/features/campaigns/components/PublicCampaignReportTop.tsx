@@ -53,12 +53,10 @@ const PublicCampaignReportTop = () => {
     }
   }, [isError, error, campaignSlug, workspaceId, groupId, router]);
 
-  if (!isAuthorized) {
-    return null; // or a loading spinner
-  }
-
   const title = report?.campaign_title || "";
   const description = report?.campaign_description || "";
+  
+  const showSkeletons = !isAuthorized || isLoading;
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-8 p-4 sm:p-6">
@@ -66,7 +64,7 @@ const PublicCampaignReportTop = () => {
       <Card className="bg-secondary/30 border-border/50 shadow-sm rounded-3xl">
         <CardContent className="p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="flex items-center gap-5">
-            {isLoading ? (
+            {showSkeletons ? (
               <Skeleton className="w-16 h-16 rounded-full shrink-0" />
             ) : (
               <div
@@ -79,7 +77,7 @@ const PublicCampaignReportTop = () => {
               </div>
             )}
             <div className="flex flex-col justify-center gap-1.5">
-              {isLoading ? (
+              {showSkeletons ? (
                 <>
                   <Skeleton className="h-8 w-48" />
                   <Skeleton className="h-5 w-64 mt-1" />
@@ -96,7 +94,41 @@ const PublicCampaignReportTop = () => {
       </Card>
 
       {/* Campaign Detail Components */}
-      {report && (
+      {showSkeletons ? (
+        <>
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-stretch">
+            <div className="xl:col-span-2">
+              <Card className="h-full">
+                <CardContent className="flex flex-col items-center justify-center h-75 p-6 space-y-6">
+                  <Skeleton className="w-48 h-48 rounded-full" />
+                </CardContent>
+              </Card>
+            </div>
+            <div className="xl:col-span-1">
+              <Card className="h-full flex flex-col justify-between">
+                <CardContent className="flex flex-col flex-1 p-6 space-y-6 mt-14">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          <div className="mt-8">
+            <Card>
+              <CardContent className="p-6 space-y-4">
+                <Skeleton className="h-8 w-48 mb-6" />
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      ) : report ? (
         <>
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-stretch">
             <div className="xl:col-span-2">
@@ -111,7 +143,7 @@ const PublicCampaignReportTop = () => {
             <PublicCampaignContributions contributors={report.contributors} />
           </div>
         </>
-      )}
+      ) : null}
     </div>
   );
 };
