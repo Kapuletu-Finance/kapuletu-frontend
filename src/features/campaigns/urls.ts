@@ -1,7 +1,6 @@
 export const CAMPAIGNS_URLS = {
   campaignDetail: (id: string) => `/campaigns/${id}` as const,
-  publicCampaignVerify: (workspaceId: string, groupId: string, campaignId: string) =>
-    `/public/workspaces/${workspaceId}/groups/${groupId}/campaigns/${campaignId}/verify` as const,
+  publicCampaignVerify: (shortCode: string) => `/public/campaigns/${shortCode}/verify` as const,
   campaignFavorite: (id: string) => `/campaigns/${id}/favorite` as const,
   campaignInbox: (id: string) => `/campaigns/${id}/inbox` as const,
   campaignTransactions: (id: string) => `/campaigns/${id}/transactions` as const,

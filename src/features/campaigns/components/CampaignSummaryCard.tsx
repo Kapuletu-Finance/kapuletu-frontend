@@ -23,7 +23,7 @@ const CampaignSummaryCard = () => {
   const contributor_count = campaign?.contributor_count ?? 0;
 
   return (
-    <Card className="h-full flex flex-col justify-between">
+    <Card className="h-full flex flex-col justify-between bg-primary/5 border-primary/10">
       <CardHeader>
         <CardTitle className="text-xl font-bold text-foreground font-sans">
           Campaign Summary
@@ -42,65 +42,78 @@ const CampaignSummaryCard = () => {
             </span>
           </div>
 
-          {/* BENTO GRID (PAYMENT METHODS) */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* LIST VIEW (PAYMENT METHODS) */}
+          <div className="flex flex-col space-y-4">
             {(campaign?.total_mpesa ?? 0) > 0 && (
-              <div className="flex flex-col p-4 bg-primary/10 rounded-xl space-y-1">
-                <div className="flex items-center gap-2 text-primary mb-1">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <IconLibrary name="smartphone" className="w-4 h-4" />
-                  <span className="text-xs font-semibold uppercase tracking-wider">M-Pesa</span>
+                  <span>
+                    Amount Received <span className="text-primary">(M-Pesa)</span>
+                  </span>
                 </div>
-                <span className="text-lg font-bold text-foreground">
-                  {formatCurrency(campaign?.total_mpesa!)}
+                <span className="font-medium text-foreground">
+                  {formatCurrency(campaign?.total_mpesa ?? 0)}
                 </span>
               </div>
             )}
 
             {(campaign?.total_cash ?? 0) > 0 && (
-              <div className="flex flex-col p-4 bg-primary/10 rounded-xl space-y-1">
-                <div className="flex items-center gap-2 text-primary mb-1">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <IconLibrary name="contribution" className="w-4 h-4" />
-                  <span className="text-xs font-semibold uppercase tracking-wider">Cash</span>
+                  <span>
+                    Amount Received <span className="text-primary">(Cash)</span>
+                  </span>
                 </div>
-                <span className="text-lg font-bold text-foreground">
-                  {formatCurrency(campaign?.total_cash!)}
+                <span className="font-medium text-foreground">
+                  {formatCurrency(campaign?.total_cash ?? 0)}
                 </span>
               </div>
             )}
 
             {(campaign?.total_bank ?? 0) > 0 && (
-              <div className="flex flex-col p-4 bg-primary/10 rounded-xl space-y-1">
-                <div className="flex items-center gap-2 text-primary mb-1">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <IconLibrary name="globe" className="w-4 h-4" />
-                  <span className="text-xs font-semibold uppercase tracking-wider">Bank</span>
+                  <span>
+                    Amount Received <span className="text-primary">(Bank)</span>
+                  </span>
                 </div>
-                <span className="text-lg font-bold text-foreground">
-                  {formatCurrency(campaign?.total_bank!)}
+                <span className="font-medium text-foreground">
+                  {formatCurrency(campaign?.total_bank ?? 0)}
                 </span>
               </div>
             )}
 
             {(campaign?.total_pledges ?? 0) > 0 && (
-              <div className="flex flex-col p-4 bg-primary/10 rounded-xl space-y-1">
-                <div className="flex items-center gap-2 text-primary mb-1">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <IconLibrary name="report" className="w-4 h-4" />
-                  <span className="text-xs font-semibold uppercase tracking-wider">Pledge</span>
+                  <span>
+                    Amount Received <span className="text-primary">(Pledge)</span>
+                  </span>
                 </div>
-                <span className="text-lg font-bold text-foreground">
-                  {formatCurrency(campaign?.total_pledges!)}
+                <span className="font-medium text-foreground">
+                  {formatCurrency(campaign?.total_pledges ?? 0)}
                 </span>
               </div>
             )}
-          </div>
 
-          {/* FOOTER STATS */}
-          <div className="pt-6 border-t border-border space-y-4">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconLibrary name="credit-card" className="w-4 h-4" />
                 <span>Total Contributions</span>
               </div>
               <span className="font-semibold text-foreground">{contributor_count}</span>
+            </div>
+
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <IconLibrary name="campaign" className="w-4 h-4" />
+                <span>Amount Raised</span>
+              </div>
+              <span className="font-bold text-primary">{formatCurrency(total_raised)}</span>
             </div>
 
             {surplus > 0 ? (

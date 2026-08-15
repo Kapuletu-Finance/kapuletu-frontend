@@ -12,18 +12,16 @@ const EnterCampaignPin = () => {
   const [pin, setPin] = useState("");
   const params = useParams();
   const router = useRouter();
-  const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
-  const workspaceId = typeof params.workspaceId === "string" ? params.workspaceId : "";
-  const groupId = typeof params.groupId === "string" ? params.groupId : "";
+  const shortCode = typeof params.shortCode === "string" ? params.shortCode : "";
 
-  const verifyMutation = useVerifyCampaignPinMutation(workspaceId, groupId, campaignSlug);
+  const verifyMutation = useVerifyCampaignPinMutation(shortCode);
 
   const handleVerify = () => {
     if (pin.length !== 4) return;
     verifyMutation.mutate(pin, {
       onSuccess: () => {
-        sessionStorage.setItem(`campaign_pin_${campaignSlug}`, pin);
-        router.push(`/report/w/${workspaceId}/g/${groupId}/c/${campaignSlug}`);
+        sessionStorage.setItem(`campaign_pin_${shortCode}`, pin);
+        router.push(`/r/${shortCode}`);
       },
     });
   };

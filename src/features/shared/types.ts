@@ -28,6 +28,7 @@ export interface CampaignOut {
   is_active: boolean;
   created_at: string;
   slug: string | null;
+  short_code: string | null;
   is_favorite: boolean;
   end_date: string | null;
   total_raised: number;

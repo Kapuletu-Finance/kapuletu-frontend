@@ -14,44 +14,36 @@ import { cn, getInitials } from "@/lib/utils";
 const PublicCampaignReportTop = () => {
   const params = useParams();
   const router = useRouter();
-  const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
-  const workspaceId = typeof params.workspaceId === "string" ? params.workspaceId : "";
-  const groupId = typeof params.groupId === "string" ? params.groupId : "";
+  const shortCode = typeof params.shortCode === "string" ? params.shortCode : "";
 
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [pin, setPin] = useState<string | undefined>();
 
   useEffect(() => {
-    if (!campaignSlug) return;
-    const storedPin = sessionStorage.getItem(`campaign_pin_${campaignSlug}`);
+    if (!shortCode) return;
+    const storedPin = sessionStorage.getItem(`campaign_pin_${shortCode}`);
     if (storedPin === null) {
-      router.replace(`/report/w/${workspaceId}/g/${groupId}/c/${campaignSlug}/auth`);
+      router.replace(`/r/${shortCode}/auth`);
     } else {
       setPin(storedPin);
       setIsAuthorized(true);
     }
-  }, [campaignSlug, workspaceId, groupId, router]);
+  }, [shortCode, router]);
 
   const {
     data: report,
     isLoading,
     isError,
     error,
-  } = usePublicCampaignReportQuery(
-    workspaceId,
-    groupId,
-    campaignSlug,
-    { pin: pin || "" },
-    isAuthorized,
-  );
+  } = usePublicCampaignReportQuery(shortCode, { pin: pin || "" }, isAuthorized);
 
   useEffect(() => {
     // If the query returns a 403, the PIN is invalid (maybe expired or changed)
     if (isError && (error as { response?: { status?: number } })?.response?.status === 403) {
-      sessionStorage.removeItem(`campaign_pin_${campaignSlug}`);
-      router.replace(`/report/w/${workspaceId}/g/${groupId}/c/${campaignSlug}/auth`);
+      sessionStorage.removeItem(`campaign_pin_${shortCode}`);
+      router.replace(`/r/${shortCode}/auth`);
     }
-  }, [isError, error, campaignSlug, workspaceId, groupId, router]);
+  }, [isError, error, shortCode, router]);
 
   const title = report?.campaign_title || "";
   const description = report?.campaign_description || "";
@@ -107,12 +99,22 @@ const PublicCampaignReportTop = () => {
             <div className="xl:col-span-1">
               <Card className="h-full flex flex-col justify-between">
                 <CardContent className="flex flex-col flex-1 p-6 space-y-6 mt-14">
-                  {[...Array(4)].map((_, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-4 w-16" />
-                    </div>
-                  ))}
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -121,9 +123,11 @@ const PublicCampaignReportTop = () => {
             <Card>
               <CardContent className="p-6 space-y-4">
                 <Skeleton className="h-8 w-48 mb-6" />
-                {[...Array(5)].map((_, i) => (
-                  <Skeleton key={i} className="h-12 w-full" />
-                ))}
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
               </CardContent>
             </Card>
           </div>

@@ -31,15 +31,11 @@ export const useRegenerateCampaignPinMutation = (campaignId: string) => {
   });
 };
 
-export const useVerifyCampaignPinMutation = (
-  workspaceId: string,
-  groupId: string,
-  campaignId: string,
-) => {
+export const useVerifyCampaignPinMutation = (shortCode: string) => {
   return useMutation({
     mutationFn: async (pin: string) => {
       const response = await apiClient.post<PublicWebReportOut>(
-        CAMPAIGNS_URLS.publicCampaignVerify(workspaceId, groupId, campaignId),
+        CAMPAIGNS_URLS.publicCampaignVerify(shortCode),
         { pin, page: 1, limit: 1 },
       );
       return response.data;

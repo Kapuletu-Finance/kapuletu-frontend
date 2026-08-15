@@ -19,22 +19,20 @@ export interface PublicVerifyRequest {
 }
 
 export const usePublicCampaignReportQuery = (
-  workspaceId: string,
-  groupId: string,
-  campaignSlug: string,
+  shortCode: string,
   data: PublicVerifyRequest,
-  enabled: boolean,
+  enabled: boolean = true,
 ) => {
   return useQuery({
     queryFn: async () => {
       const response = await apiClient.post<PublicWebReportOut>(
-        CAMPAIGNS_URLS.publicCampaignVerify(workspaceId, groupId, campaignSlug),
+        CAMPAIGNS_URLS.publicCampaignVerify(shortCode),
         data,
       );
       return response.data;
     },
-    queryKey: ["public-campaign-report", workspaceId, groupId, campaignSlug, data],
-    enabled: enabled && !!workspaceId && !!groupId && !!campaignSlug,
+    queryKey: ["public-campaign-report", shortCode, data],
+    enabled: enabled && !!shortCode,
     retry: false, // Don't retry on 403
   });
 };

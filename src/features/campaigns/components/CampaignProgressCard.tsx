@@ -40,7 +40,9 @@ const CampaignProgressCard = () => {
 
   const progress = campaign?.progress_percentage ?? 0;
   const isGoalMet = progress >= 100;
-  const surplusPercentage = Math.max(0, progress - 100);
+  const target_amount = campaign?.target_amount ?? 0;
+  const total_raised = campaign?.total_raised ?? 0;
+  const surplus = campaign?.surplus_amount ?? Math.max(0, total_raised - target_amount);
   const { fireConfetti } = useConfetti();
 
   useEffect(() => {
@@ -102,18 +104,7 @@ const CampaignProgressCard = () => {
                 fill="none"
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
-              {/* SURPLUS RING */}
-              {surplusPercentage > 0 && (
-                <path
-                  className="text-amber-500 transition-all duration-1000 ease-out drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]"
-                  strokeDasharray={`${Math.min(surplusPercentage, 100)}, 100`}
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  stroke="currentColor"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-              )}
+              {/* REMOVED SURPLUS RING */}
             </svg>
             <div className="absolute text-center flex flex-col items-center">
               {isLoading ? (
@@ -139,6 +130,14 @@ const CampaignProgressCard = () => {
               )}
             </div>
           </div>
+
+          {/* SURPLUS BADGE */}
+          {surplus > 0 && !isLoading && (
+            <div className="mt-4 bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 animate-in fade-in slide-in-from-bottom-2">
+              <IconLibrary name="trending-up" className="w-3 h-3" />+ Ksh.{" "}
+              {surplus.toLocaleString()}
+            </div>
+          )}
         </div>
 
         <div className="lg:col-span-8 bg-secondary/20 p-6 rounded-2xl flex flex-col justify-between h-52 relative w-full">
