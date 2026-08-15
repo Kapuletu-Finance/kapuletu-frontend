@@ -19,6 +19,7 @@ import {
   useBulkApproveMutation,
   useBulkRejectMutation,
   useRejectMutation,
+  useSplitMutation,
 } from "@/features/inbox/services/mutations";
 import { usePendingInboxQuery } from "@/features/inbox/services/queries";
 import EmptyState from "@/features/shared/components/EmptyState";
@@ -98,6 +99,19 @@ export const TreasurerInboxPageClient = () => {
     approveMutation.mutate(
       { id, data: { group_id: groupId, campaign_id: campaignId, internal_note: notes } },
       { onSuccess: () => toast.success("Contribution approved!") },
+    );
+  };
+
+  const splitMutation = useSplitMutation();
+  const handleSplit = (
+    id: string,
+    groupId: string,
+    campaignId: string | undefined,
+    allocations: { name: string; amount: number }[],
+    notes?: string,
+  ) => {
+    splitMutation.mutate(
+      { id, data: { group_id: groupId, campaign_id: campaignId, allocations, internal_note: notes } },
     );
   };
 
@@ -227,6 +241,7 @@ export const TreasurerInboxPageClient = () => {
                   isSelected={selectedIds.has(item.pending_id)}
                   onSelect={handleSelect}
                   onApprove={handleApprove}
+                  onSplit={handleSplit}
                   onReject={handleReject}
                 />
               ))}

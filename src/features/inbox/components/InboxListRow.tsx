@@ -13,6 +13,7 @@ export interface InboxListRowProps {
   isSelected: boolean;
   onSelect: (id: string, checked: boolean) => void;
   onApprove: (id: string, groupId?: string, campaignId?: string, notes?: string) => void;
+  onSplit: (id: string, groupId: string, campaignId: string | undefined, allocations: { name: string; amount: number }[], notes?: string) => void;
   onReject: (id: string) => void;
 }
 
@@ -21,6 +22,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
   isSelected,
   onSelect,
   onApprove,
+  onSplit,
   onReject,
 }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -120,6 +122,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         onApprove={(id, groupId, campaignId, notes) => onApprove(id, groupId, campaignId, notes)}
+        onSplit={onSplit}
         onReject={onReject}
       />
     </div>
