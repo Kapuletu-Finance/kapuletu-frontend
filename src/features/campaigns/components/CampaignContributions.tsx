@@ -39,7 +39,7 @@ const CampaignContributions = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [timeFilter, setTimeFilter] = useState("This year");
-  const limit = 10;
+  const limit = 50;
 
   const { data, isLoading } = useCampaignTransactionsQuery(campaignSlug, {
     skip: (page - 1) * limit,

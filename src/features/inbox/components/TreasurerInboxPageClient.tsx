@@ -34,7 +34,7 @@ export const TreasurerInboxPageClient = () => {
   const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("this_year"));
   const [status, setStatus] = useQueryState("status", parseAsString.withDefault("pending"));
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
-  const limit = 10;
+  const limit = 50;
   const router = useRouter();
   const undoMutation = useUndoMutation();
 
