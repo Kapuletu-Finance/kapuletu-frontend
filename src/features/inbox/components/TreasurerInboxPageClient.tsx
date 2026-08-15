@@ -295,7 +295,7 @@ export const TreasurerInboxPageClient = () => {
       }
     >
       <div className="w-full overflow-x-auto pb-4 mt-6">
-        <div className="flex flex-col min-w-[1000px] bg-card rounded-xl border border-border">
+        <div className="flex flex-col min-w-[1000px] bg-card rounded-xl border border-border shadow-sm">
           {status === "pending" ? (
             <InboxBulkActions
               selectedCount={selectedIds.size}
@@ -304,7 +304,7 @@ export const TreasurerInboxPageClient = () => {
               onRejectAll={() => setIsBulkRejectOpen(true)}
             />
           ) : (
-            <div className="flex items-center justify-between p-4 border-b border-border bg-muted/20">
+            <div className="flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-10">
               <span className="text-sm font-medium text-muted-foreground">
                 {selectedIds.size > 0 ? `${selectedIds.size} selected` : "Processed History"}
               </span>

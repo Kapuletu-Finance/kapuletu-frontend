@@ -49,8 +49,8 @@ const RecentContributionsCard = () => {
         </Link>
       </CardHeader>
 
-      <CardContent>
-        <div className="grid grid-cols-4 text-xs font-semibold text-muted-foreground pb-4 px-2">
+      <CardContent className="p-0">
+        <div className="grid grid-cols-4 text-xs font-semibold text-muted-foreground py-4 px-6 border-b border-border sticky top-0 z-10 bg-card">
           <span>Name</span>
           <span>Amount</span>
           <span>Date</span>
@@ -60,7 +60,7 @@ const RecentContributionsCard = () => {
         <div className="divide-y divide-border">
           {isLoading ? (
             ["sk-1", "sk-2", "sk-3", "sk-4"].map((key) => (
-              <div key={key} className="grid grid-cols-4 items-center py-4 px-2 text-sm">
+              <div key={key} className="grid grid-cols-4 items-center py-4 px-6 text-sm">
                 <div className="flex items-center gap-3">
                   <Skeleton className="w-9 h-9 rounded-full" />
                   <Skeleton className="h-4 w-24" />
@@ -80,7 +80,7 @@ const RecentContributionsCard = () => {
               return (
                 <div
                   key={item.transaction_id || `tx-${index}`}
-                  className="grid grid-cols-4 items-center py-4 px-2 text-sm"
+                  className="grid grid-cols-4 items-center py-4 px-6 text-sm transition-colors hover:bg-muted/50"
                 >
                   <div className="flex items-center gap-3">
                     <div

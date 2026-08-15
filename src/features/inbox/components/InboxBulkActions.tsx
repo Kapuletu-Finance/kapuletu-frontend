@@ -18,7 +18,7 @@ export const InboxBulkActions: React.FC<InboxBulkActionsProps> = ({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full py-4 px-4 border-b border-border gap-4">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full py-4 px-4 border-b border-border gap-4 sticky top-0 z-10 bg-card">
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium text-foreground">{selectedCount} selected</span>
         <Button

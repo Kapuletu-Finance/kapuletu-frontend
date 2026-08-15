@@ -142,9 +142,9 @@ const CampaignContributions = () => {
         <Pagination currentPage={page} totalPages={totalPages} onPageChange={(p) => setPage(p)} />
       }
     >
-      <div className="bg-transparent rounded-2xl overflow-hidden mt-6">
-        <CardContent>
-          <div className="grid grid-cols-4 text-sm font-semibold text-muted-foreground pb-4 px-6 border-b border-border">
+      <div className="bg-card border border-border shadow-sm rounded-xl overflow-hidden mt-6">
+        <CardContent className="p-0">
+          <div className="grid grid-cols-4 text-sm font-semibold text-muted-foreground py-4 px-6 border-b border-border sticky top-0 z-10 bg-card">
             <span>Name</span>
             <span>Amount</span>
             <span>Date</span>
@@ -174,7 +174,7 @@ const CampaignContributions = () => {
                 return (
                   <div
                     key={item.transaction_id || `tx-${index}`}
-                    className="grid grid-cols-4 items-center py-5 px-6 text-sm transition-colors hover:bg-muted/20"
+                    className="grid grid-cols-4 items-center py-5 px-6 text-sm transition-colors hover:bg-muted/50"
                   >
                     <div className="flex items-center gap-4">
                       <div
