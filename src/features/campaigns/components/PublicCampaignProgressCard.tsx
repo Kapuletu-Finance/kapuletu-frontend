@@ -13,6 +13,7 @@ interface PublicCampaignProgressCardProps {
 const PublicCampaignProgressCard: React.FC<PublicCampaignProgressCardProps> = ({ report }) => {
   const progress = report.progress_percentage;
   const isGoalMet = progress >= 100;
+  const surplusPercentage = Math.max(0, progress - 100);
   const { fireConfetti } = useConfetti();
 
   useEffect(() => {
@@ -48,6 +49,18 @@ const PublicCampaignProgressCard: React.FC<PublicCampaignProgressCardProps> = ({
                 fill="none"
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
+              {/* SURPLUS RING */}
+              {surplusPercentage > 0 && (
+                <path
+                  className="text-amber-500 transition-all duration-1000 ease-out drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                  strokeDasharray={`${Math.min(surplusPercentage, 100)}, 100`}
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  stroke="currentColor"
+                  fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+              )}
             </svg>
             <div className="absolute text-center flex flex-col items-center">
               {isGoalMet ? (

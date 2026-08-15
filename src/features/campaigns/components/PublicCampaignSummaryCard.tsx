@@ -26,105 +26,99 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-col flex-1">
-        <div className="space-y-6 flex-1">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <IconLibrary name="target" className="w-4 h-4" />
-              <span>Goal</span>
-            </div>
-            <span className="font-semibold text-foreground">{formatCurrency(target_amount)}</span>
+      <CardContent className="flex flex-col flex-1 p-6">
+        <div className="flex flex-col space-y-8 flex-1">
+          {/* HERO SECTION */}
+          <div className="flex flex-col items-center justify-center text-center space-y-1">
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Goal: {formatCurrency(target_amount)}
+            </span>
+            <span className="text-4xl lg:text-5xl font-extrabold text-primary tracking-tight">
+              {formatCurrency(total_raised)}
+            </span>
           </div>
 
-          {(report.total_mpesa ?? 0) > 0 && (
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <IconLibrary name="smartphone" className="w-4 h-4" />
-                <span>
-                  Amount Received <span className="text-primary">(M-Pesa)</span>
+          {/* BENTO GRID (PAYMENT METHODS) */}
+          <div className="grid grid-cols-2 gap-3">
+            {(report.total_mpesa ?? 0) > 0 && (
+              <div className="flex flex-col p-4 bg-primary/10 rounded-xl space-y-1">
+                <div className="flex items-center gap-2 text-primary mb-1">
+                  <IconLibrary name="smartphone" className="w-4 h-4" />
+                  <span className="text-xs font-semibold uppercase tracking-wider">M-Pesa</span>
+                </div>
+                <span className="text-lg font-bold text-foreground">
+                  {formatCurrency(report.total_mpesa!)}
                 </span>
               </div>
-              <span className="font-medium text-foreground">
-                {formatCurrency(report.total_mpesa!)}
-              </span>
-            </div>
-          )}
+            )}
 
-          {(report.total_cash ?? 0) > 0 && (
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <IconLibrary name="contribution" className="w-4 h-4" />
-                <span>
-                  Amount Received <span className="text-primary">(Cash)</span>
+            {(report.total_cash ?? 0) > 0 && (
+              <div className="flex flex-col p-4 bg-primary/10 rounded-xl space-y-1">
+                <div className="flex items-center gap-2 text-primary mb-1">
+                  <IconLibrary name="contribution" className="w-4 h-4" />
+                  <span className="text-xs font-semibold uppercase tracking-wider">Cash</span>
+                </div>
+                <span className="text-lg font-bold text-foreground">
+                  {formatCurrency(report.total_cash!)}
                 </span>
               </div>
-              <span className="font-medium text-foreground">
-                {formatCurrency(report.total_cash!)}
-              </span>
-            </div>
-          )}
+            )}
 
-          {(report.total_bank ?? 0) > 0 && (
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <IconLibrary name="globe" className="w-4 h-4" />
-                <span>
-                  Amount Received <span className="text-primary">(Bank)</span>
+            {(report.total_bank ?? 0) > 0 && (
+              <div className="flex flex-col p-4 bg-primary/10 rounded-xl space-y-1">
+                <div className="flex items-center gap-2 text-primary mb-1">
+                  <IconLibrary name="globe" className="w-4 h-4" />
+                  <span className="text-xs font-semibold uppercase tracking-wider">Bank</span>
+                </div>
+                <span className="text-lg font-bold text-foreground">
+                  {formatCurrency(report.total_bank!)}
                 </span>
               </div>
-              <span className="font-medium text-foreground">
-                {formatCurrency(report.total_bank!)}
-              </span>
-            </div>
-          )}
+            )}
 
-          {(report.total_pledges ?? 0) > 0 && (
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <IconLibrary name="report" className="w-4 h-4" />
-                <span>
-                  Amount Received <span className="text-primary">(Pledge)</span>
+            {(report.total_pledges ?? 0) > 0 && (
+              <div className="flex flex-col p-4 bg-primary/10 rounded-xl space-y-1">
+                <div className="flex items-center gap-2 text-primary mb-1">
+                  <IconLibrary name="report" className="w-4 h-4" />
+                  <span className="text-xs font-semibold uppercase tracking-wider">Pledge</span>
+                </div>
+                <span className="text-lg font-bold text-foreground">
+                  {formatCurrency(report.total_pledges!)}
                 </span>
               </div>
-              <span className="font-medium text-foreground">
-                {formatCurrency(report.total_pledges!)}
-              </span>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <IconLibrary name="credit-card" className="w-4 h-4" />
-              <span>Total Contributions</span>
-            </div>
-            <span className="font-semibold text-foreground">{contributor_count}</span>
+            )}
           </div>
 
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <IconLibrary name="campaign" className="w-4 h-4" />
-              <span>Amount Raised</span>
-            </div>
-            <span className="font-bold text-primary">{formatCurrency(total_raised)}</span>
-          </div>
-
-          {surplus > 0 ? (
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 text-primary">
-                <IconLibrary name="trending-up" className="w-4 h-4" />
-                <span className="font-medium">Surplus Raised</span>
-              </div>
-              <span className="font-bold text-primary">{formatCurrency(surplus)}</span>
-            </div>
-          ) : (
+          {/* FOOTER STATS */}
+          <div className="pt-6 border-t border-border space-y-4">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <IconLibrary name="rotate-ccw" className="w-4 h-4" />
-                <span>Amount Remaining</span>
+                <IconLibrary name="credit-card" className="w-4 h-4" />
+                <span>Total Contributions</span>
               </div>
-              <span className="font-medium text-muted-foreground">{formatCurrency(remaining)}</span>
+              <span className="font-semibold text-foreground">{contributor_count}</span>
             </div>
-          )}
+
+            {surplus > 0 ? (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-primary">
+                  <IconLibrary name="trending-up" className="w-4 h-4" />
+                  <span className="font-medium">Surplus Raised</span>
+                </div>
+                <span className="font-bold text-primary">{formatCurrency(surplus)}</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <IconLibrary name="rotate-ccw" className="w-4 h-4" />
+                  <span>Amount Remaining</span>
+                </div>
+                <span className="font-medium text-muted-foreground">
+                  {formatCurrency(remaining)}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
