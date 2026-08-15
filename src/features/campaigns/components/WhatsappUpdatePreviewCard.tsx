@@ -29,7 +29,12 @@ const WhatsappUpdatePreviewCard = () => {
       preview.description ?? "",
       "",
       `Raised so far: Ksh ${preview.raised.toLocaleString("en-KE")} of Ksh ${preview.target.toLocaleString("en-KE")}`,
-      `PAYBILL: ${preview.payment_instructions?.split(",")[0]?.trim() ?? "------"} ACCOUNT: ${preview.payment_instructions?.split(",")[1]?.trim() ?? "------"}`,
+      (() => {
+        const parts = preview.payment_instructions?.split(",") || [];
+        const paybill = parts[0]?.trim() || "------";
+        const account = parts[1]?.trim();
+        return account ? `PAYBILL: ${paybill} ACCOUNT: ${account}` : `PAYBILL: ${paybill}`;
+      })(),
       "",
       ...preview.contributors.map(
         (c, i) => `${i + 1}. ${c.name} - Ksh ${c.amount.toLocaleString("en-KE")} ✓`,
@@ -121,11 +126,16 @@ const WhatsappUpdatePreviewCard = () => {
                 PAYBILL:{" "}
                 <span className="bg-background px-1.5 py-0.5 rounded border border-border">
                   {preview.payment_instructions?.split(",")[0]?.trim() || "------"}
-                </span>{" "}
-                ACCOUNT:{" "}
-                <span className="bg-background px-1.5 py-0.5 rounded border border-border">
-                  {preview.payment_instructions?.split(",")[1]?.trim() || "------"}
                 </span>
+                {preview.payment_instructions?.split(",")[1] && (
+                  <>
+                    {" "}
+                    ACCOUNT:{" "}
+                    <span className="bg-background px-1.5 py-0.5 rounded border border-border">
+                      {preview.payment_instructions.split(",")[1].trim()}
+                    </span>
+                  </>
+                )}
               </p>
             </div>
 
