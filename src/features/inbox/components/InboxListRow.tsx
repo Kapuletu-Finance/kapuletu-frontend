@@ -55,13 +55,25 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
     rawDateStr.endsWith("Z") || rawDateStr.includes("+") ? rawDateStr : `${rawDateStr}Z`;
 
   return (
-    <div className="flex flex-col xl:flex-row xl:items-center gap-4 py-4 px-2 border-b border-border hover:bg-muted/50 transition-colors">
+    <div
+      className="flex flex-col xl:flex-row xl:items-center gap-4 py-4 px-2 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
+      onClick={() => setIsDialogOpen(true)}
+      onKeyDown={(e) => e.key === "Enter" && setIsDialogOpen(true)}
+      role="button"
+      tabIndex={0}
+    >
       <div className="flex items-center gap-4 flex-1 min-w-0">
         {item.workflow_status === "pending" ? (
-          <Checkbox
-            checked={isSelected}
-            onCheckedChange={(checked) => onSelect(item.pending_id, checked === true)}
-          />
+          <div 
+            onClick={(e) => e.stopPropagation()} 
+            onKeyDown={(e) => e.stopPropagation()}
+            role="presentation"
+          >
+            <Checkbox
+              checked={isSelected}
+              onCheckedChange={(checked) => onSelect(item.pending_id, checked === true)}
+            />
+          </div>
         ) : (
           <div className="w-4 h-4 shrink-0" />
         )}
@@ -75,18 +87,14 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
           {initials}
         </div>
 
-        <button
-          type="button"
-          className="flex flex-col min-w-0 w-48 shrink-0 cursor-pointer hover:underline decoration-muted-foreground underline-offset-4 text-left bg-transparent border-none p-0 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
-          onClick={() => setIsDialogOpen(true)}
-        >
+        <div className="flex flex-col min-w-0 w-48 shrink-0 text-left">
           <span className="font-semibold text-sm text-foreground truncate w-full">
             {item.sender_name || "Unknown Sender"}
           </span>
           <span className="text-xs text-muted-foreground truncate w-full">
             {item.sender_phone || "No phone number"}
           </span>
-        </button>
+        </div>
 
         <div className="w-24 shrink-0 font-medium text-sm">{amount}</div>
 
@@ -127,7 +135,10 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
             <Button
               variant="default"
               size="sm"
-              onClick={() => onApprove(item.pending_id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onApprove(item.pending_id);
+              }}
               className="bg-primary hover:bg-primary/90 gap-1.5"
             >
               <IconLibrary name="check" className="w-4 h-4" />
@@ -136,7 +147,10 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onReject(item.pending_id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onReject(item.pending_id);
+              }}
               className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive gap-1.5"
             >
               <IconLibrary name="close" className="w-4 h-4" />
