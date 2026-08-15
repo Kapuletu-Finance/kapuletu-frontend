@@ -88,6 +88,8 @@ export const useUpdateCampaignMutation = (campaignId: string) => {
     onSuccess: () => {
       toast.success("Campaign updated successfully!");
       queryClient.invalidateQueries({ queryKey: campaignsQueryKey });
+      queryClient.invalidateQueries({ queryKey: ["campaign", campaignId] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-report-preview", campaignId] });
     },
   });
 };
