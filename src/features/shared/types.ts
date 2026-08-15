@@ -250,6 +250,7 @@ export interface CampaignReportPreview {
   payment_instructions?: string;
   footer: string;
   public_url: string;
+  preview_text: string;
 }
 
 export interface CampaignSettingsOverride {

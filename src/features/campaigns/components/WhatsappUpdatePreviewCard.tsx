@@ -24,56 +24,7 @@ const WhatsappUpdatePreviewCard = () => {
 
   const getMessageText = () => {
     if (!preview) return "";
-    const remaining = Math.max(0, preview.target - preview.raised);
-
-    const lines: string[] = [
-      `*${preview.title}*`,
-      "",
-      preview.description ?? "",
-      "",
-      "*Progress Update:*",
-      preview.raised >= preview.target
-        ? `So far, we have raised Ksh ${preview.raised.toLocaleString("en-KE")}, successfully surpassing our initial goal of Ksh ${preview.target.toLocaleString("en-KE")}! Thank you to everyone who made this possible. The campaign remains open, and any further contributions are still greatly appreciated.`
-        : `So far, we have raised Ksh ${preview.raised.toLocaleString("en-KE")} against our goal of Ksh ${preview.target.toLocaleString("en-KE")}. We have an amount remaining of Ksh ${remaining.toLocaleString("en-KE")} to meet our goal. Every contribution counts.`,
-      "",
-      ...(preview.total_mpesa > 0
-        ? [`*Amount Received (M-Pesa):* Ksh ${preview.total_mpesa.toLocaleString("en-KE")}`]
-        : []),
-      ...(preview.total_cash > 0
-        ? [`*Amount Received (Cash):* Ksh ${preview.total_cash.toLocaleString("en-KE")}`]
-        : []),
-      ...(preview.total_bank > 0
-        ? [`*Amount Received (Bank):* Ksh ${preview.total_bank.toLocaleString("en-KE")}`]
-        : []),
-      ...(preview.total_pledges > 0
-        ? [`*Amount Received (Pledge):* Ksh ${preview.total_pledges.toLocaleString("en-KE")}`]
-        : []),
-      ...(preview.total_mpesa > 0 ||
-      preview.total_cash > 0 ||
-      preview.total_bank > 0 ||
-      preview.total_pledges > 0
-        ? [""]
-        : []),
-      "To send your contributions, the payment instructions are as follows:",
-      preview.payment_instructions ? preview.payment_instructions : "",
-      "",
-      "*Contributions Received:*",
-      ...preview.contributors.map(
-        (c, i) => `${i + 1}. ${c.name} - Ksh ${c.amount.toLocaleString("en-KE")} ✓`,
-      ),
-      ...Array.from({ length: blankSlotsCount }).map(
-        (_, i) => `${preview.contributors.length + i + 1}. `,
-      ),
-      "",
-      "Thank you to everyone who has contributed so far. Your continued support is greatly appreciated as we work towards our goal.",
-      "",
-      "To view a more comprehensive report, click the link below:",
-      publicUrl,
-    ];
-    return lines
-      .join("\n")
-      .replace(/\n{3,}/g, "\n\n")
-      .trim();
+    return preview.preview_text.trim();
   };
 
   const handleCopyMessage = async () => {
