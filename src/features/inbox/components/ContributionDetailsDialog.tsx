@@ -3,7 +3,6 @@
 import type * as React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,13 +40,13 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
-  const [isSplitting, setIsSplitting] = useState(false);
   const [otherAllocations, setOtherAllocations] = useState<
     { id: string; name: string; amount: number | "" }[]
   >([]);
 
   if (!item) return null;
 
+  const isSplitting = otherAllocations.length > 0;
   const totalOtherAllocated = otherAllocations.reduce((sum, a) => sum + (Number(a.amount) || 0), 0);
   const senderAmount = (item.amount || 0) - totalOtherAllocated;
   const isOverAllocated = senderAmount < 0;
@@ -192,11 +191,9 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
             </div>
 
             <div className="flex flex-col gap-3 mt-2">
-              <div className="flex items-center justify-between bg-primary/5 p-3 rounded-xl border border-primary/10">
-                <div className="flex items-center gap-3">
-                  <div className="bg-primary/10 p-2 rounded-lg">
-                    <IconLibrary name="split" className="w-5 h-5 text-primary" />
-                  </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <IconLibrary name="split" className="w-5 h-5 text-primary" />
                   <div className="flex flex-col">
                     <span className="text-sm font-semibold text-foreground">
                       Split contribution
@@ -206,46 +203,31 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
                     </span>
                   </div>
                 </div>
-                <Checkbox
-                  checked={isSplitting}
-                  onCheckedChange={(c) => {
-                    const checked = c === true;
-                    setIsSplitting(checked);
-                    if (!checked) setOtherAllocations([]);
-                  }}
-                />
+                <Button
+                  type="button"
+                  variant="default"
+                  size="sm"
+                  className="h-7 text-xs px-3 bg-emerald-700 hover:bg-emerald-800 text-white"
+                  onClick={() =>
+                    setOtherAllocations([
+                      ...otherAllocations,
+                      { id: Date.now().toString(), name: "", amount: "" },
+                    ])
+                  }
+                >
+                  <IconLibrary name="add" className="w-3 h-3 mr-1" />
+                  Add a contributor
+                </Button>
               </div>
 
               {isSplitting && (
-                <div className="flex flex-col pt-2 gap-3">
-                  <div className="bg-muted/50 p-3 rounded-lg text-[11px] text-muted-foreground leading-relaxed border border-border">
-                    <strong className="text-foreground">Tip:</strong> If a sender is paying entirely
-                    on behalf of others, simply allocate the full amount to the other contributors.
-                    The sender's allocation will automatically adjust to 0 and they will be omitted
-                    from the final split.
+                <div className="flex flex-col pt-2 gap-2">
+                  <div className="text-xs text-muted-foreground italic mb-1">
+                    Tip: If the sender's allocation falls to 0, they will be omitted from the split.
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-foreground">Contributors</span>
-                    <Button
-                      type="button"
-                      variant="default"
-                      size="sm"
-                      className="h-7 text-xs px-3 bg-emerald-600 hover:bg-emerald-700 text-white gap-1"
-                      onClick={() =>
-                        setOtherAllocations([
-                          ...otherAllocations,
-                          { id: Date.now().toString(), name: "", amount: "" },
-                        ])
-                      }
-                    >
-                      <IconLibrary name="add" className="w-3.5 h-3.5" />
-                      Add
-                    </Button>
-                  </div>
-
-                  <div className="flex flex-col bg-card border border-border rounded-xl overflow-hidden">
-                    <div className="grid grid-cols-[1fr_80px_40px] items-center gap-2 px-3 py-2 bg-muted/30 text-xs font-semibold text-muted-foreground border-b border-border">
+                  <div className="flex flex-col bg-card">
+                    <div className="grid grid-cols-[1fr_80px_40px] items-center gap-2 px-2 pb-2 text-sm text-muted-foreground border-b border-border">
                       <span>Name</span>
                       <span>Amount</span>
                       <span></span>
@@ -254,11 +236,11 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
                     {/* Sender Row */}
                     <div
                       className={cn(
-                        "grid grid-cols-[1fr_80px_40px] items-center gap-2 py-3 px-1 border-b border-border transition-all duration-300",
-                        senderAmount <= 0 && "opacity-40 grayscale bg-muted/20",
+                        "grid grid-cols-[1fr_80px_40px] items-center gap-2 py-2 px-2 border-b border-border transition-opacity",
+                        senderAmount <= 0 && "opacity-40 grayscale",
                       )}
                     >
-                      <div className="flex flex-col justify-center px-2">
+                      <div className="flex flex-col justify-center">
                         <span className="text-sm font-medium text-foreground">
                           {item.sender_name || "Unknown"}
                         </span>
@@ -266,7 +248,7 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
                           Sender
                         </span>
                       </div>
-                      <div className="px-2 text-sm font-medium text-foreground text-right pr-4">
+                      <div className="text-sm font-medium text-foreground text-left px-2">
                         {Math.max(0, senderAmount).toLocaleString()}
                       </div>
                       <div></div>
@@ -298,7 +280,7 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
                             newAlloc[idx].amount = e.target.value ? Number(e.target.value) : "";
                             setOtherAllocations(newAlloc);
                           }}
-                          className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium text-right"
+                          className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium"
                         />
                         <Button
                           type="button"
