@@ -18,7 +18,8 @@ const WhatsappUpdatePreviewCard = () => {
   const { data: preview, isLoading } = useCampaignReportPreviewQuery(campaignSlug);
   const { data: campaignData } = useCampaignQuery(campaignSlug);
   const publicSlug = campaignData?.slug || campaignSlug;
-  const publicUrl = `${env.NEXT_PUBLIC_APP_URL}/report/${publicSlug}`;
+  const publicUrl =
+    preview?.public_url || `${env.NEXT_PUBLIC_APP_URL}/r/${campaignData?.short_code || publicSlug}`;
   const blankSlotsCount = campaignData?.settings_override?.blank_slots ?? 3;
 
   const getMessageText = () => {
@@ -31,7 +32,9 @@ const WhatsappUpdatePreviewCard = () => {
       preview.description ?? "",
       "",
       "*Progress Update:*",
-      `So far, we have raised Ksh ${preview.raised.toLocaleString("en-KE")} against our goal of Ksh ${preview.target.toLocaleString("en-KE")}. We have an amount remaining of Ksh ${remaining.toLocaleString("en-KE")} to meet our goal. Every contribution counts.`,
+      preview.raised >= preview.target
+        ? `So far, we have raised Ksh ${preview.raised.toLocaleString("en-KE")}, successfully surpassing our initial goal of Ksh ${preview.target.toLocaleString("en-KE")}! Thank you to everyone who made this possible. The campaign remains open, and any further contributions are still greatly appreciated.`
+        : `So far, we have raised Ksh ${preview.raised.toLocaleString("en-KE")} against our goal of Ksh ${preview.target.toLocaleString("en-KE")}. We have an amount remaining of Ksh ${remaining.toLocaleString("en-KE")} to meet our goal. Every contribution counts.`,
       "",
       ...(preview.total_mpesa > 0
         ? [`*Amount Received (M-Pesa):* Ksh ${preview.total_mpesa.toLocaleString("en-KE")}`]
