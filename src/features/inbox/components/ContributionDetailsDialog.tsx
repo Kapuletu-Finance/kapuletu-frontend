@@ -3,6 +3,7 @@
 import type * as React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,7 +20,13 @@ export interface ContributionDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onApprove: (id: string, groupId: string, campaignId: string, notes: string) => void;
-  onSplit: (id: string, groupId: string, campaignId: string | undefined, allocations: { name: string; amount: number }[], notes: string) => void;
+  onSplit: (
+    id: string,
+    groupId: string,
+    campaignId: string | undefined,
+    allocations: { name: string; amount: number }[],
+    notes: string,
+  ) => void;
   onReject: (id: string) => void;
 }
 
@@ -34,12 +41,16 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
-  const [allocations, setAllocations] = useState<{ id: string; name: string; amount: number | "" }[]>([]);
+  const [isSplitting, setIsSplitting] = useState(false);
+  const [otherAllocations, setOtherAllocations] = useState<
+    { id: string; name: string; amount: number | "" }[]
+  >([]);
 
   if (!item) return null;
 
-  const totalAllocated = allocations.reduce((sum, a) => sum + (Number(a.amount) || 0), 0);
-  const amountRemaining = (item.amount || 0) - totalAllocated;
+  const totalOtherAllocated = otherAllocations.reduce((sum, a) => sum + (Number(a.amount) || 0), 0);
+  const senderAmount = (item.amount || 0) - totalOtherAllocated;
+  const isOverAllocated = senderAmount < 0;
 
   const initials = (item.sender_name || "?").substring(0, 2).toUpperCase();
   const avatarColor = getAvatarColor(item.sender_name || "?");
@@ -58,14 +69,27 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
   }).format(new Date(item.created_at));
 
   const handleApprove = () => {
-    if (allocations.length > 0) {
-      if (amountRemaining !== 0) return;
+    if (isSplitting) {
+      if (isOverAllocated) return;
+
+      const finalAllocations: { name: string; amount: number }[] = [];
+      if (senderAmount > 0) {
+        finalAllocations.push({ name: item.sender_name || "Unknown", amount: senderAmount });
+      }
+      otherAllocations.forEach((a) => {
+        if (Number(a.amount) > 0) {
+          finalAllocations.push({ name: a.name || "Unknown", amount: Number(a.amount) });
+        }
+      });
+
+      if (finalAllocations.length === 0) return;
+
       onSplit(
         item.pending_id,
         selectedGroupId,
         selectedCampaignId || undefined,
-        allocations.map(a => ({ name: a.name || "Unknown", amount: Number(a.amount) })),
-        notes
+        finalAllocations,
+        notes,
       );
     } else {
       onApprove(item.pending_id, selectedGroupId, selectedCampaignId, notes);
@@ -168,76 +192,135 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
             </div>
 
             <div className="flex flex-col gap-3 mt-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <IconLibrary name="split" className="w-5 h-5 text-primary" />
+              <div className="flex items-center justify-between bg-primary/5 p-3 rounded-xl border border-primary/10">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 p-2 rounded-lg">
+                    <IconLibrary name="split" className="w-5 h-5 text-primary" />
+                  </div>
                   <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-foreground">Split contribution</span>
-                    <span className="text-[10px] text-muted-foreground leading-tight">Allocate a payment to multiple contributors</span>
+                    <span className="text-sm font-semibold text-foreground">
+                      Split contribution
+                    </span>
+                    <span className="text-[10px] text-muted-foreground leading-tight">
+                      Allocate a payment to multiple contributors
+                    </span>
                   </div>
                 </div>
-                <Button 
-                  type="button" 
-                  variant="default" 
-                  size="sm" 
-                  className="h-7 text-xs px-3 bg-emerald-700 hover:bg-emerald-800"
-                  onClick={() => setAllocations([...allocations, { id: Date.now().toString(), name: "", amount: "" }])}
-                >
-                  <IconLibrary name="add" className="w-3 h-3 mr-1" />
-                  Add a contributor
-                </Button>
+                <Checkbox
+                  checked={isSplitting}
+                  onCheckedChange={(c) => {
+                    const checked = c === true;
+                    setIsSplitting(checked);
+                    if (!checked) setOtherAllocations([]);
+                  }}
+                />
               </div>
 
-              {allocations.length > 0 && (
-                <div className="flex flex-col pt-4">
-                  <div className="grid grid-cols-[1fr_80px_40px] items-center gap-2 px-2 pb-3 text-sm text-muted-foreground border-b border-border">
-                    <span>Name</span>
-                    <span>Amount</span>
-                    <span></span>
+              {isSplitting && (
+                <div className="flex flex-col pt-2 gap-3">
+                  <div className="bg-muted/50 p-3 rounded-lg text-[11px] text-muted-foreground leading-relaxed border border-border">
+                    <strong className="text-foreground">Tip:</strong> If a sender is paying entirely
+                    on behalf of others, simply allocate the full amount to the other contributors.
+                    The sender's allocation will automatically adjust to 0 and they will be omitted
+                    from the final split.
                   </div>
-                  {allocations.map((alloc, idx) => (
-                    <div key={alloc.id} className="grid grid-cols-[1fr_80px_40px] items-center gap-2 py-1 border-b border-border">
-                      <Input 
-                        type="text"
-                        placeholder="John Doe" 
-                        value={alloc.name} 
-                        onChange={(e) => {
-                          const newAlloc = [...allocations];
-                          newAlloc[idx].name = e.target.value;
-                          setAllocations(newAlloc);
-                        }} 
-                        className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium"
-                      />
-                      <Input 
-                        type="number"
-                        placeholder="500" 
-                        value={alloc.amount} 
-                        onChange={(e) => {
-                          const newAlloc = [...allocations];
-                          newAlloc[idx].amount = e.target.value ? Number(e.target.value) : "";
-                          setAllocations(newAlloc);
-                        }} 
-                        className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium"
-                      />
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-destructive hover:bg-destructive/10 justify-self-end mr-2"
-                        onClick={() => setAllocations(allocations.filter((a) => a.id !== alloc.id))}
-                      >
-                        <IconLibrary name="trash" className="w-4 h-4" />
-                      </Button>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-foreground">Contributors</span>
+                    <Button
+                      type="button"
+                      variant="default"
+                      size="sm"
+                      className="h-7 text-xs px-3 bg-emerald-600 hover:bg-emerald-700 text-white gap-1"
+                      onClick={() =>
+                        setOtherAllocations([
+                          ...otherAllocations,
+                          { id: Date.now().toString(), name: "", amount: "" },
+                        ])
+                      }
+                    >
+                      <IconLibrary name="add" className="w-3.5 h-3.5" />
+                      Add
+                    </Button>
+                  </div>
+
+                  <div className="flex flex-col bg-card border border-border rounded-xl overflow-hidden">
+                    <div className="grid grid-cols-[1fr_80px_40px] items-center gap-2 px-3 py-2 bg-muted/30 text-xs font-semibold text-muted-foreground border-b border-border">
+                      <span>Name</span>
+                      <span>Amount</span>
+                      <span></span>
                     </div>
-                  ))}
-                  
-                  <div className={cn(
-                    "flex items-center justify-between p-2 mt-2 rounded-md text-sm font-semibold",
-                    amountRemaining === 0 ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400" : "bg-primary/10 text-primary"
-                  )}>
-                    <span>Amount remaining:</span>
-                    <span>Ksh. {amountRemaining.toLocaleString()}</span>
+
+                    {/* Sender Row */}
+                    <div
+                      className={cn(
+                        "grid grid-cols-[1fr_80px_40px] items-center gap-2 py-3 px-1 border-b border-border transition-all duration-300",
+                        senderAmount <= 0 && "opacity-40 grayscale bg-muted/20",
+                      )}
+                    >
+                      <div className="flex flex-col justify-center px-2">
+                        <span className="text-sm font-medium text-foreground">
+                          {item.sender_name || "Unknown"}
+                        </span>
+                        <span className="text-[10px] text-primary font-bold tracking-wider uppercase">
+                          Sender
+                        </span>
+                      </div>
+                      <div className="px-2 text-sm font-medium text-foreground text-right pr-4">
+                        {Math.max(0, senderAmount).toLocaleString()}
+                      </div>
+                      <div></div>
+                    </div>
+
+                    {/* Other Allocations */}
+                    {otherAllocations.map((alloc, idx) => (
+                      <div
+                        key={alloc.id}
+                        className="grid grid-cols-[1fr_80px_40px] items-center gap-2 py-1 px-1 border-b border-border last:border-0"
+                      >
+                        <Input
+                          type="text"
+                          placeholder="John Doe"
+                          value={alloc.name}
+                          onChange={(e) => {
+                            const newAlloc = [...otherAllocations];
+                            newAlloc[idx].name = e.target.value;
+                            setOtherAllocations(newAlloc);
+                          }}
+                          className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="500"
+                          value={alloc.amount}
+                          onChange={(e) => {
+                            const newAlloc = [...otherAllocations];
+                            newAlloc[idx].amount = e.target.value ? Number(e.target.value) : "";
+                            setOtherAllocations(newAlloc);
+                          }}
+                          className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium text-right"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:bg-destructive/10 justify-self-center"
+                          onClick={() =>
+                            setOtherAllocations(otherAllocations.filter((a) => a.id !== alloc.id))
+                          }
+                        >
+                          <IconLibrary name="trash" className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
+
+                  {isOverAllocated && (
+                    <div className="text-xs text-destructive mt-1 font-medium px-1 flex items-center gap-1">
+                      <IconLibrary name="close" className="w-3.5 h-3.5" />
+                      Warning: Total splits exceed the original amount by {-senderAmount}.
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -258,10 +341,10 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
             <Button
               className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-11"
               onClick={handleApprove}
-              disabled={!selectedGroupId || (allocations.length > 0 && amountRemaining !== 0)}
+              disabled={!selectedGroupId || (isSplitting && isOverAllocated)}
             >
               <IconLibrary name="check" className="w-5 h-5" />
-              Approve
+              Approve {isSplitting ? "Split" : ""}
             </Button>
             <Button
               variant="outline"
