@@ -51,18 +51,6 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
         </DialogHeader>
 
         <div className="flex flex-col gap-6 mt-2">
-          {/* Info Alert Box */}
-          <div className="flex items-start gap-3 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-900/30 p-4 rounded-xl">
-            <IconLibrary
-              name="info"
-              className="w-5 h-5 text-green-700 dark:text-green-500 shrink-0 mt-0.5"
-            />
-            <p className="text-sm text-green-800 dark:text-green-400 font-medium leading-relaxed">
-              Approved contributions will be permanently added to the selected campaign and will
-              reflect in your reports.
-            </p>
-          </div>
-
           {/* Form Section */}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
