@@ -28,7 +28,7 @@ const CampaignTemplateCard = () => {
   const reportFooter = settings?.report_footer ?? "Thank you for your support.";
   const blankSlots = settings?.blank_slots ?? 3;
   const removeWatermark = settings?.remove_watermark ?? false;
-  const useEmoji = settings?.paid_indicator === "✔" || settings?.paid_indicator === "✅";
+  const paidIndicator = settings?.paid_indicator ?? "\u2713";
   const requirePin = settings?.require_pin ?? true;
   const accessPin = settings?.access_pin;
 
@@ -160,24 +160,55 @@ const CampaignTemplateCard = () => {
             />
           </div>
 
-          <div className="flex items-center justify-between py-2">
-            <div className="space-y-1 pr-4">
-              <Label className="text-sm font-semibold text-foreground">
-                Use Emoji for Paid Status
-              </Label>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1">
+              <Label className="text-sm font-semibold text-foreground">Paid Status Indicator</Label>
               <p className="text-xs text-muted-foreground">
-                Use a tick emoji instead of the text (PAID).
+                Choose an emoji, a preset word, or type your own custom indicator to mark paid
+                contributions.
               </p>
             </div>
-            <LabeledSwitch
-              checked={useEmoji}
-              onCheckedChange={(checked) =>
-                handleUpdateSetting({ paid_indicator: checked ? "✔" : "PAID" })
-              }
-              disabled={updateCampaign.isPending}
-              labelOn="YES"
-              labelOff="NO"
-            />
+
+            <div className="flex flex-wrap gap-2">
+              {["\u2713", "\u2705", "\ud83d\udcaf", "[PAID]", "(Received)"].map((preset) => (
+                <Button
+                  key={preset}
+                  type="button"
+                  variant={paidIndicator === preset ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleUpdateSetting({ paid_indicator: preset })}
+                  disabled={updateCampaign.isPending}
+                  className={`h-8 rounded-full px-3 text-xs font-semibold ${
+                    paidIndicator === preset
+                      ? "bg-primary text-primary-foreground"
+                      : "border-border text-foreground hover:bg-primary/10 hover:text-primary"
+                  }`}
+                >
+                  {preset}
+                </Button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2 mt-2">
+              <Input
+                key={`input-${paidIndicator}`}
+                placeholder="Type custom text or emoji..."
+                className="max-w-xs border-border bg-background h-9 text-sm"
+                defaultValue={paidIndicator}
+                onBlur={(e) => {
+                  const val = e.target.value.trim();
+                  if (val && val !== paidIndicator) {
+                    handleUpdateSetting({ paid_indicator: val });
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }}
+                disabled={updateCampaign.isPending}
+              />
+            </div>
           </div>
 
           <div className="p-5 rounded-2xl border border-dashed border-primary/40 bg-primary/5 space-y-4">
