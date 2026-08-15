@@ -69,6 +69,9 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
   });
   const { mutateAsync: addContribution, isPending } = useAddManualContributionMutation();
 
+  const [selectedGroupSlug, setSelectedGroupSlug] = useState<string | undefined>();
+  const [selectedCampaignSlug, setSelectedCampaignSlug] = useState<string | undefined>();
+
   const selectedGroupId = useWatch({ control: form.control, name: "groupId" });
 
   useEffect(() => {
@@ -109,11 +112,19 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
       form.reset();
       setIsOpen(false);
 
-      if (!campaignSlug && finalGroupId && finalCampaignId) {
-        router.push(`/treasurer/groups/${finalGroupId}/campaigns/${finalCampaignId}`);
+      if (!campaignSlug && selectedGroupSlug && selectedCampaignSlug) {
+        router.push(`/treasurer/groups/${selectedGroupSlug}/campaigns/${selectedCampaignSlug}`);
       }
     },
-    [campaignSlug, campaignData, form, addContribution, router],
+    [
+      campaignSlug,
+      campaignData,
+      form,
+      addContribution,
+      router,
+      selectedGroupSlug,
+      selectedCampaignSlug,
+    ],
   );
 
   return (
@@ -142,9 +153,11 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
                       </FieldLabel>
                       <GroupSelect
                         value={field.value}
-                        onChange={(val) => {
+                        onChange={(val, slug) => {
                           field.onChange(val);
+                          setSelectedGroupSlug(slug);
                           form.setValue("campaignId", undefined); // reset campaign when group changes
+                          setSelectedCampaignSlug(undefined);
                         }}
                         error={form.formState.errors.groupId?.message}
                       />
@@ -163,7 +176,10 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
                       <CampaignSelect
                         groupId={selectedGroupId}
                         value={field.value}
-                        onChange={field.onChange}
+                        onChange={(val, slug) => {
+                          field.onChange(val);
+                          setSelectedCampaignSlug(slug);
+                        }}
                         error={form.formState.errors.campaignId?.message}
                       />
                     </Field>
