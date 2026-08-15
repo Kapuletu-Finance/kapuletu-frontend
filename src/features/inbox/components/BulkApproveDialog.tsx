@@ -19,7 +19,12 @@ export interface BulkApproveDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedCount: number;
-  onConfirm: (groupId: string, campaignId: string) => void;
+  onConfirm: (
+    groupId: string,
+    campaignId: string,
+    groupSlug?: string,
+    campaignSlug?: string,
+  ) => void;
 }
 
 export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
@@ -29,10 +34,12 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
   onConfirm,
 }) => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+  const [selectedGroupSlug, setSelectedGroupSlug] = useState<string>("");
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>("");
+  const [selectedCampaignSlug, setSelectedCampaignSlug] = useState<string>("");
 
   const handleApprove = () => {
-    onConfirm(selectedGroupId, selectedCampaignId);
+    onConfirm(selectedGroupId, selectedCampaignId, selectedGroupSlug, selectedCampaignSlug);
     onOpenChange(false);
   };
 
@@ -57,7 +64,13 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
               <Label className="text-sm text-foreground">
                 Select Group <span className="text-destructive">*</span>
               </Label>
-              <GroupSelect value={selectedGroupId} onChange={setSelectedGroupId} />
+              <GroupSelect
+                value={selectedGroupId}
+                onChange={(id, slug) => {
+                  setSelectedGroupId(id);
+                  if (slug) setSelectedGroupSlug(slug);
+                }}
+              />
             </div>
 
             <div className="flex flex-col gap-2">
@@ -67,7 +80,10 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
               <CampaignSelect
                 groupId={selectedGroupId}
                 value={selectedCampaignId}
-                onChange={setSelectedCampaignId}
+                onChange={(id, slug) => {
+                  setSelectedCampaignId(id);
+                  if (slug) setSelectedCampaignSlug(slug);
+                }}
                 disabled={!selectedGroupId}
               />
             </div>

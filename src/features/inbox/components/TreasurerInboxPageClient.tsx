@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 import { useState } from "react";
@@ -22,7 +23,6 @@ import {
   useSplitMutation,
   useUndoMutation,
 } from "@/features/inbox/services/mutations";
-import { useRouter } from "next/navigation";
 import { usePendingInboxQuery } from "@/features/inbox/services/queries";
 import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
@@ -95,26 +95,43 @@ export const TreasurerInboxPageClient = () => {
   const bulkApproveMutation = useBulkApproveMutation();
   const bulkRejectMutation = useBulkRejectMutation();
 
-  const handleApprove = (id: string, groupId?: string, campaignId?: string, notes?: string) => {
+  const handleApprove = (
+    id: string,
+    groupId?: string,
+    campaignId?: string,
+    notes?: string,
+    groupSlug?: string,
+    campaignSlug?: string,
+  ) => {
     if (!groupId || !campaignId) {
       setSingleApproveId(id);
       return;
     }
     approveMutation.mutate(
       { id, data: { group_id: groupId, campaign_id: campaignId, internal_note: notes } },
-      { 
+      {
         onSuccess: () => {
           toast.success("Contribution approved!", {
             duration: 60000,
             closeButton: true,
-            action: { label: "View", onClick: () => router.push(campaignId ? `/treasurer/groups/${groupId}/campaigns/${campaignId}/contributions` : `/treasurer/groups/${groupId}/contributions`) },
+            action: {
+              label: "View",
+              onClick: () =>
+                router.push(
+                  campaignId
+                    ? `/treasurer/groups/${groupSlug || groupId}/campaigns/${campaignSlug || campaignId}/contributions`
+                    : `/treasurer/groups/${groupSlug || groupId}/contributions`,
+                ),
+            },
             cancel: { label: "Undo", onClick: () => undoMutation.mutate(id) },
             classNames: {
-              actionButton: "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
-              cancelButton: "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
-            }
+              actionButton:
+                "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
+              cancelButton:
+                "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
+            },
           });
-        }
+        },
       },
     );
   };
@@ -126,23 +143,38 @@ export const TreasurerInboxPageClient = () => {
     campaignId: string | undefined,
     allocations: { name: string; amount: number }[],
     notes?: string,
+    groupSlug?: string,
+    campaignSlug?: string,
   ) => {
     splitMutation.mutate(
-      { id, data: { group_id: groupId, campaign_id: campaignId, allocations, internal_note: notes } },
+      {
+        id,
+        data: { group_id: groupId, campaign_id: campaignId, allocations, internal_note: notes },
+      },
       {
         onSuccess: () => {
           toast.success("Contribution split successfully!", {
             duration: 60000,
             closeButton: true,
-            action: { label: "View", onClick: () => router.push(campaignId ? `/treasurer/groups/${groupId}/campaigns/${campaignId}/contributions` : `/treasurer/groups/${groupId}/contributions`) },
+            action: {
+              label: "View",
+              onClick: () =>
+                router.push(
+                  campaignId
+                    ? `/treasurer/groups/${groupSlug || groupId}/campaigns/${campaignSlug || campaignId}/contributions`
+                    : `/treasurer/groups/${groupSlug || groupId}/contributions`,
+                ),
+            },
             cancel: { label: "Undo", onClick: () => undoMutation.mutate(id) },
             classNames: {
-              actionButton: "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
-              cancelButton: "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
-            }
+              actionButton:
+                "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
+              cancelButton:
+                "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
+            },
           });
-        }
-      }
+        },
+      },
     );
   };
 
@@ -294,7 +326,7 @@ export const TreasurerInboxPageClient = () => {
           }
         }}
         selectedCount={singleApproveId ? 1 : selectedIds.size}
-        onConfirm={(groupId, campaignId) => {
+        onConfirm={(groupId, campaignId, groupSlug, campaignSlug) => {
           if (singleApproveId) {
             approveMutation.mutate(
               { id: singleApproveId, data: { group_id: groupId, campaign_id: campaignId } },
@@ -303,12 +335,22 @@ export const TreasurerInboxPageClient = () => {
                   toast.success("Contribution approved!", {
                     duration: 60000,
                     closeButton: true,
-                    action: { label: "View", onClick: () => router.push(campaignId ? `/treasurer/groups/${groupId}/campaigns/${campaignId}/contributions` : `/treasurer/groups/${groupId}/contributions`) },
+                    action: {
+                      label: "View",
+                      onClick: () =>
+                        router.push(
+                          campaignId
+                            ? `/treasurer/groups/${groupSlug || groupId}/campaigns/${campaignSlug || campaignId}/contributions`
+                            : `/treasurer/groups/${groupSlug || groupId}/contributions`,
+                        ),
+                    },
                     cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleApproveId) },
                     classNames: {
-                      actionButton: "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
-                      cancelButton: "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
-                    }
+                      actionButton:
+                        "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
+                      cancelButton:
+                        "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
+                    },
                   });
                   setSingleApproveId(null);
                 },
@@ -338,8 +380,9 @@ export const TreasurerInboxPageClient = () => {
                   closeButton: true,
                   cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleRejectId) },
                   classNames: {
-                    cancelButton: "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
-                  }
+                    cancelButton:
+                      "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
+                  },
                 });
                 setSingleRejectId(null);
               },

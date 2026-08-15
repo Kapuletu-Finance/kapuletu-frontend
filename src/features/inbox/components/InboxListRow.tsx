@@ -12,8 +12,23 @@ export interface InboxListRowProps {
   item: PendingInboxOut;
   isSelected: boolean;
   onSelect: (id: string, checked: boolean) => void;
-  onApprove: (id: string, groupId?: string, campaignId?: string, notes?: string) => void;
-  onSplit: (id: string, groupId: string, campaignId: string | undefined, allocations: { name: string; amount: number }[], notes?: string) => void;
+  onApprove: (
+    id: string,
+    groupId?: string,
+    campaignId?: string,
+    notes?: string,
+    groupSlug?: string,
+    campaignSlug?: string,
+  ) => void;
+  onSplit: (
+    id: string,
+    groupId: string,
+    campaignId: string | undefined,
+    allocations: { name: string; amount: number }[],
+    notes?: string,
+    groupSlug?: string,
+    campaignSlug?: string,
+  ) => void;
   onReject: (id: string) => void;
 }
 
@@ -114,14 +129,15 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
           <IconLibrary name="close" className="w-4 h-4" />
           Reject
         </Button>
-
       </div>
 
       <ContributionDetailsDialog
         item={item}
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        onApprove={(id, groupId, campaignId, notes) => onApprove(id, groupId, campaignId, notes)}
+        onApprove={(id, groupId, campaignId, notes, groupSlug, campaignSlug) =>
+          onApprove(id, groupId, campaignId, notes, groupSlug, campaignSlug)
+        }
         onSplit={onSplit}
         onReject={onReject}
       />

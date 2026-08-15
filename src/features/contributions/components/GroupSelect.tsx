@@ -14,7 +14,7 @@ import { useGroupsQuery } from "@/features/groups/services/queries";
 
 interface GroupSelectProps {
   value?: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, slug?: string) => void;
   disabled?: boolean;
   error?: string;
 }
@@ -36,7 +36,10 @@ export function GroupSelect({ value, onChange, disabled, error }: GroupSelectPro
       <Select
         value={value}
         onValueChange={(val) => {
-          if (val) onChange(val);
+          if (val) {
+            const group = data?.items?.find((g) => g.id === val);
+            onChange(val, group?.slug || undefined);
+          }
         }}
         disabled={disabled}
       >

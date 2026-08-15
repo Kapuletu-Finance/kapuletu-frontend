@@ -15,7 +15,7 @@ import { useCampaignsQuery } from "@/features/campaigns/services/queries";
 interface CampaignSelectProps {
   groupId?: string;
   value?: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, slug?: string) => void;
   disabled?: boolean;
   error?: string;
 }
@@ -39,7 +39,10 @@ export function CampaignSelect({ groupId, value, onChange, disabled, error }: Ca
       <Select
         value={value}
         onValueChange={(val) => {
-          if (val) onChange(val);
+          if (val) {
+            const campaign = data?.items?.find((c) => c.id === val);
+            onChange(val, campaign?.slug || undefined);
+          }
         }}
         disabled={isDisabled}
       >

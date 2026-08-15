@@ -18,13 +18,22 @@ export interface ContributionDetailsDialogProps {
   item: PendingInboxOut | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onApprove: (id: string, groupId: string, campaignId: string, notes: string) => void;
+  onApprove: (
+    id: string,
+    groupId: string,
+    campaignId: string,
+    notes: string,
+    groupSlug?: string,
+    campaignSlug?: string,
+  ) => void;
   onSplit: (
     id: string,
     groupId: string,
     campaignId: string | undefined,
     allocations: { name: string; amount: number }[],
     notes: string,
+    groupSlug?: string,
+    campaignSlug?: string,
   ) => void;
   onReject: (id: string) => void;
 }
@@ -38,7 +47,9 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
   onReject,
 }) => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+  const [selectedGroupSlug, setSelectedGroupSlug] = useState<string>("");
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>("");
+  const [selectedCampaignSlug, setSelectedCampaignSlug] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [otherAllocations, setOtherAllocations] = useState<
     { id: string; name: string; amount: number | "" }[]
@@ -89,9 +100,18 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
         selectedCampaignId || undefined,
         finalAllocations,
         notes,
+        selectedGroupSlug,
+        selectedCampaignSlug,
       );
     } else {
-      onApprove(item.pending_id, selectedGroupId, selectedCampaignId, notes);
+      onApprove(
+        item.pending_id,
+        selectedGroupId,
+        selectedCampaignId,
+        notes,
+        selectedGroupSlug,
+        selectedCampaignSlug,
+      );
     }
     onOpenChange(false);
   };
@@ -175,7 +195,13 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
               <Label className="text-sm text-foreground">
                 Select Group <span className="text-destructive">*</span>
               </Label>
-              <GroupSelect value={selectedGroupId} onChange={setSelectedGroupId} />
+              <GroupSelect
+                value={selectedGroupId}
+                onChange={(id, slug) => {
+                  setSelectedGroupId(id);
+                  if (slug) setSelectedGroupSlug(slug);
+                }}
+              />
             </div>
 
             <div className="flex flex-col gap-2">
@@ -185,7 +211,10 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
               <CampaignSelect
                 groupId={selectedGroupId}
                 value={selectedCampaignId}
-                onChange={setSelectedCampaignId}
+                onChange={(id, slug) => {
+                  setSelectedCampaignId(id);
+                  if (slug) setSelectedCampaignSlug(slug);
+                }}
                 disabled={!selectedGroupId}
               />
             </div>
