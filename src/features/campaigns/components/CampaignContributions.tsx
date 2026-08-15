@@ -64,7 +64,7 @@ const CampaignContributions = () => {
       className="p-0"
       controls={
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
-          <div className="relative w-full max-w-2xl">
+          <div className="relative w-full flex-1">
             <IconLibrary
               name="search"
               className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"

@@ -63,7 +63,7 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
   return (
     <div className="flex flex-col sm:flex-row items-center w-full justify-between gap-4">
       {/* Search Bar */}
-      <div className="relative w-full flex-1 max-w-lg">
+      <div className="relative w-full flex-1">
         <IconLibrary
           name="search"
           className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10"
@@ -77,8 +77,8 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
         />
       </div>
 
-      {/* Status Filter */}
-      <div className="flex items-center shrink-0">
+      <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+        {/* Status Filter */}
         <Select
           value={selectedStatus}
           onValueChange={(v) => handleSelectStatus(v as StatusFilterValue)}
@@ -99,10 +99,8 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
             ))}
           </SelectContent>
         </Select>
-      </div>
 
       {/* Date Filter */}
-      <div className="flex items-center shrink-0">
         <Select
           value={selectedFilter}
           onValueChange={(v) => handleSelectFilter(v as TimeFilterValue)}
