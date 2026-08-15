@@ -142,8 +142,8 @@ const CampaignContributions = () => {
         <Pagination currentPage={page} totalPages={totalPages} onPageChange={(p) => setPage(p)} />
       }
     >
-      <div className="bg-card border border-border shadow-sm rounded-xl overflow-hidden mt-6">
-        <CardContent className="p-0">
+      <div className="bg-card border border-border shadow-sm rounded-xl overflow-x-auto mt-6">
+        <CardContent className="p-0 min-w-[700px]">
           <div className="grid grid-cols-4 text-sm font-semibold text-muted-foreground py-4 px-6 border-b border-border sticky top-0 z-10 bg-card">
             <span>Name</span>
             <span>Amount</span>
@@ -151,7 +151,7 @@ const CampaignContributions = () => {
             <span className="text-right sm:text-center">Payment method</span>
           </div>
 
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border animate-in fade-in duration-500">
             {isLoading ? (
               ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((key) => (
                 <div key={key} className="grid grid-cols-4 items-center py-5 px-6 text-sm">
@@ -165,8 +165,14 @@ const CampaignContributions = () => {
                 </div>
               ))
             ) : contributions.length === 0 ? (
-              <div className="py-12 text-center text-sm text-muted-foreground">
-                No contributions found.
+              <div className="py-16 flex flex-col items-center justify-center text-center">
+                <div className="bg-muted/50 p-4 rounded-full mb-4">
+                  <IconLibrary name="info" className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">No contributions yet</h3>
+                <p className="text-sm text-muted-foreground max-w-sm mt-1">
+                  When this campaign receives its first contribution, it will appear here.
+                </p>
               </div>
             ) : (
               contributions.map((item, index) => {

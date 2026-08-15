@@ -24,6 +24,7 @@ export interface BulkApproveDialogProps {
     groupSlug?: string,
     campaignSlug?: string,
   ) => void;
+  isLoading?: boolean;
 }
 
 export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
@@ -31,6 +32,7 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
   onOpenChange,
   selectedCount,
   onConfirm,
+  isLoading,
 }) => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [selectedGroupSlug, setSelectedGroupSlug] = useState<string>("");
@@ -101,11 +103,12 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
               Cancel
             </Button>
             <Button
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground h-11"
+              className="flex-1 h-11"
               onClick={handleApprove}
               disabled={!selectedGroupId}
+              isLoading={isLoading}
             >
-              Approve
+              Approve {selectedCount} Records
             </Button>
           </div>
         </div>

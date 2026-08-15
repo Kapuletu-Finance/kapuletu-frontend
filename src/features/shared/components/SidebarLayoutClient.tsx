@@ -208,12 +208,18 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
             </div>
           </header>
 
+          {/* Sticky Breadcrumb Bar */}
+          <div className="bg-muted px-4 md:px-6 lg:px-8 py-3 border-b border-border shrink-0 z-10 sticky top-0 shadow-sm">
+            <div className="max-w-6xl mx-auto">
+              <AppBreadcrumb role={role} />
+            </div>
+          </div>
+
           {/* Page Content */}
           <ScrollArea className="flex-1 min-h-0 bg-muted transition-colors">
             <main className="p-4 md:p-6 lg:p-8">
               <div className="max-w-6xl mx-auto space-y-4">
                 <VerifyEmailAlert />
-                <AppBreadcrumb role={role} />
                 {children}
               </div>
             </main>

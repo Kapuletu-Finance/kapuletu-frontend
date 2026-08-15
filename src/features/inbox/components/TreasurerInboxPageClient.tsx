@@ -342,7 +342,7 @@ export const TreasurerInboxPageClient = () => {
               ))}
             </div>
           ) : inboxItems.length > 0 ? (
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full animate-in fade-in duration-500">
               {inboxItems.map((item) => (
                 <InboxListRow
                   key={item.pending_id}
@@ -356,7 +356,7 @@ export const TreasurerInboxPageClient = () => {
               ))}
             </div>
           ) : (
-            <div className="py-16">
+            <div className="py-16 animate-in fade-in duration-500">
               <EmptyState message="No new inbox items found." />
             </div>
           )}
@@ -406,6 +406,7 @@ export const TreasurerInboxPageClient = () => {
             handleBulkApprove(groupId, campaignId);
           }
         }}
+        isLoading={approveMutation.isPending || bulkApproveMutation.isPending}
       />
 
       <BulkRejectDialog
