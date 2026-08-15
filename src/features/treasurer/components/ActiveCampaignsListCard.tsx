@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { useWorkspaceOverviewQuery } from "@/features/treasurer/services/queries";
+import { getAvatarColor } from "@/lib/colors";
 import { cn, getInitials } from "@/lib/utils";
 
 const ActiveCampaignsListCard = () => {
@@ -78,8 +79,8 @@ const ActiveCampaignsListCard = () => {
                     >
                       <div
                         className={cn(
-                          "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold shrink-0 text-sm",
-                          "bg-primary/15 text-primary",
+                          "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold shrink-0 text-sm text-white",
+                          getAvatarColor(campaign.title),
                         )}
                       >
                         {getInitials(campaign.title)}
