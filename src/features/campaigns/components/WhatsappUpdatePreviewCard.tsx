@@ -32,6 +32,7 @@ const WhatsappUpdatePreviewCard = () => {
     if (!message) return;
     try {
       await navigator.clipboard.writeText(message);
+      toast.success("Message copied to clipboard!");
     } catch {
       toast.error("Failed to copy message");
     }
