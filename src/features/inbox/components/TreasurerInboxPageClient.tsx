@@ -107,8 +107,12 @@ export const TreasurerInboxPageClient = () => {
           toast.success("Contribution approved!", {
             duration: 60000,
             closeButton: true,
-            action: { label: "View", onClick: () => router.push("/contributions") },
-            cancel: { label: "Undo", onClick: () => undoMutation.mutate(id) }
+            action: { label: "View", onClick: () => router.push(campaignId ? `/treasurer/groups/${groupId}/campaigns/${campaignId}/contributions` : `/treasurer/groups/${groupId}/contributions`) },
+            cancel: { label: "Undo", onClick: () => undoMutation.mutate(id) },
+            classNames: {
+              actionButton: "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
+              cancelButton: "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
+            }
           });
         }
       },
@@ -130,8 +134,12 @@ export const TreasurerInboxPageClient = () => {
           toast.success("Contribution split successfully!", {
             duration: 60000,
             closeButton: true,
-            action: { label: "View", onClick: () => router.push("/contributions") },
-            cancel: { label: "Undo", onClick: () => undoMutation.mutate(id) }
+            action: { label: "View", onClick: () => router.push(campaignId ? `/treasurer/groups/${groupId}/campaigns/${campaignId}/contributions` : `/treasurer/groups/${groupId}/contributions`) },
+            cancel: { label: "Undo", onClick: () => undoMutation.mutate(id) },
+            classNames: {
+              actionButton: "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
+              cancelButton: "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
+            }
           });
         }
       }
@@ -295,8 +303,12 @@ export const TreasurerInboxPageClient = () => {
                   toast.success("Contribution approved!", {
                     duration: 60000,
                     closeButton: true,
-                    action: { label: "View", onClick: () => router.push("/contributions") },
-                    cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleApproveId) }
+                    action: { label: "View", onClick: () => router.push(campaignId ? `/treasurer/groups/${groupId}/campaigns/${campaignId}/contributions` : `/treasurer/groups/${groupId}/contributions`) },
+                    cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleApproveId) },
+                    classNames: {
+                      actionButton: "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
+                      cancelButton: "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
+                    }
                   });
                   setSingleApproveId(null);
                 },
@@ -324,7 +336,10 @@ export const TreasurerInboxPageClient = () => {
                 toast.success("Contribution rejected!", {
                   duration: 60000,
                   closeButton: true,
-                  cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleRejectId) }
+                  cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleRejectId) },
+                  classNames: {
+                    cancelButton: "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
+                  }
                 });
                 setSingleRejectId(null);
               },
