@@ -124,18 +124,12 @@ export const TreasurerInboxPageClient = () => {
       title={`Inbox (${totalItems})`}
       subtitle="Review new contributions before adding them to your records"
       actionButton={
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="gap-2">
-            Bulk Select
-            <IconLibrary name="chevron-down" className="w-4 h-4" />
+        <AddContributionFormDialog>
+          <Button className="gap-2">
+            <IconLibrary name="add" className="w-4 h-4" />
+            Add a contribution
           </Button>
-          <AddContributionFormDialog>
-            <Button className="gap-2">
-              <IconLibrary name="add" className="w-4 h-4" />
-              Add a contribution
-            </Button>
-          </AddContributionFormDialog>
-        </div>
+        </AddContributionFormDialog>
       }
       controls={
         <InboxHeaderControls
