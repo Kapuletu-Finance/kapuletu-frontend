@@ -8,4 +8,5 @@ export const INBOX_URLS = {
   reject: (id: string) => `/inbox/${id}/reject`,
   REPARSE: "/inbox/reparse",
   split: (id: string) => `/inbox/${id}/split`,
+  edit: (id: string) => `/transactions/${id}`,
 } as const;

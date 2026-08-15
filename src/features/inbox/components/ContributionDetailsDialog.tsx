@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CampaignSelect } from "@/features/contributions/components/CampaignSelect";
 import { GroupSelect } from "@/features/contributions/components/GroupSelect";
+import {
+  useApproveMutation,
+  useEditTransactionMutation,
+  useRejectMutation,
+  useSplitMutation,
+} from "@/features/inbox/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { PendingInboxOut } from "@/features/shared/types";
 import { getAvatarColor } from "@/lib/colors";
@@ -55,10 +61,26 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
     { id: string; name: string; amount: number | "" }[]
   >([]);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState(item?.sender_name || "");
+  const [editCode, setEditCode] = useState(item?.inbox_code || "");
+
+  const approveMutation = useApproveMutation();
+  const rejectMutation = useRejectMutation();
+  const splitMutation = useSplitMutation();
+  const editMutation = useEditTransactionMutation();
+
+  useEffect(() => {
+    setEditName(item?.sender_name || "");
+    setEditCode(item?.inbox_code || "");
+    setIsEditing(false);
+  }, [item]);
+
   if (!item) return null;
 
   const isSplitting = otherAllocations.length > 0;
   const totalOtherAllocated = otherAllocations.reduce((sum, a) => sum + (Number(a.amount) || 0), 0);
+
   const senderAmount = (item.amount || 0) - totalOtherAllocated;
   const isOverAllocated = senderAmount < 0;
 
@@ -121,6 +143,29 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
     onOpenChange(false);
   };
 
+  const handleSaveEdit = () => {
+    editMutation.mutate(
+      {
+        id: item.pending_id,
+        data: {
+          extracted_sender_name: editName,
+          extracted_code: editCode,
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsEditing(false);
+        },
+      },
+    );
+  };
+
+  const handleCancelEdit = () => {
+    setEditName(item.sender_name || "");
+    setEditCode(item.inbox_code || "");
+    setIsEditing(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md w-full p-6 bg-card border-none sm:rounded-2xl">
@@ -130,28 +175,64 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
 
         <div className="flex flex-col gap-6">
           {/* Header Section */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 flex-1">
               <div
                 className={cn(
-                  "w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg",
+                  "w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0",
                   avatarColor,
                 )}
               >
                 {initials}
               </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-base text-foreground">
-                  {item.sender_name || "Unknown"}
-                </span>
-                <span className="text-sm text-muted-foreground">
+              <div className="flex flex-col flex-1 max-w-[200px]">
+                {isEditing ? (
+                  <Input
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="h-8 mb-1 text-sm px-2 font-medium"
+                    placeholder="Sender Name"
+                  />
+                ) : (
+                  <span className="font-semibold text-base text-foreground truncate">
+                    {item.sender_name || "Unknown"}
+                  </span>
+                )}
+                <span className="text-sm text-muted-foreground truncate">
                   {item.sender_phone || "No phone number"}
                 </span>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="text-muted-foreground">
-              <IconLibrary name="edit" className="w-5 h-5" />
-            </Button>
+            {isEditing ? (
+              <div className="flex gap-1 shrink-0">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950"
+                  onClick={handleSaveEdit}
+                  disabled={editMutation.isPending}
+                >
+                  <IconLibrary name="check" className="w-5 h-5" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={handleCancelEdit}
+                >
+                  <IconLibrary name="close" className="w-5 h-5" />
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground shrink-0"
+                onClick={() => setIsEditing(true)}
+              >
+                <IconLibrary name="edit" className="w-5 h-5" />
+              </Button>
+            )}
           </div>
 
           {/* Details List */}
@@ -178,8 +259,19 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Transaction code</span>
-              <span className="font-medium">{item.inbox_code || "N/A"}</span>
+              <span className="text-muted-foreground shrink-0">Transaction code</span>
+              {isEditing ? (
+                <Input
+                  value={editCode}
+                  onChange={(e) => setEditCode(e.target.value)}
+                  className="h-7 w-40 text-right px-2 text-sm"
+                  placeholder="Tx Code"
+                />
+              ) : (
+                <span className="font-medium text-right truncate pl-4">
+                  {item.inbox_code || "N/A"}
+                </span>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Received on</span>

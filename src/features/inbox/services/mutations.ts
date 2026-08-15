@@ -243,3 +243,26 @@ export const useClearHistoryMutation = () => {
     },
   });
 };
+
+export interface EditTransactionData {
+  extracted_sender_name?: string;
+  extracted_code?: string;
+  extracted_amount?: number;
+}
+
+export const useEditTransactionMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: EditTransactionData }) => {
+      const response = await apiClient.patch(INBOX_URLS.edit(id), data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: pendingInboxKey });
+      toast.success("Transaction updated successfully!");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to edit transaction.");
+    },
+  });
+};

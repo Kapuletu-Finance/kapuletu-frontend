@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import type React from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,20 @@ const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
     },
     resolver: zodResolver(editCampaignSchema),
   });
+
+  useEffect(() => {
+    if (campaign) {
+      form.reset({
+        campaignName: campaign.title ?? "",
+        description: campaign.description ?? "",
+        targetAmount: String(campaign.target_amount ?? ""),
+        paymentInstructions: campaign.payment_instructions ?? "",
+        fundraisingDeadline: campaign.end_date
+          ? new Date(campaign.end_date).toISOString().split("T")[0]
+          : "",
+      });
+    }
+  }, [campaign, form]);
 
   const onSubmit = (data: EditCampaignFormData) => {
     updateCampaign.mutate(
