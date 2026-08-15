@@ -112,9 +112,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
           <IconLibrary name="close" className="w-4 h-4" />
           Reject
         </Button>
-        <Button variant="ghost" size="icon" className="text-muted-foreground w-8 h-8">
-          <IconLibrary name="more-horizontal" className="w-4 h-4" />
-        </Button>
+
       </div>
 
       <ContributionDetailsDialog

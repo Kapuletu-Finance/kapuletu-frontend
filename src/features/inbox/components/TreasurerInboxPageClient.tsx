@@ -29,7 +29,8 @@ import { cn } from "@/lib/utils";
 export const TreasurerInboxPageClient = () => {
   const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
   const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("this_year"));
-  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(0));
+  const [status, setStatus] = useQueryState("status", parseAsString.withDefault("pending"));
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const limit = 10;
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -39,10 +40,11 @@ export const TreasurerInboxPageClient = () => {
   const [singleRejectId, setSingleRejectId] = useState<string | null>(null);
 
   const { data, isLoading } = usePendingInboxQuery({
-    skip: page * limit,
+    skip: (page - 1) * limit,
     limit,
     search: search || undefined,
     filter: filter || undefined,
+    status: status,
   });
 
   const inboxItems = data?.items ?? [];
@@ -52,7 +54,7 @@ export const TreasurerInboxPageClient = () => {
   const handleSearchChange = React.useCallback(
     (value: string) => {
       setSearch(value);
-      setPage(0);
+      setPage(1);
     },
     [setSearch, setPage],
   );
@@ -60,9 +62,17 @@ export const TreasurerInboxPageClient = () => {
   const handleFilterChange = React.useCallback(
     (value: TimeFilterValue) => {
       setFilter(value);
-      setPage(0);
+      setPage(1);
     },
     [setFilter, setPage],
+  );
+
+  const handleStatusChange = React.useCallback(
+    (value: string) => {
+      setStatus(value);
+      setPage(1);
+    },
+    [setStatus, setPage],
   );
 
   const handleSelect = (id: string, checked: boolean) => {
@@ -100,7 +110,6 @@ export const TreasurerInboxPageClient = () => {
       { pending_ids: Array.from(selectedIds), group_id: groupId, campaign_id: campaignId },
       {
         onSuccess: () => {
-          toast.success(`Approved ${selectedIds.size} contributions!`);
           setSelectedIds(new Set());
         },
       },
@@ -112,7 +121,6 @@ export const TreasurerInboxPageClient = () => {
       { pending_ids: Array.from(selectedIds) },
       {
         onSuccess: () => {
-          toast.success(`Rejected ${selectedIds.size} contributions!`);
           setSelectedIds(new Set());
         },
       },
@@ -135,8 +143,10 @@ export const TreasurerInboxPageClient = () => {
         <InboxHeaderControls
           searchValue={search}
           filterValue={filter as TimeFilterValue}
+          statusValue={status}
           onSearchChange={handleSearchChange}
           onFilterChange={handleFilterChange}
+          onStatusChange={handleStatusChange}
         />
       }
       pagination={
@@ -146,21 +156,21 @@ export const TreasurerInboxPageClient = () => {
               variant="outline"
               size="icon"
               className="text-muted-foreground"
-              disabled={page === 0}
-              onClick={() => setPage(Math.max(0, page - 1))}
+              disabled={page === 1}
+              onClick={() => setPage(Math.max(1, page - 1))}
             >
               <IconLibrary name="chevron-left" className="w-4 h-4" />
             </Button>
             {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => (
               <Button
                 key={String(i + 1)}
-                variant={page === i ? "default" : "outline"}
+                variant={page === i + 1 ? "default" : "outline"}
                 size="icon"
                 className={cn(
                   "font-semibold shadow-sm",
-                  page !== i && "text-foreground font-medium",
+                  page !== i + 1 && "text-foreground font-medium",
                 )}
-                onClick={() => setPage(i)}
+                onClick={() => setPage(i + 1)}
               >
                 {i + 1}
               </Button>
@@ -169,8 +179,8 @@ export const TreasurerInboxPageClient = () => {
               variant="outline"
               size="icon"
               className="text-muted-foreground"
-              disabled={page >= totalPages - 1}
-              onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+              disabled={page >= totalPages}
+              onClick={() => setPage(Math.min(totalPages, page + 1))}
             >
               <IconLibrary name="chevron-right" className="w-4 h-4" />
             </Button>

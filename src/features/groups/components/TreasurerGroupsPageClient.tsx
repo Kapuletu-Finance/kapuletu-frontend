@@ -38,11 +38,11 @@ export const TreasurerGroupsPageClient = () => {
   const [view] = useQueryState("view", parseAsString.withDefault("grid"));
   const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
   const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("all"));
-  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(0));
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const limit = 12;
 
   const { data, isLoading } = useGroupsQuery({
-    skip: page * limit,
+    skip: (page - 1) * limit,
     limit,
     search: search || undefined,
     group_status: filter === "all" ? undefined : (filter as FilterValue),
@@ -58,7 +58,7 @@ export const TreasurerGroupsPageClient = () => {
   const handleSearchChange = React.useCallback(
     (value: string) => {
       setSearch(value);
-      setPage(0);
+      setPage(1);
     },
     [setSearch, setPage],
   );
@@ -66,7 +66,7 @@ export const TreasurerGroupsPageClient = () => {
   const handleFilterChange = React.useCallback(
     (value: FilterValue) => {
       setFilter(value);
-      setPage(0);
+      setPage(1);
     },
     [setFilter, setPage],
   );
@@ -98,21 +98,21 @@ export const TreasurerGroupsPageClient = () => {
               variant="outline"
               size="icon"
               className="text-muted-foreground"
-              disabled={page === 0}
-              onClick={() => setPage(Math.max(0, page - 1))}
+              disabled={page === 1}
+              onClick={() => setPage(Math.max(1, page - 1))}
             >
               <IconLibrary name="chevron-left" className="w-4 h-4" />
             </Button>
             {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => (
               <Button
                 key={String(i + 1)}
-                variant={page === i ? "default" : "outline"}
+                variant={page === i + 1 ? "default" : "outline"}
                 size="icon"
                 className={cn(
                   "font-semibold shadow-sm",
-                  page !== i && "text-foreground font-medium",
+                  page !== i + 1 && "text-foreground font-medium",
                 )}
-                onClick={() => setPage(i)}
+                onClick={() => setPage(i + 1)}
               >
                 {i + 1}
               </Button>
@@ -121,8 +121,8 @@ export const TreasurerGroupsPageClient = () => {
               variant="outline"
               size="icon"
               className="text-muted-foreground"
-              disabled={page >= totalPages - 1}
-              onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+              disabled={page >= totalPages}
+              onClick={() => setPage(Math.min(totalPages, page + 1))}
             >
               <IconLibrary name="chevron-right" className="w-4 h-4" />
             </Button>

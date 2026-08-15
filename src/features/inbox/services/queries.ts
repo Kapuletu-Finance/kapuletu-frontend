@@ -21,6 +21,7 @@ export const usePendingInboxQuery = (params: {
   limit?: number;
   search?: string;
   filter?: string;
+  status?: string;
 }) => {
   return useQuery({
     queryFn: async () => {
@@ -30,6 +31,7 @@ export const usePendingInboxQuery = (params: {
           limit: params.limit,
           search: params.search,
           filter: params.filter,
+          status: params.status,
         },
       });
       return response.data;

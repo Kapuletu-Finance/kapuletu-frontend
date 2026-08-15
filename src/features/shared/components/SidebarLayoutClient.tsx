@@ -31,6 +31,7 @@ import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { UserProfileDropdown } from "@/features/shared/components/UserProfileDropdown";
 import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert";
 import { cn } from "@/lib/utils";
+import { usePendingInboxCountQuery } from "@/features/inbox/services/queries";
 
 const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin", icon: "dashboard", label: "Dashboard" },
@@ -49,9 +50,10 @@ interface AppSidebarProps {
   links: { href: string; label: string; icon: IconName }[];
   onOpenFaqs?: () => void;
   role: UserRole;
+  pendingInboxCount?: number;
 }
 
-const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs, role }) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs, role, pendingInboxCount = 0 }) => {
   const pathname = usePathname();
   const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -99,7 +101,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs, role }) => {
                       >
                         <div
                           className={cn(
-                            "flex items-center justify-center shrink-0 size-10 transition-colors duration-300 rounded-md",
+                            "relative flex items-center justify-center shrink-0 size-10 transition-colors duration-300 rounded-md",
                             isActive ? "bg-primary text-primary-foreground" : "text-primary",
                           )}
                         >
@@ -107,6 +109,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs, role }) => {
                             name={link.icon}
                             className="size-5 transition-transform duration-300 group-hover:scale-110"
                           />
+                          {link.label === "Inbox" && pendingInboxCount > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none shadow-md bg-primary text-primary-foreground">
+                              {pendingInboxCount > 99 ? "99+" : pendingInboxCount}
+                            </span>
+                          )}
                         </div>
                         <span className="text-base tracking-tight truncate group-data-[collapsible=icon]:hidden">
                           {link.label}
@@ -146,6 +153,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   const isAdminOrSuperAdmin = role === "admin" || role === "super_admin";
   const links = isAdminOrSuperAdmin ? ADMIN_LINKS : TREASURER_LINKS;
   const { data: user, isLoading } = useGetMeQuery();
+  const { data: pendingCount } = usePendingInboxCountQuery();
   const [isFaqsOpen, setIsFaqsOpen] = useState(false);
 
   const hour = new Date().getHours();
@@ -154,7 +162,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   return (
     <>
       <SidebarProvider>
-        <AppSidebar links={links} onOpenFaqs={() => setIsFaqsOpen(true)} role={role} />
+        <AppSidebar links={links} onOpenFaqs={() => setIsFaqsOpen(true)} role={role} pendingInboxCount={pendingCount ?? 0} />
 
         <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">
           {/* Header */}

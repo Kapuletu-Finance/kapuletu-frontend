@@ -70,7 +70,8 @@ export const BulkRejectDialog: React.FC<BulkRejectDialogProps> = ({
               Cancel
             </Button>
             <Button
-              className="flex-1 bg-destructive hover:bg-destructive/90 text-destructive-foreground h-11"
+              variant="destructive"
+              className="flex-1 h-11"
               onClick={handleReject}
             >
               Reject

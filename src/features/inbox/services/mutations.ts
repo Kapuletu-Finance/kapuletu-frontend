@@ -104,7 +104,16 @@ export const useBulkApproveMutation = () => {
       const response = await apiClient.post(INBOX_URLS.BULK_APPROVE, data);
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Bulk API returns {results: [...]} — not an array directly
+      const results = Array.isArray(data) ? data : (data?.results ?? []);
+      const failed = results.filter((item: any) => item.status === "error");
+      if (failed.length > 0) {
+        toast.error(`Failed to approve ${failed.length} contribution(s). ${failed[0]?.message?.split('\n')[0]}`);
+      } else {
+        toast.success(`Approved ${results.length} contribution(s)!`);
+      }
+      
       // Fix: use the correct structural key ["inbox", "pending"]
       queryClient.invalidateQueries({ queryKey: pendingInboxKey });
       // Refresh campaign stats
@@ -129,7 +138,15 @@ export const useBulkRejectMutation = () => {
       const response = await apiClient.post(INBOX_URLS.BULK_REJECT, data);
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Bulk API returns {results: [...]} — not an array directly
+      const results = Array.isArray(data) ? data : (data?.results ?? []);
+      const failed = results.filter((item: any) => item.status === "error");
+      if (failed.length > 0) {
+        toast.error(`Failed to reject ${failed.length} contribution(s). ${failed[0]?.message?.split('\n')[0]}`);
+      } else {
+        toast.success(`Rejected ${results.length} contribution(s)!`);
+      }
       // Fix: use the correct structural key ["inbox", "pending"]
       queryClient.invalidateQueries({ queryKey: pendingInboxKey });
       // Refresh campaign stats in case items were campaign-linked
