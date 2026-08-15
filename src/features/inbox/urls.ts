@@ -7,5 +7,5 @@ export const INBOX_URLS = {
   approve: (id: string) => `/inbox/${id}/approve`,
   reject: (id: string) => `/inbox/${id}/reject`,
   REPARSE: "/inbox/reparse",
-  SPLIT: "/inbox/split",
+  split: (id: string) => `/inbox/${id}/split`,
 } as const;

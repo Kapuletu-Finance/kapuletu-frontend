@@ -142,3 +142,30 @@ export const useBulkRejectMutation = () => {
     },
   });
 };
+
+export interface SplitTransactionData {
+  group_id?: string;
+  campaign_id?: string;
+  allocations: { name: string; amount: number }[];
+}
+
+export const useSplitTransactionMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: SplitTransactionData }) => {
+      const response = await apiClient.post(INBOX_URLS.split(id), data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: pendingInboxKey });
+      queryClient.invalidateQueries({ queryKey: ["campaign"] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-chart-data"] });
+      toast.success("Transaction successfully split and approved!");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to split contribution.");
+    },
+  });
+};
