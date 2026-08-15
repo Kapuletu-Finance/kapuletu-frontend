@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -15,6 +15,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCampaignChartDataQuery, useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { useConfetti } from "@/hooks/useConfetti";
 
 const timeRangeToFilter: Record<string, string> = {
   "this-year": "this_year",
@@ -38,6 +39,14 @@ const CampaignProgressCard = () => {
   const { data: chartData, isLoading } = useCampaignChartDataQuery(campaignSlug, filter);
 
   const progress = campaign?.progress_percentage ?? 0;
+  const isGoalMet = progress >= 100;
+  const { fireConfetti } = useConfetti();
+
+  useEffect(() => {
+    if (isGoalMet) {
+      fireConfetti();
+    }
+  }, [isGoalMet, fireConfetti]);
 
   const displayData = chartData?.length
     ? chartData.map((d) => ({ date: d.date, raised: d.amount }))
@@ -84,7 +93,7 @@ const CampaignProgressCard = () => {
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
               <path
-                className="text-primary"
+                className={`text-primary transition-all duration-1000 ease-out ${isGoalMet ? "drop-shadow-[0_0_8px_rgba(var(--primary),0.8)]" : ""}`}
                 strokeDasharray={`${Math.min(progress, 100)}, 100`}
                 strokeWidth="3.5"
                 strokeLinecap="round"
@@ -94,12 +103,27 @@ const CampaignProgressCard = () => {
               />
             </svg>
             <div className="absolute text-center flex flex-col items-center">
-              <span className="text-3xl font-extrabold text-foreground tracking-tight">
-                {isLoading ? "..." : `${Math.round(progress)}%`}
-              </span>
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Raised
-              </span>
+              {isLoading ? (
+                <span className="text-3xl font-extrabold text-foreground tracking-tight">...</span>
+              ) : isGoalMet ? (
+                <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
+                  <IconLibrary name="badge-check" className="w-8 h-8 text-primary mb-1" />
+                  <span className="text-sm font-bold text-foreground tracking-tight leading-none text-center">
+                    Target
+                    <br />
+                    Met!
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <span className="text-3xl font-extrabold text-foreground tracking-tight">
+                    {`${Math.round(progress)}%`}
+                  </span>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Raised
+                  </span>
+                </>
+              )}
             </div>
           </div>
         </div>

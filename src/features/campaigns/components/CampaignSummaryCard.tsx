@@ -19,6 +19,7 @@ const CampaignSummaryCard = () => {
   const target_amount = campaign?.target_amount ?? 0;
   const total_raised = campaign?.total_raised ?? 0;
   const remaining = Math.max(0, target_amount - total_raised);
+  const surplus = campaign?.surplus_amount ?? Math.max(0, total_raised - target_amount);
   const contributor_count = campaign?.contributor_count ?? 0;
 
   return (
@@ -111,13 +112,23 @@ const CampaignSummaryCard = () => {
             <span className="font-bold text-primary">{formatCurrency(total_raised)}</span>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <IconLibrary name="rotate-ccw" className="w-4 h-4" />
-              <span>Amount Remaining</span>
+          {surplus > 0 ? (
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2 text-primary">
+                <IconLibrary name="trending-up" className="w-4 h-4" />
+                <span className="font-medium">Surplus Raised</span>
+              </div>
+              <span className="font-bold text-primary">{formatCurrency(surplus)}</span>
             </div>
-            <span className="font-medium text-muted-foreground">{formatCurrency(remaining)}</span>
-          </div>
+          ) : (
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <IconLibrary name="rotate-ccw" className="w-4 h-4" />
+                <span>Amount Remaining</span>
+              </div>
+              <span className="font-medium text-muted-foreground">{formatCurrency(remaining)}</span>
+            </div>
+          )}
         </div>
 
         <AddContributionFormDialog campaignSlug={campaignSlug}>

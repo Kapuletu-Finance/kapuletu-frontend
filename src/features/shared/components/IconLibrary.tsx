@@ -64,6 +64,7 @@ import {
   Sun,
   Target,
   Trash2,
+  TrendingUp,
   TriangleAlert,
   User,
   Users,
@@ -143,6 +144,7 @@ const ICON_MAP = {
   target: <Target />,
   inbox: <Banknote />,
   trash: <Trash2 />,
+  "trending-up": <TrendingUp />,
   "triangle-alert": <TriangleAlert />,
   split: <Split />,
 } as const;

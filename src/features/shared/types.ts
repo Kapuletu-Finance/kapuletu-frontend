@@ -32,6 +32,7 @@ export interface CampaignOut {
   end_date: string | null;
   total_raised: number;
   progress_percentage: number;
+  surplus_amount: number;
   contributor_count: number;
   total_mpesa?: number;
   total_cash?: number;
@@ -69,6 +70,7 @@ export interface CampaignSummary {
   target_amount: number;
   total_raised: number;
   progress_percentage: number;
+  surplus_amount: number;
 }
 
 export interface SubscriptionOverview {
@@ -287,6 +289,7 @@ export interface PublicWebReportOut {
   raised_amount: number;
   target_amount: number;
   progress_percentage: number;
+  surplus_amount: number;
   total_contributors: number;
   page: number;
   total_pages: number;
