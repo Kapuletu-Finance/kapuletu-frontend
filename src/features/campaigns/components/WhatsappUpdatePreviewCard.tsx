@@ -29,6 +29,18 @@ const WhatsappUpdatePreviewCard = () => {
       preview.description ?? "",
       "",
       `Raised so far: Ksh ${preview.raised.toLocaleString("en-KE")} of Ksh ${preview.target.toLocaleString("en-KE")}`,
+      ...(preview.total_mpesa > 0
+        ? [`Amount Received (M-Pesa): Ksh ${preview.total_mpesa.toLocaleString("en-KE")}`]
+        : []),
+      ...(preview.total_cash > 0
+        ? [`Amount Received (Cash): Ksh ${preview.total_cash.toLocaleString("en-KE")}`]
+        : []),
+      ...(preview.total_bank > 0
+        ? [`Amount Received (Bank): Ksh ${preview.total_bank.toLocaleString("en-KE")}`]
+        : []),
+      ...(preview.total_pledges > 0
+        ? [`Amount Received (Pledge): Ksh ${preview.total_pledges.toLocaleString("en-KE")}`]
+        : []),
       (() => {
         const parts = preview.payment_instructions?.split(",") || [];
         const paybill = parts[0]?.trim() || "------";
@@ -122,7 +134,19 @@ const WhatsappUpdatePreviewCard = () => {
                 Raised so far: Ksh {preview.raised.toLocaleString("en-KE")} of Ksh{" "}
                 {preview.target.toLocaleString("en-KE")}
               </p>
-              <p className="font-bold">
+              {preview.total_mpesa > 0 && (
+                <p>Amount Received (M-Pesa): Ksh {preview.total_mpesa.toLocaleString("en-KE")}</p>
+              )}
+              {preview.total_cash > 0 && (
+                <p>Amount Received (Cash): Ksh {preview.total_cash.toLocaleString("en-KE")}</p>
+              )}
+              {preview.total_bank > 0 && (
+                <p>Amount Received (Bank): Ksh {preview.total_bank.toLocaleString("en-KE")}</p>
+              )}
+              {preview.total_pledges > 0 && (
+                <p>Amount Received (Pledge): Ksh {preview.total_pledges.toLocaleString("en-KE")}</p>
+              )}
+              <p className="font-bold mt-2">
                 PAYBILL:{" "}
                 <span className="bg-background px-1.5 py-0.5 rounded border border-border">
                   {preview.payment_instructions?.split(",")[0]?.trim() || "------"}

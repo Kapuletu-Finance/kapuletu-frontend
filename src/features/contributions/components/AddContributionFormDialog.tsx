@@ -17,6 +17,13 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { NumericInput } from "@/components/ui/numeric-input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAddManualContributionMutation } from "@/features/inbox/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
@@ -239,19 +246,31 @@ const AddContributionFormDialog = ({ campaignSlug, children }: AddContributionDi
               )}
             />
 
-            <div className="space-y-2">
-              <FieldLabel className="text-sm font-semibold text-foreground">
-                Payment Type
-              </FieldLabel>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full justify-between font-normal"
-              >
-                Cash
-                <IconLibrary name="chevron-down" className="w-4 h-4 text-muted-foreground" />
-              </Button>
-            </div>
+            <FormField
+              control={form.control}
+              name="paymentType"
+              render={({ field }) => (
+                <Field data-invalid={!!form.formState.errors.paymentType}>
+                  <FieldLabel className="text-sm font-semibold text-foreground">
+                    Payment Type
+                  </FieldLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full font-normal">
+                      <SelectValue placeholder="Select payment type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="M-Pesa">M-Pesa</SelectItem>
+                      <SelectItem value="Cash">Cash</SelectItem>
+                      <SelectItem value="Bank">Bank</SelectItem>
+                      <SelectItem value="Pledge">Pledge</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {form.formState.errors.paymentType && (
+                    <FieldError>{form.formState.errors.paymentType.message}</FieldError>
+                  )}
+                </Field>
+              )}
+            />
 
             <Button type="submit" className="w-full mt-2" isLoading={isPending}>
               Create Contribution

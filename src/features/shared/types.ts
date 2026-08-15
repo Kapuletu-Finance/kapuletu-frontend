@@ -233,8 +233,15 @@ export interface CampaignReportPreview {
   description: string;
   raised: number;
   target: number;
-  contributors: { name: string; amount: number }[];
-  payment_instructions: string | null;
+  total_mpesa: number;
+  total_cash: number;
+  total_bank: number;
+  total_pledges: number;
+  contributors: {
+    name: string;
+    amount: number;
+  }[];
+  payment_instructions?: string;
   footer: string;
   public_url: string;
 }
