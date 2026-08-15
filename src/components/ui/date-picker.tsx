@@ -4,6 +4,8 @@ import * as React from "react"
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 
+import { Matcher } from "react-day-picker"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -17,10 +19,12 @@ export function DatePicker({
   date,
   setDate,
   className,
+  disabled,
 }: {
   date?: Date;
   setDate: (date?: Date) => void;
   className?: string;
+  disabled?: Matcher | Matcher[];
 }) {
   return (
     <Popover>
@@ -44,6 +48,7 @@ export function DatePicker({
           mode="single"
           selected={date}
           onSelect={setDate}
+          disabled={disabled}
         />
       </PopoverContent>
     </Popover>

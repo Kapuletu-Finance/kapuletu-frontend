@@ -195,6 +195,7 @@ const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
                   <DatePicker
                     date={field.value ? new Date(field.value) : undefined}
                     setDate={(date) => field.onChange(date ? date.toISOString().split("T")[0] : "")}
+                    disabled={{ before: new Date() }}
                   />
                 </Field>
               )}
