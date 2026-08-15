@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { useWorkspaceOverviewQuery } from "@/features/treasurer/services/queries";
+import { cn, getInitials } from "@/lib/utils";
 
 const ActiveCampaignsListCard = () => {
   const { data: overview, isLoading } = useWorkspaceOverviewQuery();
@@ -63,26 +64,48 @@ const ActiveCampaignsListCard = () => {
                     campaign.target_amount > 0
                       ? Math.min(100, (campaign.amount_raised / campaign.target_amount) * 100)
                       : 0;
+                  const isCompleted = progressPercentage >= 100 || campaign.status === "completed";
+                  const detailHref =
+                    campaign.group_slug && campaign.campaign_slug
+                      ? `/treasurer/groups/${campaign.group_slug}/campaigns/${campaign.campaign_slug}/contributions`
+                      : `/treasurer/groups/${campaign.group_id}/campaigns/${campaign.campaign_id}/contributions`;
 
                   return (
                     <Link
                       key={campaign.campaign_id}
-                      href={`/treasurer/groups/${campaign.group_id}/campaigns/${campaign.campaign_id}/contributions`}
-                      className="flex items-center gap-4 py-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors rounded-lg px-2"
+                      href={detailHref}
+                      className="flex items-center gap-4 py-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors rounded-lg px-2 group"
                     >
-                      <div className="size-10 rounded-full flex items-center justify-center bg-primary/10 text-primary">
-                        <IconLibrary name="target" className="w-5 h-5" />
+                      <div
+                        className={cn(
+                          "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold shrink-0 text-sm",
+                          "bg-primary/15 text-primary",
+                        )}
+                      >
+                        {getInitials(campaign.title)}
                       </div>
-                      <div className="flex flex-col flex-1 gap-1">
+                      <div className="flex flex-col flex-1 gap-1.5">
                         <div className="flex justify-between items-center">
-                          <span className="text-foreground font-semibold text-sm sm:text-base line-clamp-1">
+                          <span className="text-foreground font-semibold text-sm sm:text-base line-clamp-1 flex items-center gap-2">
                             {campaign.title}
+                            {isCompleted && (
+                              <IconLibrary
+                                name="badge-check"
+                                className="w-4 h-4 text-primary shrink-0"
+                              />
+                            )}
                           </span>
                         </div>
-                        <Progress
-                          value={progressPercentage}
-                          className="[&_[data-slot=progress-indicator]]:bg-green-500 h-1.5"
-                        />
+
+                        <div className="flex items-center gap-3 w-full max-w-[200px]">
+                          <Progress
+                            value={progressPercentage}
+                            className="w-full **:data-[slot=progress-track]:h-1.5 **:data-[slot=progress-track]:bg-primary/20 **:data-[slot=progress-indicator]:bg-primary"
+                          />
+                          <span className="text-xs font-bold text-primary tabular-nums leading-none min-w-[3ch] text-right">
+                            {Math.round(progressPercentage)}%
+                          </span>
+                        </div>
                       </div>
                     </Link>
                   );

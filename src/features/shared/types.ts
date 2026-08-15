@@ -67,12 +67,15 @@ export interface GroupOverview {
 
 export interface CampaignOverview {
   campaign_id: string;
+  campaign_slug?: string | null;
   title: string;
   group_id: string;
+  group_slug?: string | null;
   group_name: string;
   target_amount: number;
   amount_raised: number;
   currency: string;
+  status?: string | null;
   updated_at: string;
 }
 
