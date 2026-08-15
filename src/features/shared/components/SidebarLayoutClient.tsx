@@ -131,7 +131,6 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs, role, pendin
       {role !== "admin" && role !== "super_admin" && (
         <SidebarFooter className="gap-2">
           <CurrentPlanCard />
-          <NeedAssistanceCard onOpenFaqs={onOpenFaqs} />
         </SidebarFooter>
       )}
       <SidebarRail />
@@ -187,6 +186,14 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
             </div>
 
             <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setIsFaqsOpen(true)}
+                className="relative shrink-0 size-9 inline-flex items-center justify-center hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
+                aria-label="Help and FAQs"
+              >
+                <IconLibrary name="help" className="h-5 w-5 text-muted-foreground" />
+              </button>
               <NotificationsDropdown />
               <UserProfileDropdown role={role} />
             </div>
