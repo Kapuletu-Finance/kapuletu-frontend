@@ -222,3 +222,24 @@ export const useUndoMutation = () => {
     },
   });
 };
+
+export const useClearHistoryMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data?: { pending_ids?: string[] }) => {
+      const response = await apiClient.delete("/transactions/history", { data });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(
+        data?.deleted_count
+          ? `Cleared ${data.deleted_count} record(s) from history.`
+          : "History cleared successfully.",
+      );
+      queryClient.invalidateQueries({ queryKey: pendingInboxKey });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to clear history.");
+    },
+  });
+};

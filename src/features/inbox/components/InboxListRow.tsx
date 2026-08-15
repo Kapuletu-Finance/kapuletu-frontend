@@ -52,10 +52,14 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
   return (
     <div className="flex flex-col xl:flex-row xl:items-center gap-4 py-4 px-2 border-b border-border hover:bg-muted/50 transition-colors">
       <div className="flex items-center gap-4 flex-1 min-w-0">
-        <Checkbox
-          checked={isSelected}
-          onCheckedChange={(checked) => onSelect(item.pending_id, checked === true)}
-        />
+        {item.workflow_status === "pending" ? (
+          <Checkbox
+            checked={isSelected}
+            onCheckedChange={(checked) => onSelect(item.pending_id, checked === true)}
+          />
+        ) : (
+          <div className="w-4 h-4 shrink-0" />
+        )}
 
         <div
           className={cn(
@@ -93,7 +97,9 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
         </div>
 
         <div className="w-32 shrink-0 truncate text-muted-foreground text-sm">
-          {item.purpose || "No associated group"}
+          {item.assigned_group_name
+            ? `${item.assigned_group_name}${item.assigned_campaign_name ? ` / ${item.assigned_campaign_name}` : ""}`
+            : item.purpose || "No associated group"}
         </div>
 
         <div className="w-20 shrink-0">
@@ -111,24 +117,44 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
       </div>
 
       <div className="flex items-center gap-2 shrink-0 justify-end w-full xl:w-auto">
-        <Button
-          variant="default"
-          size="sm"
-          onClick={() => onApprove(item.pending_id)}
-          className="bg-primary hover:bg-primary/90 gap-1.5"
-        >
-          <IconLibrary name="check" className="w-4 h-4" />
-          Approve
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onReject(item.pending_id)}
-          className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive gap-1.5"
-        >
-          <IconLibrary name="close" className="w-4 h-4" />
-          Reject
-        </Button>
+        {item.workflow_status === "pending" ? (
+          <>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => onApprove(item.pending_id)}
+              className="bg-primary hover:bg-primary/90 gap-1.5"
+            >
+              <IconLibrary name="check" className="w-4 h-4" />
+              Approve
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onReject(item.pending_id)}
+              className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive gap-1.5"
+            >
+              <IconLibrary name="close" className="w-4 h-4" />
+              Reject
+            </Button>
+          </>
+        ) : (
+          <div
+            className={cn(
+              "px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider min-w-[120px] text-center border",
+              item.workflow_status === "approved" &&
+                "text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/30",
+              item.workflow_status === "split_approved" &&
+                "text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30",
+              item.workflow_status === "rejected" &&
+                "text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30",
+            )}
+          >
+            {item.workflow_status === "approved" && "Approved"}
+            {item.workflow_status === "split_approved" && "Split & Approved"}
+            {item.workflow_status === "rejected" && "Rejected"}
+          </div>
+        )}
       </div>
 
       <ContributionDetailsDialog

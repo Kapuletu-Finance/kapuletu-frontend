@@ -6,6 +6,14 @@ import * as React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddContributionFormDialog from "@/features/contributions/components/AddContributionFormDialog";
 import BulkApproveDialog from "@/features/inbox/components/BulkApproveDialog";
@@ -19,6 +27,7 @@ import {
   useApproveMutation,
   useBulkApproveMutation,
   useBulkRejectMutation,
+  useClearHistoryMutation,
   useRejectMutation,
   useSplitMutation,
   useUndoMutation,
@@ -43,6 +52,8 @@ export const TreasurerInboxPageClient = () => {
   const [isBulkRejectOpen, setIsBulkRejectOpen] = useState(false);
   const [singleApproveId, setSingleApproveId] = useState<string | null>(null);
   const [singleRejectId, setSingleRejectId] = useState<string | null>(null);
+  const [isClearHistoryOpen, setIsClearHistoryOpen] = useState(false);
+  const clearHistoryMutation = useClearHistoryMutation();
 
   const { data, isLoading } = usePendingInboxQuery({
     skip: (page - 1) * limit,
@@ -55,6 +66,11 @@ export const TreasurerInboxPageClient = () => {
   const inboxItems = data?.items ?? [];
   const totalPages = data?.total_pages ?? 1;
   const totalItems = data?.total_items ?? 0;
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We explicitly want to clear selections when the filters change
+  React.useEffect(() => {
+    setSelectedIds(new Set());
+  }, [status, filter, search]);
 
   const handleSearchChange = React.useCallback(
     (value: string) => {
@@ -267,12 +283,29 @@ export const TreasurerInboxPageClient = () => {
     >
       <div className="w-full overflow-x-auto pb-4 mt-6">
         <div className="flex flex-col min-w-[1000px] bg-card rounded-xl border border-border">
-          <InboxBulkActions
-            selectedCount={selectedIds.size}
-            onClearSelection={() => setSelectedIds(new Set())}
-            onApproveAll={() => setIsBulkApproveOpen(true)}
-            onRejectAll={() => setIsBulkRejectOpen(true)}
-          />
+          {status === "pending" ? (
+            <InboxBulkActions
+              selectedCount={selectedIds.size}
+              onClearSelection={() => setSelectedIds(new Set())}
+              onApproveAll={() => setIsBulkApproveOpen(true)}
+              onRejectAll={() => setIsBulkRejectOpen(true)}
+            />
+          ) : (
+            <div className="flex items-center justify-between p-4 border-b border-border bg-muted/20">
+              <span className="text-sm font-medium text-muted-foreground">
+                {selectedIds.size > 0 ? `${selectedIds.size} selected` : "Processed History"}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive gap-2"
+                onClick={() => setIsClearHistoryOpen(true)}
+              >
+                <IconLibrary name="trash" className="w-4 h-4" />
+                Clear History
+              </Button>
+            </div>
+          )}
 
           {isLoading ? (
             <div className="flex flex-col w-full">
@@ -392,6 +425,45 @@ export const TreasurerInboxPageClient = () => {
           }
         }}
       />
+
+      <Dialog open={isClearHistoryOpen} onOpenChange={setIsClearHistoryOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Clear History</DialogTitle>
+            <DialogDescription>
+              This will clear the selected records from your inbox history. Note: This action does
+              not delete the actual contributions from your financial ledger.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsClearHistoryOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={clearHistoryMutation.isPending}
+              onClick={() => {
+                const pending_ids = selectedIds.size > 0 ? Array.from(selectedIds) : undefined;
+                clearHistoryMutation.mutate(
+                  { pending_ids },
+                  {
+                    onSuccess: () => {
+                      setIsClearHistoryOpen(false);
+                      setSelectedIds(new Set());
+                    },
+                  },
+                );
+              }}
+            >
+              {clearHistoryMutation.isPending
+                ? "Clearing..."
+                : selectedIds.size > 0
+                  ? `Clear ${selectedIds.size} Records`
+                  : "Clear All History"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageLayout>
   );
 };

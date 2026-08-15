@@ -111,6 +111,8 @@ export interface PendingInboxOut {
   confidence_score: number;
   workflow_status: string;
   created_at: string;
+  assigned_group_name?: string;
+  assigned_campaign_name?: string;
 }
 
 export interface PaginatedPendingResponse {
