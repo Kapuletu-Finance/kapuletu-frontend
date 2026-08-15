@@ -40,7 +40,7 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconLibrary name="smartphone" className="w-4 h-4" />
                 <span>
-                  Amount Received <span className="opacity-60">(M-Pesa)</span>
+                  Amount Received <span className="text-primary">(M-Pesa)</span>
                 </span>
               </div>
               <span className="font-medium text-foreground">
@@ -54,7 +54,7 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconLibrary name="contribution" className="w-4 h-4" />
                 <span>
-                  Amount Received <span className="opacity-60">(Cash)</span>
+                  Amount Received <span className="text-primary">(Cash)</span>
                 </span>
               </div>
               <span className="font-medium text-foreground">
@@ -68,7 +68,7 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconLibrary name="globe" className="w-4 h-4" />
                 <span>
-                  Amount Received <span className="opacity-60">(Bank)</span>
+                  Amount Received <span className="text-primary">(Bank)</span>
                 </span>
               </div>
               <span className="font-medium text-foreground">
@@ -82,7 +82,7 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconLibrary name="report" className="w-4 h-4" />
                 <span>
-                  Amount Received <span className="opacity-60">(Pledge)</span>
+                  Amount Received <span className="text-primary">(Pledge)</span>
                 </span>
               </div>
               <span className="font-medium text-foreground">
