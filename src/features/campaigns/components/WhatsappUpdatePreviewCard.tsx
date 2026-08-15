@@ -23,29 +23,38 @@ const WhatsappUpdatePreviewCard = () => {
 
   const getMessageText = () => {
     if (!preview) return "";
+    const remaining = Math.max(0, preview.target - preview.raised);
+
     const lines: string[] = [
-      preview.title,
+      `*${preview.title}*`,
       "",
       preview.description ?? "",
       "",
-      `Raised so far: Ksh ${preview.raised.toLocaleString("en-KE")} of Ksh ${preview.target.toLocaleString("en-KE")}`,
+      "*Progress Update:*",
+      `So far, we have raised Ksh ${preview.raised.toLocaleString("en-KE")} against our goal of Ksh ${preview.target.toLocaleString("en-KE")}. We have an amount remaining of Ksh ${remaining.toLocaleString("en-KE")} to meet our goal. Every contribution counts.`,
+      "",
       ...(preview.total_mpesa > 0
-        ? [`Amount Received (M-Pesa): Ksh ${preview.total_mpesa.toLocaleString("en-KE")}`]
+        ? [`*Amount Received (M-Pesa):* Ksh ${preview.total_mpesa.toLocaleString("en-KE")}`]
         : []),
       ...(preview.total_cash > 0
-        ? [`Amount Received (Cash): Ksh ${preview.total_cash.toLocaleString("en-KE")}`]
+        ? [`*Amount Received (Cash):* Ksh ${preview.total_cash.toLocaleString("en-KE")}`]
         : []),
       ...(preview.total_bank > 0
-        ? [`Amount Received (Bank): Ksh ${preview.total_bank.toLocaleString("en-KE")}`]
+        ? [`*Amount Received (Bank):* Ksh ${preview.total_bank.toLocaleString("en-KE")}`]
         : []),
       ...(preview.total_pledges > 0
-        ? [`Amount Received (Pledge): Ksh ${preview.total_pledges.toLocaleString("en-KE")}`]
+        ? [`*Amount Received (Pledge):* Ksh ${preview.total_pledges.toLocaleString("en-KE")}`]
         : []),
-      (() => {
-        if (!preview.payment_instructions) return "";
-        return `Payment Instructions: ${preview.payment_instructions}`;
-      })(),
+      ...(preview.total_mpesa > 0 ||
+      preview.total_cash > 0 ||
+      preview.total_bank > 0 ||
+      preview.total_pledges > 0
+        ? [""]
+        : []),
+      "To send your contributions, the payment instructions are as follows:",
+      preview.payment_instructions ? preview.payment_instructions : "",
       "",
+      "*Contributions Received:*",
       ...preview.contributors.map(
         (c, i) => `${i + 1}. ${c.name} - Ksh ${c.amount.toLocaleString("en-KE")} ✓`,
       ),
@@ -53,10 +62,15 @@ const WhatsappUpdatePreviewCard = () => {
         (_, i) => `${preview.contributors.length + i + 1}. `,
       ),
       "",
-      preview.footer,
-      `View the full report at: ${publicUrl}`,
+      "Thank you to everyone who has contributed so far. Your continued support is greatly appreciated as we work towards our goal.",
+      "",
+      "To view a more comprehensive report, click the link below:",
+      publicUrl,
     ];
-    return lines.join("\n");
+    return lines
+      .join("\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
   };
 
   const handleCopyMessage = async () => {
@@ -124,54 +138,84 @@ const WhatsappUpdatePreviewCard = () => {
           <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 font-mono text-xs md:text-sm text-foreground space-y-4 max-w-2xl mx-auto leading-relaxed max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
             <div>
               <p className="font-bold underline">{preview.title}</p>
-              <p className="text-muted-foreground">{preview.description}</p>
+              {preview.description && (
+                <p className="text-muted-foreground mt-2">{preview.description}</p>
+              )}
             </div>
 
             <div>
+              <p className="font-bold">*Progress Update:*</p>
               <p>
-                Raised so far: Ksh {preview.raised.toLocaleString("en-KE")} of Ksh{" "}
-                {preview.target.toLocaleString("en-KE")}
+                So far, we have raised Ksh {preview.raised.toLocaleString("en-KE")} against our goal
+                of Ksh {preview.target.toLocaleString("en-KE")}. We have an amount remaining of Ksh{" "}
+                {Math.max(0, preview.target - preview.raised).toLocaleString("en-KE")} to meet our
+                goal. Every contribution counts.
               </p>
+            </div>
+
+            <div>
               {preview.total_mpesa > 0 && (
-                <p>Amount Received (M-Pesa): Ksh {preview.total_mpesa.toLocaleString("en-KE")}</p>
+                <p>
+                  <span className="font-bold">*Amount Received (M-Pesa):*</span> Ksh{" "}
+                  {preview.total_mpesa.toLocaleString("en-KE")}
+                </p>
               )}
               {preview.total_cash > 0 && (
-                <p>Amount Received (Cash): Ksh {preview.total_cash.toLocaleString("en-KE")}</p>
+                <p>
+                  <span className="font-bold">*Amount Received (Cash):*</span> Ksh{" "}
+                  {preview.total_cash.toLocaleString("en-KE")}
+                </p>
               )}
               {preview.total_bank > 0 && (
-                <p>Amount Received (Bank): Ksh {preview.total_bank.toLocaleString("en-KE")}</p>
+                <p>
+                  <span className="font-bold">*Amount Received (Bank):*</span> Ksh{" "}
+                  {preview.total_bank.toLocaleString("en-KE")}
+                </p>
               )}
               {preview.total_pledges > 0 && (
-                <p>Amount Received (Pledge): Ksh {preview.total_pledges.toLocaleString("en-KE")}</p>
-              )}
-              {preview.payment_instructions && (
-                <p className="font-bold mt-2">
-                  Payment Instructions:{" "}
-                  <span className="bg-background px-1.5 py-0.5 rounded border border-border">
-                    {preview.payment_instructions}
-                  </span>
+                <p>
+                  <span className="font-bold">*Amount Received (Pledge):*</span> Ksh{" "}
+                  {preview.total_pledges.toLocaleString("en-KE")}
                 </p>
               )}
-            </div>
-
-            <div className="space-y-1">
-              {preview.contributors.map((c, i) => (
-                <p key={`contrib-${i}-${c.name}`}>
-                  {i + 1}. {c.name} - Ksh {c.amount.toLocaleString("en-KE")} ✓
-                </p>
-              ))}
-              {Array.from({ length: blankSlotsCount }).map((_, i) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: this is a static list of blank slots
-                <p key={`blank-${i}`}>{preview.contributors.length + i + 1}.</p>
-              ))}
             </div>
 
             <div>
-              <p>{preview.footer}</p>
+              <p>To send your contributions, the payment instructions are as follows:</p>
+              {preview.payment_instructions && (
+                <p className="font-medium bg-background px-1.5 py-0.5 rounded border border-border mt-1 inline-block">
+                  {preview.payment_instructions}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <p className="font-bold">*Contributions Received:*</p>
+              <div className="space-y-1 mt-1">
+                {preview.contributors.map((c, i) => (
+                  <p key={`contrib-${i}-${c.name}`}>
+                    {i + 1}. {c.name} - Ksh {c.amount.toLocaleString("en-KE")} ✓
+                  </p>
+                ))}
+                {Array.from({ length: blankSlotsCount }).map((_, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: this is a static list of blank slots
+                  <p key={`blank-${i}`}>{preview.contributors.length + i + 1}.</p>
+                ))}
+              </div>
+            </div>
+
+            <div>
               <p>
-                View the full report at:{" "}
-                <a href={preview.public_url} className="text-refined-blue underline">
-                  {preview.public_url.replace("https://", "")}
+                Thank you to everyone who has contributed so far. Your continued support is greatly
+                appreciated as we work towards our goal.
+              </p>
+            </div>
+
+            <div>
+              <p>To view a more comprehensive report, click the link below:</p>
+              <p>
+                <a href={publicUrl} className="text-refined-blue underline">
+                  {publicUrl.replace("https://", "")}
                 </a>
               </p>
             </div>
