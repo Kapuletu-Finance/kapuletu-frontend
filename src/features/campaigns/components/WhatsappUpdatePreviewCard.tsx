@@ -30,6 +30,7 @@ const WhatsappUpdatePreviewCard = () => {
 
   const publicUrl = preview?.public_url ?? "";
   const accessPin = campaignData?.settings_override?.access_pin;
+  const blankSlotsCount = campaignData?.settings_override?.blank_slots ?? 3;
 
   const handleCopyMessage = async () => {
     if (!preview) return;
@@ -43,6 +44,9 @@ const WhatsappUpdatePreviewCard = () => {
       "",
       ...preview.contributors.map(
         (c, i) => `${i + 1}. ${c.name} - Ksh ${c.amount.toLocaleString("en-KE")} ✓`,
+      ),
+      ...Array.from({ length: blankSlotsCount }).map(
+        (_, i) => `${preview.contributors.length + i + 1}. `,
       ),
       "",
       preview.footer,
@@ -229,6 +233,9 @@ const WhatsappUpdatePreviewCard = () => {
                 <p key={`contrib-${i}-${c.name}`}>
                   {i + 1}. {c.name} - Ksh {c.amount.toLocaleString("en-KE")} ✓
                 </p>
+              ))}
+              {Array.from({ length: blankSlotsCount }).map((_, i) => (
+                <p key={`blank-${i}`}>{preview.contributors.length + i + 1}.</p>
               ))}
             </div>
 
