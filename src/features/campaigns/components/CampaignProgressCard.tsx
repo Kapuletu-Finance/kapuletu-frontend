@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { Area, AreaChart, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import {
@@ -138,10 +138,11 @@ const CampaignProgressCard = () => {
                     <stop offset="95%" stopColor="var(--color-raised)" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
+                <CartesianGrid vertical={false} stroke="var(--primary)" strokeOpacity={0.15} strokeDasharray="4 4" />
                 <YAxis
                   dataKey="raised"
                   tickLine={false}
-                  axisLine={{ stroke: "hsl(var(--border))" }}
+                  axisLine={{ stroke: "var(--primary)", strokeWidth: 1.5 }}
                   ticks={yTicks}
                   tickMargin={12}
                   tickFormatter={(value: number) =>
@@ -152,7 +153,7 @@ const CampaignProgressCard = () => {
                 <XAxis
                   dataKey="date"
                   tickLine={false}
-                  axisLine={{ stroke: "hsl(var(--border))" }}
+                  axisLine={{ stroke: "var(--primary)", strokeWidth: 1.5 }}
                   tickMargin={12}
                   className="text-xs font-medium text-muted-foreground"
                 />
