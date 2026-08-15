@@ -1,37 +1,24 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { env } from "@/env";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { env } from "@/env";
 import {
   useCampaignQuery,
   useCampaignReportPreviewQuery,
 } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const WhatsappUpdatePreviewCard = () => {
   const params = useParams();
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
   const { data: preview, isLoading } = useCampaignReportPreviewQuery(campaignSlug);
   const { data: campaignData } = useCampaignQuery(campaignSlug);
-  const [shareOpen, setShareOpen] = useState(false);
-
   const publicSlug = campaignData?.slug || campaignSlug;
   const publicUrl = `${env.NEXT_PUBLIC_APP_URL}/report/${publicSlug}`;
-  const accessPin = campaignData?.settings_override?.access_pin;
   const blankSlotsCount = campaignData?.settings_override?.blank_slots ?? 3;
 
   const getMessageText = () => {
@@ -62,18 +49,8 @@ const WhatsappUpdatePreviewCard = () => {
     if (!message) return;
     try {
       await navigator.clipboard.writeText(message);
-      toast.success("Message copied to clipboard!");
     } catch {
       toast.error("Failed to copy message");
-    }
-  };
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(publicUrl);
-      toast.success("Link copied to clipboard!");
-    } catch {
-      toast.error("Failed to copy link");
     }
   };
 
@@ -129,7 +106,7 @@ const WhatsappUpdatePreviewCard = () => {
             <Skeleton className="h-4 w-56" />
           </div>
         ) : preview ? (
-          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 font-mono text-xs md:text-sm text-foreground space-y-4 max-w-2xl mx-auto leading-relaxed">
+          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 font-mono text-xs md:text-sm text-foreground space-y-4 max-w-2xl mx-auto leading-relaxed max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
             <div>
               <p className="font-bold underline">{preview.title}</p>
               <p className="text-muted-foreground">{preview.description}</p>
@@ -159,6 +136,7 @@ const WhatsappUpdatePreviewCard = () => {
                 </p>
               ))}
               {Array.from({ length: blankSlotsCount }).map((_, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: this is a static list of blank slots
                 <p key={`blank-${i}`}>{preview.contributors.length + i + 1}.</p>
               ))}
             </div>
