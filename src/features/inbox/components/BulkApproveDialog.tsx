@@ -13,7 +13,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { CampaignSelect } from "@/features/contributions/components/CampaignSelect";
 import { GroupSelect } from "@/features/contributions/components/GroupSelect";
-import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export interface BulkApproveDialogProps {
   open: boolean;
@@ -21,7 +20,7 @@ export interface BulkApproveDialogProps {
   selectedCount: number;
   onConfirm: (
     groupId: string,
-    campaignId: string,
+    campaignId?: string,
     groupSlug?: string,
     campaignSlug?: string,
   ) => void;
@@ -39,7 +38,12 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
   const [selectedCampaignSlug, setSelectedCampaignSlug] = useState<string>("");
 
   const handleApprove = () => {
-    onConfirm(selectedGroupId, selectedCampaignId, selectedGroupSlug, selectedCampaignSlug);
+    onConfirm(
+      selectedGroupId,
+      selectedCampaignId || undefined,
+      selectedGroupSlug,
+      selectedCampaignSlug,
+    );
     onOpenChange(false);
   };
 
@@ -74,9 +78,7 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label className="text-sm text-foreground">
-                Select Campaign <span className="text-destructive">*</span>
-              </Label>
+              <Label className="text-sm text-foreground">Select Campaign (Optional)</Label>
               <CampaignSelect
                 groupId={selectedGroupId}
                 value={selectedCampaignId}
@@ -101,7 +103,7 @@ export const BulkApproveDialog: React.FC<BulkApproveDialogProps> = ({
             <Button
               className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground h-11"
               onClick={handleApprove}
-              disabled={!selectedGroupId || !selectedCampaignId}
+              disabled={!selectedGroupId}
             >
               Approve
             </Button>

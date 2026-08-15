@@ -103,7 +103,7 @@ export const TreasurerInboxPageClient = () => {
     groupSlug?: string,
     campaignSlug?: string,
   ) => {
-    if (!groupId || !campaignId) {
+    if (!groupId) {
       setSingleApproveId(id);
       return;
     }
@@ -182,7 +182,7 @@ export const TreasurerInboxPageClient = () => {
     setSingleRejectId(id);
   };
 
-  const handleBulkApprove = (groupId: string, campaignId: string) => {
+  const handleBulkApprove = (groupId: string, campaignId?: string) => {
     bulkApproveMutation.mutate(
       { pending_ids: Array.from(selectedIds), group_id: groupId, campaign_id: campaignId },
       {
@@ -326,7 +326,7 @@ export const TreasurerInboxPageClient = () => {
           }
         }}
         selectedCount={singleApproveId ? 1 : selectedIds.size}
-        onConfirm={(groupId, campaignId, groupSlug, campaignSlug) => {
+        onConfirm={(groupId, campaignId?: string, groupSlug?: string, campaignSlug?: string) => {
           if (singleApproveId) {
             approveMutation.mutate(
               { id: singleApproveId, data: { group_id: groupId, campaign_id: campaignId } },

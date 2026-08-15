@@ -132,24 +132,30 @@ export const useBulkApproveMutation = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      // Bulk API returns {results: [...]} — not an array directly
       const results = Array.isArray(data) ? data : (data?.results ?? []);
-      const failed = results.filter((item: any) => item.status === "error");
-      if (failed.length > 0) {
-        toast.error(`Failed to approve ${failed.length} contribution(s). ${failed[0]?.message?.split('\n')[0]}`);
+      const failed = results.filter(
+        (item: { status: string; message?: string }) => item.status === "error",
+      );
+      const succeeded = results.filter(
+        (item: { status: string; message?: string }) => item.status === "success",
+      );
+
+      if (failed.length > 0 && succeeded.length > 0) {
+        toast.warning(
+          `Approved ${succeeded.length} contribution(s), but failed on ${failed.length}. ${failed[0]?.message?.split("\n")[0]}`,
+        );
+      } else if (failed.length > 0) {
+        toast.error(
+          `Failed to approve ${failed.length} contribution(s). ${failed[0]?.message?.split("\n")[0]}`,
+        );
       } else {
         toast.success(`Approved ${results.length} contribution(s)!`);
       }
-      
-      // Fix: use the correct structural key ["inbox", "pending"]
+
       queryClient.invalidateQueries({ queryKey: pendingInboxKey });
-      // Refresh campaign stats
       queryClient.invalidateQueries({ queryKey: ["campaign"] });
-      // Refresh the Contributions tab & Recent Contributions card
       queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
-      // Refresh the activity feed
       queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
-      // Refresh the progress chart
       queryClient.invalidateQueries({ queryKey: ["campaign-chart-data"] });
     },
     onError: (error) => {
@@ -166,19 +172,28 @@ export const useBulkRejectMutation = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      // Bulk API returns {results: [...]} — not an array directly
       const results = Array.isArray(data) ? data : (data?.results ?? []);
-      const failed = results.filter((item: any) => item.status === "error");
-      if (failed.length > 0) {
-        toast.error(`Failed to reject ${failed.length} contribution(s). ${failed[0]?.message?.split('\n')[0]}`);
+      const failed = results.filter(
+        (item: { status: string; message?: string }) => item.status === "error",
+      );
+      const succeeded = results.filter(
+        (item: { status: string; message?: string }) => item.status === "success",
+      );
+
+      if (failed.length > 0 && succeeded.length > 0) {
+        toast.warning(
+          `Rejected ${succeeded.length} contribution(s), but failed on ${failed.length}. ${failed[0]?.message?.split("\n")[0]}`,
+        );
+      } else if (failed.length > 0) {
+        toast.error(
+          `Failed to reject ${failed.length} contribution(s). ${failed[0]?.message?.split("\n")[0]}`,
+        );
       } else {
         toast.success(`Rejected ${results.length} contribution(s)!`);
       }
-      // Fix: use the correct structural key ["inbox", "pending"]
+
       queryClient.invalidateQueries({ queryKey: pendingInboxKey });
-      // Refresh campaign stats in case items were campaign-linked
       queryClient.invalidateQueries({ queryKey: ["campaign"] });
-      // Refresh the activity feed
       queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
     },
     onError: (error) => {
