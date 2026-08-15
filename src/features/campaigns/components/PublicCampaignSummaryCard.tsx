@@ -39,7 +39,9 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconLibrary name="smartphone" className="w-4 h-4" />
-                <span>Amount Received (M-Pesa)</span>
+                <span>
+                  Amount Received <span className="opacity-60">(M-Pesa)</span>
+                </span>
               </div>
               <span className="font-medium text-foreground">
                 {formatCurrency(report.total_mpesa!)}
@@ -51,7 +53,9 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconLibrary name="contribution" className="w-4 h-4" />
-                <span>Amount Received (Cash)</span>
+                <span>
+                  Amount Received <span className="opacity-60">(Cash)</span>
+                </span>
               </div>
               <span className="font-medium text-foreground">
                 {formatCurrency(report.total_cash!)}
@@ -63,7 +67,9 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconLibrary name="globe" className="w-4 h-4" />
-                <span>Amount Received (Bank)</span>
+                <span>
+                  Amount Received <span className="opacity-60">(Bank)</span>
+                </span>
               </div>
               <span className="font-medium text-foreground">
                 {formatCurrency(report.total_bank!)}
@@ -75,7 +81,9 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconLibrary name="report" className="w-4 h-4" />
-                <span>Amount Received (Pledge)</span>
+                <span>
+                  Amount Received <span className="opacity-60">(Pledge)</span>
+                </span>
               </div>
               <span className="font-medium text-foreground">
                 {formatCurrency(report.total_pledges!)}
