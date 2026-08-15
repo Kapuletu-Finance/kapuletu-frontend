@@ -58,6 +58,56 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
             </div>
             <span className="font-semibold text-foreground">{contributor_count}</span>
           </div>
+
+          <div className="border-t border-border/60 my-2 pt-2 space-y-3">
+            {(report.total_mpesa ?? 0) > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <IconLibrary name="smartphone" className="w-4 h-4" />
+                  <span>M-Pesa</span>
+                </div>
+                <span className="font-medium text-foreground">
+                  {formatCurrency(report.total_mpesa!)}
+                </span>
+              </div>
+            )}
+
+            {(report.total_cash ?? 0) > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <IconLibrary name="contribution" className="w-4 h-4" />
+                  <span>Cash</span>
+                </div>
+                <span className="font-medium text-foreground">
+                  {formatCurrency(report.total_cash!)}
+                </span>
+              </div>
+            )}
+
+            {(report.total_bank ?? 0) > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <IconLibrary name="globe" className="w-4 h-4" />
+                  <span>Bank</span>
+                </div>
+                <span className="font-medium text-foreground">
+                  {formatCurrency(report.total_bank!)}
+                </span>
+              </div>
+            )}
+
+            {(report.total_pledges ?? 0) > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <IconLibrary name="report" className="w-4 h-4" />
+                  <span>Pledges</span>
+                </div>
+                <span className="font-medium text-foreground">
+                  {formatCurrency(report.total_pledges!)}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

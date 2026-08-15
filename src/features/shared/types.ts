@@ -33,6 +33,10 @@ export interface CampaignOut {
   total_raised: number;
   progress_percentage: number;
   contributor_count: number;
+  total_mpesa?: number;
+  total_cash?: number;
+  total_bank?: number;
+  total_pledges?: number;
   settings_override?: CampaignSettingsOverride | null;
 }
 
@@ -277,6 +281,10 @@ export interface PublicWebReportOut {
   page: number;
   total_pages: number;
   contributors: PublicContributor[];
+  total_mpesa?: number;
+  total_cash?: number;
+  total_bank?: number;
+  total_pledges?: number;
   blank_slots_count: number;
   payment_instructions: string | null;
   remaining_message: string;

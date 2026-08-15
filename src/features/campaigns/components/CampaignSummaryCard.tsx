@@ -62,6 +62,56 @@ const CampaignSummaryCard = () => {
             </div>
             <span className="font-semibold text-foreground">{contributor_count}</span>
           </div>
+
+          <div className="border-t border-border/60 my-2 pt-2 space-y-3">
+            {(campaign?.total_mpesa ?? 0) > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <IconLibrary name="smartphone" className="w-4 h-4" />
+                  <span>M-Pesa</span>
+                </div>
+                <span className="font-medium text-foreground">
+                  {formatCurrency(campaign!.total_mpesa!)}
+                </span>
+              </div>
+            )}
+
+            {(campaign?.total_cash ?? 0) > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <IconLibrary name="contribution" className="w-4 h-4" />
+                  <span>Cash</span>
+                </div>
+                <span className="font-medium text-foreground">
+                  {formatCurrency(campaign!.total_cash!)}
+                </span>
+              </div>
+            )}
+
+            {(campaign?.total_bank ?? 0) > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <IconLibrary name="globe" className="w-4 h-4" />
+                  <span>Bank</span>
+                </div>
+                <span className="font-medium text-foreground">
+                  {formatCurrency(campaign!.total_bank!)}
+                </span>
+              </div>
+            )}
+
+            {(campaign?.total_pledges ?? 0) > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <IconLibrary name="report" className="w-4 h-4" />
+                  <span>Pledges</span>
+                </div>
+                <span className="font-medium text-foreground">
+                  {formatCurrency(campaign!.total_pledges!)}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
         <AddContributionFormDialog campaignSlug={campaignSlug}>
