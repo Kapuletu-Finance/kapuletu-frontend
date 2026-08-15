@@ -138,7 +138,12 @@ const CampaignProgressCard = () => {
                     <stop offset="95%" stopColor="var(--color-raised)" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid vertical={false} stroke="var(--primary)" strokeOpacity={0.15} strokeDasharray="4 4" />
+                <CartesianGrid
+                  vertical={false}
+                  stroke="var(--primary)"
+                  strokeOpacity={0.15}
+                  strokeDasharray="4 4"
+                />
                 <YAxis
                   dataKey="raised"
                   tickLine={false}
@@ -156,6 +161,18 @@ const CampaignProgressCard = () => {
                   axisLine={{ stroke: "var(--primary)", strokeWidth: 1.5 }}
                   tickMargin={12}
                   className="text-xs font-medium text-muted-foreground"
+                  tickFormatter={(val) => {
+                    if (!val) return "";
+                    // Support "YYYY-MM" downsampling by checking length
+                    if (val.length === 7) {
+                      const d = new Date(`${val}-01`);
+                      if (isNaN(d.getTime())) return val;
+                      return d.toLocaleString("default", { month: "short", year: "2-digit" });
+                    }
+                    const d = new Date(val);
+                    if (isNaN(d.getTime())) return val;
+                    return `${d.getDate()} ${d.toLocaleString("default", { month: "short" })}`;
+                  }}
                 />
                 <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
                 <Area
