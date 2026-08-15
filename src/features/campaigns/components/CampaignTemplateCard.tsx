@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import { Textarea } from "@/components/ui/textarea";
 import DisableCampaignAccessPinDialog from "@/features/campaigns/components/DisableCampaignAccessPinDialog";
 import EditCampaignSettingsDialog from "@/features/campaigns/components/EditCampaignSettingsDialog";
@@ -14,7 +15,6 @@ import {
 } from "@/features/campaigns/services/mutations";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { LabeledSwitch } from "@/components/ui/labeled-switch";
 
 const CampaignTemplateCard = () => {
   const params = useParams();
@@ -99,21 +99,39 @@ const CampaignTemplateCard = () => {
                 Adds numbered empty lines to motivate more people to contribute.
               </p>
             </div>
-            <div className="flex items-center gap-3 border border-primary rounded-full px-2 py-1 text-primary">
+            <div className="flex items-center gap-2 border border-primary rounded-full px-2 py-1 text-primary">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary rounded-full"
+                className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary rounded-full shrink-0"
                 onClick={() => handleUpdateSetting({ blank_slots: Math.max(0, blankSlots - 1) })}
                 disabled={updateCampaign.isPending}
               >
                 <IconLibrary name="minus" className="w-4 h-4" />
               </Button>
-              <span className="font-bold text-sm w-4 text-center">{blankSlots}</span>
+              <input
+                key={blankSlots}
+                type="number"
+                min="0"
+                className="w-8 text-center bg-transparent font-bold text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                defaultValue={blankSlots}
+                onBlur={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  if (!Number.isNaN(val) && val !== blankSlots) {
+                    handleUpdateSetting({ blank_slots: Math.max(0, val) });
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }}
+                disabled={updateCampaign.isPending}
+              />
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary rounded-full"
+                className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary rounded-full shrink-0"
                 onClick={() => handleUpdateSetting({ blank_slots: blankSlots + 1 })}
                 disabled={updateCampaign.isPending}
               >
@@ -153,7 +171,9 @@ const CampaignTemplateCard = () => {
             </div>
             <LabeledSwitch
               checked={useEmoji}
-              onCheckedChange={(checked) => handleUpdateSetting({ paid_indicator: checked ? "✔" : "PAID" })}
+              onCheckedChange={(checked) =>
+                handleUpdateSetting({ paid_indicator: checked ? "✔" : "PAID" })
+              }
               disabled={updateCampaign.isPending}
               labelOn="YES"
               labelOff="NO"
