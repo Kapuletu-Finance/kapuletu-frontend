@@ -232,21 +232,6 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
                     </span>
                   </div>
                 </div>
-                <Button
-                  type="button"
-                  variant="default"
-                  size="sm"
-                  className="h-7 text-xs px-3 bg-emerald-700 hover:bg-emerald-800 text-white"
-                  onClick={() =>
-                    setOtherAllocations([
-                      ...otherAllocations,
-                      { id: Date.now().toString(), name: "", amount: "" },
-                    ])
-                  }
-                >
-                  <IconLibrary name="add" className="w-3 h-3 mr-1" />
-                  Add a contributor
-                </Button>
               </div>
 
               {isSplitting && (
@@ -334,6 +319,22 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
                   )}
                 </div>
               )}
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full mt-1 border-dashed bg-transparent text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:text-emerald-300 dark:border-emerald-900/50 dark:hover:bg-emerald-950/30 transition-colors"
+                onClick={() =>
+                  setOtherAllocations([
+                    ...otherAllocations,
+                    { id: Date.now().toString(), name: "", amount: "" },
+                  ])
+                }
+              >
+                <IconLibrary name="add" className="w-4 h-4 mr-2" />
+                {isSplitting ? "Add another contributor" : "Split this contribution"}
+              </Button>
             </div>
 
             <div className="flex flex-col gap-2">
