@@ -49,6 +49,11 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
   const paymentMethod = isMpesa ? "M-pesa" : "Cash";
   const amount = item.amount ? `Ksh. ${item.amount.toLocaleString()}` : "Unknown";
 
+  const rawDateStr = item.processed_at || item.created_at;
+  // Fallback to Z (UTC) if backend returns naive ISO string
+  const dateStr =
+    rawDateStr.endsWith("Z") || rawDateStr.includes("+") ? rawDateStr : `${rawDateStr}Z`;
+
   return (
     <div className="flex flex-col xl:flex-row xl:items-center gap-4 py-4 px-2 border-b border-border hover:bg-muted/50 transition-colors">
       <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -93,7 +98,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
             hour: "2-digit",
             minute: "2-digit",
             hour12: true,
-          }).format(new Date(item.created_at))}
+          }).format(new Date(dateStr))}
         </div>
 
         <div className="w-32 shrink-0 truncate text-muted-foreground text-sm">

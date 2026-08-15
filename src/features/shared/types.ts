@@ -113,6 +113,7 @@ export interface PendingInboxOut {
   created_at: string;
   assigned_group_name?: string;
   assigned_campaign_name?: string;
+  processed_at?: string;
 }
 
 export interface PaginatedPendingResponse {
