@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import CardWithIcon from "@/features/shared/components/CardWithIcon";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { useWorkspaceOverviewQuery } from "@/features/treasurer/services/queries";
-import GroupsSection from "./GroupsSection";
+import ActiveCampaignsSection from "./ActiveCampaignsSection";
 import OverviewSection from "./OverviewSection";
 import QuickActionsSection from "./QuickActionsSection";
 import RecentActivitiesSection from "./RecentActivitiesSection";
@@ -46,7 +46,7 @@ const TreasurerPageClient = () => {
       {isLoading ? <OverviewSkeleton /> : <OverviewSection overview={overview} />}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-        <GroupsSection />
+        <ActiveCampaignsSection />
         <RecentActivitiesSection />
       </div>
     </>

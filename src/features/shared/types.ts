@@ -61,8 +61,19 @@ export interface PaginatedCampaignResponse {
 export interface GroupOverview {
   group_id: string;
   name: string;
-  currency: string;
+  currency: string | null;
   total_campaigns: number;
+}
+
+export interface CampaignOverview {
+  campaign_id: string;
+  title: string;
+  group_id: string;
+  group_name: string;
+  target_amount: number;
+  amount_raised: number;
+  currency: string;
+  updated_at: string;
 }
 
 export interface CampaignSummary {
@@ -99,6 +110,7 @@ export interface WorkspaceOverviewOut {
   total_collected: number;
   subscription: SubscriptionOverview;
   active_groups: GroupOverview[];
+  recent_campaigns: CampaignOverview[];
   recent_activities: WorkspaceActivity[];
 }
 
