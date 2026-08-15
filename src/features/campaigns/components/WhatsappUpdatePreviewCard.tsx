@@ -42,10 +42,8 @@ const WhatsappUpdatePreviewCard = () => {
         ? [`Amount Received (Pledge): Ksh ${preview.total_pledges.toLocaleString("en-KE")}`]
         : []),
       (() => {
-        const parts = preview.payment_instructions?.split(",") || [];
-        const paybill = parts[0]?.trim() || "------";
-        const account = parts[1]?.trim();
-        return account ? `PAYBILL: ${paybill} ACCOUNT: ${account}` : `PAYBILL: ${paybill}`;
+        if (!preview.payment_instructions) return "";
+        return `Payment Instructions: ${preview.payment_instructions}`;
       })(),
       "",
       ...preview.contributors.map(
@@ -146,21 +144,14 @@ const WhatsappUpdatePreviewCard = () => {
               {preview.total_pledges > 0 && (
                 <p>Amount Received (Pledge): Ksh {preview.total_pledges.toLocaleString("en-KE")}</p>
               )}
-              <p className="font-bold mt-2">
-                PAYBILL:{" "}
-                <span className="bg-background px-1.5 py-0.5 rounded border border-border">
-                  {preview.payment_instructions?.split(",")[0]?.trim() || "------"}
-                </span>
-                {preview.payment_instructions?.split(",")[1] && (
-                  <>
-                    {" "}
-                    ACCOUNT:{" "}
-                    <span className="bg-background px-1.5 py-0.5 rounded border border-border">
-                      {preview.payment_instructions.split(",")[1].trim()}
-                    </span>
-                  </>
-                )}
-              </p>
+              {preview.payment_instructions && (
+                <p className="font-bold mt-2">
+                  Payment Instructions:{" "}
+                  <span className="bg-background px-1.5 py-0.5 rounded border border-border">
+                    {preview.payment_instructions}
+                  </span>
+                </p>
+              )}
             </div>
 
             <div className="space-y-1">
