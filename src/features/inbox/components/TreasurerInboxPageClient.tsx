@@ -20,7 +20,9 @@ import {
   useBulkRejectMutation,
   useRejectMutation,
   useSplitMutation,
+  useUndoMutation,
 } from "@/features/inbox/services/mutations";
+import { useRouter } from "next/navigation";
 import { usePendingInboxQuery } from "@/features/inbox/services/queries";
 import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
@@ -33,6 +35,8 @@ export const TreasurerInboxPageClient = () => {
   const [status, setStatus] = useQueryState("status", parseAsString.withDefault("pending"));
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const limit = 10;
+  const router = useRouter();
+  const undoMutation = useUndoMutation();
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkApproveOpen, setIsBulkApproveOpen] = useState(false);
@@ -98,7 +102,16 @@ export const TreasurerInboxPageClient = () => {
     }
     approveMutation.mutate(
       { id, data: { group_id: groupId, campaign_id: campaignId, internal_note: notes } },
-      { onSuccess: () => toast.success("Contribution approved!") },
+      { 
+        onSuccess: () => {
+          toast.success("Contribution approved!", {
+            duration: 60000,
+            closeButton: true,
+            action: { label: "View", onClick: () => router.push("/contributions") },
+            cancel: { label: "Undo", onClick: () => undoMutation.mutate(id) }
+          });
+        }
+      },
     );
   };
 
@@ -112,6 +125,16 @@ export const TreasurerInboxPageClient = () => {
   ) => {
     splitMutation.mutate(
       { id, data: { group_id: groupId, campaign_id: campaignId, allocations, internal_note: notes } },
+      {
+        onSuccess: () => {
+          toast.success("Contribution split successfully!", {
+            duration: 60000,
+            closeButton: true,
+            action: { label: "View", onClick: () => router.push("/contributions") },
+            cancel: { label: "Undo", onClick: () => undoMutation.mutate(id) }
+          });
+        }
+      }
     );
   };
 
@@ -269,7 +292,12 @@ export const TreasurerInboxPageClient = () => {
               { id: singleApproveId, data: { group_id: groupId, campaign_id: campaignId } },
               {
                 onSuccess: () => {
-                  toast.success("Contribution approved!");
+                  toast.success("Contribution approved!", {
+                    duration: 60000,
+                    closeButton: true,
+                    action: { label: "View", onClick: () => router.push("/contributions") },
+                    cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleApproveId) }
+                  });
                   setSingleApproveId(null);
                 },
               },
@@ -293,7 +321,11 @@ export const TreasurerInboxPageClient = () => {
           if (singleRejectId) {
             rejectMutation.mutate(singleRejectId, {
               onSuccess: () => {
-                toast.success("Contribution rejected!");
+                toast.success("Contribution rejected!", {
+                  duration: 60000,
+                  closeButton: true,
+                  cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleRejectId) }
+                });
                 setSingleRejectId(null);
               },
             });

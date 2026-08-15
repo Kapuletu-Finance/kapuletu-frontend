@@ -89,7 +89,6 @@ export const useSplitMutation = () => {
       queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
       queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
       queryClient.invalidateQueries({ queryKey: ["campaign-chart-data"] });
-      toast.success("Contribution split successfully!");
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to split contribution.");
@@ -184,6 +183,27 @@ export const useBulkRejectMutation = () => {
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to bulk reject contributions.");
+    },
+  });
+};
+
+export const useUndoMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      // Assuming INBOX_URLS.undo is defined. If not, we will need to add it to urls.ts
+      const response = await apiClient.post(`/inbox/${id}/undo`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: pendingInboxKey });
+      queryClient.invalidateQueries({ queryKey: ["campaign"] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-activities"] });
+      toast.success("Action undone successfully!");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to undo action.");
     },
   });
 };
