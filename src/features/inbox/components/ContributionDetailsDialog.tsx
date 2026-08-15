@@ -9,12 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CampaignSelect } from "@/features/contributions/components/CampaignSelect";
 import { GroupSelect } from "@/features/contributions/components/GroupSelect";
-import {
-  useApproveMutation,
-  useEditTransactionMutation,
-  useRejectMutation,
-  useSplitMutation,
-} from "@/features/inbox/services/mutations";
+import { useEditTransactionMutation } from "@/features/inbox/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { PendingInboxOut } from "@/features/shared/types";
 import { getAvatarColor } from "@/lib/colors";
@@ -65,9 +60,6 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
   const [editName, setEditName] = useState(item?.sender_name || "");
   const [editCode, setEditCode] = useState(item?.inbox_code || "");
 
-  const approveMutation = useApproveMutation();
-  const rejectMutation = useRejectMutation();
-  const splitMutation = useSplitMutation();
   const editMutation = useEditTransactionMutation();
 
   useEffect(() => {
