@@ -12,8 +12,8 @@ export default function CampaignReportsPage() {
           <IconLibrary name="edit" className="w-4 h-4" /> Customize your report
         </Button>
       </div>
-      <PublicReportLinkCard />
       <WhatsappUpdatePreviewCard />
+      <PublicReportLinkCard />
       <DownloadCampaignReportCard />
     </div>
   );
