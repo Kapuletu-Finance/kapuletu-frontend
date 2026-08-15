@@ -104,7 +104,7 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
               <IconLibrary name="campaign" className="w-4 h-4" />
               <span>Amount Raised</span>
             </div>
-            <span className="font-semibold text-foreground">{formatCurrency(total_raised)}</span>
+            <span className="font-bold text-primary">{formatCurrency(total_raised)}</span>
           </div>
 
           <div className="flex items-center justify-between text-sm">
@@ -112,7 +112,7 @@ const PublicCampaignSummaryCard: React.FC<PublicCampaignSummaryCardProps> = ({ r
               <IconLibrary name="rotate-ccw" className="w-4 h-4" />
               <span>Amount Remaining</span>
             </div>
-            <span className="font-semibold text-foreground">{formatCurrency(remaining)}</span>
+            <span className="font-medium text-muted-foreground">{formatCurrency(remaining)}</span>
           </div>
         </div>
       </CardContent>
