@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { formatCurrency } from "@/lib/formatters";
 import { getTierStyles, pricings } from "@/features/shared/utils/pricing";
+import { formatCurrency } from "@/lib/formatters";
 
 const PricingPaymentModal = () => {
   const [rawTier] = useQueryState("tier", { defaultValue: "bronze" });
@@ -56,7 +56,9 @@ const PricingPaymentModal = () => {
               <RadioGroupItem value="monthly" id="monthly" className={styles.radioClass} />
               <Label htmlFor="monthly" className="flex-1 cursor-pointer">
                 <div className="font-semibold">Pay Monthly</div>
-                <div className="text-sm text-muted-foreground">Ksh. {formatCurrency(monthlyPrice)} / Month</div>
+                <div className="text-sm text-muted-foreground">
+                  Ksh. {formatCurrency(monthlyPrice)} / Month
+                </div>
               </Label>
             </div>
 
@@ -70,7 +72,9 @@ const PricingPaymentModal = () => {
               <RadioGroupItem value="annual" id="annual" className={styles.radioClass} />
               <Label htmlFor="annual" className="flex-1 cursor-pointer">
                 <div className="font-semibold">Pay Annually</div>
-                <div className="text-sm text-muted-foreground">Ksh. {formatCurrency(annualPrice)} / Year</div>
+                <div className="text-sm text-muted-foreground">
+                  Ksh. {formatCurrency(annualPrice)} / Year
+                </div>
               </Label>
             </div>
           </RadioGroup>
@@ -87,7 +91,9 @@ const PricingPaymentModal = () => {
                 />
                 <Label htmlFor="addons" className="cursor-pointer">
                   <div className="font-semibold">Need More Campaigns?</div>
-                  <div className="text-sm text-muted-foreground">Ksh. {formatCurrency(addonPrice)} / Month</div>
+                  <div className="text-sm text-muted-foreground">
+                    Ksh. {formatCurrency(addonPrice)} / Month
+                  </div>
                   <div className="text-xs text-muted-foreground mt-1">
                     Get an extra campaign for any group.
                   </div>

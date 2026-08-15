@@ -50,6 +50,8 @@ export interface InboxQueryParams {
   skip?: number;
   limit?: number;
   search?: string;
+  sort_by?: string;
+  sort_order?: "asc" | "desc";
 }
 
 export const campaignsQueryKey = ["campaigns"] as const;

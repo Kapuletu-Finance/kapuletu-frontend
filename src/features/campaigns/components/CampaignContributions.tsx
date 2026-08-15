@@ -39,12 +39,15 @@ const CampaignContributions = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [timeFilter, setTimeFilter] = useState("This year");
+  const [sort, setSort] = useState("date-desc");
   const limit = 50;
 
   const { data, isLoading } = useCampaignTransactionsQuery(campaignSlug, {
     skip: (page - 1) * limit,
     limit,
     search: debouncedSearch || undefined,
+    sort_by: sort.split("-")[0],
+    sort_order: sort.split("-")[1] as "asc" | "desc",
   });
 
   const contributions = data?.items ?? [];
@@ -99,6 +102,37 @@ const CampaignContributions = () => {
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTimeFilter("All time")}>
                 All time
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="outline"
+                  className="h-12 px-6 border-border bg-transparent font-medium gap-2 shadow-sm w-full sm:w-auto shrink-0"
+                >
+                  <IconLibrary name="filter" className="w-4 h-4 text-muted-foreground" />
+                  {sort === "date-desc"
+                    ? "Newest First"
+                    : sort === "date-asc"
+                      ? "Oldest First"
+                      : sort === "amount-desc"
+                        ? "Amount: High to Low"
+                        : "Amount: Low to High"}
+                  <IconLibrary name="chevron-down" className="w-4 h-4 text-muted-foreground" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setSort("date-desc")}>Newest First</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSort("date-asc")}>Oldest First</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSort("amount-desc")}>
+                Amount: High to Low
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSort("amount-asc")}>
+                Amount: Low to High
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -48,7 +48,7 @@ const CampaignSummaryCard = () => {
                 </span>
               </div>
               <span className="font-medium text-foreground">
-                {formatCurrency(campaign!.total_mpesa!)}
+                {formatCurrency(campaign?.total_mpesa!)}
               </span>
             </div>
           )}
@@ -62,7 +62,7 @@ const CampaignSummaryCard = () => {
                 </span>
               </div>
               <span className="font-medium text-foreground">
-                {formatCurrency(campaign!.total_cash!)}
+                {formatCurrency(campaign?.total_cash!)}
               </span>
             </div>
           )}
@@ -76,7 +76,7 @@ const CampaignSummaryCard = () => {
                 </span>
               </div>
               <span className="font-medium text-foreground">
-                {formatCurrency(campaign!.total_bank!)}
+                {formatCurrency(campaign?.total_bank!)}
               </span>
             </div>
           )}
@@ -90,7 +90,7 @@ const CampaignSummaryCard = () => {
                 </span>
               </div>
               <span className="font-medium text-foreground">
-                {formatCurrency(campaign!.total_pledges!)}
+                {formatCurrency(campaign?.total_pledges!)}
               </span>
             </div>
           )}

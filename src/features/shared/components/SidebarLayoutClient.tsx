@@ -21,17 +21,16 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
+import { usePendingInboxCountQuery } from "@/features/inbox/services/queries";
 import AppBreadcrumb from "@/features/shared/components/AppBreadcrumb";
 import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
 import type { IconName } from "@/features/shared/components/IconLibrary";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import NeedAssistanceCard from "@/features/shared/components/NeedAssistanceCard";
 import NotificationsDropdown from "@/features/shared/components/NotificationsDropdown";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { UserProfileDropdown } from "@/features/shared/components/UserProfileDropdown";
 import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert";
 import { cn } from "@/lib/utils";
-import { usePendingInboxCountQuery } from "@/features/inbox/services/queries";
 
 const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin", icon: "dashboard", label: "Dashboard" },
@@ -53,7 +52,12 @@ interface AppSidebarProps {
   pendingInboxCount?: number;
 }
 
-const AppSidebar: React.FC<AppSidebarProps> = ({ links, onOpenFaqs, role, pendingInboxCount = 0 }) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({
+  links,
+  onOpenFaqs,
+  role,
+  pendingInboxCount = 0,
+}) => {
   const pathname = usePathname();
   const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -161,7 +165,12 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   return (
     <>
       <SidebarProvider>
-        <AppSidebar links={links} onOpenFaqs={() => setIsFaqsOpen(true)} role={role} pendingInboxCount={pendingCount ?? 0} />
+        <AppSidebar
+          links={links}
+          onOpenFaqs={() => setIsFaqsOpen(true)}
+          role={role}
+          pendingInboxCount={pendingCount ?? 0}
+        />
 
         <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">
           {/* Header */}

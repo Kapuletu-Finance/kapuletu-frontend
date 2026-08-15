@@ -55,7 +55,7 @@ const PublicCampaignReportTop = () => {
 
   const title = report?.campaign_title || "";
   const description = report?.campaign_description || "";
-  
+
   const showSkeletons = !isAuthorized || isLoading;
 
   return (

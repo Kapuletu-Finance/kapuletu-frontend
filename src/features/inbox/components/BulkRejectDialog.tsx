@@ -69,11 +69,7 @@ export const BulkRejectDialog: React.FC<BulkRejectDialogProps> = ({
             >
               Cancel
             </Button>
-            <Button
-              variant="destructive"
-              className="flex-1 h-11"
-              onClick={handleReject}
-            >
+            <Button variant="destructive" className="flex-1 h-11" onClick={handleReject}>
               Reject
             </Button>
           </div>

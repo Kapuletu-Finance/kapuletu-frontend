@@ -22,7 +22,6 @@ import { ChangePasswordDialog } from "@/features/auth/components/ChangePasswordD
 import { type UpdateProfileFormData, updateProfileSchema } from "@/features/auth/schemas";
 import { useUpdateProfileMutation } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
-import { cn } from "@/lib/utils";
 
 export const ProfileSettingsForm = () => {
   const { data: user, isLoading: isUserLoading } = useGetMeQuery();

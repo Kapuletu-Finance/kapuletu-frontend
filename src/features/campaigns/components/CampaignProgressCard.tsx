@@ -166,11 +166,11 @@ const CampaignProgressCard = () => {
                     // Support "YYYY-MM" downsampling by checking length
                     if (val.length === 7) {
                       const d = new Date(`${val}-01`);
-                      if (isNaN(d.getTime())) return val;
+                      if (Number.isNaN(d.getTime())) return val;
                       return d.toLocaleString("default", { month: "short", year: "2-digit" });
                     }
                     const d = new Date(val);
-                    if (isNaN(d.getTime())) return val;
+                    if (Number.isNaN(d.getTime())) return val;
                     return `${d.getDate()} ${d.toLocaleString("default", { month: "short" })}`;
                   }}
                 />

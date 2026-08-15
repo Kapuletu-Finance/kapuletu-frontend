@@ -30,25 +30,39 @@ const statusOptions = [
 
 export type StatusFilterValue = (typeof statusOptions)[number]["value"];
 
+const sortOptions = [
+  { label: "Newest First", value: "date-desc" },
+  { label: "Oldest First", value: "date-asc" },
+  { label: "Amount: High to Low", value: "amount-desc" },
+  { label: "Amount: Low to High", value: "amount-asc" },
+] as const;
+
+export type SortFilterValue = (typeof sortOptions)[number]["value"];
+
 export interface InboxHeaderControlsProps {
   onSearchChange?: (search: string) => void;
   onFilterChange?: (filter: TimeFilterValue) => void;
   onStatusChange?: (status: StatusFilterValue) => void;
+  onSortChange?: (sort: SortFilterValue) => void;
   searchValue?: string;
   filterValue?: TimeFilterValue;
   statusValue?: string;
+  sortValue?: string;
 }
 
 const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
   onSearchChange,
   onFilterChange,
   onStatusChange,
+  onSortChange,
   searchValue,
   filterValue,
   statusValue,
+  sortValue,
 }) => {
   const [selectedFilter, setSelectedFilter] = useState<TimeFilterValue>(filterValue ?? "this_year");
   const [selectedStatus, setSelectedStatus] = useState<string>(statusValue ?? "pending");
+  const [selectedSort, setSelectedSort] = useState<string>(sortValue ?? "date-desc");
 
   const handleSelectFilter = (value: TimeFilterValue) => {
     setSelectedFilter(value);
@@ -58,6 +72,11 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
   const handleSelectStatus = (value: StatusFilterValue) => {
     setSelectedStatus(value);
     onStatusChange?.(value);
+  };
+
+  const handleSelectSort = (value: SortFilterValue) => {
+    setSelectedSort(value);
+    onSortChange?.(value);
   };
 
   return (
@@ -100,7 +119,7 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
           </SelectContent>
         </Select>
 
-      {/* Date Filter */}
+        {/* Date Filter */}
         <Select
           value={selectedFilter}
           onValueChange={(v) => handleSelectFilter(v as TimeFilterValue)}
@@ -115,6 +134,25 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
           </SelectTrigger>
           <SelectContent align="end">
             {filterOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Sort Filter */}
+        <Select value={selectedSort} onValueChange={(v) => handleSelectSort(v as SortFilterValue)}>
+          <SelectTrigger className="h-10 w-44 bg-background text-sm font-semibold text-foreground">
+            <div className="flex items-center gap-2">
+              <IconLibrary name="filter" className="h-4 w-4" />
+              <SelectValue>
+                {sortOptions.find((o) => o.value === selectedSort)?.label ?? "Newest First"}
+              </SelectValue>
+            </div>
+          </SelectTrigger>
+          <SelectContent align="end">
+            {sortOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>

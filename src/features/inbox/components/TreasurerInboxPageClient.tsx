@@ -42,6 +42,7 @@ export const TreasurerInboxPageClient = () => {
   const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
   const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("this_year"));
   const [status, setStatus] = useQueryState("status", parseAsString.withDefault("pending"));
+  const [sort, setSort] = useQueryState("sort", parseAsString.withDefault("date-desc"));
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const limit = 50;
   const router = useRouter();
@@ -61,6 +62,8 @@ export const TreasurerInboxPageClient = () => {
     search: search || undefined,
     filter: filter || undefined,
     status: status,
+    sort_by: sort.split("-")[0],
+    sort_order: sort.split("-")[1] as "asc" | "desc",
   });
 
   const inboxItems = data?.items ?? [];
@@ -70,7 +73,7 @@ export const TreasurerInboxPageClient = () => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: We explicitly want to clear selections when the filters change
   React.useEffect(() => {
     setSelectedIds(new Set());
-  }, [status, filter, search]);
+  }, [status, filter, search, sort]);
 
   const handleSearchChange = React.useCallback(
     (value: string) => {
@@ -94,6 +97,14 @@ export const TreasurerInboxPageClient = () => {
       setPage(1);
     },
     [setStatus, setPage],
+  );
+
+  const handleSortChange = React.useCallback(
+    (value: string) => {
+      setSort(value);
+      setPage(1);
+    },
+    [setSort, setPage],
   );
 
   const handleSelect = (id: string, checked: boolean) => {
@@ -237,9 +248,11 @@ export const TreasurerInboxPageClient = () => {
           searchValue={search}
           filterValue={filter as TimeFilterValue}
           statusValue={status}
+          sortValue={sort}
           onSearchChange={handleSearchChange}
           onFilterChange={handleFilterChange}
           onStatusChange={handleStatusChange}
+          onSortChange={handleSortChange}
         />
       }
       pagination={

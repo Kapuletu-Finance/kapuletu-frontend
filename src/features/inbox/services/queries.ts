@@ -22,6 +22,8 @@ export const usePendingInboxQuery = (params: {
   search?: string;
   filter?: string;
   status?: string;
+  sort_by?: string;
+  sort_order?: "asc" | "desc";
 }) => {
   return useQuery({
     queryFn: async () => {
@@ -32,6 +34,8 @@ export const usePendingInboxQuery = (params: {
           search: params.search,
           filter: params.filter,
           status: params.status,
+          sort_by: params.sort_by,
+          sort_order: params.sort_order,
         },
       });
       return response.data;

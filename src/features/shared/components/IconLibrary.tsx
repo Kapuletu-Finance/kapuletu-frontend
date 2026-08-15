@@ -59,16 +59,16 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Smartphone,
+  Split,
   Star,
   Sun,
   Target,
-  TriangleAlert,
   Trash2,
+  TriangleAlert,
   User,
   Users,
   Wallet,
   X,
-  Split,
 } from "lucide-react";
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -144,7 +144,7 @@ const ICON_MAP = {
   inbox: <Banknote />,
   trash: <Trash2 />,
   "triangle-alert": <TriangleAlert />,
-  split: <Split />
+  split: <Split />,
 } as const;
 
 type IconName = keyof typeof ICON_MAP;

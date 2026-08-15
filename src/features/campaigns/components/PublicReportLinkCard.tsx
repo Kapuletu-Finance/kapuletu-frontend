@@ -13,8 +13,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { env } from "@/env";
-import { useCampaignQuery, useCampaignReportPreviewQuery } from "@/features/campaigns/services/queries";
+import {
+  useCampaignQuery,
+  useCampaignReportPreviewQuery,
+} from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
@@ -22,7 +24,8 @@ const PublicReportLinkCard = () => {
   const params = useParams();
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
   const { data: campaignData, isLoading: isCampaignLoading } = useCampaignQuery(campaignSlug);
-  const { data: preview, isLoading: isPreviewLoading } = useCampaignReportPreviewQuery(campaignSlug);
+  const { data: preview, isLoading: isPreviewLoading } =
+    useCampaignReportPreviewQuery(campaignSlug);
   const [shareOpen, setShareOpen] = useState(false);
 
   const publicUrl = preview?.public_url ?? "";
