@@ -131,7 +131,7 @@ export const TreasurerCampaignDetailPageClient: React.FC<
 
         {/* Tabs and Content */}
         <div className="w-full">
-          <div className="border-b mb-6 sticky top-0 bg-background z-10">
+          <div className="border-b mb-6 sticky top-14 bg-background/80 backdrop-blur-md z-10">
             <nav className="w-full flex flex-wrap justify-between sm:justify-start h-auto p-0 bg-transparent gap-4 sm:gap-12 border-none">
               {tabs.map((tab) => {
                 const isActive = getIsActive(tab.value);

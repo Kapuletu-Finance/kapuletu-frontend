@@ -52,7 +52,7 @@ const RecentContributionsCard = () => {
 
       <CardContent className="p-0 overflow-x-auto">
         <div className="min-w-[500px]">
-          <div className="grid grid-cols-4 text-xs font-semibold text-muted-foreground py-4 px-6 border-b border-border sticky top-0 z-10 bg-card">
+          <div className="grid grid-cols-4 text-xs font-semibold text-muted-foreground py-4 px-6 border-b border-border bg-card">
             <span>Name</span>
             <span>Amount</span>
             <span>Date</span>

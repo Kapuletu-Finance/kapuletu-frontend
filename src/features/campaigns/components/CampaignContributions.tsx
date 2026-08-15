@@ -144,7 +144,7 @@ const CampaignContributions = () => {
     >
       <div className="bg-card border border-border shadow-sm rounded-xl overflow-x-auto mt-6">
         <CardContent className="p-0 min-w-[700px]">
-          <div className="grid grid-cols-4 text-sm font-semibold text-muted-foreground py-4 px-6 border-b border-border sticky top-0 z-10 bg-card">
+          <div className="grid grid-cols-4 text-sm font-semibold text-muted-foreground py-4 px-6 border-b border-border bg-card">
             <span>Name</span>
             <span>Amount</span>
             <span>Date</span>
