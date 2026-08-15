@@ -20,7 +20,16 @@ const WhatsappUpdatePreviewCard = () => {
   const publicSlug = campaignData?.slug || campaignSlug;
   const publicUrl =
     preview?.public_url || `${env.NEXT_PUBLIC_APP_URL}/r/${campaignData?.short_code || publicSlug}`;
-  const blankSlotsCount = campaignData?.settings_override?.blank_slots ?? 3;
+  const settings = campaignData?.settings_override;
+  const blankSlotsCount = settings?.blank_slots ?? 3;
+  const reportTitle = settings?.report_title || `${campaignData?.title || "Campaign"} Update`;
+  const reportFooter = settings?.report_footer || "Thank you for your support.";
+  const paidIndicator = settings?.paid_indicator ?? "\u2713";
+  const removeWatermark = settings?.remove_watermark ?? false;
+  const requirePin = settings?.require_pin ?? true;
+  const accessPin = settings?.access_pin;
+
+  const isGoalMet = preview ? preview.raised >= preview.target : false;
 
   const getMessageText = () => {
     if (!preview) return "";
@@ -92,19 +101,21 @@ const WhatsappUpdatePreviewCard = () => {
         ) : preview ? (
           <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 font-mono text-xs md:text-sm text-foreground space-y-4 max-w-2xl mx-auto leading-relaxed max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
             <div>
-              <p className="font-bold underline">{preview.title}</p>
+              <p className="font-bold underline">*{reportTitle}*</p>
               {preview.description && (
                 <p className="text-muted-foreground mt-2">{preview.description}</p>
               )}
             </div>
 
             <div>
-              <p className="font-bold">*Progress Update:*</p>
+              <p className="font-bold">
+                {isGoalMet ? "*Goal Achieved Update! \ud83c\udf1f*" : "*Progress Update:*"}
+              </p>
               <p>
-                So far, we have raised Ksh {preview.raised.toLocaleString("en-KE")} against our goal
-                of Ksh {preview.target.toLocaleString("en-KE")}. We have an amount remaining of Ksh{" "}
-                {Math.max(0, preview.target - preview.raised).toLocaleString("en-KE")} to meet our
-                goal. Every contribution counts.
+                So far, we have raised Ksh {preview.raised.toLocaleString("en-KE")}
+                {isGoalMet
+                  ? `, successfully surpassing our initial goal of Ksh ${preview.target.toLocaleString("en-KE")}! Thank you to everyone who made this possible. The campaign remains open, and any further contributions are still greatly appreciated.`
+                  : ` against our goal of Ksh ${preview.target.toLocaleString("en-KE")}. We have an amount remaining of Ksh ${Math.max(0, preview.target - preview.raised).toLocaleString("en-KE")} to meet our goal. Every contribution counts.`}
               </p>
             </div>
 
@@ -149,7 +160,7 @@ const WhatsappUpdatePreviewCard = () => {
               <div className="space-y-1 mt-1">
                 {preview.contributors.map((c, i) => (
                   <p key={`contrib-${i}-${c.name}`}>
-                    {i + 1}. {c.name} - Ksh {c.amount.toLocaleString("en-KE")} ✓
+                    {i + 1}. {c.name} - Ksh {c.amount.toLocaleString("en-KE")} {paidIndicator}
                   </p>
                 ))}
                 {Array.from({ length: blankSlotsCount }).map((_, i) => (
@@ -161,23 +172,33 @@ const WhatsappUpdatePreviewCard = () => {
 
             <div>
               <p>
-                Thank you to everyone who has contributed so far. Your continued support is greatly
-                appreciated as we work towards our goal.
+                {isGoalMet
+                  ? "Thank you to everyone who has contributed so far. Your overwhelming support has helped us successfully reach our goal! The campaign is still ongoing, and we encourage you to continue supporting the cause."
+                  : "Thank you to everyone who has contributed so far. Your continued support is greatly appreciated as we work towards our goal."}
               </p>
+              {reportFooter && <p className="mt-2">{reportFooter}</p>}
             </div>
 
             <div>
               <p>To view a more comprehensive report, click the link below:</p>
               <p>
                 <a href={publicUrl} className="text-refined-blue underline">
-                  {publicUrl.replace("https://", "")}
+                  {publicUrl}
                 </a>
               </p>
             </div>
 
-            <div className="pt-2 font-sans font-bold text-xs text-muted-foreground">
-              Powered by KapuLetu
-            </div>
+            {requirePin && accessPin && (
+              <div>
+                <p>Access PIN: {accessPin}</p>
+              </div>
+            )}
+
+            {!removeWatermark && (
+              <div className="pt-2 font-sans font-bold text-xs text-muted-foreground">
+                *Generated via KapuLetu*
+              </div>
+            )}
           </div>
         ) : (
           <div className="py-8 text-center text-sm text-muted-foreground">
