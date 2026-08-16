@@ -323,6 +323,34 @@ export const ProfileSettingsForm = () => {
                       disabled={updateReportingMutation.isPending}
                     />
                   </div>
+
+                  <Separator className="w-full" />
+
+                  <div className="flex items-center justify-between py-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <MessageCircle className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-semibold text-sm text-foreground">WhatsApp Creation</h4>
+                        <p className="text-xs text-muted-foreground">
+                          Create campaigns and groups interactively using Kapuletu AI via WhatsApp
+                        </p>
+                      </div>
+                    </div>
+                    <LabeledSwitch
+                      checked={settings?.automation?.allow_whatsapp_creation ?? false}
+                      onCheckedChange={(checked) => {
+                        if (settings) {
+                          updateAutomationMutation.mutate({
+                            ...settings.automation,
+                            allow_whatsapp_creation: checked,
+                          });
+                        }
+                      }}
+                      disabled={updateAutomationMutation.isPending}
+                    />
+                  </div>
                 </div>
 
                 <Separator className="mx-8 w-auto mb-8" />
