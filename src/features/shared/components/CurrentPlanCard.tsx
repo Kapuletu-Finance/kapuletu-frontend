@@ -70,17 +70,22 @@ const CurrentPlanCard = () => {
       </Card>
 
       {/* Collapsed Icon View */}
-      <Button
-        variant="ghost"
-        className="hidden group-data-[collapsible=icon]:flex justify-center shrink-0 w-full hover:bg-transparent h-auto p-0"
+      <Link
+        href="/subscriptions"
         onClick={handleClick}
+        className="hidden group-data-[collapsible=icon]:flex w-full"
       >
-        <div className="cursor-pointer hover:opacity-80 transition-opacity">
-          <div className={config.iconWrapperClass}>
-            <IconLibrary name={config.icon} className={config.iconClass} />
+        <Button
+          variant="ghost"
+          className="flex justify-center shrink-0 w-full hover:bg-transparent h-auto p-0"
+        >
+          <div className="cursor-pointer hover:opacity-80 transition-opacity">
+            <div className={config.iconWrapperClass}>
+              <IconLibrary name={config.icon} className={config.iconClass} />
+            </div>
           </div>
-        </div>
-      </Button>
+        </Button>
+      </Link>
     </>
   );
 };

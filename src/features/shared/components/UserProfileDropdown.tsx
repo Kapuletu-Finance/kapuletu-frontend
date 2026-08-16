@@ -120,6 +120,12 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ role }
             </DropdownMenuItem>
           )}
           <DropdownMenuItem>
+            <Link href="/subscriptions" className="cursor-pointer flex items-center w-full">
+              <IconLibrary name="credit-card" className="w-4 h-4 mr-2" />
+              Billing & Subscriptions
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
             <Link href="/settings" className="cursor-pointer flex items-center w-full">
               <IconLibrary name="settings" className="w-4 h-4 mr-2" />
               Settings

@@ -39,12 +39,14 @@ import { cn } from "@/lib/utils";
 
 const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin", icon: "dashboard", label: "Dashboard" },
+  { href: "/notifications", icon: "notification", label: "Notifications" },
 ];
 
 const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/treasurer", icon: "home", label: "Dashboard" },
   { href: "/treasurer/groups", icon: "group", label: "Groups" },
   { href: "/treasurer/inbox", icon: "mail", label: "Inbox" },
+  { href: "/notifications", icon: "notification", label: "Notifications" },
   { href: "/treasurer/reports", icon: "report", label: "Reports" },
   { href: "/treasurer/analytics", icon: "analytics", label: "Analytics" },
   { href: "/treasurer/settings", icon: "settings", label: "Settings" },
