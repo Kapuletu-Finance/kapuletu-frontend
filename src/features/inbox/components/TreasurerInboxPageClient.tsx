@@ -51,7 +51,6 @@ export const TreasurerInboxPageClient = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkApproveOpen, setIsBulkApproveOpen] = useState(false);
   const [isBulkRejectOpen, setIsBulkRejectOpen] = useState(false);
-  const [singleApproveId, setSingleApproveId] = useState<string | null>(null);
   const [singleRejectId, setSingleRejectId] = useState<string | null>(null);
   const [isClearHistoryOpen, setIsClearHistoryOpen] = useState(false);
   const clearHistoryMutation = useClearHistoryMutation();
@@ -130,10 +129,6 @@ export const TreasurerInboxPageClient = () => {
     groupSlug?: string,
     campaignSlug?: string,
   ) => {
-    if (!groupId) {
-      setSingleApproveId(id);
-      return;
-    }
     approveMutation.mutate(
       { id, data: { group_id: groupId, campaign_id: campaignId, internal_note: notes } },
       {
@@ -364,49 +359,13 @@ export const TreasurerInboxPageClient = () => {
       </div>
 
       <BulkApproveDialog
-        open={isBulkApproveOpen || singleApproveId !== null}
-        onOpenChange={(open) => {
-          if (!open) {
-            setIsBulkApproveOpen(false);
-            setSingleApproveId(null);
-          }
+        open={isBulkApproveOpen}
+        onOpenChange={setIsBulkApproveOpen}
+        selectedCount={selectedIds.size}
+        onConfirm={(groupId, campaignId?: string) => {
+          handleBulkApprove(groupId, campaignId);
         }}
-        selectedCount={singleApproveId ? 1 : selectedIds.size}
-        onConfirm={(groupId, campaignId?: string, groupSlug?: string, campaignSlug?: string) => {
-          if (singleApproveId) {
-            approveMutation.mutate(
-              { id: singleApproveId, data: { group_id: groupId, campaign_id: campaignId } },
-              {
-                onSuccess: () => {
-                  toast.success("Contribution approved!", {
-                    duration: 60000,
-                    closeButton: true,
-                    action: {
-                      label: "View",
-                      onClick: () =>
-                        router.push(
-                          campaignId
-                            ? `/treasurer/groups/${groupSlug || groupId}/campaigns/${campaignSlug || campaignId}/contributions`
-                            : `/treasurer/groups/${groupSlug || groupId}/contributions`,
-                        ),
-                    },
-                    cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleApproveId) },
-                    classNames: {
-                      actionButton:
-                        "!bg-primary !text-primary-foreground hover:!bg-primary/90 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
-                      cancelButton:
-                        "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold !mr-2",
-                    },
-                  });
-                  setSingleApproveId(null);
-                },
-              },
-            );
-          } else {
-            handleBulkApprove(groupId, campaignId);
-          }
-        }}
-        isLoading={approveMutation.isPending || bulkApproveMutation.isPending}
+        isLoading={bulkApproveMutation.isPending}
       />
 
       <BulkRejectDialog

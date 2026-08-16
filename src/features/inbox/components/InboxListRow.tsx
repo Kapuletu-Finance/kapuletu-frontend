@@ -171,7 +171,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onApprove(item.pending_id);
+                  setIsDialogOpen(true);
                 }}
                 className="bg-primary hover:bg-primary/90 gap-1.5"
               >
