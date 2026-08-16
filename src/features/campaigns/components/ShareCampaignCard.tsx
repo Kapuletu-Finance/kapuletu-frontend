@@ -82,17 +82,19 @@ const ShareCampaignCard = () => {
           </DialogHeader>
 
           <div className="space-y-6 pt-4">
-            <div className="flex items-center gap-2 bg-muted/50 border border-border p-2 rounded-xl">
-              <IconLibrary name="link" className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
-              <Input
-                readOnly
-                value={isPreviewLoading ? "Loading link..." : publicUrl}
-                className="text-sm text-foreground truncate"
-              />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <div className="flex items-center gap-2 bg-muted/50 border border-border p-2 rounded-xl flex-1 min-w-0 h-11">
+                <IconLibrary name="link" className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
+                <Input
+                  readOnly
+                  value={isPreviewLoading ? "Loading link..." : publicUrl}
+                  className="text-sm text-foreground truncate h-auto py-1 border-none bg-transparent shadow-none focus-visible:ring-0 flex-1 min-w-0"
+                />
+              </div>
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-1 border-primary/30 text-primary hover:bg-primary/10 shrink-0"
+                className="gap-1 border-primary/30 text-primary hover:bg-primary/10 shrink-0 h-10 sm:h-11 px-4 font-semibold rounded-xl flex-1 sm:flex-none"
                 onClick={handleCopyLink}
                 disabled={!publicUrl || isPreviewLoading}
               >

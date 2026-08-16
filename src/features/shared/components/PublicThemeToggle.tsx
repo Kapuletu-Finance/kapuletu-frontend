@@ -13,6 +13,7 @@ export const PublicThemeToggle = () => {
     pathname.startsWith("/subscriptions") ||
     pathname.startsWith("/blogs") ||
     pathname.startsWith("/report") ||
+    pathname.startsWith("/settings") ||
     pathname === "/"
   ) {
     return null;

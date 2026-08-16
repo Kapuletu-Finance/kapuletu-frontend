@@ -43,7 +43,7 @@ const NotificationsDropdown: React.FC = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[85vw] max-w-sm sm:max-w-none sm:w-105 overflow-hidden border-border bg-background"
+        className="w-[calc(100vw-2rem)] sm:w-105 max-w-[calc(100vw-2rem)] sm:max-w-none overflow-hidden border-border bg-background"
       >
         <div className="p-6 pb-2">
           <div className="flex items-center justify-between mb-4">

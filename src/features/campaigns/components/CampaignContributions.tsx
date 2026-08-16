@@ -142,86 +142,106 @@ const CampaignContributions = () => {
         <Pagination currentPage={page} totalPages={totalPages} onPageChange={(p) => setPage(p)} />
       }
     >
-      <div className="bg-card border border-border shadow-sm rounded-xl overflow-x-auto mt-6">
-        <CardContent className="p-0 min-w-[700px]">
-          <div className="grid grid-cols-4 text-sm font-semibold text-muted-foreground py-4 px-6 border-b border-border bg-card">
-            <span>Name</span>
-            <span>Amount</span>
-            <span>Date</span>
-            <span className="text-right sm:text-center">Payment method</span>
-          </div>
+      <div className="bg-card border border-border shadow-sm rounded-xl overflow-hidden mt-6">
+        <CardContent className="p-0 overflow-x-auto">
+          <div className="min-w-full md:min-w-[700px]">
+            <div className="hidden md:grid grid-cols-4 text-sm font-semibold text-muted-foreground py-4 px-6 border-b border-border bg-card">
+              <span>Name</span>
+              <span>Amount</span>
+              <span>Date</span>
+              <span className="text-right sm:text-center">Payment method</span>
+            </div>
 
-          <div className="divide-y divide-border animate-in fade-in duration-500">
-            {isLoading ? (
-              ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((key) => (
-                <div key={key} className="grid grid-cols-4 items-center py-5 px-6 text-sm">
-                  <div className="flex items-center gap-4">
-                    <Skeleton className="w-10 h-10 rounded-full" />
-                    <Skeleton className="h-4 w-32" />
-                  </div>
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-28" />
-                  <Skeleton className="h-6 w-20 ml-auto sm:mx-auto" />
-                </div>
-              ))
-            ) : contributions.length === 0 ? (
-              <div className="py-16 flex flex-col items-center justify-center text-center">
-                <div className="bg-muted/50 p-4 rounded-full mb-4">
-                  <IconLibrary name="info" className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground">No contributions yet</h3>
-                <p className="text-sm text-muted-foreground max-w-sm mt-1">
-                  When this campaign receives its first contribution, it will appear here.
-                </p>
-              </div>
-            ) : (
-              contributions.map((item, index) => {
-                const avatarColor = avatarColors[index % avatarColors.length];
-                return (
+            <div className="divide-y divide-border animate-in fade-in duration-500">
+              {isLoading ? (
+                ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((key) => (
                   <div
-                    key={item.transaction_id || `tx-${index}`}
-                    className="grid grid-cols-4 items-center py-5 px-6 text-sm transition-colors hover:bg-muted/50"
+                    key={key}
+                    className="flex flex-col md:grid md:grid-cols-4 md:items-center py-4 md:py-5 px-4 md:px-6 text-sm gap-3 md:gap-0"
                   >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarColor}`}
-                      >
-                        {getInitials(item.name || "")}
+                    <div className="flex items-center justify-between md:contents">
+                      <div className="flex items-center gap-3 md:gap-4">
+                        <Skeleton className="w-10 h-10 rounded-full" />
+                        <Skeleton className="h-4 w-32" />
                       </div>
-                      <span className="font-semibold text-foreground truncate">
-                        {item.name || "Unknown"}
-                      </span>
+                      <Skeleton className="h-4 w-20 md:hidden" />
                     </div>
-
-                    <span className="font-medium text-foreground">
-                      Ksh. {item.amount.toLocaleString("en-KE")}
-                    </span>
-
-                    <span className="text-muted-foreground">
-                      {new Date(item.date).toLocaleDateString("en-KE", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-
-                    <div className="text-right sm:text-center">
-                      <Badge
-                        variant="secondary"
-                        className={`px-4 py-1.5 font-medium shadow-sm ${
-                          paymentMethodColors[item.payment_method] ||
-                          "bg-secondary text-secondary-foreground"
-                        }`}
-                      >
-                        {item.payment_method}
-                      </Badge>
+                    <Skeleton className="h-4 w-20 hidden md:block" />
+                    <div className="flex items-center justify-between md:contents ml-13 md:ml-0">
+                      <Skeleton className="h-4 w-28" />
+                      <Skeleton className="h-6 w-20 md:mx-auto" />
                     </div>
                   </div>
-                );
-              })
-            )}
+                ))
+              ) : contributions.length === 0 ? (
+                <div className="py-16 flex flex-col items-center justify-center text-center">
+                  <div className="bg-muted/50 p-4 rounded-full mb-4">
+                    <IconLibrary name="info" className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">No contributions yet</h3>
+                  <p className="text-sm text-muted-foreground max-w-sm mt-1">
+                    When this campaign receives its first contribution, it will appear here.
+                  </p>
+                </div>
+              ) : (
+                contributions.map((item, index) => {
+                  const avatarColor = avatarColors[index % avatarColors.length];
+                  return (
+                    <div
+                      key={item.transaction_id || `tx-${index}`}
+                      className="flex flex-col md:grid md:grid-cols-4 md:items-center gap-2 md:gap-0 py-4 md:py-5 px-4 md:px-6 text-sm transition-colors hover:bg-muted/50 border-b border-border md:border-none last:border-none"
+                    >
+                      <div className="flex items-center justify-between md:contents">
+                        <div className="flex items-center gap-3 md:gap-4">
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarColor}`}
+                          >
+                            {getInitials(item.name || "")}
+                          </div>
+                          <span className="font-semibold text-foreground truncate text-base md:text-sm">
+                            {item.name || "Unknown"}
+                          </span>
+                        </div>
+
+                        {/* Mobile amount */}
+                        <span className="font-bold text-foreground md:hidden">
+                          Ksh. {item.amount.toLocaleString("en-KE")}
+                        </span>
+                      </div>
+
+                      {/* Desktop amount */}
+                      <span className="hidden md:block font-medium text-foreground">
+                        Ksh. {item.amount.toLocaleString("en-KE")}
+                      </span>
+
+                      <div className="flex items-center justify-between md:contents mt-1 md:mt-0 ml-[3.25rem] md:ml-0">
+                        <span className="text-muted-foreground text-xs md:text-sm">
+                          {new Date(item.date).toLocaleDateString("en-KE", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+
+                        <div className="text-right md:text-center">
+                          <Badge
+                            variant="secondary"
+                            className={`px-3 md:px-4 py-1 md:py-1.5 font-medium shadow-sm text-[10px] md:text-xs ${
+                              paymentMethodColors[item.payment_method] ||
+                              "bg-secondary text-secondary-foreground"
+                            }`}
+                          >
+                            {item.payment_method}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
         </CardContent>
       </div>

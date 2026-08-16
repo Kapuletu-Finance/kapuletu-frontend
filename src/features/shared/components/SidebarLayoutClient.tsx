@@ -47,17 +47,11 @@ const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
 
 interface AppSidebarProps {
   links: { href: string; label: string; icon: IconName }[];
-  onOpenFaqs?: () => void;
   role: UserRole;
   pendingInboxCount?: number;
 }
 
-const AppSidebar: React.FC<AppSidebarProps> = ({
-  links,
-  onOpenFaqs,
-  role,
-  pendingInboxCount = 0,
-}) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({ links, role, pendingInboxCount = 0 }) => {
   const pathname = usePathname();
   const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -165,12 +159,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   return (
     <>
       <SidebarProvider>
-        <AppSidebar
-          links={links}
-          onOpenFaqs={() => setIsFaqsOpen(true)}
-          role={role}
-          pendingInboxCount={pendingCount ?? 0}
-        />
+        <AppSidebar links={links} role={role} pendingInboxCount={pendingCount ?? 0} />
 
         <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">
           {/* Header */}
@@ -228,11 +217,8 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
       </SidebarProvider>
 
       <Dialog open={isFaqsOpen} onOpenChange={setIsFaqsOpen}>
-        <DialogContent
-          className="max-w-4xl p-0 border-none bg-transparent shadow-none"
-          showCloseButton={false}
-        >
-          <ScrollArea className="relative bg-background overflow-hidden max-h-[85vh]">
+        <DialogContent className="max-w-4xl p-0 border-none bg-background shadow-lg overflow-hidden sm:rounded-xl">
+          <ScrollArea className="relative max-h-[85vh]">
             <FaqsSection />
           </ScrollArea>
         </DialogContent>
