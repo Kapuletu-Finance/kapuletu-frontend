@@ -448,9 +448,16 @@ export const ProfileSettingsForm = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Auto-Approval Target</DialogTitle>
-            <DialogDescription>
-              Select the Group and Campaign that incoming M-Pesa transactions should be instantly
-              approved to.
+            <DialogDescription className="space-y-2">
+              <p className="font-medium text-destructive">
+                Are you sure you want to enable Auto-Approval? All incoming valid M-Pesa
+                transactions will be instantly approved without your review. This action cannot be
+                undone on a per-transaction basis.
+              </p>
+              <p>
+                Select the Group and Campaign that incoming M-Pesa transactions should be instantly
+                approved to.
+              </p>
             </DialogDescription>
           </DialogHeader>
 
