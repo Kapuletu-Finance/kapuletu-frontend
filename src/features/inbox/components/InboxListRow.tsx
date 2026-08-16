@@ -55,6 +55,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
     rawDateStr.endsWith("Z") || rawDateStr.includes("+") ? rawDateStr : `${rawDateStr}Z`;
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: This row contains interactive child elements so it cannot be a native button
     <div
       className="flex flex-col xl:flex-row xl:items-center gap-4 py-4 px-2 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
       onClick={() => setIsDialogOpen(true)}
@@ -64,8 +65,9 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
     >
       <div className="flex items-center gap-4 flex-1 min-w-0">
         {item.workflow_status === "pending" ? (
-          <div 
-            onClick={(e) => e.stopPropagation()} 
+          // biome-ignore lint/a11y/noStaticElementInteractions: Need to stop propagation for checkbox inside clickable row
+          <div
+            onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => e.stopPropagation()}
             role="presentation"
           >
