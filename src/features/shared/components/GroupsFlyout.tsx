@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { CampaignOverview, GroupOverview } from "@/features/shared/types";
 import { useWorkspaceOverviewQuery } from "@/features/treasurer/services/queries";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 // ─── Campaign Sub-Panel ────────────────────────────────────────────────────
@@ -25,22 +26,29 @@ const CampaignSubPanel = ({
   onNavigate,
   anchorRef,
 }: CampaignSubPanelProps) => {
+  const isMobile = useIsMobile();
   const pathname = usePathname();
   const effectiveGroupSlug = groupSlug || groupId;
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
 
   useEffect(() => {
+    if (isMobile) return;
     if (!anchorRef.current) return;
     const rect = anchorRef.current.getBoundingClientRect();
     setPos({ top: rect.top + window.scrollY, left: rect.right + window.scrollX + 4 });
-  }, [anchorRef]);
+  }, [anchorRef, isMobile]);
 
-  if (!pos) return null;
-
-  return createPortal(
+  const content = (
     <div
-      style={{ position: "absolute", top: pos.top, left: pos.left, zIndex: 9999 }}
-      className="bg-popover border border-border rounded-lg shadow-xl p-1 min-w-[200px] max-w-[240px] animate-in fade-in-0 zoom-in-95 duration-100"
+      style={
+        !isMobile && pos ? { position: "absolute", top: pos.top, left: pos.left, zIndex: 9999 } : {}
+      }
+      className={cn(
+        "bg-popover border border-border p-1",
+        isMobile
+          ? "w-full border-t border-x-0 border-b-0 rounded-none shadow-none pl-4 pb-2"
+          : "rounded-lg shadow-xl min-w-[200px] max-w-[240px] animate-in fade-in-0 zoom-in-95 duration-100",
+      )}
     >
       {campaigns.map((c) => {
         const effectiveCampaignSlug = c.campaign_slug || c.campaign_id;
@@ -64,9 +72,13 @@ const CampaignSubPanel = ({
           </Link>
         );
       })}
-    </div>,
-    document.body,
+    </div>
   );
+
+  if (isMobile) return content;
+
+  if (!pos) return null;
+  return createPortal(content, document.body);
 };
 
 // ─── Group Row with optional campaign sub-panel ─────────────────────────────
@@ -162,9 +174,10 @@ export const GroupsFlyoutPanel = ({ open, onClose, anchorRef }: GroupsFlyoutProp
     return acc;
   }, {});
 
+  const isMobile = useIsMobile();
   // Compute position from anchor's bounding rect
   useEffect(() => {
-    if (!open || !anchorRef.current) return;
+    if (!open || !anchorRef.current || isMobile) return;
     const update = () => {
       if (!anchorRef.current) return;
       const rect = anchorRef.current.getBoundingClientRect();
@@ -177,16 +190,16 @@ export const GroupsFlyoutPanel = ({ open, onClose, anchorRef }: GroupsFlyoutProp
       window.removeEventListener("resize", update);
       window.removeEventListener("scroll", update, true);
     };
-  }, [open, anchorRef]);
+  }, [open, anchorRef, isMobile]);
 
-  if (!open || !pos) return null;
+  if (!open || (!isMobile && !pos)) return null;
 
   return createPortal(
     <>
       {/* Backdrop */}
       {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop click dismiss is an established UX pattern */}
       <div
-        className="fixed inset-0 z-[9990]"
+        className={cn("fixed inset-0 z-[9990]", isMobile ? "bg-black/60" : "")}
         role="presentation"
         onClick={onClose}
         onKeyDown={(e) => e.key === "Escape" && onClose()}
@@ -194,24 +207,34 @@ export const GroupsFlyoutPanel = ({ open, onClose, anchorRef }: GroupsFlyoutProp
 
       {/* Flyout panel */}
       <div
-        style={{ position: "absolute", top: pos.top, left: pos.left, zIndex: 9999 }}
+        style={
+          !isMobile && pos
+            ? { position: "absolute", top: pos.top, left: pos.left, zIndex: 9999 }
+            : { zIndex: 9999 }
+        }
         className={cn(
-          "bg-popover border border-border rounded-xl shadow-2xl",
-          "min-w-[220px] max-w-[260px] py-2 px-1",
-          "animate-in fade-in-0 zoom-in-95 slide-in-from-left-2 duration-150",
+          "bg-popover border border-border flex flex-col",
+          isMobile
+            ? "fixed bottom-0 left-0 right-0 w-full rounded-t-2xl shadow-2xl animate-in slide-in-from-bottom-full duration-300 max-h-[85vh]"
+            : "rounded-xl shadow-2xl min-w-[220px] max-w-[260px] py-2 px-1 animate-in fade-in-0 zoom-in-95 slide-in-from-left-2 duration-150",
         )}
       >
         {/* Header */}
-        <div className="px-3 py-1.5 mb-1 border-b border-border">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {isMobile && (
+          <div className="w-full flex justify-center pt-3 pb-1 shrink-0">
+            <div className="w-12 h-1.5 bg-muted rounded-full" />
+          </div>
+        )}
+        <div className="px-4 py-2 sm:py-1.5 sm:px-3 mb-1 border-b border-border shrink-0">
+          <p className="text-sm sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Your Groups
           </p>
         </div>
 
         {/* Group list */}
-        <ul className="max-h-[60vh] overflow-y-auto overflow-x-visible">
+        <ul className="overflow-y-auto overflow-x-hidden flex-1 sm:max-h-[60vh] max-h-full">
           {groups.length === 0 ? (
-            <li className="text-sm text-muted-foreground px-3 py-2 list-none">No groups found.</li>
+            <li className="text-sm text-muted-foreground px-4 py-3 list-none">No groups found.</li>
           ) : (
             groups.map((group) => (
               <GroupRow
@@ -225,7 +248,7 @@ export const GroupsFlyoutPanel = ({ open, onClose, anchorRef }: GroupsFlyoutProp
         </ul>
 
         {/* Footer: View all link */}
-        <div className="mt-1 pt-1.5 border-t border-border px-3">
+        <div className="mt-1 pt-2 pb-2 sm:pb-0 sm:pt-1.5 border-t border-border px-4 sm:px-3 shrink-0">
           <Link
             href="/treasurer/groups"
             onClick={onClose}
