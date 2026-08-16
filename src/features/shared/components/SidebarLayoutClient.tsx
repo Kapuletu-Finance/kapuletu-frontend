@@ -152,7 +152,10 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, role, pendingInboxCount 
                       {/* Flyout panel — anchored to this row */}
                       <GroupsFlyoutPanel
                         open={isFlyoutOpen}
-                        onClose={() => setIsFlyoutOpen(false)}
+                        onClose={() => {
+                          setIsFlyoutOpen(false);
+                          if (isMobile) setOpenMobile(false);
+                        }}
                         anchorRef={anchorRef}
                       />
                     </div>
