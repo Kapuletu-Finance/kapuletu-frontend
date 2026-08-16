@@ -4,6 +4,8 @@ export type CampaignStatus = "active" | "archived";
 
 export interface AutomationSettings {
   auto_approve_enabled: boolean;
+  auto_approve_group_id?: string | null;
+  auto_approve_campaign_id?: string | null;
   allow_whatsapp_approvals: boolean;
   allow_whatsapp_creation: boolean;
   confidence_threshold: number;

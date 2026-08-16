@@ -14,6 +14,14 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -34,6 +42,8 @@ import {
   useUpdateReportingSettingsMutation,
 } from "@/features/auth/services/mutations";
 import { useGetMeQuery, useGetSettingsQuery } from "@/features/auth/services/queries";
+import { CampaignSelect } from "@/features/contributions/components/CampaignSelect";
+import { GroupSelect } from "@/features/contributions/components/GroupSelect";
 
 export const ProfileSettingsForm = () => {
   const { data: user, isLoading: isUserLoading } = useGetMeQuery();
@@ -58,7 +68,7 @@ export const ProfileSettingsForm = () => {
   const [language, setLanguage] = React.useState("english");
   const [twoFactorEnabled, setTwoFactorEnabled] = React.useState(true);
   const [subscriptionsEnabled, setSubscriptionsEnabled] = React.useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
+  const [showAutoApproveWarning, setShowAutoApproveWarning] = React.useState(false);
 
   const onSubmit = (data: UpdateProfileFormData) => {
     updateProfileMutation.mutate(data);
@@ -294,6 +304,77 @@ export const ProfileSettingsForm = () => {
                     />
                   </div>
 
+                  {/* AI Auto-Approval Settings */}
+                  <Separator className="w-full" />
+                  <div className="flex flex-col py-2 gap-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                          <MessageCircle className="w-4 h-4" />
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="font-semibold text-sm text-foreground">
+                            AI Auto-Approval
+                          </h4>
+                          <p className="text-xs text-muted-foreground">
+                            Automatically approve valid M-Pesa transactions to a designated
+                            campaign.
+                          </p>
+                        </div>
+                      </div>
+                      <LabeledSwitch
+                        checked={settings?.automation?.auto_approve_enabled ?? false}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setShowAutoApproveWarning(true);
+                          } else if (settings) {
+                            updateAutomationMutation.mutate({
+                              ...settings.automation,
+                              auto_approve_enabled: false,
+                            });
+                          }
+                        }}
+                        disabled={updateAutomationMutation.isPending}
+                      />
+                    </div>
+
+                    {settings?.automation?.auto_approve_enabled && (
+                      <div className="bg-muted/30 p-4 rounded-xl border border-border space-y-4">
+                        <div className="space-y-2">
+                          <FieldLabel className="text-sm font-semibold">Target Group</FieldLabel>
+                          <GroupSelect
+                            value={settings.automation.auto_approve_group_id || undefined}
+                            onChange={(val) => {
+                              updateAutomationMutation.mutate({
+                                ...settings.automation,
+                                auto_approve_group_id: val,
+                                auto_approve_campaign_id: null,
+                              });
+                            }}
+                            disabled={updateAutomationMutation.isPending}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <FieldLabel className="text-sm font-semibold">Target Campaign</FieldLabel>
+                          <CampaignSelect
+                            groupId={settings.automation.auto_approve_group_id || ""}
+                            value={settings.automation.auto_approve_campaign_id || undefined}
+                            onChange={(val) => {
+                              updateAutomationMutation.mutate({
+                                ...settings.automation,
+                                auto_approve_campaign_id: val,
+                              });
+                            }}
+                            disabled={
+                              updateAutomationMutation.isPending ||
+                              !settings.automation.auto_approve_group_id
+                            }
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <Separator className="w-full" />
 
                   <div className="flex items-center justify-between py-2">
@@ -370,6 +451,37 @@ export const ProfileSettingsForm = () => {
           </Form>
         </CardContent>
       </Card>
+
+      <Dialog open={showAutoApproveWarning} onOpenChange={setShowAutoApproveWarning}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enable AI Auto-Approval?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to enable Auto-Approval? All incoming valid M-Pesa transactions
+              will be instantly approved to the selected campaign without your review. This action
+              cannot be undone on a per-transaction basis.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAutoApproveWarning(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                setShowAutoApproveWarning(false);
+                if (settings) {
+                  updateAutomationMutation.mutate({
+                    ...settings.automation,
+                    auto_approve_enabled: true,
+                  });
+                }
+              }}
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
