@@ -59,13 +59,13 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
     <>
       {/* biome-ignore lint/a11y/useSemanticElements: This row contains interactive child elements so it cannot be a native button */}
       <div
-        className="flex flex-col xl:flex-row xl:items-center gap-4 py-4 px-2 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
+        className="flex items-center gap-4 py-4 px-4 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
         onClick={() => setIsDialogOpen(true)}
         onKeyDown={(e) => e.key === "Enter" && setIsDialogOpen(true)}
         role="button"
         tabIndex={0}
       >
-        <div className="flex items-center gap-4 flex-1 min-w-0">
+        <div className="flex items-center gap-4 flex-1">
           {item.workflow_status === "pending" ? (
             // biome-ignore lint/a11y/noStaticElementInteractions: Need to stop propagation for checkbox inside clickable row
             <div
@@ -163,7 +163,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0 justify-end w-full xl:w-auto">
+        <div className="flex items-center gap-2 shrink-0 ml-auto">
           {item.workflow_status === "pending" ? (
             <>
               <Button

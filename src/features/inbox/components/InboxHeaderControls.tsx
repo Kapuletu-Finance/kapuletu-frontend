@@ -80,9 +80,9 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center w-full justify-between gap-4">
-      {/* Search Bar */}
-      <div className="relative w-full flex-1">
+    <div className="flex flex-col gap-3 w-full">
+      {/* Search Bar — full width */}
+      <div className="relative w-full">
         <IconLibrary
           name="search"
           className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10"
@@ -96,69 +96,75 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full sm:w-auto sm:shrink-0">
-        {/* Status Filter */}
-        <Select
-          value={selectedStatus}
-          onValueChange={(v) => handleSelectStatus(v as StatusFilterValue)}
-        >
-          <SelectTrigger className="h-10 w-40 bg-background text-sm font-semibold text-foreground">
-            <div className="flex items-center gap-2">
-              <IconLibrary name="filter" className="h-4 w-4" />
-              <SelectValue>
-                {statusOptions.find((o) => o.value === selectedStatus)?.label ?? "Pending"}
-              </SelectValue>
-            </div>
-          </SelectTrigger>
-          <SelectContent align="end">
-            {statusOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Filters row — horizontally scrollable on mobile, never truncates */}
+      <div className="overflow-x-auto pb-1">
+        <div className="flex items-center gap-3 min-w-max">
+          {/* Status Filter */}
+          <Select
+            value={selectedStatus}
+            onValueChange={(v) => handleSelectStatus(v as StatusFilterValue)}
+          >
+            <SelectTrigger className="h-10 w-40 bg-background text-sm font-semibold text-foreground shrink-0">
+              <div className="flex items-center gap-2">
+                <IconLibrary name="filter" className="h-4 w-4" />
+                <SelectValue>
+                  {statusOptions.find((o) => o.value === selectedStatus)?.label ?? "Pending"}
+                </SelectValue>
+              </div>
+            </SelectTrigger>
+            <SelectContent align="end">
+              {statusOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        {/* Date Filter */}
-        <Select
-          value={selectedFilter}
-          onValueChange={(v) => handleSelectFilter(v as TimeFilterValue)}
-        >
-          <SelectTrigger className="h-10 w-40 bg-background text-sm font-semibold text-foreground">
-            <div className="flex items-center gap-2">
-              <IconLibrary name="calendar" className="h-4 w-4" />
-              <SelectValue>
-                {filterOptions.find((o) => o.value === selectedFilter)?.label ?? "This year"}
-              </SelectValue>
-            </div>
-          </SelectTrigger>
-          <SelectContent align="end">
-            {filterOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          {/* Date Filter */}
+          <Select
+            value={selectedFilter}
+            onValueChange={(v) => handleSelectFilter(v as TimeFilterValue)}
+          >
+            <SelectTrigger className="h-10 w-40 bg-background text-sm font-semibold text-foreground shrink-0">
+              <div className="flex items-center gap-2">
+                <IconLibrary name="calendar" className="h-4 w-4" />
+                <SelectValue>
+                  {filterOptions.find((o) => o.value === selectedFilter)?.label ?? "This year"}
+                </SelectValue>
+              </div>
+            </SelectTrigger>
+            <SelectContent align="end">
+              {filterOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        {/* Sort Filter */}
-        <Select value={selectedSort} onValueChange={(v) => handleSelectSort(v as SortFilterValue)}>
-          <SelectTrigger className="h-10 w-44 bg-background text-sm font-semibold text-foreground">
-            <div className="flex items-center gap-2">
-              <IconLibrary name="filter" className="h-4 w-4" />
-              <SelectValue>
-                {sortOptions.find((o) => o.value === selectedSort)?.label ?? "Newest First"}
-              </SelectValue>
-            </div>
-          </SelectTrigger>
-          <SelectContent align="end">
-            {sortOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          {/* Sort Filter */}
+          <Select
+            value={selectedSort}
+            onValueChange={(v) => handleSelectSort(v as SortFilterValue)}
+          >
+            <SelectTrigger className="h-10 w-44 bg-background text-sm font-semibold text-foreground shrink-0">
+              <div className="flex items-center gap-2">
+                <IconLibrary name="filter" className="h-4 w-4" />
+                <SelectValue>
+                  {sortOptions.find((o) => o.value === selectedSort)?.label ?? "Newest First"}
+                </SelectValue>
+              </div>
+            </SelectTrigger>
+            <SelectContent align="end">
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );

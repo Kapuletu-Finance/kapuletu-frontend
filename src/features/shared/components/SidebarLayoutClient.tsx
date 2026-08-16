@@ -223,6 +223,7 @@ interface SidebarLayoutClientProps {
   role: UserRole;
 }
 
+import { ScrollArea } from "@base-ui/react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 
