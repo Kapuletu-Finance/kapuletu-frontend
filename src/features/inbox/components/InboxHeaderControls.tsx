@@ -96,7 +96,7 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
         />
       </div>
 
-      <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full sm:w-auto sm:shrink-0">
         {/* Status Filter */}
         <Select
           value={selectedStatus}

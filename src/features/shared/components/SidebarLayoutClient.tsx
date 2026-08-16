@@ -228,7 +228,7 @@ interface SidebarLayoutClientProps {
 }
 
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 
@@ -317,9 +317,10 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
 
       <Dialog open={isFaqsOpen} onOpenChange={setIsFaqsOpen}>
         <DialogContent className="max-w-4xl p-0 border-none bg-background shadow-lg overflow-hidden sm:rounded-xl">
-          <ScrollArea className="relative max-h-[85vh]">
+          <DialogTitle className="sr-only">Frequently Asked Questions</DialogTitle>
+          <div className="relative max-h-[85vh] overflow-y-auto w-full">
             <FaqsSection />
-          </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
 

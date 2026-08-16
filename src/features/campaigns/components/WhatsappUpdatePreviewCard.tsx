@@ -49,9 +49,9 @@ const WhatsappUpdatePreviewCard = () => {
 
   return (
     <Card className="border-none bg-card overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between border-b border-border">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="bg-emerald-500/10 p-2 rounded-xl text-emerald-600">
+          <div className="bg-emerald-500/10 p-2 rounded-xl text-emerald-600 shrink-0">
             <IconLibrary
               name="message-circle"
               className="w-6 h-6 fill-emerald-600 text-emerald-600"
@@ -65,10 +65,10 @@ const WhatsappUpdatePreviewCard = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
           <Button
             variant="default"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-semibold"
+            className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-semibold"
             onClick={handleCopyMessage}
             disabled={!preview || isLoading}
           >
@@ -77,11 +77,14 @@ const WhatsappUpdatePreviewCard = () => {
 
           <Button
             variant="outline"
-            className="border-primary text-primary hover:bg-primary/10 gap-2 font-semibold"
+            className="w-full sm:w-auto border-primary text-primary hover:bg-primary/10 gap-2 font-semibold"
             disabled={!preview || isLoading}
             onClick={() => {
               const text = getMessageText();
-              window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+              window.open(
+                `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`,
+                "_blank",
+              );
             }}
           >
             <IconLibrary name="share" className="w-4 h-4" /> Share on WhatsApp

@@ -65,123 +65,101 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
         role="button"
         tabIndex={0}
       >
-        <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 flex-1 min-w-0">
-          <div className="flex items-center gap-3 w-full md:w-auto md:gap-4">
-            {item.workflow_status === "pending" ? (
-              // biome-ignore lint/a11y/noStaticElementInteractions: Need to stop propagation for checkbox inside clickable row
-              <div
-                onClick={(e) => e.stopPropagation()}
-                onKeyDown={(e) => e.stopPropagation()}
-                role="presentation"
-              >
-                <Checkbox
-                  checked={isSelected}
-                  onCheckedChange={(checked) => onSelect(item.pending_id, checked === true)}
-                />
-              </div>
-            ) : (
-              <div className="w-4 h-4 shrink-0" />
-            )}
-
+        <div className="flex items-center gap-4 flex-1 min-w-0">
+          {item.workflow_status === "pending" ? (
+            // biome-ignore lint/a11y/noStaticElementInteractions: Need to stop propagation for checkbox inside clickable row
             <div
-              className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm",
-                avatarColor,
-              )}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+              role="presentation"
             >
-              {initials}
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={(checked) => onSelect(item.pending_id, checked === true)}
+              />
             </div>
+          ) : (
+            <div className="w-4 h-4 shrink-0" />
+          )}
 
-            <div className="flex flex-col min-w-0 flex-1 md:w-48 md:flex-none shrink-0 text-left">
-              <span className="font-semibold text-sm text-foreground truncate w-full">
-                {item.sender_name || "Unknown Sender"}
-              </span>
-              <span className="text-xs text-muted-foreground truncate w-full">
-                {item.sender_phone || "No phone number"}
-              </span>
-            </div>
-
-            {/* Mobile view for Amount and Payment Method */}
-            <div className="flex items-center justify-between w-full md:hidden ml-11 sm:ml-0">
-              <span className="font-medium text-sm">{amount}</span>
-              <span
-                className={cn(
-                  "px-2 py-1 rounded-full text-xs font-medium",
-                  isMpesa
-                    ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
-                )}
-              >
-                {paymentMethod}
-              </span>
-            </div>
+          <div
+            className={cn(
+              "w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm",
+              avatarColor,
+            )}
+          >
+            {initials}
           </div>
 
-          {/* Desktop view for additional columns */}
-          <div className="hidden md:flex items-center gap-4 flex-1 min-w-0">
-            <div className="w-24 shrink-0 font-medium text-sm">{amount}</div>
+          <div className="flex flex-col min-w-0 w-48 shrink-0 text-left">
+            <span className="font-semibold text-sm text-foreground truncate w-full">
+              {item.sender_name || "Unknown Sender"}
+            </span>
+            <span className="text-xs text-muted-foreground truncate w-full">
+              {item.sender_phone || "No phone number"}
+            </span>
+          </div>
 
-            <div className="w-48 shrink-0 text-muted-foreground text-sm">
-              {new Intl.DateTimeFormat("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              }).format(new Date(dateStr))}
-            </div>
+          <div className="w-24 shrink-0 font-medium text-sm">{amount}</div>
 
-            <div className="w-32 shrink-0 truncate text-sm">
-              {item.assigned_group_name ? (
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Link
-                    href={
-                      item.assigned_group_slug
-                        ? `/treasurer/groups/${item.assigned_group_slug}/overview`
-                        : `/treasurer/groups/${item.assigned_group_id}/overview`
-                    }
-                    className="hover:text-primary transition-colors font-medium truncate"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {item.assigned_group_name}
-                  </Link>
-                  {item.assigned_campaign_name && (
-                    <>
-                      <span>/</span>
-                      <Link
-                        href={
-                          item.assigned_group_slug && item.assigned_campaign_slug
-                            ? `/treasurer/groups/${item.assigned_group_slug}/campaigns/${item.assigned_campaign_slug}/contributions`
-                            : `/treasurer/groups/${item.assigned_group_id}/campaigns/${item.assigned_campaign_id}/contributions`
-                        }
-                        className="hover:text-primary transition-colors font-medium truncate"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {item.assigned_campaign_name}
-                      </Link>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <span className="text-muted-foreground">
-                  {item.purpose || "No associated group"}
-                </span>
-              )}
-            </div>
+          <div className="w-48 shrink-0 text-muted-foreground text-sm">
+            {new Intl.DateTimeFormat("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            }).format(new Date(dateStr))}
+          </div>
 
-            <div className="w-20 shrink-0">
-              <span
-                className={cn(
-                  "px-2 py-1 rounded-full text-xs font-medium",
-                  isMpesa
-                    ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
+          <div className="w-32 shrink-0 truncate text-sm">
+            {item.assigned_group_name ? (
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Link
+                  href={
+                    item.assigned_group_slug
+                      ? `/treasurer/groups/${item.assigned_group_slug}/overview`
+                      : `/treasurer/groups/${item.assigned_group_id}/overview`
+                  }
+                  className="hover:text-primary transition-colors font-medium truncate"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {item.assigned_group_name}
+                </Link>
+                {item.assigned_campaign_name && (
+                  <>
+                    <span>/</span>
+                    <Link
+                      href={
+                        item.assigned_group_slug && item.assigned_campaign_slug
+                          ? `/treasurer/groups/${item.assigned_group_slug}/campaigns/${item.assigned_campaign_slug}/contributions`
+                          : `/treasurer/groups/${item.assigned_group_id}/campaigns/${item.assigned_campaign_id}/contributions`
+                      }
+                      className="hover:text-primary transition-colors font-medium truncate"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {item.assigned_campaign_name}
+                    </Link>
+                  </>
                 )}
-              >
-                {paymentMethod}
-              </span>
-            </div>
+              </div>
+            ) : (
+              <span className="text-muted-foreground">{item.purpose || "No associated group"}</span>
+            )}
+          </div>
+
+          <div className="w-20 shrink-0">
+            <span
+              className={cn(
+                "px-2 py-1 rounded-full text-xs font-medium",
+                isMpesa
+                  ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                  : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
+              )}
+            >
+              {paymentMethod}
+            </span>
           </div>
         </div>
 
@@ -195,7 +173,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
                   e.stopPropagation();
                   onApprove(item.pending_id);
                 }}
-                className="bg-primary hover:bg-primary/90 gap-1.5 flex-1 xl:flex-none justify-center"
+                className="bg-primary hover:bg-primary/90 gap-1.5"
               >
                 <IconLibrary name="check" className="w-4 h-4" />
                 Approve
@@ -207,7 +185,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
                   e.stopPropagation();
                   onReject(item.pending_id);
                 }}
-                className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive gap-1.5 flex-1 xl:flex-none justify-center"
+                className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive gap-1.5"
               >
                 <IconLibrary name="close" className="w-4 h-4" />
                 Reject

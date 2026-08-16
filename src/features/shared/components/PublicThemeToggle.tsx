@@ -7,15 +7,16 @@ import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
 export const PublicThemeToggle = () => {
   const pathname = usePathname();
 
-  if (
-    pathname.startsWith("/admin") ||
-    pathname.startsWith("/treasurer") ||
-    pathname.startsWith("/subscriptions") ||
-    pathname.startsWith("/blogs") ||
-    pathname.startsWith("/report") ||
-    pathname.startsWith("/settings") ||
-    pathname === "/"
-  ) {
+  const publicRoutes = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-phone",
+    "/verify-email",
+  ];
+
+  if (!publicRoutes.some((route) => pathname.startsWith(route))) {
     return null;
   }
 
