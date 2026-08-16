@@ -89,6 +89,7 @@ interface GroupRowProps {
 }
 
 const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
+  const isMobile = useIsMobile();
   const [isSubOpen, setIsSubOpen] = useState(false);
   const rowRef = useRef<HTMLLIElement>(null);
   const pathname = usePathname();
@@ -117,7 +118,7 @@ const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
           <IconLibrary name="group" className="size-3.5 shrink-0 text-primary" />
           <span className="truncate">{group.name}</span>
         </Link>
-        {hasCampaigns && (
+        {hasCampaigns && !isMobile && (
           <button
             type="button"
             aria-label={`View campaigns for ${group.name}`}
@@ -138,7 +139,7 @@ const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
         )}
       </div>
 
-      {hasCampaigns && isSubOpen && (
+      {hasCampaigns && isSubOpen && !isMobile && (
         <CampaignSubPanel
           campaigns={campaigns}
           groupSlug={group.slug}
