@@ -32,18 +32,15 @@ const CampaignSummaryCard = () => {
 
       <CardContent className="flex flex-col flex-1 p-6">
         <div className="flex flex-col space-y-8 flex-1">
-          {/* HERO SECTION */}
-          <div className="flex flex-col items-center justify-center text-center space-y-1">
-            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Goal: {formatCurrency(target_amount)}
-            </span>
-            <span className="text-4xl lg:text-5xl font-extrabold text-primary tracking-tight">
-              {formatCurrency(total_raised)}
-            </span>
-          </div>
-
           {/* LIST VIEW (PAYMENT METHODS) */}
           <div className="flex flex-col space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <IconLibrary name="target" className="w-4 h-4" />
+                <span>Campaign Goal</span>
+              </div>
+              <span className="font-semibold text-foreground">{formatCurrency(target_amount)}</span>
+            </div>
             {(campaign?.total_mpesa ?? 0) > 0 && (
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2 text-muted-foreground">
