@@ -100,9 +100,9 @@ const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
   return (
     <li
       ref={rowRef}
-      className="relative list-none"
-      onMouseEnter={() => hasCampaigns && setIsSubOpen(true)}
-      onMouseLeave={() => setIsSubOpen(false)}
+      className="relative list-none flex flex-col"
+      onMouseEnter={() => !isMobile && hasCampaigns && setIsSubOpen(true)}
+      onMouseLeave={() => !isMobile && setIsSubOpen(false)}
     >
       <div
         className={cn(
@@ -118,20 +118,21 @@ const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
           <IconLibrary name="group" className="size-3.5 shrink-0 text-primary" />
           <span className="truncate">{group.name}</span>
         </Link>
-        {hasCampaigns && !isMobile && (
+        {hasCampaigns && (
           <button
             type="button"
             aria-label={`View campaigns for ${group.name}`}
             onClick={(e) => {
               e.stopPropagation();
+              e.preventDefault();
               setIsSubOpen((prev) => !prev);
             }}
-            className="shrink-0 p-0.5 rounded hover:bg-accent"
+            className="shrink-0 p-1.5 -mr-1 rounded hover:bg-accent flex items-center justify-center"
           >
             <IconLibrary
               name="chevron-right"
               className={cn(
-                "size-3.5 text-muted-foreground transition-transform duration-200",
+                "size-4 text-muted-foreground transition-transform duration-200",
                 isSubOpen && "rotate-90",
               )}
             />
@@ -139,7 +140,7 @@ const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
         )}
       </div>
 
-      {hasCampaigns && isSubOpen && !isMobile && (
+      {hasCampaigns && isSubOpen && (
         <CampaignSubPanel
           campaigns={campaigns}
           groupSlug={group.slug}
