@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
+import { useRef, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,9 +14,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
@@ -24,11 +22,11 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
-import { useGroupsQuery } from "@/features/groups/services/queries";
 import { usePendingInboxCountQuery } from "@/features/inbox/services/queries";
 import AppBreadcrumb from "@/features/shared/components/AppBreadcrumb";
 import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
 import { GlobalSearch } from "@/features/shared/components/GlobalSearch";
+import { GroupsFlyoutPanel } from "@/features/shared/components/GroupsFlyout";
 import type { IconName } from "@/features/shared/components/IconLibrary";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import NotificationsDropdown from "@/features/shared/components/NotificationsDropdown";
@@ -60,9 +58,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, role, pendingInboxCount 
   const pathname = usePathname();
   const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const [isGroupsOpen, setIsGroupsOpen] = useState(false);
-  const { data: groupsData } = useGroupsQuery({ limit: 100 });
-  const groups = groupsData?.items || [];
+  const [isFlyoutOpen, setIsFlyoutOpen] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
 
   return (
     <Sidebar collapsible="icon" className="border-border bg-background">
@@ -85,34 +82,34 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, role, pendingInboxCount 
               const isActive = isRootLink ? pathname === link.href : pathname.startsWith(link.href);
 
               if (link.label === "Groups" && role !== "admin" && role !== "super_admin") {
+                const isGroupsActive = pathname.startsWith("/treasurer/groups");
                 return (
                   <SidebarMenuItem key={link.href}>
-                    <SidebarMenuButton
-                      tooltip={link.label}
-                      size="lg"
-                      onClick={(e) => {
-                        if (!isCollapsed) {
-                          e.preventDefault();
-                          setIsGroupsOpen(!isGroupsOpen);
-                        } else {
-                          if (isMobile) setOpenMobile(false);
-                        }
-                      }}
-                      className={cn(
-                        "transition-all duration-300 py-7 px-4 group-data-[collapsible=icon]:p-2 rounded-lg group",
-                        isActive
-                          ? "bg-primary/20 text-foreground font-medium"
-                          : "hover:bg-muted/40 text-muted-foreground hover:text-foreground",
-                      )}
-                      render={
+                    {/* Anchor wrapper for the flyout positioning */}
+                    <div ref={anchorRef} className="relative">
+                      <div
+                        className={cn(
+                          "flex items-center transition-all duration-300 py-1 px-4 group-data-[collapsible=icon]:px-2 rounded-lg group",
+                          isGroupsActive
+                            ? "bg-primary/20 text-foreground font-medium"
+                            : "hover:bg-muted/40 text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        {/* Clickable section: icon + label → navigates to /groups */}
                         <Link
                           href={link.href}
-                          className="flex items-center gap-3 w-full group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0!"
+                          onClick={() => {
+                            setIsFlyoutOpen(false);
+                            if (isMobile) setOpenMobile(false);
+                          }}
+                          className="flex items-center gap-3 flex-1 min-w-0 py-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0!"
                         >
                           <div
                             className={cn(
                               "relative flex items-center justify-center shrink-0 size-10 transition-colors duration-300 rounded-md",
-                              isActive ? "bg-primary text-primary-foreground" : "text-primary",
+                              isGroupsActive
+                                ? "bg-primary text-primary-foreground"
+                                : "text-primary",
                             )}
                           >
                             <IconLibrary
@@ -120,44 +117,43 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, role, pendingInboxCount 
                               className="size-5 transition-transform duration-300 group-hover:scale-110"
                             />
                           </div>
-                          <span className="text-base tracking-tight truncate group-data-[collapsible=icon]:hidden flex-1">
+                          <span className="text-base tracking-tight truncate group-data-[collapsible=icon]:hidden">
                             {link.label}
                           </span>
-                          {!isCollapsed && (
+                        </Link>
+
+                        {/* Right-pointing arrow — opens flyout. Hidden when sidebar is icon-only (tooltip handles it) */}
+                        {!isCollapsed && (
+                          <button
+                            type="button"
+                            aria-label="Browse groups"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsFlyoutOpen((prev) => !prev);
+                            }}
+                            className={cn(
+                              "shrink-0 p-1.5 rounded-md transition-colors hover:bg-primary/10",
+                              isFlyoutOpen && "bg-primary/10 text-primary",
+                            )}
+                          >
                             <IconLibrary
-                              name="chevron-down"
+                              name="chevron-right"
                               className={cn(
                                 "size-4 text-muted-foreground transition-transform duration-200",
-                                isGroupsOpen ? "rotate-180" : "",
+                                isFlyoutOpen && "rotate-90 text-primary",
                               )}
                             />
-                          )}
-                        </Link>
-                      }
-                    />
-                    {isGroupsOpen && !isCollapsed && groups.length > 0 && (
-                      <SidebarMenuSub className="pr-0 mr-0 mt-1">
-                        {groups.map((group) => (
-                          <SidebarMenuSubItem key={group.id}>
-                            <SidebarMenuSubButton
-                              isActive={pathname.includes(`/groups/${group.slug || group.id}`)}
-                              render={
-                                <Link
-                                  href={`/treasurer/groups/${group.slug || group.id}/overview`}
-                                  className={cn(
-                                    "text-sm truncate px-4 py-2 hover:bg-muted/40 transition-colors",
-                                    pathname.includes(`/groups/${group.slug || group.id}`) &&
-                                      "text-primary font-medium",
-                                  )}
-                                >
-                                  {group.name}
-                                </Link>
-                              }
-                            />
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    )}
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Flyout panel — anchored to this row */}
+                      <GroupsFlyoutPanel
+                        open={isFlyoutOpen}
+                        onClose={() => setIsFlyoutOpen(false)}
+                        anchorRef={anchorRef}
+                      />
+                    </div>
                   </SidebarMenuItem>
                 );
               }
@@ -227,9 +223,7 @@ interface SidebarLayoutClientProps {
   role: UserRole;
 }
 
-import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 
 export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
@@ -304,14 +298,14 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
           </div>
 
           {/* Page Content */}
-          <ScrollArea className="flex-1 min-h-0 bg-muted transition-colors">
+          <div className="flex-1 min-h-0 overflow-y-auto bg-muted transition-colors">
             <main className="p-4 md:p-6 lg:p-8">
               <div className="max-w-6xl mx-auto space-y-4">
                 <VerifyEmailAlert />
                 {children}
               </div>
             </main>
-          </ScrollArea>
+          </div>
         </SidebarInset>
       </SidebarProvider>
 
