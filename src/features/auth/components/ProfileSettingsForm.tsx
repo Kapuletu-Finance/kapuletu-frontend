@@ -69,6 +69,14 @@ export const ProfileSettingsForm = () => {
   const [twoFactorEnabled, setTwoFactorEnabled] = React.useState(true);
   const [subscriptionsEnabled, setSubscriptionsEnabled] = React.useState(false);
   const [showAutoApproveWarning, setShowAutoApproveWarning] = React.useState(false);
+  const [pendingGroupId, setPendingGroupId] = React.useState<string | undefined>(undefined);
+  const [pendingCampaignId, setPendingCampaignId] = React.useState<string | undefined>(undefined);
+
+  const handleOpenAutoApproveDialog = () => {
+    setPendingGroupId(settings?.automation?.auto_approve_group_id || undefined);
+    setPendingCampaignId(settings?.automation?.auto_approve_campaign_id || undefined);
+    setShowAutoApproveWarning(true);
+  };
 
   const onSubmit = (data: UpdateProfileFormData) => {
     updateProfileMutation.mutate(data);
@@ -326,11 +334,13 @@ export const ProfileSettingsForm = () => {
                         checked={settings?.automation?.auto_approve_enabled ?? false}
                         onCheckedChange={(checked) => {
                           if (checked) {
-                            setShowAutoApproveWarning(true);
+                            handleOpenAutoApproveDialog();
                           } else if (settings) {
                             updateAutomationMutation.mutate({
                               ...settings.automation,
                               auto_approve_enabled: false,
+                              auto_approve_group_id: null,
+                              auto_approve_campaign_id: null,
                             });
                           }
                         }}
@@ -339,38 +349,20 @@ export const ProfileSettingsForm = () => {
                     </div>
 
                     {settings?.automation?.auto_approve_enabled && (
-                      <div className="bg-muted/30 p-4 rounded-xl border border-border space-y-4">
-                        <div className="space-y-2">
-                          <FieldLabel className="text-sm font-semibold">Target Group</FieldLabel>
-                          <GroupSelect
-                            value={settings.automation.auto_approve_group_id || undefined}
-                            onChange={(val) => {
-                              updateAutomationMutation.mutate({
-                                ...settings.automation,
-                                auto_approve_group_id: val,
-                                auto_approve_campaign_id: null,
-                              });
-                            }}
-                            disabled={updateAutomationMutation.isPending}
-                          />
+                      <div className="bg-muted/30 p-4 rounded-xl border border-border flex items-center justify-between">
+                        <div className="text-sm text-muted-foreground">
+                          Transactions are auto-approved to the selected target.
                         </div>
-                        <div className="space-y-2">
-                          <FieldLabel className="text-sm font-semibold">Target Campaign</FieldLabel>
-                          <CampaignSelect
-                            groupId={settings.automation.auto_approve_group_id || ""}
-                            value={settings.automation.auto_approve_campaign_id || undefined}
-                            onChange={(val) => {
-                              updateAutomationMutation.mutate({
-                                ...settings.automation,
-                                auto_approve_campaign_id: val,
-                              });
-                            }}
-                            disabled={
-                              updateAutomationMutation.isPending ||
-                              !settings.automation.auto_approve_group_id
-                            }
-                          />
-                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleOpenAutoApproveDialog();
+                          }}
+                        >
+                          Edit Target
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -455,24 +447,51 @@ export const ProfileSettingsForm = () => {
       <Dialog open={showAutoApproveWarning} onOpenChange={setShowAutoApproveWarning}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Enable AI Auto-Approval?</DialogTitle>
+            <DialogTitle>Auto-Approval Target</DialogTitle>
             <DialogDescription>
-              Are you sure you want to enable Auto-Approval? All incoming valid M-Pesa transactions
-              will be instantly approved to the selected campaign without your review. This action
-              cannot be undone on a per-transaction basis.
+              Select the Group and Campaign that incoming M-Pesa transactions should be instantly
+              approved to.
             </DialogDescription>
           </DialogHeader>
+
+          <div className="grid grid-cols-2 gap-4 py-4">
+            <div className="space-y-2">
+              <FieldLabel className="text-sm font-semibold">Group</FieldLabel>
+              <GroupSelect
+                value={pendingGroupId}
+                onChange={(val) => {
+                  setPendingGroupId(val);
+                  setPendingCampaignId(undefined);
+                }}
+              />
+            </div>
+            <div className="space-y-2">
+              <FieldLabel className="text-sm font-semibold">Campaign</FieldLabel>
+              <CampaignSelect
+                groupId={pendingGroupId || ""}
+                value={pendingCampaignId}
+                onChange={(val) => {
+                  setPendingCampaignId(val);
+                }}
+                disabled={!pendingGroupId}
+              />
+            </div>
+          </div>
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAutoApproveWarning(false)}>
               Cancel
             </Button>
             <Button
+              disabled={!pendingGroupId || !pendingCampaignId}
               onClick={() => {
                 setShowAutoApproveWarning(false);
                 if (settings) {
                   updateAutomationMutation.mutate({
                     ...settings.automation,
                     auto_approve_enabled: true,
+                    auto_approve_group_id: pendingGroupId,
+                    auto_approve_campaign_id: pendingCampaignId,
                   });
                 }
               }}
