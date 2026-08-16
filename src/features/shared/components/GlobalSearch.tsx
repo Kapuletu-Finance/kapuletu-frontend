@@ -78,7 +78,7 @@ export const GlobalSearch = ({
           {groups.map((group) => (
             <Link
               key={group.group_id}
-              href={`/treasurer/groups/${group.slug || group.group_id}/overview`}
+              href={`/treasurer/groups/${group.slug || group.group_id}`}
               onClick={() => onOpenChange(false)}
               className="relative flex cursor-default select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
             >

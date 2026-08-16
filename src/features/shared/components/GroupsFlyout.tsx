@@ -111,7 +111,7 @@ const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
         )}
       >
         <Link
-          href={`/treasurer/groups/${effectiveGroupSlug}/overview`}
+          href={`/treasurer/groups/${effectiveGroupSlug}`}
           onClick={onNavigate}
           className="flex items-center gap-2 flex-1 min-w-0 text-sm"
         >
