@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCookie, setCookie } from "cookies-next";
 
 import { toast } from "sonner";
@@ -26,6 +26,7 @@ import type {
   VerifyRequest,
 } from "@/features/auth/types";
 import { AUTH_URLS } from "@/features/auth/urls";
+import type { AutomationSettings, ReportingSettings } from "@/features/shared/types";
 import { apiClient } from "@/lib/api-client";
 
 export const useSignInMutation = () => {
@@ -284,6 +285,40 @@ export const useLogoutMutation = () => {
       deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
       window.location.href = "/sign-in";
+    },
+  });
+};
+
+export const useUpdateAutomationSettingsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: AutomationSettings) => {
+      const response = await apiClient.put("/settings/me/automation/auto-approve", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Automation settings updated");
+      queryClient.invalidateQueries({ queryKey: ["settings", "me"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update settings");
+    },
+  });
+};
+
+export const useUpdateReportingSettingsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: ReportingSettings) => {
+      const response = await apiClient.put("/settings/me/reports/frequency", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Reporting settings updated");
+      queryClient.invalidateQueries({ queryKey: ["settings", "me"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update settings");
     },
   });
 };

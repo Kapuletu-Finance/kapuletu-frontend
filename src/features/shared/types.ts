@@ -2,6 +2,29 @@ export type Currency = "KES" | "USD" | "EUR" | "GBP";
 export type GroupStatus = "active" | "archived";
 export type CampaignStatus = "active" | "archived";
 
+export interface AutomationSettings {
+  auto_approve_enabled: boolean;
+  allow_whatsapp_approvals: boolean;
+  confidence_threshold: number;
+  default_group_id?: string | null;
+  fallback_action: string;
+}
+
+export interface ReportingSettings {
+  allow_whatsapp_reports: boolean;
+  auto_report_frequency: string;
+  global_header_template?: string | null;
+  global_footer_template?: string | null;
+  remove_kapuletu_branding: boolean;
+  use_emojis: boolean;
+  public_ledger_pin?: string | null;
+}
+
+export interface UserSettings {
+  automation: AutomationSettings;
+  reporting: ReportingSettings;
+}
+
 export interface GroupOut {
   id: string;
   name: string;

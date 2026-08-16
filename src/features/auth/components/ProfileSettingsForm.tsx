@@ -1,7 +1,15 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Bell, Diamond, Loader2, Lock, Upload, User as UserIcon } from "lucide-react";
+import {
+  Bell,
+  Diamond,
+  Loader2,
+  Lock,
+  MessageCircle,
+  Upload,
+  User as UserIcon,
+} from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -20,12 +28,20 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ChangePasswordDialog } from "@/features/auth/components/ChangePasswordDialog";
 import { type UpdateProfileFormData, updateProfileSchema } from "@/features/auth/schemas";
-import { useUpdateProfileMutation } from "@/features/auth/services/mutations";
-import { useGetMeQuery } from "@/features/auth/services/queries";
+import {
+  useUpdateAutomationSettingsMutation,
+  useUpdateProfileMutation,
+  useUpdateReportingSettingsMutation,
+} from "@/features/auth/services/mutations";
+import { useGetMeQuery, useGetSettingsQuery } from "@/features/auth/services/queries";
 
 export const ProfileSettingsForm = () => {
   const { data: user, isLoading: isUserLoading } = useGetMeQuery();
+  const { data: settings, isLoading: isSettingsLoading } = useGetSettingsQuery();
+
   const updateProfileMutation = useUpdateProfileMutation();
+  const updateAutomationMutation = useUpdateAutomationSettingsMutation();
+  const updateReportingMutation = useUpdateReportingSettingsMutation();
 
   const form = useForm<UpdateProfileFormData>({
     resolver: zodResolver(updateProfileSchema),
@@ -48,7 +64,7 @@ export const ProfileSettingsForm = () => {
     updateProfileMutation.mutate(data);
   };
 
-  if (isUserLoading) {
+  if (isUserLoading || isSettingsLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -253,18 +269,58 @@ export const ProfileSettingsForm = () => {
                   <div className="flex items-center justify-between py-2">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                        <Bell className="w-4 h-4" />
+                        <MessageCircle className="w-4 h-4" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="font-semibold text-sm text-foreground">Notifications</h4>
+                        <h4 className="font-semibold text-sm text-foreground">
+                          WhatsApp Approvals
+                        </h4>
                         <p className="text-xs text-muted-foreground">
-                          Get notified when you receive large contributions
+                          Instantly approve forwarded transactions via WhatsApp
                         </p>
                       </div>
                     </div>
                     <LabeledSwitch
-                      checked={notificationsEnabled}
-                      onCheckedChange={setNotificationsEnabled}
+                      checked={settings?.automation?.allow_whatsapp_approvals ?? false}
+                      onCheckedChange={(checked) => {
+                        if (settings) {
+                          updateAutomationMutation.mutate({
+                            ...settings.automation,
+                            allow_whatsapp_approvals: checked,
+                          });
+                        }
+                      }}
+                      disabled={updateAutomationMutation.isPending}
+                    />
+                  </div>
+
+                  <Separator className="w-full" />
+
+                  <div className="flex items-center justify-between py-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <MessageCircle className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-semibold text-sm text-foreground">
+                          WhatsApp Reporting
+                        </h4>
+                        <p className="text-xs text-muted-foreground">
+                          Allow retrieving interactive campaign reports via WhatsApp
+                        </p>
+                      </div>
+                    </div>
+                    <LabeledSwitch
+                      checked={settings?.reporting?.allow_whatsapp_reports ?? false}
+                      onCheckedChange={(checked) => {
+                        if (settings) {
+                          updateReportingMutation.mutate({
+                            ...settings.reporting,
+                            allow_whatsapp_reports: checked,
+                          });
+                        }
+                      }}
+                      disabled={updateReportingMutation.isPending}
                     />
                   </div>
                 </div>

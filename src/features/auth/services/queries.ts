@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { AuthResponse, SubscriptionResponse } from "@/features/auth/types";
 import { AUTH_URLS } from "@/features/auth/urls";
+import type { UserSettings } from "@/features/shared/types";
 import { apiClient } from "@/lib/api-client";
 
 export const useGetMeQuery = () => {
@@ -20,5 +21,15 @@ export const useGetMySubscriptionQuery = () => {
       return response.data;
     },
     queryKey: ["finance", "subscription"],
+  });
+};
+
+export const useGetSettingsQuery = () => {
+  return useQuery({
+    queryFn: async () => {
+      const response = await apiClient.get<UserSettings>("/settings/me");
+      return response.data;
+    },
+    queryKey: ["settings", "me"],
   });
 };
