@@ -150,7 +150,7 @@ export interface PendingInboxOut {
   sender_name: string | null;
   amount: number | null;
   currency: string | null;
-  inbox_code: string | null;
+  transaction_code: string | null;
   sender_phone: string | null;
   purpose: string | null;
   confidence_score: number;

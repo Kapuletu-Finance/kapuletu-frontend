@@ -46,7 +46,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
   const initials = (item.sender_name || "?").substring(0, 2).toUpperCase();
   const avatarColor = getAvatarColor(item.sender_name || "?");
 
-  const isMpesa = item.inbox_code !== null;
+  const isMpesa = item.transaction_code !== null;
   const paymentMethod = isMpesa ? "M-pesa" : "Cash";
   const amount = item.amount ? `Ksh. ${item.amount.toLocaleString()}` : "Unknown";
 

@@ -58,13 +58,13 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
 
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(item?.sender_name || "");
-  const [editCode, setEditCode] = useState(item?.inbox_code || "");
+  const [editCode, setEditCode] = useState(item?.transaction_code || "");
 
   const editMutation = useEditTransactionMutation();
 
   useEffect(() => {
     setEditName(item?.sender_name || "");
-    setEditCode(item?.inbox_code || "");
+    setEditCode(item?.transaction_code || "");
     setIsEditing(false);
   }, [item]);
 
@@ -79,7 +79,7 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
   const initials = (item.sender_name || "?").substring(0, 2).toUpperCase();
   const avatarColor = getAvatarColor(item.sender_name || "?");
 
-  const isMpesa = item.inbox_code !== null;
+  const isMpesa = item.transaction_code !== null;
   const paymentMethod = isMpesa ? "M-pesa" : "Cash";
   const amount = item.amount ? `Ksh. ${item.amount.toLocaleString()}` : "Unknown";
 
@@ -154,7 +154,7 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
 
   const handleCancelEdit = () => {
     setEditName(item.sender_name || "");
-    setEditCode(item.inbox_code || "");
+    setEditCode(item.transaction_code || "");
     setIsEditing(false);
   };
 
@@ -261,7 +261,7 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
                 />
               ) : (
                 <span className="font-medium text-right truncate pl-4">
-                  {item.inbox_code || "N/A"}
+                  {item.transaction_code || "N/A"}
                 </span>
               )}
             </div>
