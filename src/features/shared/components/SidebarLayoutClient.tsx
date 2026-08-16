@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
 import { useRef, useState } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
 import { usePendingInboxCountQuery } from "@/features/inbox/services/queries";
+import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 import AppBreadcrumb from "@/features/shared/components/AppBreadcrumb";
 import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
 import { GlobalSearch } from "@/features/shared/components/GlobalSearch";
@@ -222,10 +224,6 @@ interface SidebarLayoutClientProps {
   children: React.ReactNode;
   role: UserRole;
 }
-
-import { ScrollArea } from "@base-ui/react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 
 export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
   const isAdminOrSuperAdmin = role === "admin" || role === "super_admin";
