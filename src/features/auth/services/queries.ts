@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { AuthResponse, SubscriptionResponse } from "@/features/auth/types";
+import type { AuthResponse, BillingHistoryOut, SubscriptionResponse } from "@/features/auth/types";
 import { AUTH_URLS } from "@/features/auth/urls";
 import type { UserSettings } from "@/features/shared/types";
 import { apiClient } from "@/lib/api-client";
@@ -21,6 +21,16 @@ export const useGetMySubscriptionQuery = () => {
       return response.data;
     },
     queryKey: ["finance", "subscription"],
+  });
+};
+
+export const useGetBillingHistoryQuery = () => {
+  return useQuery({
+    queryFn: async () => {
+      const response = await apiClient.get<BillingHistoryOut[]>("/finance/billing-history");
+      return response.data;
+    },
+    queryKey: ["finance", "billing-history"],
   });
 };
 

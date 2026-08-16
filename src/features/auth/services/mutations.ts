@@ -322,3 +322,42 @@ export const useUpdateReportingSettingsMutation = () => {
     },
   });
 };
+
+export const useCancelSubscriptionMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.post<{ message: string }>("/finance/cancel-subscription");
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Subscription auto-renew cancelled");
+      queryClient.invalidateQueries({ queryKey: ["finance", "subscription"] });
+      queryClient.invalidateQueries({ queryKey: ["settings", "me"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to cancel subscription");
+    },
+  });
+};
+
+export const useUpdateBillingSettingsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      auto_renew_subscription: boolean;
+      billing_email?: string | null;
+    }) => {
+      const response = await apiClient.put("/settings/me/billing", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Billing settings updated");
+      queryClient.invalidateQueries({ queryKey: ["finance", "subscription"] });
+      queryClient.invalidateQueries({ queryKey: ["settings", "me"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update billing settings");
+    },
+  });
+};

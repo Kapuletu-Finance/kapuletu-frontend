@@ -98,10 +98,26 @@ export type ResendCodeRequest = {
 
 export type SubscriptionResponse = {
   active_plan: string;
-  status: string;
+  is_on_trial: boolean;
+  days_remaining: number;
   expiry_date: string | null;
   usage: {
     groups: string;
     campaigns: string;
   };
+};
+
+export type BillingHistoryOut = {
+  payment_id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  payment_method: string | null;
+  provider_reference: string | null;
+  created_at: string;
+};
+
+export type BillingSettings = {
+  auto_renew_subscription: boolean;
+  billing_email: string | null;
 };

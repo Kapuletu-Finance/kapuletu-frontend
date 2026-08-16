@@ -1,15 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Bell,
-  Diamond,
-  Loader2,
-  Lock,
-  MessageCircle,
-  Upload,
-  User as UserIcon,
-} from "lucide-react";
+import { Diamond, Loader2, Lock, MessageCircle, Upload, User as UserIcon } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";

@@ -26,6 +26,10 @@ export interface ReportingSettings {
 export interface UserSettings {
   automation: AutomationSettings;
   reporting: ReportingSettings;
+  billing?: {
+    auto_renew_subscription: boolean;
+    billing_email: string | null;
+  };
 }
 
 export interface GroupOut {
