@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ActivityList from "@/features/shared/components/ActivityList";
@@ -44,17 +45,67 @@ const RecentActivitiesSection = () => {
   const { data: overview, isLoading } = useWorkspaceOverviewQuery();
   const activities = overview?.recent_activities ?? [];
 
-  const activityItems = activities.map((activity) => ({
-    id: activity.log_id,
-    icon: getActionIcon(activity.action),
-    title:
+  const activityItems = activities.map((activity) => {
+    const rawMessage =
       activity.details?.message ||
       activity.action
         .split("_")
         .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-        .join(" "),
-    time: formatTimestamp(activity.created_at),
-  }));
+        .join(" ");
+
+    let titleContent: React.ReactNode = rawMessage;
+
+    // Check if we can build a clickable link to a campaign or group
+    if (activity.details?.group_slug) {
+      if (activity.details?.campaign_slug) {
+        titleContent = (
+          <Link
+            href={`/treasurer/groups/${activity.details.group_slug}/campaigns/${activity.details.campaign_slug}/contributions`}
+            className="hover:text-primary transition-colors"
+          >
+            {rawMessage}
+          </Link>
+        );
+      } else {
+        titleContent = (
+          <Link
+            href={`/treasurer/groups/${activity.details.group_slug}/overview`}
+            className="hover:text-primary transition-colors"
+          >
+            {rawMessage}
+          </Link>
+        );
+      }
+    } else if (activity.details?.group_id) {
+      // Fallback to IDs if slugs aren't available for older logs
+      if (activity.details?.campaign_id) {
+        titleContent = (
+          <Link
+            href={`/treasurer/groups/${activity.details.group_id}/campaigns/${activity.details.campaign_id}/contributions`}
+            className="hover:text-primary transition-colors"
+          >
+            {rawMessage}
+          </Link>
+        );
+      } else {
+        titleContent = (
+          <Link
+            href={`/treasurer/groups/${activity.details.group_id}/overview`}
+            className="hover:text-primary transition-colors"
+          >
+            {rawMessage}
+          </Link>
+        );
+      }
+    }
+
+    return {
+      id: activity.log_id,
+      icon: getActionIcon(activity.action),
+      title: titleContent,
+      time: formatTimestamp(activity.created_at),
+    };
+  });
 
   return (
     <section className="flex flex-col flex-1 gap-4">

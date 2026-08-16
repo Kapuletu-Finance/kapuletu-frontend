@@ -55,10 +55,20 @@ const ActiveCampaignsListCard = () => {
         <div className="flex flex-col p-4 pt-2 gap-6">
           {Object.entries(groupedCampaigns).map(([groupName, groupCampaigns]) => (
             <div key={groupName} className="flex flex-col gap-2">
-              <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pl-2 flex items-center gap-1.5">
-                <IconLibrary name="group" className="w-3 h-3" />
+              <Link
+                href={
+                  groupCampaigns[0]?.group_slug
+                    ? `/treasurer/groups/${groupCampaigns[0].group_slug}/overview`
+                    : `/treasurer/groups/${groupCampaigns[0]?.group_id}/overview`
+                }
+                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pl-2 flex items-center gap-1.5 hover:text-foreground transition-colors group/group-link"
+              >
+                <IconLibrary
+                  name="group"
+                  className="w-3 h-3 group-hover/group-link:text-primary transition-colors"
+                />
                 {groupName}
-              </h3>
+              </Link>
               <div className="flex flex-col">
                 {groupCampaigns.map((campaign) => {
                   const progressPercentage =

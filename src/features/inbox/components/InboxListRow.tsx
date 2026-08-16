@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type * as React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -131,10 +132,42 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
               }).format(new Date(dateStr))}
             </div>
 
-            <div className="w-32 shrink-0 truncate text-muted-foreground text-sm">
-              {item.assigned_group_name
-                ? `${item.assigned_group_name}${item.assigned_campaign_name ? ` / ${item.assigned_campaign_name}` : ""}`
-                : item.purpose || "No associated group"}
+            <div className="w-32 shrink-0 truncate text-sm">
+              {item.assigned_group_name ? (
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <Link
+                    href={
+                      item.assigned_group_slug
+                        ? `/treasurer/groups/${item.assigned_group_slug}/overview`
+                        : `/treasurer/groups/${item.assigned_group_id}/overview`
+                    }
+                    className="hover:text-primary transition-colors font-medium truncate"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {item.assigned_group_name}
+                  </Link>
+                  {item.assigned_campaign_name && (
+                    <>
+                      <span>/</span>
+                      <Link
+                        href={
+                          item.assigned_group_slug && item.assigned_campaign_slug
+                            ? `/treasurer/groups/${item.assigned_group_slug}/campaigns/${item.assigned_campaign_slug}/contributions`
+                            : `/treasurer/groups/${item.assigned_group_id}/campaigns/${item.assigned_campaign_id}/contributions`
+                        }
+                        className="hover:text-primary transition-colors font-medium truncate"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {item.assigned_campaign_name}
+                      </Link>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <span className="text-muted-foreground">
+                  {item.purpose || "No associated group"}
+                </span>
+              )}
             </div>
 
             <div className="w-20 shrink-0">

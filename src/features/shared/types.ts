@@ -86,6 +86,7 @@ export interface PaginatedCampaignResponse {
 
 export interface GroupOverview {
   group_id: string;
+  slug?: string | null;
   name: string;
   currency: string | null;
   total_campaigns: number;
@@ -155,8 +156,12 @@ export interface PendingInboxOut {
   confidence_score: number;
   workflow_status: string;
   created_at: string;
+  assigned_group_id?: string;
   assigned_group_name?: string;
+  assigned_group_slug?: string;
+  assigned_campaign_id?: string;
   assigned_campaign_name?: string;
+  assigned_campaign_slug?: string;
   processed_at?: string;
 }
 
