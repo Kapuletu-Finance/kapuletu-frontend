@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { CampaignOverview, GroupOverview } from "@/features/shared/types";
 import { useWorkspaceOverviewQuery } from "@/features/treasurer/services/queries";
@@ -14,14 +15,33 @@ interface CampaignSubPanelProps {
   groupSlug: string | null | undefined;
   groupId: string;
   onNavigate: () => void;
+  anchorRef: React.RefObject<HTMLElement | null>;
 }
 
-const CampaignSubPanel = ({ campaigns, groupSlug, groupId, onNavigate }: CampaignSubPanelProps) => {
+const CampaignSubPanel = ({
+  campaigns,
+  groupSlug,
+  groupId,
+  onNavigate,
+  anchorRef,
+}: CampaignSubPanelProps) => {
   const pathname = usePathname();
   const effectiveGroupSlug = groupSlug || groupId;
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
 
-  return (
-    <div className="min-w-[200px] max-w-[240px] py-1">
+  useEffect(() => {
+    if (!anchorRef.current) return;
+    const rect = anchorRef.current.getBoundingClientRect();
+    setPos({ top: rect.top + window.scrollY, left: rect.right + window.scrollX + 4 });
+  }, [anchorRef]);
+
+  if (!pos) return null;
+
+  return createPortal(
+    <div
+      style={{ position: "absolute", top: pos.top, left: pos.left, zIndex: 9999 }}
+      className="bg-popover border border-border rounded-lg shadow-xl p-1 min-w-[200px] max-w-[240px] animate-in fade-in-0 zoom-in-95 duration-100"
+    >
       {campaigns.map((c) => {
         const effectiveCampaignSlug = c.campaign_slug || c.campaign_id;
         const href = `/treasurer/groups/${effectiveGroupSlug}/campaigns/${effectiveCampaignSlug}/contributions`;
@@ -44,7 +64,8 @@ const CampaignSubPanel = ({ campaigns, groupSlug, groupId, onNavigate }: Campaig
           </Link>
         );
       })}
-    </div>
+    </div>,
+    document.body,
   );
 };
 
@@ -57,6 +78,7 @@ interface GroupRowProps {
 
 const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
   const [isSubOpen, setIsSubOpen] = useState(false);
+  const rowRef = useRef<HTMLLIElement>(null);
   const pathname = usePathname();
   const effectiveGroupSlug = group.slug || group.group_id;
   const isActive = pathname.includes(`/groups/${effectiveGroupSlug}`);
@@ -64,6 +86,7 @@ const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
 
   return (
     <li
+      ref={rowRef}
       className="relative list-none"
       onMouseEnter={() => hasCampaigns && setIsSubOpen(true)}
       onMouseLeave={() => setIsSubOpen(false)}
@@ -103,25 +126,17 @@ const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
         )}
       </div>
 
-      {/* Campaign sub-panel — floats to the right on desktop, expands inline on mobile/click */}
       {hasCampaigns && isSubOpen && (
-        <div
-          className={cn(
-            // Desktop: absolute right flyout
-            "absolute left-full top-0 ml-1 z-[60]",
-            "bg-popover border border-border rounded-lg shadow-xl p-1",
-            "min-w-[200px]",
-            // On small screens fall back to inline below
-            "max-sm:static max-sm:ml-4 max-sm:mt-1 max-sm:shadow-none max-sm:border-l max-sm:border-border max-sm:rounded-none max-sm:bg-transparent",
-          )}
-        >
-          <CampaignSubPanel
-            campaigns={campaigns}
-            groupSlug={group.slug}
-            groupId={group.group_id}
-            onNavigate={onNavigate}
-          />
-        </div>
+        <CampaignSubPanel
+          campaigns={campaigns}
+          groupSlug={group.slug}
+          groupId={group.group_id}
+          onNavigate={() => {
+            setIsSubOpen(false);
+            onNavigate();
+          }}
+          anchorRef={rowRef}
+        />
       )}
     </li>
   );
@@ -131,14 +146,14 @@ const GroupRow = ({ group, campaigns, onNavigate }: GroupRowProps) => {
 interface GroupsFlyoutProps {
   open: boolean;
   onClose: () => void;
-  /** Position anchor ref — used to compute placement */
   anchorRef: React.RefObject<HTMLDivElement | null>;
 }
 
-export const GroupsFlyoutPanel = ({ open, onClose }: GroupsFlyoutProps) => {
+export const GroupsFlyoutPanel = ({ open, onClose, anchorRef }: GroupsFlyoutProps) => {
   const { data: overview } = useWorkspaceOverviewQuery();
   const groups = overview?.active_groups ?? [];
   const allCampaigns = overview?.recent_campaigns ?? [];
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
 
   // Group campaigns by group_id for O(1) lookup
   const campaignsByGroup = allCampaigns.reduce<Record<string, CampaignOverview[]>>((acc, c) => {
@@ -147,20 +162,40 @@ export const GroupsFlyoutPanel = ({ open, onClose }: GroupsFlyoutProps) => {
     return acc;
   }, {});
 
-  if (!open) return null;
+  // Compute position from anchor's bounding rect
+  useEffect(() => {
+    if (!open || !anchorRef.current) return;
+    const update = () => {
+      if (!anchorRef.current) return;
+      const rect = anchorRef.current.getBoundingClientRect();
+      setPos({ top: rect.top + window.scrollY, left: rect.right + window.scrollX + 8 });
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [open, anchorRef]);
 
-  return (
+  if (!open || !pos) return null;
+
+  return createPortal(
     <>
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop click dismiss is an established UX pattern; screen readers use Escape via onKeyDown */}
+      {/* Backdrop */}
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop click dismiss is an established UX pattern */}
       <div
-        className="fixed inset-0 z-40"
+        className="fixed inset-0 z-[9990]"
         role="presentation"
         onClick={onClose}
         onKeyDown={(e) => e.key === "Escape" && onClose()}
       />
+
+      {/* Flyout panel */}
       <div
+        style={{ position: "absolute", top: pos.top, left: pos.left, zIndex: 9999 }}
         className={cn(
-          "absolute left-full top-0 ml-2 z-50",
           "bg-popover border border-border rounded-xl shadow-2xl",
           "min-w-[220px] max-w-[260px] py-2 px-1",
           "animate-in fade-in-0 zoom-in-95 slide-in-from-left-2 duration-150",
@@ -201,6 +236,7 @@ export const GroupsFlyoutPanel = ({ open, onClose }: GroupsFlyoutProps) => {
           </Link>
         </div>
       </div>
-    </>
+    </>,
+    document.body,
   );
 };
