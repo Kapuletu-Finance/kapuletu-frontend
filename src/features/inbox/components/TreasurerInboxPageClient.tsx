@@ -290,7 +290,7 @@ export const TreasurerInboxPageClient = () => {
       }
     >
       <div className="w-full overflow-x-auto pb-4 mt-6">
-        <div className="flex flex-col min-w-[1000px] bg-card rounded-xl border border-border shadow-sm">
+        <div className="flex flex-col min-w-[1150px] bg-card rounded-xl border border-border shadow-sm">
           {status === "pending" ? (
             <InboxBulkActions
               selectedCount={selectedIds.size}
