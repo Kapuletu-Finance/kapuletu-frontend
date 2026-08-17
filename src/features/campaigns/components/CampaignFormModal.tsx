@@ -89,7 +89,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
     }
   }, [campaign, form]);
 
-  const onSubmit = (data: CampaignFormData) => {
+  const onSubmit = async (data: CampaignFormData) => {
     const payload = {
       title: data.name,
       description: data.description || null,
@@ -98,20 +98,20 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
       end_date: data.fundraisingDeadline || null,
     };
 
-    if (isEditing && campaign?.id) {
-      updateMutation.mutate(payload, {
-        onSuccess: () => onOpenChange(false),
-      });
-    } else {
-      createMutation.mutate(payload, {
-        onSuccess: (data) => {
-          form.reset();
-          onOpenChange(false);
-          if (data?.slug) {
-            router.push(`/treasurer/groups/${groupId}/campaigns/${data.slug}`);
-          }
-        },
-      });
+    try {
+      if (isEditing && campaign?.id) {
+        await updateMutation.mutateAsync(payload);
+        onOpenChange(false);
+      } else {
+        const response = await createMutation.mutateAsync(payload);
+        form.reset();
+        onOpenChange(false);
+        if (response?.slug) {
+          router.push(`/treasurer/groups/${groupId}/campaigns/${response.slug}`);
+        }
+      }
+    } catch (error) {
+      // Error is handled globally by api client
     }
   };
 

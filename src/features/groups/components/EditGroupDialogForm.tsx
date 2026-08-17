@@ -53,18 +53,16 @@ const EditGroupDialogForm: React.FC<EditGroupDialogFormProps> = ({ group, childr
 
   const descriptionValue = form.watch("description") ?? "";
 
-  const onSubmit = (data: EditGroupFormData) => {
-    updateGroupMutation.mutate(
-      {
+  const onSubmit = async (data: EditGroupFormData) => {
+    try {
+      await updateGroupMutation.mutateAsync({
         name: data.name,
         description: data.description || null,
-      },
-      {
-        onSuccess: () => {
-          setIsOpen(false);
-        },
-      },
-    );
+      });
+      setIsOpen(false);
+    } catch (error) {
+      // Error handled globally
+    }
   };
 
   return (

@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ interface EditCampaignFormDialogProps {
 }
 
 const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
+  const [open, setOpen] = useState(false);
   const params = useParams();
   const campaignSlug = typeof params.campaignSlug === "string" ? params.campaignSlug : "";
   const { data: campaign } = useCampaignQuery(campaignSlug);
@@ -72,9 +73,9 @@ const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
     }
   }, [campaign, form]);
 
-  const onSubmit = (data: EditCampaignFormData) => {
-    updateCampaign.mutate(
-      {
+  const onSubmit = async (data: EditCampaignFormData) => {
+    try {
+      await updateCampaign.mutateAsync({
         title: data.campaignName,
         description: data.description || null,
         target_amount: Number.parseFloat(data.targetAmount.replace(/,/g, "")) || 0,
@@ -82,13 +83,15 @@ const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
         end_date: data.fundraisingDeadline
           ? new Date(data.fundraisingDeadline).toISOString()
           : null,
-      },
-      {},
-    );
+      });
+      setOpen(false);
+    } catch (error) {
+      // Error is handled by global query client
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           children ?? (

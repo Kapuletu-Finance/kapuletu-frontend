@@ -67,20 +67,18 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
     }
   }, [open, initialTitle, initialFooter, form]);
 
-  const onSubmit = (data: FormValues) => {
-    updateCampaign.mutate(
-      {
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await updateCampaign.mutateAsync({
         settings: {
           report_title: data.report_title,
           report_footer: data.report_footer,
         },
-      },
-      {
-        onSuccess: () => {
-          setOpen(false);
-        },
-      },
-    );
+      });
+      setOpen(false);
+    } catch (error) {
+      // Error handled globally
+    }
   };
 
   return (

@@ -48,23 +48,21 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
 
   const descriptionValue = form.watch("description") ?? "";
 
-  const onSubmit = (data: CreateGroupFormData) => {
-    createGroupMutation.mutate(
-      {
+  const onSubmit = async (data: CreateGroupFormData) => {
+    try {
+      const response = await createGroupMutation.mutateAsync({
         name: data.name,
         description: data.description || null,
         currency: data.currency as "KES",
-      },
-      {
-        onSuccess: (data) => {
-          form.reset();
-          setIsOpen(false);
-          if (data?.slug) {
-            router.push(`/treasurer/groups/${data.slug}`);
-          }
-        },
-      },
-    );
+      });
+      form.reset();
+      setIsOpen(false);
+      if (response?.slug) {
+        router.push(`/treasurer/groups/${response.slug}`);
+      }
+    } catch (error) {
+      // Error handled globally
+    }
   };
 
   return (
