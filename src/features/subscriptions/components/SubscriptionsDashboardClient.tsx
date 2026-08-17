@@ -9,6 +9,7 @@ import {
 } from "@/features/auth/services/queries";
 import { PricingSection } from "@/features/landing-page/components/PricingSection";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import PageLayout from "@/features/shared/components/PageLayout";
 import { BillingHistoryTable } from "./BillingHistoryTable";
 import { BillingSettingsCard } from "./BillingSettingsCard";
 import { SubscriptionOverviewCard } from "./SubscriptionOverviewCard";
@@ -40,16 +41,10 @@ export const SubscriptionsDashboardClient = () => {
   const isActivePlan = subscription.active_plan.toLowerCase() !== "free";
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-12">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Billing & Subscriptions
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Manage your plan, quotas, and payment history.
-          </p>
-        </div>
+    <PageLayout
+      title="Billing & Subscriptions"
+      subtitle="Manage your plan, quotas, and payment history."
+      actionButton={
         <Button
           onClick={() => setShowPlans(!showPlans)}
           variant={showPlans ? "outline" : "default"}
@@ -64,8 +59,8 @@ export const SubscriptionsDashboardClient = () => {
             </>
           )}
         </Button>
-      </div>
-
+      }
+    >
       {showPlans && (
         <div className="animate-in fade-in slide-in-from-top-4 duration-300 border-b border-border pb-8 mb-8">
           <PricingSection />
@@ -94,6 +89,6 @@ export const SubscriptionsDashboardClient = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 };
