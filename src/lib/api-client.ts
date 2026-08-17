@@ -1,6 +1,5 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { deleteCookie } from "cookies-next";
-import { toast } from "sonner";
 import { env } from "@/env";
 import { getQueryClient } from "@/lib/query-client";
 import type { ApiErrorResponse } from "@/types/api";
@@ -59,26 +58,27 @@ apiClient.interceptors.response.use(
           // Clear any non-HTTP-only client cookies explicitly if needed
           deleteCookie("user_role", { path: "/" });
 
-          // Show a single toast
-          toast.error("Your session has expired. Please log in again.");
-
-          // Force redirect to sign in
-          window.location.href = "/sign-in";
+          // Force redirect to sign in with reason
+          window.location.href = "/sign-in?reason=session_expired";
         }
       }
     }
 
     // Try to extract a human-readable message from the response payload
-    if (error.response?.data && typeof error.response.data === "object") {
+    if (error.response?.status === 500) {
+      error.message = "Oops! Something went wrong on our end. Please try again later.";
+    } else if (error.response?.data && typeof error.response.data === "object") {
       const data = error.response.data as ApiErrorResponse;
       if (typeof data.detail === "string") {
         error.message = data.detail;
       } else if (Array.isArray(data.detail)) {
-        // Handle Pydantic validation errors
-        error.message = data.detail.map((err) => err.msg).join(", ");
+        // Sanitize Pydantic validation errors
+        error.message = "Please check the highlighted fields and try again.";
       } else if (typeof data.message === "string") {
         error.message = data.message;
       }
+    } else if (!error.response) {
+      error.message = "Please check your internet connection and try again.";
     }
 
     return Promise.reject(error);

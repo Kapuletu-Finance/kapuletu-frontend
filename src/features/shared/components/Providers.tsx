@@ -25,7 +25,7 @@ export const Providers: React.FC<ProvidersProps> = ({ children }) => {
           >
             {children}
           </NextThemesProvider>
-          <Toaster richColors />
+          <Toaster richColors position="top-right" />
         </TooltipProvider>
       </QueryClientProvider>
     </NuqsAdapter>

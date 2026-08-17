@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -12,6 +13,9 @@ import { type SignInFormData, signInSchema } from "@/features/auth/schemas";
 import { useSignInMutation } from "@/features/auth/services/mutations";
 
 export const SignInForm = () => {
+  const searchParams = useSearchParams();
+  const reason = searchParams.get("reason");
+
   const form = useForm<SignInFormData>({
     defaultValues: {
       identifier: "",
@@ -40,6 +44,35 @@ export const SignInForm = () => {
           </Link>
         </p>
       </div>
+
+      {reason === "session_expired" && (
+        <div className="mb-6 rounded-md bg-amber-500/15 border border-amber-500/20 p-4 text-sm text-amber-600 flex items-start gap-3">
+          <svg
+            aria-label="Warning"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-alert-triangle mt-0.5 shrink-0"
+          >
+            <title>Warning</title>
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+            <path d="M12 9v4" />
+            <path d="M12 17h.01" />
+          </svg>
+          <p>
+            <strong>Session Expired.</strong>
+            <br />
+            Your session has expired due to inactivity or a security update. Please log in again to
+            continue.
+          </p>
+        </div>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
