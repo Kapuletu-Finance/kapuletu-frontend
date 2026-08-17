@@ -2,9 +2,12 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { deleteCookie } from "cookies-next";
 import { toast } from "sonner";
 import { env } from "@/env";
+import { getQueryClient } from "@/lib/query-client";
 import type { ApiErrorResponse } from "@/types/api";
 
 const CSRF_HEADER_NAME = env.NEXT_PUBLIC_CSRF_HEADER_NAME;
+
+let isRedirecting = false;
 
 /**
  * Instantiate a global Axios client instance targeting our BFF endpoint.
@@ -46,17 +49,21 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 || error.response?.status === 403) {
       if (typeof window !== "undefined") {
         // We ensure we only redirect if we aren't already on the sign in page
-        if (!window.location.pathname.startsWith("/sign-in")) {
+        if (!window.location.pathname.startsWith("/sign-in") && !isRedirecting) {
+          isRedirecting = true;
           console.warn("Session explicitly terminated or CSRF blocked. Redirecting to sign in.");
 
-          // Note: In a full app, you might also clear TanStack Query cache here
-          // e.g., queryClient.clear();
+          // Clear TanStack Query cache
+          getQueryClient().clear();
 
           // Clear any non-HTTP-only client cookies explicitly if needed
           deleteCookie("user_role", { path: "/" });
 
-          // Show a toast instead of forcibly redirecting the user
-          toast.error("You don't have access to this feature");
+          // Show a single toast
+          toast.error("Your session has expired. Please log in again.");
+
+          // Force redirect to sign in
+          window.location.href = "/sign-in";
         }
       }
     }
