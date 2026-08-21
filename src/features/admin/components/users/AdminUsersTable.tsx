@@ -2,6 +2,14 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -73,7 +81,6 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
             >
               <TableCell>
                 <p className="font-medium text-foreground">{user.full_name}</p>
-                <p className="text-xs text-muted-foreground">ID: {user.user_id.split("-")[0]}...</p>
               </TableCell>
               <TableCell>
                 <p className="text-sm text-foreground">{user.email}</p>
@@ -95,9 +102,30 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
                 {formatDate(user.created_at)}
               </TableCell>
               <TableCell className="text-right">
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <IconLibrary name="more-horizontal" className="h-4 w-4" />
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-8 w-8 p-0"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <IconLibrary name="more-horizontal" className="h-4 w-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => onRowClick(user.user_id)}>
+                      <IconLibrary name="eye" className="mr-2 h-4 w-4" />
+                      View Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        navigator.clipboard.writeText(user.email);
+                      }}
+                    >
+                      <IconLibrary name="copy" className="mr-2 h-4 w-4" />
+                      Copy Email
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           ))}
