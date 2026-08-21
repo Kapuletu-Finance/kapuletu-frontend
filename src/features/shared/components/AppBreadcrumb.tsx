@@ -41,6 +41,7 @@ const formatSegment = (segment: string): string => {
     broadcast: "Broadcast",
     support: "Support",
     "ai-governance": "AI Governance",
+    feedback: "Feedback",
   };
 
   if (knownLabels[lower]) {

@@ -27,6 +27,7 @@ import { usePendingInboxCountQuery } from "@/features/inbox/services/queries";
 import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 import AppBreadcrumb from "@/features/shared/components/AppBreadcrumb";
 import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
+import { FeedbackWidget } from "@/features/shared/components/FeedbackWidget";
 import { GlobalSearch } from "@/features/shared/components/GlobalSearch";
 import { GroupsFlyoutPanel } from "@/features/shared/components/GroupsFlyout";
 import type { IconName } from "@/features/shared/components/IconLibrary";
@@ -42,6 +43,7 @@ const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin/users", icon: "group", label: "Users" },
   { href: "/admin/finance", icon: "credit-card", label: "Finance" },
   { href: "/admin/broadcast", icon: "radio", label: "Broadcast" },
+  { href: "/admin/feedback", icon: "feedback", label: "Feedback" },
   { href: "/admin/support", icon: "ticket", label: "Support" },
   { href: "/admin/ai-governance", icon: "brain", label: "AI Governance" },
   { href: "/admin/audit", icon: "shield-ellipsis", label: "Audit Logs" },
@@ -328,6 +330,9 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
       </Dialog>
 
       <GlobalSearch open={isSearchOpen} onOpenChange={setIsSearchOpen} />
+
+      {/* Floating feedback widget — treasurer workspace only */}
+      {!isAdminOrSuperAdmin && <FeedbackWidget />}
     </>
   );
 };
