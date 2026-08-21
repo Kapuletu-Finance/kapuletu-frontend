@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import type { FeedbackSubmission } from "@/features/admin/services/mutations";
 import { useSubmitFeedbackMutation } from "@/features/admin/services/mutations";
@@ -404,16 +404,29 @@ const Step3: React.FC<{
 
 // ─── Success State ─────────────────────────────────────────────────────────────
 
-const SuccessState: React.FC = () => (
-  <div className="flex flex-col items-center justify-center py-12 text-center gap-4">
-    <div className="flex size-14 items-center justify-center rounded-full bg-primary/10">
-      <IconLibrary name="check-circle" className="size-7 text-primary" />
+const SuccessState: React.FC<{ onReset: () => void; onClose: () => void }> = ({
+  onReset,
+  onClose,
+}) => (
+  <div className="flex flex-col items-center justify-center py-12 text-center gap-6">
+    <div className="flex flex-col items-center gap-4">
+      <div className="flex size-14 items-center justify-center rounded-full bg-primary/10">
+        <IconLibrary name="check-circle" className="size-7 text-primary" />
+      </div>
+      <div className="space-y-1">
+        <p className="text-base font-semibold text-foreground">Feedback received</p>
+        <p className="text-sm text-muted-foreground max-w-xs">
+          Thank you. Your submission helps us improve Kapuletu for everyone.
+        </p>
+      </div>
     </div>
-    <div className="space-y-1">
-      <p className="text-base font-semibold text-foreground">Feedback received</p>
-      <p className="text-sm text-muted-foreground max-w-xs">
-        Thank you. Your submission helps us improve Kapuletu for everyone.
-      </p>
+    <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+      <Button variant="outline" className="w-full sm:w-auto" onClick={onClose}>
+        Close
+      </Button>
+      <Button className="w-full sm:w-auto" onClick={onReset}>
+        Submit Another
+      </Button>
     </div>
   </div>
 );
@@ -441,6 +454,10 @@ export const FeedbackWidget: React.FC = () => {
 
   const handleOpen = () => {
     setOpen(true);
+    handleReset();
+  };
+
+  const handleReset = () => {
     setStep(1);
     setForm(EMPTY_FORM);
     setSubmitted(false);
@@ -473,7 +490,6 @@ export const FeedbackWidget: React.FC = () => {
     submit(payload, {
       onSuccess: () => {
         setSubmitted(true);
-        setTimeout(() => setOpen(false), 2500);
       },
     });
   };
@@ -496,27 +512,26 @@ export const FeedbackWidget: React.FC = () => {
         <span className="hidden text-sm font-medium sm:inline">Feedback</span>
       </button>
 
-      {/* Sheet */}
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent
-          side={isMobile ? "bottom" : "right"}
+      {/* Modal */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent
           className={cn(
-            "flex flex-col p-0 gap-0",
-            isMobile ? "max-h-[92dvh] rounded-t-2xl" : "w-full max-w-[480px]",
+            "flex flex-col p-0 gap-0 overflow-hidden",
+            isMobile ? "max-h-[92dvh] w-full" : "w-full max-w-[540px] max-h-[85vh]",
           )}
         >
           {/* Header */}
-          <SheetHeader className="shrink-0 px-6 py-5 border-b border-border">
+          <DialogHeader className="shrink-0 px-6 py-5 border-b border-border">
             <div className="flex items-center justify-between">
-              <SheetTitle className="text-base font-semibold">Share Feedback</SheetTitle>
+              <DialogTitle className="text-base font-semibold">Share Feedback</DialogTitle>
               {!submitted && <StepIndicator step={step} total={3} />}
             </div>
-          </SheetHeader>
+          </DialogHeader>
 
           {/* Content — scrollable */}
           <div className="flex-1 overflow-y-auto px-6 py-5">
             {submitted ? (
-              <SuccessState />
+              <SuccessState onReset={handleReset} onClose={handleClose} />
             ) : (
               <>
                 {step === 1 && <Step1 form={form} onChange={patch} />}
@@ -566,8 +581,8 @@ export const FeedbackWidget: React.FC = () => {
               )}
             </div>
           )}
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
