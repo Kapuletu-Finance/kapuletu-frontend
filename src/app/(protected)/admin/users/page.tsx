@@ -1,7 +1,7 @@
-import ComingSoon from "@/features/shared/components/ComingSoon";
+import { AdminUsersPage } from "@/features/admin/components/users/AdminUsersPage";
 
-const AdminUsersPage = () => {
-  return <ComingSoon />;
+const AdminUsersRoute = () => {
+  return <AdminUsersPage />;
 };
 
-export default AdminUsersPage;
+export default AdminUsersRoute;

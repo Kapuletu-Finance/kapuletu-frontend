@@ -122,3 +122,113 @@ export const useAdminOverviewQuery = () => {
     },
   });
 };
+
+export interface AdminUserItem {
+  user_id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface AdminUsersResponse {
+  total: number;
+  page: number;
+  limit: number;
+  users: AdminUserItem[];
+}
+
+export interface AdminUsersFilters {
+  status?: string;
+  q?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface AdminUserDetailsResponse {
+  profile: {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    role: string;
+    is_active: boolean;
+    created_at: string;
+  };
+  stats: {
+    total_groups: number;
+  };
+}
+
+export interface AdminUserGroupItem {
+  group_id: string;
+  name: string;
+  description: string;
+  created_at: string;
+}
+
+export interface AdminFinancePlanItem {
+  plan_id: string;
+  name: string;
+  description: string;
+  price: number;
+  billing_cycle: string;
+  is_active: boolean;
+  features: string[];
+}
+
+export const useAdminUsersQuery = (filters: AdminUsersFilters = {}) => {
+  return useQuery({
+    queryKey: ["admin", "users", filters],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters.status) params.set("status", filters.status);
+      if (filters.q) params.set("q", filters.q);
+      if (filters.page) params.set("page", String(filters.page));
+      if (filters.limit) params.set("limit", String(filters.limit));
+
+      const response = await apiClient.get<AdminUsersResponse>(
+        `/admin/users/treasurers?${params.toString()}`,
+      );
+      return response.data;
+    },
+  });
+};
+
+export const useAdminUserDetailsQuery = (userId: string) => {
+  return useQuery({
+    queryKey: ["admin", "users", userId],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminUserDetailsResponse>(
+        `/admin/users/treasurers/${userId}`,
+      );
+      return response.data;
+    },
+    enabled: !!userId,
+  });
+};
+
+export const useAdminUserGroupsQuery = (userId: string) => {
+  return useQuery({
+    queryKey: ["admin", "users", userId, "groups"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminUserGroupItem[]>(
+        `/admin/users/treasurers/${userId}/groups`,
+      );
+      return response.data;
+    },
+    enabled: !!userId,
+  });
+};
+
+export const useAdminFinancePlansQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "finance", "plans"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminFinancePlanItem[]>("/admin/finance/plans");
+      return response.data;
+    },
+  });
+};

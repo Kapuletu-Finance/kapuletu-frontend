@@ -60,3 +60,109 @@ export const useUpdateFeedbackMutation = () => {
     },
   });
 };
+
+export const useUpdateUserStatusMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      status,
+      reason,
+    }: {
+      userId: string;
+      status: "active" | "suspended";
+      reason?: string;
+    }) => {
+      const response = await apiClient.post<{ message: string }>(
+        `/admin/users/treasurers/${userId}/status`,
+        { status, reason },
+      );
+      return response.data;
+    },
+    onSuccess: (_, { userId }) => {
+      toast.success("User status updated.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users", userId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update user status.");
+    },
+  });
+};
+
+export const useEscalatedUpdateMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      data,
+    }: {
+      userId: string;
+      data: { first_name?: string; last_name?: string; email?: string; phone?: string };
+    }) => {
+      const response = await apiClient.patch<{ message: string }>(
+        `/admin/users/treasurers/${userId}`,
+        data,
+      );
+      return response.data;
+    },
+    onSuccess: (_, { userId }) => {
+      toast.success("User profile updated.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users", userId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update user profile.");
+    },
+  });
+};
+
+export const useUpgradeUserRoleMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
+      const response = await apiClient.patch<{ message: string }>(
+        `/admin/users/treasurers/${userId}/role`,
+        { role },
+      );
+      return response.data;
+    },
+    onSuccess: (_, { userId }) => {
+      toast.success("User role upgraded.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users", userId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to upgrade user role.");
+    },
+  });
+};
+
+export const useUpgradeUserPlanMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      plan_id,
+      duration,
+    }: {
+      userId: string;
+      plan_id: string;
+      duration: number;
+    }) => {
+      const response = await apiClient.post<{ message: string }>(
+        `/admin/users/treasurers/${userId}/plan`,
+        { plan_id, duration },
+      );
+      return response.data;
+    },
+    onSuccess: (_, { userId }) => {
+      toast.success("User plan upgraded.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users", userId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to upgrade user plan.");
+    },
+  });
+};
