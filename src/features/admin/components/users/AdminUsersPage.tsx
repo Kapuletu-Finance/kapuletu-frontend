@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,18 +14,16 @@ import {
 import { useAdminUsersQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { AdminUsersTable } from "./AdminUsersTable";
-import { UserDetailSheet } from "./UserDetailSheet";
 
 export const AdminUsersPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const router = useRouter();
 
   // Debounce search input
-  useState(() => {
+  useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
       setPage(1); // Reset page on new search
@@ -58,7 +57,7 @@ export const AdminUsersPage: React.FC = () => {
   }
 
   const handleRowClick = (userId: string) => {
-    setSelectedUserId(userId);
+    router.push(`/admin/users/${userId}`);
   };
 
   const totalPages = data ? Math.ceil(data.total / data.limit) : 1;
@@ -144,13 +143,6 @@ export const AdminUsersPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Detail Sheet */}
-      <UserDetailSheet
-        userId={selectedUserId}
-        isOpen={!!selectedUserId}
-        onOpenChange={(open) => !open && setSelectedUserId(null)}
-      />
     </div>
   );
 };

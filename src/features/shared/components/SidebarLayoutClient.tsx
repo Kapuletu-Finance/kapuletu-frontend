@@ -21,6 +21,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useNewFeedbackCountQuery } from "@/features/admin/services/queries";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
 import { usePendingInboxCountQuery } from "@/features/inbox/services/queries";
@@ -63,9 +64,15 @@ interface AppSidebarProps {
   links: { href: string; label: string; icon: IconName }[];
   role: UserRole;
   pendingInboxCount?: number;
+  newFeedbackCount?: number;
 }
 
-const AppSidebar: React.FC<AppSidebarProps> = ({ links, role, pendingInboxCount = 0 }) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({
+  links,
+  role,
+  pendingInboxCount = 0,
+  newFeedbackCount = 0,
+}) => {
   const pathname = usePathname();
   const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -208,6 +215,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, role, pendingInboxCount 
                               {pendingInboxCount > 99 ? "99+" : pendingInboxCount}
                             </span>
                           )}
+                          {link.label === "Feedback" && newFeedbackCount > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none shadow-md bg-destructive text-destructive-foreground">
+                              {newFeedbackCount > 99 ? "99+" : newFeedbackCount}
+                            </span>
+                          )}
                         </div>
                         <span className="text-base tracking-tight truncate group-data-[collapsible=icon]:hidden">
                           {link.label}
@@ -242,6 +254,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   const links = isAdminOrSuperAdmin ? ADMIN_LINKS : TREASURER_LINKS;
   const { data: user, isLoading } = useGetMeQuery();
   const { data: pendingCount } = usePendingInboxCountQuery();
+  const { data: feedbackCount } = useNewFeedbackCountQuery();
   const [isFaqsOpen, setIsFaqsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -251,7 +264,12 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   return (
     <>
       <SidebarProvider>
-        <AppSidebar links={links} role={role} pendingInboxCount={pendingCount ?? 0} />
+        <AppSidebar
+          links={links}
+          role={role}
+          pendingInboxCount={pendingCount ?? 0}
+          newFeedbackCount={isAdminOrSuperAdmin ? (feedbackCount ?? 0) : 0}
+        />
 
         <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">
           {/* Header */}

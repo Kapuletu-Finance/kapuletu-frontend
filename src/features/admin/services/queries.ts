@@ -7,6 +7,7 @@ export interface AdminFeedbackItem {
   feedback_id: string;
   user_id: string;
   user_name: string;
+  user_email?: string;
   feedback_type: "bug" | "feature_request" | "ux_issue" | "performance" | "general";
   app_area: string;
   severity: "critical" | "high" | "medium" | "low";
@@ -57,6 +58,17 @@ export const useAdminFeedbackQuery = (filters: AdminFeedbackFilters = {}) => {
       );
       return response.data;
     },
+  });
+};
+
+export const useAdminFeedbackDetailsQuery = (feedbackId: string) => {
+  return useQuery({
+    queryKey: ["admin", "feedback", feedbackId],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminFeedbackItem>(`/feedback/admin/${feedbackId}`);
+      return response.data;
+    },
+    enabled: !!feedbackId,
   });
 };
 
@@ -120,6 +132,19 @@ export const useAdminOverviewQuery = () => {
       const response = await apiClient.get<AdminOverviewResponse>("/admin/overview");
       return response.data;
     },
+  });
+};
+
+export const useNewFeedbackCountQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "feedback", "count", "new"],
+    queryFn: async () => {
+      // Just fetch 1 item to get the total count of 'new' feedback
+      const response = await apiClient.get<{ total: number }>("/feedback/admin?status=new&limit=1");
+      return response.data.total;
+    },
+    // Refetch periodically to keep the badge updated
+    refetchInterval: 60000,
   });
 };
 

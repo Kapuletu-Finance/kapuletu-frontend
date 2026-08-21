@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FeedbackDetailSheet } from "@/features/admin/components/feedback/FeedbackDetailSheet";
 import { FeedbackTable } from "@/features/admin/components/feedback/FeedbackTable";
 import type { AdminFeedbackItem } from "@/features/admin/services/queries";
 import {
@@ -45,7 +45,7 @@ const STATUS_OPTIONS = [
 
 export const AdminFeedbackPage: React.FC = () => {
   const [filters, setFilters] = useState<AdminFeedbackFilters>({ page: 1, limit: 50 });
-  const [selected, setSelected] = useState<AdminFeedbackItem | null>(null);
+  const router = useRouter();
 
   const { data, isLoading } = useAdminFeedbackQuery(filters);
 
@@ -143,17 +143,10 @@ export const AdminFeedbackPage: React.FC = () => {
       <FeedbackTable
         items={data?.items ?? []}
         isLoading={isLoading}
-        onSelect={setSelected}
+        onSelect={(item) => router.push(`/admin/feedback/${item.feedback_id}`)}
         currentPage={filters.page ?? 1}
         totalPages={data?.pages ?? 1}
         onPageChange={(p) => setFilters((prev) => ({ ...prev, page: p }))}
-      />
-
-      {/* Detail Sheet */}
-      <FeedbackDetailSheet
-        item={selected}
-        open={Boolean(selected)}
-        onClose={() => setSelected(null)}
       />
     </div>
   );
