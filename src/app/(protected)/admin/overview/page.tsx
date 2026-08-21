@@ -1,7 +1,7 @@
-import ComingSoon from "@/features/shared/components/ComingSoon";
+import { AdminOverviewPage } from "@/features/admin/components/overview/AdminOverviewPage";
 
-const AdminOverviewPage = () => {
-  return <ComingSoon />;
+const AdminOverviewRoute = () => {
+  return <AdminOverviewPage />;
 };
 
-export default AdminOverviewPage;
+export default AdminOverviewRoute;

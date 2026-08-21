@@ -59,3 +59,66 @@ export const useAdminFeedbackQuery = (filters: AdminFeedbackFilters = {}) => {
     },
   });
 };
+
+export interface AdminOverviewResponse {
+  kpis: {
+    total_treasurers: number;
+    active_treasurers: number;
+    total_revenue_kes: number;
+    active_subscriptions: number;
+    pending_tickets: number;
+    ai_accuracy_rate: number;
+    total_feedback: number;
+    new_feedback: number;
+  };
+  revenue_trend: {
+    date: string;
+    amount: number;
+  }[];
+  recent_signups: {
+    user_id: string;
+    name: string;
+    email: string;
+    is_active: boolean;
+    created_at: string;
+  }[];
+  recent_payments: {
+    payment_id: string;
+    user_name: string;
+    plan_name: string;
+    amount: number;
+    currency: string;
+    method: string;
+    status: string;
+    created_at: string;
+  }[];
+  recent_groups: {
+    group_id: string;
+    group_name: string;
+    owner_name: string;
+    status: string;
+    created_at: string;
+  }[];
+  subscription_breakdown: {
+    plan: string;
+    count: number;
+  }[];
+  feedback_summary: {
+    new: number;
+    reviewing: number;
+    planned: number;
+    in_progress: number;
+    shipped: number;
+    declined: number;
+  };
+}
+
+export const useAdminOverviewQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "overview"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminOverviewResponse>("/admin/overview");
+      return response.data;
+    },
+  });
+};
