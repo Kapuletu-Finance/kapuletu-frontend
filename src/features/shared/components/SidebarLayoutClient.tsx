@@ -38,8 +38,13 @@ import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert"
 import { cn } from "@/lib/utils";
 
 const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
-  { href: "/admin", icon: "dashboard", label: "Dashboard" },
-  { href: "/notifications", icon: "notification", label: "Notifications" },
+  { href: "/admin/overview", icon: "analytics", label: "Overview" },
+  { href: "/admin/users", icon: "group", label: "Users" },
+  { href: "/admin/finance", icon: "credit-card", label: "Finance" },
+  { href: "/admin/broadcast", icon: "radio", label: "Broadcast" },
+  { href: "/admin/support", icon: "ticket", label: "Support" },
+  { href: "/admin/ai-governance", icon: "brain", label: "AI Governance" },
+  { href: "/admin/audit", icon: "shield-ellipsis", label: "Audit Logs" },
 ];
 
 const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
@@ -82,7 +87,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ links, role, pendingInboxCount 
         <SidebarGroup>
           <SidebarMenu className="gap-2">
             {links.map((link) => {
-              const isRootLink = link.href === "/treasurer" || link.href === "/admin";
+              const isRootLink = link.href === "/treasurer";
               const isActive = isRootLink ? pathname === link.href : pathname.startsWith(link.href);
 
               if (link.label === "Groups" && role !== "admin" && role !== "super_admin") {

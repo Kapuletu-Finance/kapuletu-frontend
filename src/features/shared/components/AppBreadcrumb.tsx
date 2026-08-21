@@ -30,11 +30,17 @@ const formatSegment = (segment: string): string => {
     reports: "Reports",
     analytics: "Analytics",
     settings: "Settings",
-    audit: "Audit",
+    audit: "Audit Logs",
     logs: "Audit Logs",
     campaigns: "Campaigns",
     contributions: "Contributions",
     dashboard: "Dashboard",
+    overview: "Overview",
+    users: "Users",
+    finance: "Finance",
+    broadcast: "Broadcast",
+    support: "Support",
+    "ai-governance": "AI Governance",
   };
 
   if (knownLabels[lower]) {

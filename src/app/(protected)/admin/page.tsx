@@ -1,7 +1,5 @@
-import ComingSoon from "@/features/shared/components/ComingSoon";
+import { redirect } from "next/navigation";
 
-const AdminPage = () => {
-  return <ComingSoon />;
-};
-
-export default AdminPage;
+export default function AdminPage() {
+  redirect("/admin/overview");
+}

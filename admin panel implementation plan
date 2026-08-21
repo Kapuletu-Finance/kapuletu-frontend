@@ -1,0 +1,249 @@
+# Kapuletu Admin Panel — Implementation Plan
+
+## Audit Summary
+
+- **Backend admin APIs** are fully implemented across 6 service files in `services/admin/`.
+- **Notifications broadcast** lives in `services/notifications/router.py` under `POST /notifications/broadcast` — admin-only, already guarded by `get_admin_user`. It supports `in_app`, `email`, and `whatsapp` channels and three targeting modes (`all_members`, `specific_member`, `custom_selection`). This is **not** under the `/admin` prefix — it's its own service.
+- **Frontend notifications page** at `/notifications` exists for user-facing display but has no admin-side management UI.
+- **No new codebase.** All admin work is in the existing `kapuletu-frontend` Next.js app, extending `src/app/(protected)/admin/`.
+- **Charting:** `recharts` is already installed.
+- **Design tokens:** Figtree, `--primary: #097255`, `--color-burnt-amber: #EC7B23`, `--color-refined-blue: #1B4580`, existing shadcn/ui components.
+
+---
+
+## Design
+
+- The admin panel **inherits the existing design system exactly** — same font (Figtree), same CSS tokens, same shadcn/ui components, same `IconLibrary`, same `StatCard`, `PageLayout`, `Table`, `Card`, `Badge`, `Dialog`, `Sheet`, `Tabs`.
+- **No new typographies.** No new color palettes introduced.
+- **Distinction from the treasurer workspace** comes from:
+  - A denser sidebar with 9 nav items across 3 labeled sections
+  - Header role badge continues to read **"Admin Workspace"** (existing code, no change)
+  - All pages are data-dense: stat rows, tables, and action drawers
+
+> [!IMPORTANT]
+> No AI marketing language, no unnecessary verbosity. All UI copy is short, direct, and functional — consistent with the existing workspace tone.
+
+---
+
+## Access
+
+- Admins and super admins use the **same login page** (`/login`).
+- After login, the `user_role` cookie determines the workspace. `admin` and `super_admin` roles are routed to `/admin`.
+- All roles (`admin`, `super_admin`) have the same capabilities in this phase. All write actions are attributed to the logged-in user via `current_user` in the backend.
+- Destructive or irreversible actions require a **confirmation dialog** before the API call fires.
+
+---
+
+## Skeleton-First Approach
+
+Phase 0 is the shell: layout, sidebar, topbar, routing, breadcrumbs, and stub pages. No module data is wired until the shell is approved and working.
+
+**Skeleton deliverables:**
+- Admin sidebar with all 9 nav items, section labels, icons, and active state
+- Admin topbar: existing greeting, search, help, notifications, profile — no changes needed
+- All `/admin/*` routes resolving without 404
+- Breadcrumb labels extended for all new routes
+- Module pages exist as stubs (skeleton loaders or `ComingSoon`)
+
+---
+
+## Sidebar Structure
+
+Replacing the current 2-item `ADMIN_LINKS` in `SidebarLayoutClient.tsx`:
+
+```
+── PLATFORM ──────────────────
+  Dashboard          /admin
+  Overview           /admin/overview
+
+── OPERATIONS ────────────────
+  Users              /admin/users
+  Finance            /admin/finance
+  Notifications      /admin/notifications
+  Support Tickets    /admin/support
+  Broadcast          /admin/broadcast
+
+── SYSTEM ────────────────────
+  AI Governance      /admin/ai-governance
+  Audit Logs         /admin/audit
+```
+
+**Icons to add to `IconLibrary.tsx`** (all from existing `lucide-react` install):
+- `brain` → `Brain` — AI Governance
+- `ticket` → `TicketCheck` — Support Tickets
+- `radio` → `Radio` — Broadcast
+- `shield-ellipsis` → `ShieldEllipsis` — Audit
+
+---
+
+## Modules
+
+### Module 1 — Dashboard (`/admin`)
+Redirect to `/admin/overview`. Landing entry point.
+
+---
+
+### Module 2 — Platform Overview (`/admin/overview`)
+**API:** `GET /admin/overview`
+
+| Stat | Source |
+|---|---|
+| Total Treasurers | `total_treasurers` |
+| Total Revenue (KES) | `total_revenue_kes` |
+| Active Subscriptions | `active_subscriptions` |
+| Open Support Tickets | `pending_tickets` |
+| AI Accuracy Rate | `ai_accuracy_rate` |
+
+- 5 `StatCard` components in a grid row
+- `recharts` AreaChart for revenue (placeholder data — backend can extend later)
+- Recent audit events list below
+
+**New components:** `AdminOverviewPage`, `AdminKpiGrid`, `AdminRevenueChart`
+
+---
+
+### Module 3 — Users (`/admin/users`)
+**APIs:** `GET /admin/users/treasurers`, `GET /admin/users/treasurers/{id}`, `GET /admin/users/treasurers/{id}/groups`, `POST /admin/users/treasurers/{id}/status`, `PATCH /admin/users/treasurers/{id}`, `PATCH /admin/users/treasurers/{id}/role`, `POST /admin/users/treasurers/{id}/plan`
+
+- Paginated table: Name, Email, Phone, Status (Active / Suspended `Badge`), Joined, Actions
+- Filter bar: status, search
+- Row action → opens a `Sheet` with tabs: **Profile | Groups | Plan**
+- Actions behind confirmation dialogs: Suspend / Reactivate, Edit Profile, Change Role, Override Plan
+
+**New components:** `AdminUsersPage`, `AdminUsersTable`, `UserDetailSheet`, `SuspendUserDialog`, `ChangeRoleDialog`, `OverridePlanDialog`
+
+---
+
+### Module 4 — Finance (`/admin/finance`)
+**APIs:** `GET /admin/finance/plans`, `POST /admin/finance/plans`, `GET /admin/finance/payments`, `POST /admin/finance/payments/override`
+
+Tabs:
+- **Plans** — card grid of subscription plans, "Create Plan" `Sheet`
+- **Payments** — paginated table (User, Amount KES, Status badge, Date), filterable by status
+- **Override** — form to manually apply a plan to a user (user_id, plan_id, duration)
+
+**New components:** `AdminFinancePage`, `PlanCard`, `CreatePlanSheet`, `PaymentsTable`, `ManualOverrideForm`
+
+---
+
+### Module 5 — Notifications (`/admin/notifications`)
+**APIs:** `POST /notifications/broadcast`, `GET /notifications` (read-only platform view)
+
+This is the admin-side management of the notifications system.
+
+- **Broadcast tab** — compose a notification: title, message, channel selection (`in_app`, `email`, `whatsapp`), target type (`all_members`, `specific_member`, `custom_selection`). If specific/custom: user ID input. Recipient count preview. Send behind confirmation dialog.
+- **History tab** — read-only log of recent broadcasts sent (title, channels, target, timestamp). Sourced from audit logs or a future broadcast log endpoint.
+
+> [!NOTE]
+> `POST /notifications/broadcast` is already admin-gated (`get_admin_user`). The frontend just needs to call it.
+
+**New components:** `AdminNotificationsPage`, `BroadcastForm`, `BroadcastConfirmDialog`, `BroadcastHistoryTable`
+
+---
+
+### Module 6 — Support Tickets (`/admin/support`)
+**APIs:** `GET /admin/crm/tickets`, `PATCH /admin/crm/tickets/{id}`
+
+- Table: Subject, Category, Priority (`Badge`), Status, Created, Assigned
+- Filter: status (open / in-progress / resolved)
+- Row click → `Sheet`: full ticket view, status dropdown, internal notes textarea, resolve/assign button
+
+**New components:** `AdminSupportPage`, `TicketsTable`, `TicketDetailSheet`
+
+---
+
+### Module 7 — Broadcast (`/admin/broadcast`)
+**APIs:** `POST /admin/crm/broadcast` (SMS broadcast via SQS), `POST /notifications/broadcast` (in-app / email / whatsapp)
+
+- Two broadcast methods on separate tabs:
+  - **Platform Notification** — uses `/notifications/broadcast` (in-app, email, whatsapp)
+  - **SMS Broadcast** — uses `/admin/crm/broadcast` (SQS → Twilio)
+- Message compose area, channel/method selection, confirmation dialog showing estimated recipient count before send
+
+> [!NOTE]
+> Broadcast (the outbound communication action) is a separate module from Support Tickets (inbound user issues). These are now distinct sidebar items.
+
+**New components:** `AdminBroadcastPage`, `NotificationBroadcastTab`, `SMSBroadcastTab`
+
+---
+
+### Module 8 — AI Governance (`/admin/ai-governance`)
+**APIs:** `GET /admin/ai/parser/feedback-queue`, `POST /admin/ai/parser/feedback-queue/{id}`, `GET /admin/ai/parser/training-data`, `POST /admin/ai/parser/training-data`, `POST /admin/ai/parser/train`, `GET /admin/ai/parser/config`, `POST /admin/ai/parser/config`
+
+Tabs:
+- **Feedback Queue** — table of AI correction records, approve/reject per row, bulk-approve
+- **Training Data** — table of manual samples, "Add Sample" `Sheet` (raw text + ground truth)
+- **Config** — key-value config editor, save button
+- **Retrain** — trigger retraining with epoch count input, behind confirmation dialog
+
+**New components:** `AdminAIGovernancePage`, `FeedbackQueueTab`, `TrainingDataTab`, `AIConfigTab`, `TriggerRetrainDialog`
+
+---
+
+### Module 9 — Audit Logs (`/admin/audit`)
+**APIs:** `GET /admin/audit/logs` (filters: `actor_id`, `entity_type`, `action`, `q`, `page`, `limit`)
+
+Replaces existing stub at `audit/page.tsx`.
+
+- Search bar (`q` param), filter dropdowns (Entity Type, Action)
+- Paginated table: Timestamp, Actor, Entity Type, Action, Details
+- Row click → `Sheet` with pretty-printed JSON payload
+
+**New components:** `AdminAuditPage` (replaces stub), `AuditLogTable`, `AuditLogDetailSheet`
+
+---
+
+## Files
+
+### Modify
+
+| File | Change |
+|---|---|
+| [`SidebarLayoutClient.tsx`](file:///c:/Users/josep/kapuletu-frontend/src/features/shared/components/SidebarLayoutClient.tsx) | Replace `ADMIN_LINKS` with 9-item grouped structure (section labels + icons). Header badge unchanged. |
+| [`IconLibrary.tsx`](file:///c:/Users/josep/kapuletu-frontend/src/features/shared/components/IconLibrary.tsx) | Add `brain`, `ticket`, `radio`, `shield-ellipsis` |
+| [`AppBreadcrumb.tsx`](file:///c:/Users/josep/kapuletu-frontend/src/features/shared/components/AppBreadcrumb.tsx) | Add labels for `overview`, `users`, `finance`, `notifications`, `support`, `broadcast`, `ai-governance`, `audit` |
+| [`admin/page.tsx`](file:///c:/Users/josep/kapuletu-frontend/src/app/(protected)/admin/page.tsx) | Redirect to `/admin/overview` |
+| [`admin/audit/page.tsx`](file:///c:/Users/josep/kapuletu-frontend/src/app/(protected)/admin/audit/page.tsx) | Replace stub with full implementation |
+
+### New
+
+| File | Module |
+|---|---|
+| `src/app/(protected)/admin/overview/page.tsx` | Platform Overview |
+| `src/app/(protected)/admin/users/page.tsx` | Users |
+| `src/app/(protected)/admin/finance/page.tsx` | Finance |
+| `src/app/(protected)/admin/notifications/page.tsx` | Notifications |
+| `src/app/(protected)/admin/support/page.tsx` | Support Tickets |
+| `src/app/(protected)/admin/broadcast/page.tsx` | Broadcast |
+| `src/app/(protected)/admin/ai-governance/page.tsx` | AI Governance |
+| `src/features/admin/services/queries.ts` | TanStack Query hooks |
+| `src/features/admin/services/mutations.ts` | TanStack mutation hooks |
+| `src/features/admin/components/*` | All module components |
+
+---
+
+## Build Order
+
+| Phase | Deliverable |
+|---|---|
+| 0 | Skeleton shell — sidebar, layout, routing, stubs, breadcrumbs |
+| 1 | Platform Overview |
+| 2 | Users |
+| 3 | Audit Logs |
+| 4 | Finance |
+| 5 | Notifications |
+| 6 | Support Tickets |
+| 7 | Broadcast |
+| 8 | AI Governance |
+
+---
+
+## Verification
+
+After each phase:
+1. Route loads without error
+2. Data fetches from the backend via the Next.js proxy
+3. Write actions fire correctly and UI reflects the result
+4. Confirmation dialogs appear before all destructive or irreversible actions
+5. Active sidebar item highlights correctly
+6. Breadcrumb label is correct for the route
