@@ -89,7 +89,9 @@ export const UserDetailPage: React.FC = () => {
               {userDetails.profile.is_active ? "Active" : "Suspended"}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">Identifier: {userId}</p>
+          <p className="text-sm text-muted-foreground">
+            Identifier: {userDetails.profile.slug || userDetails.profile.user_id}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => setEditOpen(true)}>

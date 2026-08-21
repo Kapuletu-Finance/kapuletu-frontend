@@ -54,7 +54,7 @@ const formatSegment = (segment: string): string => {
   const isObjectId = /^[0-9a-f]{24}$/i.test(segment);
 
   if (isUuid || isCuid || isObjectId) {
-    return `Details (${segment.slice(-4).toUpperCase()})`;
+    return `Details`;
   }
 
   if (segment.toUpperCase().startsWith("FBK-")) {
