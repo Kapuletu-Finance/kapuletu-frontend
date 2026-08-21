@@ -57,6 +57,10 @@ const formatSegment = (segment: string): string => {
     return `Details (${segment.slice(-4).toUpperCase()})`;
   }
 
+  if (segment.toUpperCase().startsWith("FBK-")) {
+    return segment.toUpperCase();
+  }
+
   // Otherwise, format slug (replace hyphens with spaces and capitalize words)
   return decodeURIComponent(segment)
     .split("-")

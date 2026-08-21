@@ -54,7 +54,7 @@ const STATUS_OPTIONS = [
 export const FeedbackDetailPage: React.FC = () => {
   const params = useParams();
   const router = useRouter();
-  const feedbackId = params.id as string;
+  const feedbackId = params.slug as string;
 
   const { data: item, isLoading } = useAdminFeedbackDetailsQuery(feedbackId);
   const updateMutation = useUpdateFeedbackMutation();
@@ -135,7 +135,7 @@ export const FeedbackDetailPage: React.FC = () => {
               {item.severity} Severity
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">ID: {feedbackId}</p>
+          <p className="text-sm text-muted-foreground">Identifier: {feedbackId}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button

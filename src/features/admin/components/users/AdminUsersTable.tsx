@@ -77,7 +77,7 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
             <TableRow
               key={user.user_id}
               className="cursor-pointer transition-colors hover:bg-muted/50"
-              onClick={() => onRowClick(user.user_id)}
+              onClick={() => onRowClick(user.slug)}
             >
               <TableCell>
                 <p className="font-medium text-foreground">{user.full_name}</p>
@@ -112,7 +112,7 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
                   <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => onRowClick(user.user_id)}>
+                    <DropdownMenuItem onClick={() => onRowClick(user.slug)}>
                       <IconLibrary name="eye" className="mr-2 h-4 w-4" />
                       View Profile
                     </DropdownMenuItem>

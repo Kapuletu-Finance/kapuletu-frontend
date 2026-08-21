@@ -5,6 +5,7 @@ import { apiClient } from "@/lib/api-client";
 
 export interface AdminFeedbackItem {
   feedback_id: string;
+  reference_number: string;
   user_id: string;
   user_name: string;
   user_email?: string;
@@ -206,6 +207,7 @@ export const useNewFeedbackCountQuery = () => {
 
 export interface AdminUserItem {
   user_id: string;
+  slug: string;
   full_name: string;
   email: string;
   phone: string;
@@ -230,6 +232,7 @@ export interface AdminUsersFilters {
 export interface AdminUserDetailsResponse {
   profile: {
     user_id: string;
+    slug: string;
     first_name: string;
     last_name: string;
     email: string;

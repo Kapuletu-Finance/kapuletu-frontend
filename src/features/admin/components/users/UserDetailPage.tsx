@@ -20,7 +20,7 @@ import { SuspendUserDialog } from "./SuspendUserDialog";
 export const UserDetailPage: React.FC = () => {
   const params = useParams();
   const router = useRouter();
-  const userId = params.id as string;
+  const userId = params.slug as string;
 
   const { data: userDetails, isLoading: isLoadingDetails } = useAdminUserDetailsQuery(userId);
   const { data: userGroups, isLoading: isLoadingGroups } = useAdminUserGroupsQuery(userId);
@@ -87,7 +87,7 @@ export const UserDetailPage: React.FC = () => {
               {userDetails.profile.is_active ? "Active" : "Suspended"}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">ID: {userId}</p>
+          <p className="text-sm text-muted-foreground">Identifier: {userId}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => setEditOpen(true)}>

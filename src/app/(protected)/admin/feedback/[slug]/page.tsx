@@ -1,7 +1,5 @@
 import { FeedbackDetailPage } from "@/features/admin/components/feedback/FeedbackDetailPage";
 
-const AdminFeedbackDetailRoute = () => {
+export default function Page({ params }: { params: { slug: string } }) {
   return <FeedbackDetailPage />;
-};
-
-export default AdminFeedbackDetailRoute;
+}

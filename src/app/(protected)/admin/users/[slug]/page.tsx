@@ -1,7 +1,5 @@
 import { UserDetailPage } from "@/features/admin/components/users/UserDetailPage";
 
-const AdminUserDetailRoute = () => {
+export default function Page({ params }: { params: { slug: string } }) {
   return <UserDetailPage />;
-};
-
-export default AdminUserDetailRoute;
+}
