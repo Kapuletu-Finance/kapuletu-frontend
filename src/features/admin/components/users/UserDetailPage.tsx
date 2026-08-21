@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  useAdminUserActivityQuery,
   useAdminUserDetailsQuery,
   useAdminUserGroupsQuery,
 } from "@/features/admin/services/queries";
@@ -24,6 +25,7 @@ export const UserDetailPage: React.FC = () => {
 
   const { data: userDetails, isLoading: isLoadingDetails } = useAdminUserDetailsQuery(userId);
   const { data: userGroups, isLoading: isLoadingGroups } = useAdminUserGroupsQuery(userId);
+  const { data: userActivity, isLoading: isLoadingActivity } = useAdminUserActivityQuery(userId);
 
   const [suspendOpen, setSuspendOpen] = useState(false);
   const [roleOpen, setRoleOpen] = useState(false);
@@ -159,9 +161,10 @@ export const UserDetailPage: React.FC = () => {
         {/* Right Column: Tabs */}
         <div className="md:col-span-2">
           <Tabs defaultValue="groups" className="w-full">
-            <TabsList className="grid grid-cols-3 w-full lg:w-96 mb-6">
+            <TabsList className="grid grid-cols-4 w-full lg:w-[32rem] mb-6">
               <TabsTrigger value="groups">Groups</TabsTrigger>
               <TabsTrigger value="plan">Plan</TabsTrigger>
+              <TabsTrigger value="activity">Activity Log</TabsTrigger>
               <TabsTrigger value="admin">Admin Controls</TabsTrigger>
             </TabsList>
 
@@ -187,10 +190,33 @@ export const UserDetailPage: React.FC = () => {
                         <p className="text-sm text-muted-foreground line-clamp-2 mb-3 h-10">
                           {group.description || "No description provided."}
                         </p>
-                        <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-3">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-3 mb-3">
                           <span>Created {formatDate(group.created_at)}</span>
                           <span className="font-medium text-primary">View Group</span>
                         </div>
+                        {group.campaigns && group.campaigns.length > 0 && (
+                          <div className="space-y-2 border-t border-border pt-3">
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                              Campaigns
+                            </p>
+                            <div className="space-y-1">
+                              {group.campaigns.map((c) => (
+                                <div
+                                  key={c.campaign_id}
+                                  className="flex items-center justify-between text-xs bg-muted/40 p-2 rounded-md"
+                                >
+                                  <span className="font-medium text-foreground">{c.name}</span>
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] capitalize bg-background"
+                                  >
+                                    {c.status}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
@@ -201,20 +227,77 @@ export const UserDetailPage: React.FC = () => {
             <TabsContent value="plan" className="space-y-4">
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg text-foreground mb-2">
+                  <h3 className="font-semibold text-lg text-foreground mb-4">
                     Subscription & Billing
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-6 max-w-lg">
+                  <div className="mb-6 rounded-lg bg-muted/30 p-4 border border-border">
+                    <p className="text-sm text-muted-foreground mb-1">Current Active Plan</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-bold text-foreground">
+                        {/* Note: This should ideally come from backend if available on detail */}
+                        Basic
+                      </span>
+                      <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500">
+                        Active
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="h-px bg-border w-full mb-6" />
+                  <h4 className="font-medium text-foreground mb-2">Manual Plan Override</h4>
+                  <p className="text-sm text-muted-foreground mb-4 max-w-lg">
                     Manage this user's platform subscription. If a user requires a custom
                     arrangement or manual upgrade bypassing the payment gateway, use the manual
                     override below.
                   </p>
-                  <Button onClick={() => setPlanOpen(true)}>
+                  <Button onClick={() => setPlanOpen(true)} variant="outline">
                     <IconLibrary name="credit-card" className="mr-2 size-4" />
-                    Manual Plan Override
+                    Override Plan Manually
                   </Button>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="activity" className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-lg text-foreground">Recent Activity</h3>
+              </div>
+              {isLoadingActivity ? (
+                <div className="space-y-2 animate-pulse">
+                  <div className="h-12 bg-muted rounded-md" />
+                  <div className="h-12 bg-muted rounded-md" />
+                </div>
+              ) : !userActivity || userActivity.length === 0 ? (
+                <div className="p-8 text-center border border-dashed border-border rounded-lg">
+                  <p className="text-sm text-muted-foreground">No recent activity logs found.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {userActivity.map((log) => (
+                    <div
+                      key={log.log_id}
+                      className="flex flex-col gap-1 p-3 rounded-md border border-border bg-card"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-foreground">{log.action}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(log.timestamp).toLocaleString("en-KE", {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="px-1.5 py-0.5 bg-muted rounded capitalize">
+                          {log.entity_type}
+                        </span>
+                        {log.entity_id && (
+                          <span className="font-mono text-[10px]">{log.entity_id}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="admin" className="space-y-4">

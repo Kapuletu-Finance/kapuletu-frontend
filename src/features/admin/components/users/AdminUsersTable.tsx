@@ -68,6 +68,7 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
             <TableHead className="font-semibold">Name</TableHead>
             <TableHead className="font-semibold">Contact</TableHead>
             <TableHead className="font-semibold">Status</TableHead>
+            <TableHead className="font-semibold">Plan</TableHead>
             <TableHead className="font-semibold">Joined</TableHead>
             <TableHead className="text-right font-semibold">Actions</TableHead>
           </TableRow>
@@ -96,6 +97,11 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
                   }`}
                 >
                   {user.is_active ? "Active" : "Suspended"}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline" className="text-xs bg-muted/50 text-foreground">
+                  {user.plan_name}
                 </Badge>
               </TableCell>
               <TableCell className="text-sm text-muted-foreground whitespace-nowrap">

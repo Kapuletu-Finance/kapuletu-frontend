@@ -71,6 +71,39 @@ export const AdminUsersPage: React.FC = () => {
         </p>
       </div>
 
+      {data?.kpis && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <IconLibrary name="users" className="h-4 w-4" />
+              <span className="text-sm font-medium">Total Users</span>
+            </div>
+            <span className="text-2xl font-bold text-foreground">{data.kpis.total}</span>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <IconLibrary name="check-circle" className="h-4 w-4 text-emerald-500" />
+              <span className="text-sm font-medium">Active Users</span>
+            </div>
+            <span className="text-2xl font-bold text-foreground">{data.kpis.active}</span>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <IconLibrary name="alert" className="h-4 w-4 text-destructive" />
+              <span className="text-sm font-medium">Suspended</span>
+            </div>
+            <span className="text-2xl font-bold text-foreground">{data.kpis.suspended}</span>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <IconLibrary name="analytics" className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">New This Month</span>
+            </div>
+            <span className="text-2xl font-bold text-foreground">{data.kpis.new_this_month}</span>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">

@@ -212,6 +212,7 @@ export interface AdminUserItem {
   email: string;
   phone: string;
   is_active: boolean;
+  plan_name: string;
   created_at: string;
 }
 
@@ -219,6 +220,12 @@ export interface AdminUsersResponse {
   total: number;
   page: number;
   limit: number;
+  kpis: {
+    total: number;
+    active: number;
+    suspended: number;
+    new_this_month: number;
+  };
   users: AdminUserItem[];
 }
 
@@ -251,6 +258,12 @@ export interface AdminUserGroupItem {
   name: string;
   description: string;
   created_at: string;
+  campaigns: {
+    campaign_id: string;
+    name: string;
+    target_amount: number;
+    status: string;
+  }[];
 }
 
 export interface AdminFinancePlanItem {
@@ -314,5 +327,27 @@ export const useAdminFinancePlansQuery = () => {
       const response = await apiClient.get<AdminFinancePlanItem[]>("/admin/finance/plans");
       return response.data;
     },
+  });
+};
+
+export interface AdminUserActivityItem {
+  log_id: string;
+  action: string;
+  entity_type: string;
+  entity_id: string | null;
+  details: Record<string, unknown>;
+  timestamp: string;
+}
+
+export const useAdminUserActivityQuery = (userId: string) => {
+  return useQuery({
+    queryKey: ["admin", "users", userId, "activity"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminUserActivityItem[]>(
+        `/admin/users/treasurers/${userId}/activity`,
+      );
+      return response.data;
+    },
+    enabled: !!userId,
   });
 };
