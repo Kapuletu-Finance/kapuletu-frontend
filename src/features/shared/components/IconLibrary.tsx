@@ -166,6 +166,8 @@ const ICON_MAP = {
   trash: <Trash2 />,
   "trending-up": <TrendingUp />,
   "triangle-alert": <TriangleAlert />,
+  user: <User />,
+  users: <Users />,
   zap: <Zap />,
 } as const;
 

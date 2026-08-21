@@ -1,7 +1,5 @@
-import ComingSoon from "@/features/shared/components/ComingSoon";
+import { AdminAuditPage } from "@/features/admin/components/audit/AdminAuditPage";
 
-const AdminAuditPage = () => {
-  return <ComingSoon />;
-};
-
-export default AdminAuditPage;
+export default function Page() {
+  return <AdminAuditPage />;
+}

@@ -61,14 +61,70 @@ export const useAdminFeedbackQuery = (filters: AdminFeedbackFilters = {}) => {
   });
 };
 
+export interface AdminFeedbackDetailsResponse {
+  message: string;
+  data: AdminFeedbackItem;
+}
+
 export const useAdminFeedbackDetailsQuery = (feedbackId: string) => {
   return useQuery({
     queryKey: ["admin", "feedback", feedbackId],
     queryFn: async () => {
-      const response = await apiClient.get<AdminFeedbackItem>(`/feedback/admin/${feedbackId}`);
-      return response.data;
+      const { data } = await apiClient.get<AdminFeedbackDetailsResponse>(
+        `/admin/feedback/${feedbackId}`,
+      );
+      return data.data;
     },
     enabled: !!feedbackId,
+  });
+};
+
+// --- Audit Logs ---
+
+export interface AuditLogItem {
+  log_id: string;
+  actor_id: string | null;
+  actor_name: string;
+  actor_email: string | null;
+  action: string;
+  entity_type: string;
+  entity_id: string | null;
+  details: Record<string, unknown>;
+  timestamp: string;
+}
+
+export interface AuditLogsResponse {
+  total: number;
+  page: number;
+  logs: AuditLogItem[];
+}
+
+export interface AuditLogFilters {
+  actor_id?: string;
+  entity_type?: string;
+  action?: string;
+  q?: string;
+  page?: number;
+  limit?: number;
+}
+
+export const useAuditLogsQuery = (filters: AuditLogFilters) => {
+  return useQuery({
+    queryKey: ["admin", "audit", filters],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters.actor_id) params.set("actor_id", filters.actor_id);
+      if (filters.entity_type) params.set("entity_type", filters.entity_type);
+      if (filters.action) params.set("action", filters.action);
+      if (filters.q) params.set("q", filters.q);
+      if (filters.page) params.set("page", filters.page.toString());
+      if (filters.limit) params.set("limit", filters.limit.toString());
+
+      const { data } = await apiClient.get<AuditLogsResponse>(
+        `/admin/audit/logs?${params.toString()}`,
+      );
+      return data;
+    },
   });
 };
 
