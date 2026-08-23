@@ -1,11 +1,11 @@
 "use client";
 
-import { AlertTriangle, Clock, MessageSquare, PlusCircle } from "lucide-react";
+import { MessageSquare, PlusCircle } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTicketsQuery } from "../services/queries";
 import { TicketDetailView } from "./TicketDetailView";
@@ -35,28 +35,9 @@ export const SupportPage: React.FC = () => {
     }
   };
 
-  const renderPriorityBadge = (priority: string) => {
-    switch (priority) {
-      case "urgent":
-        return (
-          <Badge variant="destructive" className="flex items-center gap-1">
-            <AlertTriangle className="w-3 h-3" /> Urgent
-          </Badge>
-        );
-      case "high":
-        return (
-          <Badge variant="destructive" className="bg-orange-500">
-            High
-          </Badge>
-        );
-      default:
-        return <Badge variant="secondary">Standard</Badge>;
-    }
-  };
-
   if (isCreating) {
     return (
-      <div className="space-y-6 max-w-3xl mx-auto">
+      <div className="space-y-6 max-w-3xl mx-auto h-full p-4 md:p-6 lg:p-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Open Support Ticket</h1>
@@ -78,90 +59,80 @@ export const SupportPage: React.FC = () => {
     );
   }
 
-  if (selectedTicketId) {
-    return (
-      <div className="space-y-6 max-w-4xl mx-auto">
-        <Button variant="ghost" onClick={() => setSelectedTicketId(null)} className="mb-4">
-          &larr; Back to Tickets
-        </Button>
-        <TicketDetailView ticketId={selectedTicketId} />
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col h-[calc(100vh-8rem)]">
+      <div className="flex items-center justify-between mb-6 shrink-0">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Support & Ticketing</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your inquiries, feature requests, and support issues.
+            Manage your inquiries, feature requests, and support issues in real-time.
           </p>
         </div>
-        <Button onClick={() => setIsCreating(true)} className="gap-2">
-          <PlusCircle className="w-4 h-4" />
+        <Button onClick={() => setIsCreating(true)}>
+          <PlusCircle className="mr-2 h-4 w-4" />
           New Ticket
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Open Tickets</CardTitle>
-            <MessageSquare className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {tickets?.filter((t) => t.status === "open").length || 0}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+        {/* Left Pane: Ticket List */}
+        <div className="lg:col-span-1 border rounded-lg bg-card overflow-y-auto shadow-sm">
+          <div className="p-4 border-b bg-muted/20 sticky top-0 backdrop-blur z-10">
+            <h3 className="font-semibold text-lg">My Tickets</h3>
+          </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Tickets</CardTitle>
-          <CardDescription>A history of your interactions with our support team.</CardDescription>
-        </CardHeader>
-        <CardContent>
           {isLoading ? (
-            <div className="space-y-4">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
+            <div className="p-4 space-y-4">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
             </div>
           ) : tickets?.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <p>You haven't opened any support tickets yet.</p>
+            <div className="p-8 text-center border-dashed rounded-lg m-4">
+              <MessageSquare className="mx-auto h-12 w-12 text-muted-foreground mb-4 opacity-20" />
+              <h3 className="text-lg font-medium text-foreground">No open tickets</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                You haven't submitted any support requests yet.
+              </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="flex flex-col divide-y">
               {tickets?.map((ticket) => (
-                <div
+                <button
+                  type="button"
                   key={ticket.ticket_id}
-                  className="p-4 border rounded-lg hover:border-primary cursor-pointer transition-colors flex items-center justify-between"
                   onClick={() => setSelectedTicketId(ticket.ticket_id)}
+                  className={`flex flex-col text-left p-4 hover:bg-muted/50 transition-colors ${selectedTicketId === ticket.ticket_id ? "bg-muted/80 border-l-4 border-l-primary" : "border-l-4 border-l-transparent"}`}
                 >
-                  <div className="space-y-1">
-                    <div className="font-medium flex items-center gap-3">
-                      {ticket.subject}
-                      {renderStatusBadge(ticket.status)}
-                      {renderPriorityBadge(ticket.priority)}
-                    </div>
-                    <div className="text-sm text-muted-foreground flex items-center gap-4">
-                      <span>Category: {ticket.category}</span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        Opened on {new Date(ticket.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between mb-1 w-full">
+                    <span className="font-semibold text-sm truncate pr-2">{ticket.subject}</span>
+                    {renderStatusBadge(ticket.status)}
                   </div>
-                </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground w-full">
+                    <span className="truncate max-w-[120px]">{ticket.category}</span>
+                    <span>{new Date(ticket.updated_at).toLocaleDateString()}</span>
+                  </div>
+                </button>
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Right Pane: Ticket Chat */}
+        <div className="lg:col-span-2 h-full min-h-0">
+          {selectedTicketId ? (
+            <TicketDetailView ticketId={selectedTicketId} />
+          ) : (
+            <div className="h-full border rounded-lg flex flex-col items-center justify-center text-center p-8 bg-muted/10">
+              <MessageSquare className="mx-auto h-12 w-12 text-muted-foreground mb-4 opacity-20" />
+              <h3 className="text-lg font-medium text-foreground">Select a ticket</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                Choose a ticket from the list on the left to view the conversation and reply to our
+                support team.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

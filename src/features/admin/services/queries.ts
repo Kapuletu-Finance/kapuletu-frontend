@@ -210,6 +210,7 @@ export const useAdminTicketDetailQuery = (ticketId: string | null) => {
       return response.data;
     },
     enabled: !!ticketId,
+    refetchInterval: 5000,
   });
 };
 

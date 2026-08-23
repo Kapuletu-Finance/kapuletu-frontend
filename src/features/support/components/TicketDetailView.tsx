@@ -28,8 +28,9 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
       await reply({ ticketId, payload: { message: replyText } });
       setReplyText("");
       toast.success("Reply sent!");
-    } catch (e: any) {
-      toast.error(e.response?.data?.detail || "Failed to send reply");
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err.response?.data?.detail || "Failed to send reply");
     }
   };
 
@@ -38,7 +39,7 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
   }
 
   return (
-    <Card className="flex flex-col h-[700px]">
+    <Card className="flex flex-col h-full border-0 shadow-none bg-transparent lg:border lg:shadow-sm lg:bg-card">
       <CardHeader className="border-b bg-muted/20">
         <div className="flex justify-between items-start">
           <div>

@@ -523,7 +523,13 @@ export const FeedbackWidget: React.FC = () => {
           {/* Header */}
           <DialogHeader className="shrink-0 px-6 py-5 border-b border-border">
             <div className="flex items-center justify-between">
-              <DialogTitle className="text-base font-semibold">Share Feedback</DialogTitle>
+              <div className="flex flex-col gap-1">
+                <DialogTitle className="text-base font-semibold">Share Feedback</DialogTitle>
+                <p className="text-xs text-muted-foreground pr-4">
+                  By sharing your feedback, you help us improve Kapuletu's application and service
+                  delivery.
+                </p>
+              </div>
               {!submitted && <StepIndicator step={step} total={3} />}
             </div>
           </DialogHeader>

@@ -20,5 +20,6 @@ export const useTicketDetailQuery = (ticketId: string | null) => {
       return response.data;
     },
     enabled: !!ticketId,
+    refetchInterval: 5000,
   });
 };

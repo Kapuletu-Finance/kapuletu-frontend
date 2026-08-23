@@ -57,6 +57,7 @@ const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/notifications", icon: "notification", label: "Notifications" },
   { href: "/treasurer/reports", icon: "report", label: "Reports" },
   { href: "/treasurer/analytics", icon: "analytics", label: "Analytics" },
+  { href: "/support", icon: "ticket", label: "Help Center" },
   { href: "/treasurer/settings", icon: "settings", label: "Settings" },
 ];
 
