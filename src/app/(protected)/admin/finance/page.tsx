@@ -1,7 +1,5 @@
-import ComingSoon from "@/features/shared/components/ComingSoon";
+import { AdminFinancePage } from "@/features/admin/components/finance/AdminFinancePage";
 
-const AdminFinancePage = () => {
-  return <ComingSoon />;
-};
-
-export default AdminFinancePage;
+export default function FinanceRoute() {
+  return <AdminFinancePage />;
+}

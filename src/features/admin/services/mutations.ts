@@ -166,3 +166,50 @@ export const useUpgradeUserPlanMutation = () => {
     },
   });
 };
+
+export const useCreatePlanMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      name: string;
+      price: number;
+      max_groups?: number;
+      max_campaigns?: number;
+      max_transactions?: number;
+    }) => {
+      const response = await apiClient.post<{ message: string; id: string }>(
+        "/admin/finance/plans",
+        data,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Subscription plan created.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "finance", "plans"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to create plan.");
+    },
+  });
+};
+
+export const useManualOverrideMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { user_id: string; plan_id: string; duration?: number }) => {
+      const response = await apiClient.post<{ message: string }>(
+        "/admin/finance/payments/override",
+        data,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("User subscription manually overridden.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "finance", "payments"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to override subscription.");
+    },
+  });
+};

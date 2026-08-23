@@ -269,11 +269,14 @@ export interface AdminUserGroupItem {
 export interface AdminFinancePlanItem {
   plan_id: string;
   name: string;
-  description: string;
+  description?: string;
   price: number;
-  billing_cycle: string;
-  is_active: boolean;
-  features: string[];
+  billing_cycle?: string;
+  is_active?: boolean;
+  features?: string[];
+  max_groups: number;
+  max_campaigns: number;
+  max_transactions: number;
 }
 
 export const useAdminUsersQuery = (filters: AdminUsersFilters = {}) => {
@@ -349,5 +352,35 @@ export const useAdminUserActivityQuery = (userId: string) => {
       return response.data;
     },
     enabled: !!userId,
+  });
+};
+
+export interface AdminFinancePaymentItem {
+  payment_id: string;
+  user_id: string;
+  user_name: string;
+  plan_name: string;
+  amount: number;
+  status: string;
+  method: string;
+  created_at: string;
+}
+
+export interface AdminFinancePaymentsResponse {
+  items: AdminFinancePaymentItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export const useAdminFinancePaymentsQuery = (page: number = 1, limit: number = 50) => {
+  return useQuery({
+    queryKey: ["admin", "finance", "payments", page, limit],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminFinancePaymentsResponse>(
+        `/admin/finance/payments?page=${page}&limit=${limit}`,
+      );
+      return response.data;
+    },
   });
 };

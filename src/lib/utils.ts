@@ -14,3 +14,10 @@ export const getInitials = (name: string) => {
     .substring(0, 2)
     .toUpperCase();
 };
+
+export const formatKes = (amount: number) => {
+  return new Intl.NumberFormat("en-KE", {
+    style: "currency",
+    currency: "KES",
+  }).format(amount);
+};
