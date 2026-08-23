@@ -1,6 +1,7 @@
 export interface TicketMessage {
   message_id: string;
   sender_id: string;
+  sender_name?: string;
   message: string;
   created_at: string;
 }
