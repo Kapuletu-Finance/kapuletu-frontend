@@ -159,7 +159,7 @@ export const ManualOverrideTab: React.FC = () => {
           </DialogHeader>
           <div className="py-4 space-y-2 text-sm">
             <p>
-              <strong>User ID:</strong> {confirmData?.user_id}
+              <strong>User ID:</strong> {confirmData?.user_id?.split("-")[0].toUpperCase()}
             </p>
             <p>
               <strong>Plan:</strong> {selectedPlan?.name || confirmData?.plan_id}

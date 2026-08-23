@@ -405,3 +405,55 @@ export const useAdminFinancePaymentsQuery = (page: number = 1, limit: number = 5
     },
   });
 };
+
+// --- AI Governance ---
+
+export interface AIFeedbackItem {
+  feedback_id: string;
+  user_id: string;
+  original: Record<string, unknown>;
+  corrected: Record<string, unknown>;
+  created_at: string;
+}
+
+export const useAIFeedbackQueueQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "ai", "feedback-queue"],
+    queryFn: async () => {
+      const response = await apiClient.get<AIFeedbackItem[]>("/admin/ai/parser/feedback-queue");
+      return response.data;
+    },
+  });
+};
+
+export interface AITrainingSample {
+  id: string;
+  text: string;
+  ground_truth: Record<string, unknown>;
+  source: string;
+}
+
+export const useAITrainingPoolQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "ai", "training-data"],
+    queryFn: async () => {
+      const response = await apiClient.get<AITrainingSample[]>("/admin/ai/parser/training-data");
+      return response.data;
+    },
+  });
+};
+
+export interface AIConfig {
+  training_mode: string;
+  continuous_threshold: number;
+}
+
+export const useAIConfigQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "ai", "config"],
+    queryFn: async () => {
+      const response = await apiClient.get<AIConfig>("/admin/ai/parser/config");
+      return response.data;
+    },
+  });
+};

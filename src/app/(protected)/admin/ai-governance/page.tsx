@@ -1,7 +1,5 @@
-import ComingSoon from "@/features/shared/components/ComingSoon";
+import { AdminAIGovernancePage } from "@/features/admin/components/ai-governance/AdminAIGovernancePage";
 
-const AdminAIGovernancePage = () => {
-  return <ComingSoon />;
-};
-
-export default AdminAIGovernancePage;
+export default function Page() {
+  return <AdminAIGovernancePage />;
+}

@@ -244,7 +244,13 @@ export const useSendBroadcastMutation = () => {
 export const useAdminUpdateTicketMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ ticketId, payload }: { ticketId: string; payload: any }) => {
+    mutationFn: async ({
+      ticketId,
+      payload,
+    }: {
+      ticketId: string;
+      payload: Record<string, unknown>;
+    }) => {
       const response = await apiClient.patch(`/admin/crm/tickets/${ticketId}`, payload);
       return response.data;
     },
@@ -262,7 +268,13 @@ export const useAdminUpdateTicketMutation = () => {
 export const useAdminReplyTicketMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ ticketId, payload }: { ticketId: string; payload: any }) => {
+    mutationFn: async ({
+      ticketId,
+      payload,
+    }: {
+      ticketId: string;
+      payload: Record<string, unknown>;
+    }) => {
       const response = await apiClient.post(`/admin/crm/tickets/${ticketId}/reply`, payload);
       return response.data;
     },
@@ -273,6 +285,77 @@ export const useAdminReplyTicketMutation = () => {
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to send reply.");
+    },
+  });
+};
+
+// --- AI Governance Mutations ---
+
+export const useApproveFeedbackMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ feedbackId, approve }: { feedbackId: string; approve: boolean }) => {
+      const response = await apiClient.post(`/admin/ai/parser/feedback-queue/${feedbackId}`, {
+        approve,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Feedback reviewed successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "ai", "feedback-queue"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "ai", "training-data"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to review feedback.");
+    },
+  });
+};
+
+export const useInjectTrainingSampleMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { text: string; ground_truth: Record<string, unknown> }) => {
+      const response = await apiClient.post("/admin/ai/parser/training-data", payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Training sample added successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "ai", "training-data"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to add training sample.");
+    },
+  });
+};
+
+export const useTriggerAITrainingMutation = () => {
+  return useMutation({
+    mutationFn: async (payload: { epochs: number }) => {
+      const response = await apiClient.post("/admin/ai/parser/train", payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("AI retraining triggered successfully.");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to trigger AI retraining.");
+    },
+  });
+};
+
+export const useUpdateAIConfigMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: Record<string, unknown>) => {
+      const response = await apiClient.post("/admin/ai/parser/config", payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("AI configuration updated successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "ai", "config"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update config.");
     },
   });
 };

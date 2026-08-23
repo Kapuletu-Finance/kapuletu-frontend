@@ -90,7 +90,8 @@ export const UserDetailPage: React.FC = () => {
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            Identifier: {userDetails.profile.slug || userDetails.profile.user_id}
+            Identifier:{" "}
+            {userDetails.profile.slug || userDetails.profile.user_id.split("-")[0].toUpperCase()}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -293,7 +294,9 @@ export const UserDetailPage: React.FC = () => {
                           {log.entity_type}
                         </span>
                         {log.entity_id && (
-                          <span className="font-mono text-[10px]">{log.entity_id}</span>
+                          <span className="font-mono text-[10px]">
+                            {log.entity_id?.split("-")[0].toUpperCase()}
+                          </span>
                         )}
                       </div>
                     </div>

@@ -135,7 +135,9 @@ export const FeedbackDetailPage: React.FC = () => {
               {item.severity} Severity
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">Identifier: {feedbackId}</p>
+          <p className="text-sm text-muted-foreground">
+            Identifier: {feedbackId.split("-")[0].toUpperCase()}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button
