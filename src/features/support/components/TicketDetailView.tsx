@@ -95,16 +95,6 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
               </span>
             </div>
           </div>
-          {ticket.sla_deadline && (
-            <div className="text-right">
-              <div className="text-xs text-muted-foreground uppercase font-bold mb-1">
-                SLA Deadline
-              </div>
-              <div className="text-sm font-medium">
-                {new Date(ticket.sla_deadline).toLocaleString()}
-              </div>
-            </div>
-          )}
         </div>
       </CardHeader>
 

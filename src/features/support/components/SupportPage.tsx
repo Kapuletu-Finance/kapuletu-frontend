@@ -42,8 +42,8 @@ export const SupportPage: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Open Support Ticket</h1>
             <p className="text-muted-foreground mt-2">
-              Describe your issue in detail. Our enterprise support team will review it based on
-              your SLA.
+              Describe your issue in detail. Our enterprise support team will review and respond as
+              soon as possible.
             </p>
           </div>
           <Button variant="outline" onClick={() => setIsCreating(false)}>
