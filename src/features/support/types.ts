@@ -13,6 +13,7 @@ export interface Ticket {
   priority: string;
   status: string;
   sla_deadline?: string | null;
+  assigned_admin_id?: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -37,7 +37,7 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
     try {
       await reply({ ticketId, payload: { message: replyText } });
       setReplyText("");
-    } catch (e) {
+    } catch (_e) {
       // toast handled in mutation
     }
   };
@@ -46,7 +46,7 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
     try {
       await updateTicket({ ticketId, payload: { status: "resolved" } });
       onResolved();
-    } catch (e) {
+    } catch (_e) {
       // toast handled in mutation
     }
   };
@@ -56,7 +56,24 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
     try {
       await updateTicket({ ticketId, payload: { internal_notes: internalNote } });
       toast.success("Internal note saved");
-    } catch (e) {
+    } catch (_e) {
+      // toast handled in mutation
+    }
+  };
+
+  const handleClaim = async () => {
+    try {
+      await updateTicket({ ticketId, payload: { status: "in_progress" } });
+    } catch (_e) {
+      // toast handled in mutation
+    }
+  };
+
+  const handleTerminate = async () => {
+    try {
+      await updateTicket({ ticketId, payload: { status: "closed" } });
+      onResolved();
+    } catch (_e) {
       // toast handled in mutation
     }
   };
@@ -68,9 +85,21 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
         <CardHeader className="bg-muted/30 border-b">
           <CardTitle className="text-xl flex items-center justify-between">
             <span>{ticket.subject}</span>
-            <Badge variant="outline">{ticket.priority.toUpperCase()}</Badge>
+            <div className="flex gap-2">
+              <Badge
+                variant="outline"
+                className={
+                  ticket.priority === "urgent" || ticket.priority === "high"
+                    ? "border-red-500 text-red-500 animate-pulse"
+                    : ""
+                }
+              >
+                {ticket.priority.toUpperCase()}
+              </Badge>
+              <Badge variant="secondary">{ticket.status.toUpperCase()}</Badge>
+            </div>
           </CardTitle>
-          <div className="text-sm text-muted-foreground flex gap-4">
+          <div className="text-sm text-muted-foreground flex gap-4 mt-2">
             <span>
               From: <span className="font-medium text-foreground">{ticket.user_name}</span>
             </span>
@@ -79,35 +108,42 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
         </CardHeader>
 
         <CardContent className="flex-1 overflow-y-auto p-6 space-y-6">
-          {ticket.messages.map((msg: any) => {
-            const isAdmin = msg.sender_id !== ticket.user_id;
-            return (
-              <div
-                key={msg.message_id}
-                className={`flex gap-3 ${isAdmin ? "justify-end" : "justify-start"}`}
-              >
-                {!isAdmin && (
-                  <Avatar className="w-8 h-8">
-                    <AvatarFallback>{ticket.user_name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                )}
+          {ticket.messages.map(
+            (msg: {
+              message_id: string;
+              sender_id: string;
+              message: string;
+              created_at: string;
+            }) => {
+              const isAdmin = msg.sender_id !== ticket.user_id;
+              return (
                 <div
-                  className={`max-w-[80%] rounded-lg p-4 ${isAdmin ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                  key={msg.message_id}
+                  className={`flex gap-3 ${isAdmin ? "justify-end" : "justify-start"}`}
                 >
-                  <div className="text-xs opacity-70 mb-2 flex justify-between">
-                    <span>{isAdmin ? "Kapuletu Support" : ticket.user_name}</span>
-                    <span className="ml-4">
-                      {new Date(msg.created_at).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
+                  {!isAdmin && (
+                    <Avatar className="w-8 h-8">
+                      <AvatarFallback>{ticket.user_name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  )}
+                  <div
+                    className={`max-w-[80%] rounded-lg p-4 ${isAdmin ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                  >
+                    <div className="text-xs opacity-70 mb-2 flex justify-between">
+                      <span>{isAdmin ? "Kapuletu Support" : ticket.user_name}</span>
+                      <span className="ml-4">
+                        {new Date(msg.created_at).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                    <div className="text-sm whitespace-pre-wrap">{msg.message}</div>
                   </div>
-                  <div className="text-sm whitespace-pre-wrap">{msg.message}</div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            },
+          )}
         </CardContent>
 
         <CardFooter className="border-t p-4 flex gap-3">
@@ -149,14 +185,33 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
                 <TabsTrigger value="notes">Notes</TabsTrigger>
               </TabsList>
               <TabsContent value="actions" className="space-y-4 mt-4">
+                {!ticket.assigned_admin_id && ticket.status !== "closed" && (
+                  <Button
+                    variant="default"
+                    className="w-full justify-start bg-primary text-primary-foreground"
+                    onClick={handleClaim}
+                    disabled={isUpdating}
+                  >
+                    <ShieldAlert className="w-4 h-4 mr-2" />
+                    Claim Session
+                  </Button>
+                )}
                 <Button
                   variant="secondary"
                   className="w-full justify-start text-green-600"
                   onClick={handleResolve}
-                  disabled={isUpdating}
+                  disabled={isUpdating || ticket.status === "closed"}
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Mark as Resolved
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="w-full justify-start"
+                  onClick={handleTerminate}
+                  disabled={isUpdating || ticket.status === "closed"}
+                >
+                  Close & Terminate Session
                 </Button>
               </TabsContent>
               <TabsContent value="notes" className="space-y-4 mt-4">
