@@ -1,7 +1,7 @@
-import ComingSoon from "@/features/shared/components/ComingSoon";
+import { AdminBroadcastPage } from "@/features/admin/components/broadcast/AdminBroadcastPage";
 
-const AdminBroadcastPage = () => {
-  return <ComingSoon />;
+const Page = () => {
+  return <AdminBroadcastPage />;
 };
 
-export default AdminBroadcastPage;
+export default Page;
