@@ -1,5 +1,5 @@
-const Component = () => {
-  return null;
-};
+import { AdminAuditPage } from "@/features/admin/components/audit/AdminAuditPage";
 
-export default Component;
+export default function Page() {
+  return <AdminAuditPage />;
+}
