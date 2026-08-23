@@ -457,3 +457,32 @@ export const useAIConfigQuery = () => {
     },
   });
 };
+
+export interface ActiveUser {
+  user_id: string;
+  slug: string;
+  full_name: string;
+  email: string;
+  role: string;
+  last_active_at: string;
+}
+
+export interface ActivityResponse {
+  active_now: ActiveUser[];
+  recent: ActiveUser[];
+  kpis: {
+    active_now_count: number;
+    recent_count: number;
+  };
+}
+
+export const useAdminActiveUsersQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "users", "activity"],
+    queryFn: async () => {
+      const response = await apiClient.get<ActivityResponse>("/admin/users/activity");
+      return response.data;
+    },
+    refetchInterval: 15000, // Refetch every 15 seconds
+  });
+};

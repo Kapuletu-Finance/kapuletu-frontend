@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useAdminOverviewQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { ActiveUsersTracker } from "./ActiveUsersTracker";
 import { KpiCards } from "./KpiCards";
 import { RecentGroups } from "./RecentGroups";
 import { RecentPayments } from "./RecentPayments";
@@ -42,8 +43,10 @@ export const AdminOverviewPage: React.FC = () => {
 
       <KpiCards data={data?.kpis} isLoading={isLoading} />
 
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <RevenueTrend data={data?.revenue_trend} isLoading={isLoading} />
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <RevenueTrend data={data?.revenue_trend} isLoading={isLoading} />
+        </div>
         <SubscriptionBreakdown
           subscriptionData={data?.subscription_breakdown}
           feedbackData={data?.feedback_summary}
@@ -51,7 +54,8 @@ export const AdminOverviewPage: React.FC = () => {
         />
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <ActiveUsersTracker />
         <RecentSignups data={data?.recent_signups} isLoading={isLoading} />
         <RecentPayments data={data?.recent_payments} isLoading={isLoading} />
         <RecentGroups data={data?.recent_groups} isLoading={isLoading} />
