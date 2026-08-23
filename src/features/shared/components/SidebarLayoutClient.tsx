@@ -37,6 +37,7 @@ import NotificationsDropdown from "@/features/shared/components/NotificationsDro
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { UserProfileDropdown } from "@/features/shared/components/UserProfileDropdown";
 import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert";
+import { usePendingTicketsCountQuery } from "@/features/support/services/queries";
 import { cn } from "@/lib/utils";
 
 const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
@@ -66,6 +67,7 @@ interface AppSidebarProps {
   role: UserRole;
   pendingInboxCount?: number;
   newFeedbackCount?: number;
+  pendingTicketsCount?: number;
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = ({
@@ -73,6 +75,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   role,
   pendingInboxCount = 0,
   newFeedbackCount = 0,
+  pendingTicketsCount = 0,
 }) => {
   const pathname = usePathname();
   const { state, isMobile, setOpenMobile } = useSidebar();
@@ -221,6 +224,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
                               {newFeedbackCount > 99 ? "99+" : newFeedbackCount}
                             </span>
                           )}
+                          {link.label === "Help Center" && pendingTicketsCount > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none shadow-md bg-primary text-primary-foreground">
+                              {pendingTicketsCount > 99 ? "99+" : pendingTicketsCount}
+                            </span>
+                          )}
                         </div>
                         <span className="text-base tracking-tight truncate group-data-[collapsible=icon]:hidden">
                           {link.label}
@@ -256,6 +264,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   const { data: user, isLoading } = useGetMeQuery();
   const { data: pendingCount } = usePendingInboxCountQuery();
   const { data: feedbackCount } = useNewFeedbackCountQuery();
+  const { data: ticketsCount } = usePendingTicketsCountQuery();
   const [isFaqsOpen, setIsFaqsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -270,6 +279,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
           role={role}
           pendingInboxCount={pendingCount ?? 0}
           newFeedbackCount={isAdminOrSuperAdmin ? (feedbackCount ?? 0) : 0}
+          pendingTicketsCount={!isAdminOrSuperAdmin ? (ticketsCount ?? 0) : 0}
         />
 
         <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">

@@ -12,6 +12,7 @@ export const useCreateTicketMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["support-tickets-count"] });
     },
   });
 };
@@ -33,6 +34,7 @@ export const useReplyTicketMutation = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets", variables.ticketId] });
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["support-tickets-count"] });
     },
   });
 };
