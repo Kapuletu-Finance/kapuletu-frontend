@@ -184,11 +184,32 @@ export interface AdminOverviewResponse {
 
 export const useAdminOverviewQuery = () => {
   return useQuery({
-    queryKey: ["admin", "overview"],
+    queryKey: ["admin-metrics"],
     queryFn: async () => {
-      const response = await apiClient.get<AdminOverviewResponse>("/admin/overview");
+      const res = await apiClient.get("/admin/overview");
+      return res.data;
+    },
+  });
+};
+
+export const useAdminSupportTicketsQuery = (status: string = "open") => {
+  return useQuery({
+    queryKey: ["admin", "support-tickets", status],
+    queryFn: async () => {
+      const response = await apiClient.get(`/admin/crm/tickets?status=${status}`);
       return response.data;
     },
+  });
+};
+
+export const useAdminTicketDetailQuery = (ticketId: string | null) => {
+  return useQuery({
+    queryKey: ["admin", "support-tickets", ticketId],
+    queryFn: async () => {
+      const response = await apiClient.get(`/admin/crm/tickets/${ticketId}`);
+      return response.data;
+    },
+    enabled: !!ticketId,
   });
 };
 

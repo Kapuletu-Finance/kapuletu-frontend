@@ -223,13 +223,10 @@ export const useSendBroadcastMutation = () => {
       target_type: "all_members" | "specific_member" | "custom_selection";
       target_ids?: string[];
     }) => {
-      const response = await apiClient.post<{ 
-        status: string; 
-        dispatched: { in_app: number; email: number; whatsapp: number; total_targets: number } 
-      }>(
-        "/notifications/broadcast",
-        data,
-      );
+      const response = await apiClient.post<{
+        status: string;
+        dispatched: { in_app: number; email: number; whatsapp: number; total_targets: number };
+      }>("/notifications/broadcast", data);
       return response.data;
     },
     onSuccess: (data) => {
@@ -240,6 +237,42 @@ export const useSendBroadcastMutation = () => {
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to send broadcast.");
+    },
+  });
+};
+
+export const useAdminUpdateTicketMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ ticketId, payload }: { ticketId: string; payload: any }) => {
+      const response = await apiClient.patch(`/admin/crm/tickets/${ticketId}`, payload);
+      return response.data;
+    },
+    onSuccess: (_, v) => {
+      toast.success("Ticket updated successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "support-tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "support-tickets", v.ticketId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update ticket.");
+    },
+  });
+};
+
+export const useAdminReplyTicketMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ ticketId, payload }: { ticketId: string; payload: any }) => {
+      const response = await apiClient.post(`/admin/crm/tickets/${ticketId}/reply`, payload);
+      return response.data;
+    },
+    onSuccess: (_, v) => {
+      toast.success("Reply sent via Email to the Treasurer.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "support-tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "support-tickets", v.ticketId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to send reply.");
     },
   });
 };

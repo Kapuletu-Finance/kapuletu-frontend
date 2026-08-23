@@ -1,7 +1,5 @@
-import ComingSoon from "@/features/shared/components/ComingSoon";
+import { AdminSupportPage } from "@/features/admin/components/support/AdminSupportPage";
 
-const AdminSupportPage = () => {
-  return <ComingSoon />;
-};
-
-export default AdminSupportPage;
+export default function AdminSupportRoute() {
+  return <AdminSupportPage />;
+}

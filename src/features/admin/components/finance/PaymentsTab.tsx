@@ -1,3 +1,5 @@
+"use client";
+
 import { format } from "date-fns";
 import type React from "react";
 import { useState } from "react";
