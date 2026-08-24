@@ -18,7 +18,7 @@ interface AppBreadcrumbProps {
   role?: UserRole | string | null;
 }
 
-const formatSegment = (segment: string): string => {
+const formatSegment = (segment: string, index: number, segments: string[]): string => {
   const lower = segment.toLowerCase();
 
   // Known route mappings
@@ -54,6 +54,10 @@ const formatSegment = (segment: string): string => {
   const isObjectId = /^[0-9a-f]{24}$/i.test(segment);
 
   if (isUuid || isCuid || isObjectId) {
+    const prevSegment = index > 0 ? segments[index - 1].toLowerCase() : "";
+    if (prevSegment === "support") {
+      return `Ticket ${segment.substring(0, 8).toUpperCase()}`;
+    }
     return `Details`;
   }
 
@@ -93,7 +97,7 @@ const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
     .map((segment, index) => {
       const href = `/${segments.slice(0, index + 1).join("/")}`;
       const isLast = index === segments.length - 1;
-      const label = formatSegment(segment);
+      const label = formatSegment(segment, index, segments);
 
       return {
         href,
