@@ -92,4 +92,21 @@ export const pricings = [
     price: 1500,
     tagline: "Best for large organizations needing scale and advanced control.",
   },
+  {
+    ctaText: "START 21-DAY FREE TRIAL",
+    currency: "Ksh.",
+    features: [
+      "Unlock ALL Premium features for 21 days",
+      "Unlimited groups, campaigns, and members",
+      "Up to 10,000 messages monthly",
+      "WhatsApp, manual entry, and custom system integrations",
+      "Enterprise-grade auditing and insights",
+      "No credit card required for trial",
+    ],
+    id: "professional",
+    name: "Professional",
+    period: "month",
+    price: 2000,
+    tagline: "Experience the full power of KapuLetu absolutely free.",
+  },
 ];

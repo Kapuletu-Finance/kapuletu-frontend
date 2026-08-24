@@ -61,7 +61,11 @@ const CurrentPlanCard = () => {
             {isLoading ? <Skeleton className="h-4 w-40" /> : `Next billing date: ${formattedDate}`}
           </div>
 
-          <Link href="/subscriptions" className="w-full" onClick={handleClick}>
+          <Link
+            href={plan === "free" ? "/subscriptions?tier=professional" : "/subscriptions"}
+            className="w-full"
+            onClick={handleClick}
+          >
             <Button className="w-full font-semibold h-auto whitespace-normal py-2">
               {config.buttonText}
             </Button>
@@ -71,7 +75,7 @@ const CurrentPlanCard = () => {
 
       {/* Collapsed Icon View */}
       <Link
-        href="/subscriptions"
+        href={plan === "free" ? "/subscriptions?tier=professional" : "/subscriptions"}
         onClick={handleClick}
         className="hidden group-data-[collapsible=icon]:flex w-full"
       >
