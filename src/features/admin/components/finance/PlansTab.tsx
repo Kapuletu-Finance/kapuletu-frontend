@@ -1,26 +1,26 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminFinancePlansQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { CreatePlanSheet } from "./CreatePlanSheet";
 import { PlanCard } from "./PlanCard";
 
 export const PlansTab: React.FC = () => {
   const { data: plans, isLoading, error } = useAdminFinancePlansQuery();
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium text-foreground">Subscription Plans</h3>
-        <Button onClick={() => setIsSheetOpen(true)} className="gap-2">
-          <IconLibrary name="add-circle" className="size-4" />
-          Create Plan
-        </Button>
+        <Link href="/admin/finance/plans/create">
+          <Button className="gap-2">
+            <IconLibrary name="add-circle" className="size-4" />
+            Create Plan
+          </Button>
+        </Link>
       </div>
 
       {isLoading && (
@@ -50,7 +50,6 @@ export const PlansTab: React.FC = () => {
         </div>
       )}
 
-      <CreatePlanSheet open={isSheetOpen} onOpenChange={setIsSheetOpen} />
     </div>
   );
 };

@@ -18,8 +18,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUpdatePlanMutation } from "@/features/admin/services/mutations";
+import { useUpdatePlanMutation, useCreatePlanMutation } from "@/features/admin/services/mutations";
 import { useAdminPlanQuery } from "@/features/admin/services/queries";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -31,8 +32,11 @@ const formSchema = z.object({
 });
 
 export const PlanEditor = ({ planId }: { planId: string }) => {
-  const { data: plan, isLoading } = useAdminPlanQuery(planId);
+  const isCreateMode = planId === "create";
+  const { data: plan, isLoading } = useAdminPlanQuery(isCreateMode ? "" : planId);
   const updateMutation = useUpdatePlanMutation();
+  const createMutation = useCreatePlanMutation();
+  const router = useRouter();
   const [featureInput, setFeatureInput] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,7 +52,7 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
     },
   });
 
-  if (isLoading) {
+  if (isLoading && !isCreateMode) {
     return (
       <div className="p-6 space-y-4">
         <Skeleton className="h-8 w-64" />
@@ -57,10 +61,18 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
     );
   }
 
-  if (!plan) return <div className="p-6 text-destructive">Plan not found</div>;
+  if (!plan && !isCreateMode) return <div className="p-6 text-destructive">Plan not found</div>;
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    updateMutation.mutate({ planId, data: values });
+    if (isCreateMode) {
+      createMutation.mutate(values, {
+        onSuccess: () => {
+          router.push("/admin/finance");
+        }
+      });
+    } else {
+      updateMutation.mutate({ planId, data: values });
+    }
   };
 
   const addFeature = () => {
@@ -86,7 +98,9 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight">Edit Plan: {plan.name}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {isCreateMode ? "Create Subscription Plan" : `Edit Plan: ${plan?.name}`}
+        </h1>
       </div>
 
       <Form {...form}>
@@ -104,7 +118,7 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                   <FormItem>
                     <FormLabel>Plan Name</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input placeholder="e.g. Professional" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -115,7 +129,7 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price (KES/month)</FormLabel>
+                    <FormLabel>Price (KES / mo)</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
@@ -154,7 +168,7 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                 name="max_transactions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Max Monthly Transactions</FormLabel>
+                    <FormLabel>Max Transactions / mo</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
@@ -169,50 +183,39 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
             <CardHeader>
               <CardTitle>Features & Benefits</CardTitle>
               <CardDescription>
-                Manage the list of features shown on the pricing page.
+                Add the specific features included in this plan. These will be displayed on the pricing page.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  value={featureInput}
-                  onChange={(e) => setFeatureInput(e.target.value)}
-                  placeholder="e.g. Priority Support"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      addFeature();
-                    }
-                  }}
-                />
+            <CardContent>
+              <div className="flex items-end gap-4">
+                <div className="flex-1 space-y-2">
+                  <FormLabel>Add Feature</FormLabel>
+                  <Input
+                    placeholder="e.g. Priority Support"
+                    value={featureInput}
+                    onChange={(e) => setFeatureInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addFeature();
+                      }
+                    }}
+                  />
+                </div>
                 <Button type="button" onClick={addFeature} variant="secondary">
-                  <Plus className="size-4 mr-2" /> Add
+                  <Plus className="mr-2 h-4 w-4" /> Add
                 </Button>
               </div>
 
               <div className="space-y-2 mt-4">
                 {form.watch("allowed_features").map((feature, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-3 border rounded-md bg-muted/50"
-                  >
+                  <div key={idx} className="flex items-center justify-between p-3 border rounded-md bg-muted/50">
                     <span className="text-sm">{feature}</span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeFeature(idx)}
-                      className="text-destructive h-8 w-8"
-                    >
-                      <X className="size-4" />
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeFeature(idx)} className="text-destructive h-8 w-8">
+                      <X className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}
-                {form.watch("allowed_features").length === 0 && (
-                  <div className="text-sm text-muted-foreground italic p-4 text-center border border-dashed rounded-md">
-                    No features added yet.
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>
@@ -223,8 +226,8 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? "Saving..." : "Save Changes"}
+            <Button type="submit" disabled={updateMutation.isPending || createMutation.isPending}>
+              {updateMutation.isPending || createMutation.isPending ? "Saving..." : (isCreateMode ? "Create Plan" : "Save Changes")}
             </Button>
           </div>
         </form>

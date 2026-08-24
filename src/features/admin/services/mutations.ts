@@ -176,6 +176,7 @@ export const useCreatePlanMutation = () => {
       max_groups?: number;
       max_campaigns?: number;
       max_transactions?: number;
+      allowed_features?: string[];
     }) => {
       const response = await apiClient.post<{ message: string; id: string }>(
         "/admin/finance/plans",
@@ -196,7 +197,7 @@ export const useCreatePlanMutation = () => {
 export const useUpdatePlanMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ planId, data }: { planId: string; data: Partial<any> }) => {
+    mutationFn: async ({ planId, data }: { planId: string; data: Partial<Record<string, unknown>> }) => {
       const response = await apiClient.patch<{ message: string }>(
         `/admin/finance/plans/${planId}`,
         data,
