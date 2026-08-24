@@ -23,3 +23,14 @@ export const useInitiateCheckoutMutation = () => {
     },
   });
 };
+
+export const useActivateTrialMutation = () => {
+  return useMutation({
+    mutationFn: async (): Promise<{ message: string; status: string }> => {
+      const response = await apiClient.post<{ message: string; status: string }>(
+        "/finance/activate-trial",
+      );
+      return response.data;
+    },
+  });
+};

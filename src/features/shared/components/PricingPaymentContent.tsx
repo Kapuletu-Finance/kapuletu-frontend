@@ -11,7 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
-import { useInitiateCheckoutMutation } from "@/features/finance/services/mutations";
+import {
+  useActivateTrialMutation,
+  useInitiateCheckoutMutation,
+} from "@/features/finance/services/mutations";
 import {
   useGetAvailablePlansQuery,
   useGetPaymentStatusQuery,
@@ -27,10 +30,12 @@ const PricingPaymentModal = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [checkoutId, setCheckoutId] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [skipTrial, setSkipTrial] = useState(false);
 
   const { data: plans, isLoading: isPlansLoading } = useGetAvailablePlansQuery();
   const { data: paymentStatus } = useGetPaymentStatusQuery(checkoutId);
   const initiateCheckout = useInitiateCheckoutMutation();
+  const activateTrial = useActivateTrialMutation();
   const { refetch: refetchSubscription } = useGetMySubscriptionQuery();
 
   const isValidTier = plans?.some((p) => p.name.toLowerCase() === rawTier.toLowerCase());
@@ -81,6 +86,17 @@ const PricingPaymentModal = () => {
       setCheckoutId(response.checkout_id);
     } catch (_error) {
       toast.error("Failed to initiate checkout");
+    }
+  };
+
+  const handleActivateTrial = async () => {
+    try {
+      await activateTrial.mutateAsync();
+      toast.success("Trial activated successfully!");
+      refetchSubscription();
+      setIsSuccess(true);
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Failed to activate trial");
     }
   };
 
@@ -212,64 +228,94 @@ const PricingPaymentModal = () => {
 
         {/* Right Column: Payment */}
         <div className="space-y-4">
-          <Label>Account Details</Label>
-          <Input
-            placeholder="M-Pesa Phone (e.g. 254712345678)"
-            className="bg-muted/50 border-none"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-          />
-
-          <Card className={`border-2 ${styles.borderColor} bg-accent/5`}>
-            <CardContent className="space-y-6">
-              <h3 className="font-bold text-center">Payment Details</h3>
-
-              <div className="flex items-center gap-2 bg-background p-2 rounded-lg border">
-                <IconLibrary name="smartphone" className={`h-6 w-6 ${styles.titleColor}`} />
-                <Input
-                  placeholder="254712345678"
-                  className="border-none shadow-none focus-visible:ring-0"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>
-                    {tierName} - {billingCycle === "annual" ? "Annual" : "Monthly"}
-                  </span>
-                  <span>Ksh. {formatCurrency(basePrice)}</span>
+          {tier === "professional" && !skipTrial ? (
+            <Card className={`border-2 ${styles.borderColor} bg-accent/5`}>
+              <CardContent className="space-y-6 pt-6">
+                <h3 className="font-bold text-center text-xl">Start Your 21-Day Free Trial</h3>
+                <p className="text-center text-muted-foreground text-sm">
+                  Experience all premium features of KapuLetu Professional for 21 days. No credit
+                  card or M-Pesa required.
+                </p>
+                <Button
+                  className={`w-full py-6 ${styles.btnClass}`}
+                  onClick={handleActivateTrial}
+                  disabled={activateTrial.isPending}
+                >
+                  {activateTrial.isPending ? "Activating..." : "Activate Trial"}
+                </Button>
+                <div className="text-center pt-2">
+                  <Button
+                    variant="link"
+                    onClick={() => setSkipTrial(true)}
+                    className="text-sm text-muted-foreground"
+                  >
+                    Skip trial and pay directly
+                  </Button>
                 </div>
-                {hasAddons && (
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Add ons</span>
-                    <span>Ksh. {formatCurrency(addonPrice)}</span>
-                  </div>
-                )}
-                <hr className="border-border" />
-                <div className="flex justify-between font-bold">
-                  <span>TOTAL :</span>
-                  <span>Ksh. {formatCurrency(totalPrice)}</span>
-                </div>
-              </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              <Label>Account Details</Label>
+              <Input
+                placeholder="M-Pesa Phone (e.g. 254712345678)"
+                className="bg-muted/50 border-none"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
 
-              <Button
-                className={`w-full py-6 ${styles.btnClass}`}
-                onClick={handleUpgrade}
-                disabled={initiateCheckout.isPending || !phoneNumber}
-              >
-                {initiateCheckout.isPending ? (
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-                    Initiating...
+              <Card className={`border-2 ${styles.borderColor} bg-accent/5`}>
+                <CardContent className="space-y-6">
+                  <h3 className="font-bold text-center pt-6">Payment Details</h3>
+
+                  <div className="flex items-center gap-2 bg-background p-2 rounded-lg border">
+                    <IconLibrary name="smartphone" className={`h-6 w-6 ${styles.titleColor}`} />
+                    <Input
+                      placeholder="254712345678"
+                      className="border-none shadow-none focus-visible:ring-0"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                    />
                   </div>
-                ) : (
-                  `Upgrade to ${capitalizedTier}`
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>
+                        {tierName} - {billingCycle === "annual" ? "Annual" : "Monthly"}
+                      </span>
+                      <span>Ksh. {formatCurrency(basePrice)}</span>
+                    </div>
+                    {hasAddons && (
+                      <div className="flex justify-between text-muted-foreground">
+                        <span>Add ons</span>
+                        <span>Ksh. {formatCurrency(addonPrice)}</span>
+                      </div>
+                    )}
+                    <hr className="border-border" />
+                    <div className="flex justify-between font-bold">
+                      <span>TOTAL :</span>
+                      <span>Ksh. {formatCurrency(totalPrice)}</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    className={`w-full py-6 ${styles.btnClass}`}
+                    onClick={handleUpgrade}
+                    disabled={initiateCheckout.isPending || !phoneNumber}
+                  >
+                    {initiateCheckout.isPending ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                        Initiating...
+                      </div>
+                    ) : (
+                      `Upgrade to ${capitalizedTier}`
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
       </div>
 

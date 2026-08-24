@@ -1,8 +1,19 @@
 import { format } from "date-fns";
 import type React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
 import type { SubscriptionResponse } from "@/features/auth/types";
+import { useActivateTrialMutation } from "@/features/finance/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 interface Props {
@@ -11,6 +22,18 @@ interface Props {
 
 export const SubscriptionOverviewCard: React.FC<Props> = ({ subscription }) => {
   const isFree = subscription.active_plan.toLowerCase() === "free";
+  const activateTrial = useActivateTrialMutation();
+  const { refetch: refetchSubscription } = useGetMySubscriptionQuery();
+
+  const handleActivateTrial = async () => {
+    try {
+      await activateTrial.mutateAsync();
+      toast.success("Trial activated successfully!");
+      refetchSubscription();
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Failed to activate trial");
+    }
+  };
 
   let percentageLeft = 100;
   let formattedDate = "N/A";
@@ -103,6 +126,25 @@ export const SubscriptionOverviewCard: React.FC<Props> = ({ subscription }) => {
           </div>
         </div>
       </CardContent>
+      {isFree && (
+        <CardFooter className="pt-4 border-t border-border bg-muted/20">
+          <div className="w-full flex items-center justify-between">
+            <div>
+              <h4 className="font-semibold text-sm">Want to try Professional?</h4>
+              <p className="text-xs text-muted-foreground">
+                Unlock all premium features for 21 days.
+              </p>
+            </div>
+            <Button
+              variant="default"
+              onClick={handleActivateTrial}
+              disabled={activateTrial.isPending}
+            >
+              {activateTrial.isPending ? "Activating..." : "Start 21-Day Pro Trial"}
+            </Button>
+          </div>
+        </CardFooter>
+      )}
     </Card>
   );
 };

@@ -223,25 +223,37 @@ export const useUpdatePlanMutation = () => {
 
 export const useExportFinancialDataMutation = () => {
   return useMutation({
-    mutationFn: async () => {
-      const response = await apiClient.get("/admin/finance/analytics/export", {
+    mutationFn: async ({
+      format,
+      startDate,
+      endDate,
+    }: {
+      format: "csv" | "excel" | "pdf";
+      startDate?: string;
+      endDate?: string;
+    }) => {
+      const params = new URLSearchParams({ format });
+      if (startDate) params.append("start_date", startDate);
+      if (endDate) params.append("end_date", endDate);
+
+      const response = await apiClient.get(`/admin/finance/analytics/export?${params.toString()}`, {
         responseType: "blob",
       });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      return { data: response.data, format };
+    },
+    onSuccess: ({ data, format }) => {
+      const url = window.URL.createObjectURL(new Blob([data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute(
-        "download",
-        `financial_export_${new Date().toISOString().split("T")[0]}.csv`,
-      );
+
+      const extension = format === "excel" ? "xlsx" : format;
+      const dateStr = new Date().toISOString().split("T")[0].replace(/-/g, "");
+      link.setAttribute("download", `financial_export_${dateStr}.${extension}`);
+
       document.body.appendChild(link);
       link.click();
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    },
-    onSuccess: () => {
-      toast.success("Export downloaded successfully.");
+      link.remove();
+      toast.success(`Exported as ${format.toUpperCase()} successfully.`);
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to export data.");
