@@ -56,7 +56,13 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
       max_groups: plan?.max_groups || 1,
       max_campaigns: plan?.max_campaigns || 1,
       max_transactions: plan?.max_transactions || 100,
-      allowed_features: plan?.allowed_features || [],
+      allowed_features: Array.isArray(plan?.allowed_features)
+        ? plan.allowed_features
+        : plan?.allowed_features
+          ? Object.keys(plan.allowed_features).filter(
+              (k) => (plan.allowed_features as unknown as Record<string, unknown>)[k],
+            )
+          : [],
     },
   });
 
@@ -72,14 +78,26 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
   if (!plan && !isCreateMode) return <div className="p-6 text-destructive">Plan not found</div>;
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    // Convert allowed_features array back to an object for the backend
+    const featuresDict = values.allowed_features.reduce(
+      (acc, feature) => {
+        acc[feature] = true;
+        return acc;
+      },
+      {} as Record<string, boolean>,
+    );
+
+    // biome-ignore lint/suspicious/noExplicitAny: Mutation typing bypass
+    const submitData: any = { ...values, allowed_features: featuresDict };
+
     if (isCreateMode) {
-      createMutation.mutate(values, {
+      createMutation.mutate(submitData, {
         onSuccess: () => {
           router.push("/admin/finance");
         },
       });
     } else {
-      updateMutation.mutate({ planId, data: values });
+      updateMutation.mutate({ planId, data: submitData });
     }
   };
 
@@ -217,7 +235,10 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
               </div>
 
               <div className="space-y-2 mt-4">
-                {(form.watch("allowed_features") || []).map((feature, idx) => (
+                {(Array.isArray(form.watch("allowed_features"))
+                  ? form.watch("allowed_features")
+                  : []
+                ).map((feature: string, idx: number) => (
                   <div
                     // biome-ignore lint/suspicious/noArrayIndexKey: feature list is stable
                     key={idx}
