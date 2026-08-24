@@ -79,7 +79,7 @@ const KpiCard: React.FC<{
           {cfg.label}
         </span>
         <Icon
-          className={`w-4 h-4 ${cfg.colour} ${status === "in_progress" ? "animate-spin" : ""}`}
+          className={`w-4 h-4 ${cfg.colour}`}
         />
       </div>
       <div className={`text-4xl font-bold ${cfg.colour}`}>{count}</div>
