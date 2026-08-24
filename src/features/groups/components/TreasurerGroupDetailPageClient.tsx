@@ -6,6 +6,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
 import CampaignCard, { type CampaignInfo } from "@/features/campaigns/components/CampaignCard";
 import { CampaignFormModal } from "@/features/campaigns/components/CampaignFormModal";
 import CampaignsHeaderControls, {
@@ -15,6 +16,7 @@ import { useCampaignsQuery } from "@/features/campaigns/services/queries";
 import { useGroupsQuery } from "@/features/groups/services/queries";
 import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { LimitBouncerModal } from "@/features/shared/components/LimitBouncerModal";
 import PageLayout from "@/features/shared/components/PageLayout";
 import StatCard from "@/features/shared/components/StatCard";
 import type { CampaignOut } from "@/features/shared/types";
@@ -40,7 +42,9 @@ const mapCampaignToInfo = (campaign: CampaignOut): CampaignInfo => ({
 export const TreasurerGroupDetailPageClient = () => {
   const [view] = useQueryState("view", parseAsString.withDefault("grid"));
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+  const [showLimitBouncer, setShowLimitBouncer] = React.useState(false);
   const [editingCampaign, setEditingCampaign] = React.useState<CampaignInfo | null>(null);
+  const { data: subscription } = useGetMySubscriptionQuery();
   const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
   const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("all"));
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
@@ -86,13 +90,28 @@ export const TreasurerGroupDetailPageClient = () => {
     [setFilter, setPage],
   );
 
+  // Limit Enforcement Logic
+  const campaignUsage = subscription?.usage?.campaigns || "0/1";
+  const [currentCampaignsStr, maxCampaignsStr] = campaignUsage.split("/");
+  const currentCampaigns = parseInt(currentCampaignsStr, 10);
+  const maxCampaigns = parseInt(maxCampaignsStr, 10);
+  const isLimitReached = currentCampaigns >= maxCampaigns;
+
+  const handleCreateClick = () => {
+    if (isLimitReached) {
+      setShowLimitBouncer(true);
+    } else {
+      setIsCreateModalOpen(true);
+    }
+  };
+
   return (
     <>
       <PageLayout
         actionButton={
           <Button
             className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 gap-2"
-            onClick={() => setIsCreateModalOpen(true)}
+            onClick={handleCreateClick}
           >
             <IconLibrary name="add" className="w-4 h-4" />
             New Campaign
@@ -225,6 +244,13 @@ export const TreasurerGroupDetailPageClient = () => {
         isOpen={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
       />
+
+      <LimitBouncerModal
+        isOpen={showLimitBouncer}
+        onClose={() => setShowLimitBouncer(false)}
+        limitType="campaigns"
+      />
+
       <CampaignFormModal
         groupId={groupId}
         campaign={editingCampaign}

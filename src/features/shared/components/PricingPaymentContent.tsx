@@ -26,6 +26,7 @@ const PricingPaymentModal = () => {
   const [hasAddons, setHasAddons] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [checkoutId, setCheckoutId] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const { data: plans, isLoading: isPlansLoading } = useGetAvailablePlansQuery();
   const { data: paymentStatus } = useGetPaymentStatusQuery(checkoutId);
@@ -51,6 +52,7 @@ const PricingPaymentModal = () => {
     if (paymentStatus?.status === "success") {
       toast.success("Payment successful! Your plan has been upgraded.");
       refetchSubscription();
+      setIsSuccess(true);
       setCheckoutId(null);
     } else if (paymentStatus?.status === "failed") {
       toast.error("Payment failed. Please try again.");
@@ -86,6 +88,28 @@ const PricingPaymentModal = () => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (isSuccess) {
+    return (
+      <div className="max-w-md mx-auto p-8 bg-background border border-border shadow-lg rounded-3xl text-center space-y-6">
+        <div className="bg-green-500/10 p-6 rounded-full inline-block">
+          <IconLibrary name="check-circle" className="h-12 w-12 text-green-500 mx-auto" />
+        </div>
+        <h2 className="text-2xl font-bold text-green-600 dark:text-green-500">
+          Upgrade Successful!
+        </h2>
+        <p className="text-muted-foreground">
+          Welcome to the <strong className={styles.titleColor}>{capitalizedTier}</strong> tier. Your
+          new limits and features are now unlocked.
+        </p>
+        <div className="pt-4">
+          <Link href="/subscriptions">
+            <Button className="w-full">Return to Dashboard</Button>
+          </Link>
+        </div>
       </div>
     );
   }
