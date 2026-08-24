@@ -35,6 +35,7 @@ import type { IconName } from "@/features/shared/components/IconLibrary";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import NotificationsDropdown from "@/features/shared/components/NotificationsDropdown";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
+import { TrialBanner } from "@/features/shared/components/TrialBanner";
 import { UserProfileDropdown } from "@/features/shared/components/UserProfileDropdown";
 import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert";
 import { usePendingTicketsCountQuery } from "@/features/support/services/queries";
@@ -337,11 +338,11 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
             </div>
           </div>
 
-          {/* Page Content */}
           <div className="flex-1 min-h-0 overflow-y-auto bg-muted transition-colors">
             <main className="p-4 md:p-6 lg:p-8">
               <div className="max-w-6xl mx-auto space-y-4">
                 <VerifyEmailAlert />
+                {!isAdminOrSuperAdmin && <TrialBanner />}
                 {children}
               </div>
             </main>
