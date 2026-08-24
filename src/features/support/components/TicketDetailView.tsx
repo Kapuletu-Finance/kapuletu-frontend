@@ -18,6 +18,12 @@ import { SupportRatingCard } from "./SupportRatingCard";
 const IDLE_WARNING_MS = 10 * 60 * 1000; // 10 minutes — show warning banner
 const AUTO_RESOLVE_MS = 20 * 60 * 1000; // 20 minutes — auto-resolve session
 
+const parseSafeDate = (d?: string | null) => {
+  if (!d) return new Date();
+  const date = new Date(d.replace(" ", "T"));
+  return isNaN(date.getTime()) ? new Date() : date;
+};
+
 interface Props {
   ticketId: string;
   onBack?: () => void;
@@ -199,7 +205,7 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId, onBack }) => {
             </Badge>
             <span className="flex items-center gap-1" suppressHydrationWarning>
               <Clock className="w-3 h-3 ml-1" />
-              {new Date(ticket.created_at).toLocaleString()}
+              {parseSafeDate(ticket.created_at).toLocaleString()}
             </span>
           </div>
         </CardHeader>
@@ -298,7 +304,7 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId, onBack }) => {
                     {msg.message}
                   </div>
                   <span className="text-[10px] opacity-70 mt-1 block" suppressHydrationWarning>
-                    {new Date(msg.created_at).toLocaleTimeString([], {
+                    {parseSafeDate(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}

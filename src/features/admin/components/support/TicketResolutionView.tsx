@@ -42,6 +42,12 @@ interface TicketMessage {
   created_at: string;
 }
 
+const parseSafeDate = (d?: string | null) => {
+  if (!d) return new Date();
+  const date = new Date(d.replace(" ", "T"));
+  return isNaN(date.getTime()) ? new Date() : date;
+};
+
 interface Props {
   ticketId: string;
   onResolved: () => void;
@@ -336,7 +342,7 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
                     {msg.message}
                   </div>
                   <span className="text-[10px] opacity-70 mt-1 block" suppressHydrationWarning>
-                    {new Date(msg.created_at).toLocaleTimeString([], {
+                    {parseSafeDate(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
@@ -460,7 +466,9 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
               </div>
               <div className="font-semibold text-red-600 flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4" />
-                {ticket.sla_deadline ? new Date(ticket.sla_deadline).toLocaleString() : "N/A"}
+                <div className="font-semibold text-right" suppressHydrationWarning>
+                  {ticket.sla_deadline ? parseSafeDate(ticket.sla_deadline).toLocaleString() : "N/A"}
+                </div>
               </div>
             </div>
 

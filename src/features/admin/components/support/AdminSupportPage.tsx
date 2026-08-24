@@ -10,6 +10,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdminSupportTicketsQuery } from "../../services/queries";
 
+const parseSafeDate = (d?: string | null) => {
+  if (!d) return new Date();
+  const date = new Date(d.replace(" ", "T"));
+  return isNaN(date.getTime()) ? new Date() : date;
+};
+
 type StatusFilter = "open" | "in_progress" | "resolved" | "closed";
 
 interface TicketQueueItem {
@@ -44,7 +50,7 @@ const AdminSupportContent: React.FC = () => {
 
   const renderSLABadge = (deadline: string | null) => {
     if (!deadline) return null;
-    const isBreached = new Date(deadline) < new Date();
+    const isBreached = parseSafeDate(deadline) < new Date();
     return isBreached ? (
       <Badge variant="destructive" className="ml-1 text-xs">
         SLA Breached
@@ -176,7 +182,7 @@ const AdminSupportContent: React.FC = () => {
                       <Clock className="w-3 h-3" />
                       <span suppressHydrationWarning>
                         {t.last_reply_at
-                          ? new Date(t.last_reply_at).toLocaleDateString()
+                          ? parseSafeDate(t.last_reply_at).toLocaleDateString()
                           : "No replies yet"}
                       </span>
                     </div>

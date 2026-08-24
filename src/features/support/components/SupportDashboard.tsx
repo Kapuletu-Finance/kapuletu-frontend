@@ -17,6 +17,12 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Ticket } from "../types";
 
+const parseSafeDate = (d?: string | null) => {
+  if (!d) return new Date();
+  const date = new Date(d.replace(" ", "T"));
+  return isNaN(date.getTime()) ? new Date() : date;
+};
+
 interface Props {
   tickets: Ticket[] | undefined;
   isLoading: boolean;
@@ -190,7 +196,7 @@ export const SupportDashboard: React.FC<Props> = ({
                       <span className="capitalize">{t.category}</span>
                       <span>·</span>
                       <Clock className="w-3 h-3" />
-                      <span>{new Date(t.updated_at).toLocaleDateString()}</span>
+                      <span>{parseSafeDate(t.updated_at).toLocaleDateString()}</span>
                       {t.has_rating && (
                         <>
                           <span>·</span>
