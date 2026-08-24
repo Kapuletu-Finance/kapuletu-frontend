@@ -221,6 +221,34 @@ export const useUpdatePlanMutation = () => {
   });
 };
 
+export const useExportFinancialDataMutation = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.get("/admin/finance/analytics/export", {
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `financial_export_${new Date().toISOString().split("T")[0]}.csv`,
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    },
+    onSuccess: () => {
+      toast.success("Export downloaded successfully.");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to export data.");
+    },
+  });
+};
+
 export const useProcessRefundMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({

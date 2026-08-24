@@ -365,6 +365,58 @@ export const useAdminPlanQuery = (planId: string) => {
   });
 };
 
+export interface AdminFinancialHealthResponse {
+  mrr: number;
+  active_subscribers: number;
+  churn_rate_percent: number;
+  generated_at: string;
+}
+
+export const useAdminFinancialHealthQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "finance", "analytics", "health"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminFinancialHealthResponse>(
+        "/admin/finance/analytics/health-metrics",
+      );
+      return response.data;
+    },
+  });
+};
+
+export interface AdminRevenueFlowItem {
+  period: string;
+  [planName: string]: string | number; // e.g. "Basic": 500
+}
+
+export const useAdminRevenueFlowQuery = (interval: "week" | "month" = "month") => {
+  return useQuery({
+    queryKey: ["admin", "finance", "analytics", "revenue-flow", interval],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminRevenueFlowItem[]>(
+        `/admin/finance/analytics/revenue-flow?interval=${interval}`,
+      );
+      return response.data;
+    },
+  });
+};
+
+export interface AdminCohortItem {
+  cohort: string;
+  users: number;
+  retention: number[];
+}
+
+export const useAdminCohortsQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "finance", "analytics", "cohorts"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminCohortItem[]>("/admin/finance/analytics/cohorts");
+      return response.data;
+    },
+  });
+};
+
 export interface AdminUserActivityItem {
   log_id: string;
   action: string;
