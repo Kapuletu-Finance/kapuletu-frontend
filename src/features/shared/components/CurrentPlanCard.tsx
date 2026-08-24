@@ -107,7 +107,7 @@ const PLAN_CONFIG: Record<PlanType, PlanConfig> = {
     iconWrapperClass:
       "flex items-center justify-center p-1.5 rounded-md bg-secondary shadow-inner border border-white/20",
     iconClass: "w-4 h-4 text-secondary-foreground",
-    buttonText: "Unlock all premium features free for 14 days",
+    buttonText: "Unlock all premium features free for 21 days",
   },
   bronze: {
     name: "BRONZE",
