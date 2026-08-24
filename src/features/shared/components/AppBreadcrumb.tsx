@@ -52,13 +52,18 @@ const formatSegment = (segment: string, index: number, segments: string[]): stri
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(segment);
   const isCuid = /^c[a-z0-9]{24}$/i.test(segment);
   const isObjectId = /^[0-9a-f]{24}$/i.test(segment);
+  const prevSegment = index > 0 ? segments[index - 1].toLowerCase() : "";
 
   if (isUuid || isCuid || isObjectId) {
-    const prevSegment = index > 0 ? segments[index - 1].toLowerCase() : "";
     if (prevSegment === "support") {
       return `Ticket ${segment.substring(0, 8).toUpperCase()}`;
     }
     return `Details`;
+  }
+
+  // Handle generic 8-12 char hex/alphanumeric IDs for feedback, campaigns, etc
+  if (prevSegment === "feedback" && segment.length >= 6) {
+    return `Feedback ${segment.toUpperCase()}`;
   }
 
   if (segment.toUpperCase().startsWith("FBK-")) {

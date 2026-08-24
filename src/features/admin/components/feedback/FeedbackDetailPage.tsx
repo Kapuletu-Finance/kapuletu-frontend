@@ -66,17 +66,27 @@ export const FeedbackDetailPage: React.FC = () => {
     if (item) {
       setResponse(item.admin_response || "");
       setStatus(item.status);
+      
+      // Automatically mark as reviewing when opened
+      if (item.status === "new") {
+        updateMutation.mutate({ feedbackId, data: { status: "reviewing" } });
+      }
     }
-  }, [item]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item?.feedback_id, item?.status, feedbackId]);
 
-  const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString("en-KE", {
+  const formatDate = (iso: string) => {
+    const normalized = iso.replace(" ", "T");
+    const d = new Date(normalized);
+    if (isNaN(d.getTime())) return "N/A";
+    return d.toLocaleDateString("en-KE", {
       day: "numeric",
       month: "short",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
 
   const handleSave = () => {
     updateMutation.mutate({

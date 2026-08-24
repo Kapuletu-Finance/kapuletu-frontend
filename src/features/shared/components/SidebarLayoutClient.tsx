@@ -220,7 +220,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
                             </span>
                           )}
                           {link.label === "Feedback" && newFeedbackCount > 0 && (
-                            <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none shadow-md bg-destructive text-destructive-foreground">
+                            <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none shadow-md bg-primary text-primary-foreground">
                               {newFeedbackCount > 99 ? "99+" : newFeedbackCount}
                             </span>
                           )}
