@@ -96,16 +96,17 @@ export type ResendCodeRequest = {
   identifier: string;
 };
 
-export type SubscriptionResponse = {
+export interface SubscriptionResponse {
   active_plan: string;
   is_on_trial: boolean;
+  has_used_trial: boolean;
   days_remaining: number;
   expiry_date: string | null;
   usage: {
     groups: string;
     campaigns: string;
   };
-};
+}
 
 export type BillingHistoryOut = {
   payment_id: string;

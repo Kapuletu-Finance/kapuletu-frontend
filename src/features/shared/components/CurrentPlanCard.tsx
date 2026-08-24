@@ -7,7 +7,7 @@ import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
 import type { IconName } from "@/features/shared/components/IconLibrary";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
-type PlanType = "free" | "bronze" | "silver" | "gold";
+type PlanType = "free" | "bronze" | "silver" | "gold" | "professional";
 
 const CurrentPlanCard = () => {
   const { isMobile, setOpenMobile } = useSidebar();
@@ -16,6 +16,8 @@ const CurrentPlanCard = () => {
   const planName = data?.active_plan?.toLowerCase() as PlanType;
   const plan = PLAN_CONFIG[planName] ? planName : "free";
   const config = PLAN_CONFIG[plan];
+
+  const showTrial = plan === "free" && !data?.has_used_trial;
 
   const handleClick = () => {
     if (isMobile) {
@@ -62,14 +64,12 @@ const CurrentPlanCard = () => {
           </div>
 
           <Link
-            href={
-              plan === "free" ? "/checkout?tier=professional&action=start_trial" : "/subscriptions"
-            }
+            href={showTrial ? "/checkout?tier=professional&action=start_trial" : "/subscriptions"}
             className="w-full"
             onClick={handleClick}
           >
             <Button className="w-full font-semibold h-auto whitespace-normal py-2">
-              {config.buttonText}
+              {showTrial ? "Unlock all premium features free for 21 days" : config.buttonText}
             </Button>
           </Link>
         </CardContent>
@@ -77,7 +77,7 @@ const CurrentPlanCard = () => {
 
       {/* Collapsed Icon View */}
       <Link
-        href={plan === "free" ? "/checkout?tier=professional&action=start_trial" : "/subscriptions"}
+        href={showTrial ? "/checkout?tier=professional&action=start_trial" : "/subscriptions"}
         onClick={handleClick}
         className="hidden group-data-[collapsible=icon]:flex w-full"
       >
@@ -133,6 +133,14 @@ const PLAN_CONFIG: Record<PlanType, PlanConfig> = {
   },
   gold: {
     name: "GOLD",
+    icon: "star",
+    iconWrapperClass:
+      "flex items-center justify-center p-1.5 rounded-md bg-primary shadow-inner border border-white/20",
+    iconClass: "w-4 h-4 text-primary-foreground fill-primary-foreground",
+    buttonText: "Manage Subscription",
+  },
+  professional: {
+    name: "PRO TRIAL",
     icon: "star",
     iconWrapperClass:
       "flex items-center justify-center p-1.5 rounded-md bg-primary shadow-inner border border-white/20",
