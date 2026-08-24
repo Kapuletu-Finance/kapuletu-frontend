@@ -99,7 +99,7 @@ export const TicketList: React.FC<Props> = ({
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+          <h1 className="text-lg font-semibold text-foreground">{title}</h1>
           {!isLoading && (
             <p className="text-sm text-muted-foreground">
               {filtered.length} {filtered.length === 1 ? "ticket" : "tickets"}

@@ -110,9 +110,9 @@ export const SupportDashboard: React.FC<Props> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Help Center</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Submit a request, track your tickets, and chat live with our support team.
+          <h1 className="text-lg font-semibold text-foreground">Help Center</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Need assistance? We're here to help you resolve any issues quickly.
           </p>
         </div>
         <Button onClick={onNewTicket} className="gap-2 shrink-0">
