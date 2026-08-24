@@ -297,6 +297,7 @@ export interface AdminFinancePlanItem {
   max_groups: number;
   max_campaigns: number;
   max_transactions: number;
+  allowed_features?: string[];
 }
 
 export const useAdminUsersQuery = (filters: AdminUsersFilters = {}) => {
@@ -350,6 +351,17 @@ export const useAdminFinancePlansQuery = () => {
       const response = await apiClient.get<AdminFinancePlanItem[]>("/admin/finance/plans");
       return response.data;
     },
+  });
+};
+
+export const useAdminPlanQuery = (planId: string) => {
+  return useQuery({
+    queryKey: ["admin", "finance", "plans", planId],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminFinancePlanItem>(`/admin/finance/plans/${planId}`);
+      return response.data;
+    },
+    enabled: !!planId,
   });
 };
 

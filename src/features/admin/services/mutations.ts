@@ -193,6 +193,48 @@ export const useCreatePlanMutation = () => {
   });
 };
 
+export const useUpdatePlanMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ planId, data }: { planId: string; data: Partial<any> }) => {
+      const response = await apiClient.patch<{ message: string }>(
+        `/admin/finance/plans/${planId}`,
+        data,
+      );
+      return response.data;
+    },
+    onSuccess: (_, { planId }) => {
+      toast.success("Subscription plan updated.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "finance", "plans"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "finance", "plans", planId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update plan.");
+    },
+  });
+};
+
+export const useProcessRefundMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ paymentId, reason }: { paymentId: string; reason: string }) => {
+      const response = await apiClient.post<{ message: string }>(
+        `/admin/finance/payments/${paymentId}/refund`,
+        { reason },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Refund processed successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "finance", "payments"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-metrics"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to process refund.");
+    },
+  });
+};
+
 export const useManualOverrideMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({

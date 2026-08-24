@@ -16,13 +16,24 @@ import {
 import { useAdminFinancePaymentsQuery } from "@/features/admin/services/queries";
 import { formatKes } from "@/lib/utils";
 
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Undo2 } from "lucide-react";
+import { useProcessRefundMutation } from "@/features/admin/services/mutations";
+
 export const PaymentsTab: React.FC = () => {
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = useAdminFinancePaymentsQuery(page);
+  const refundMutation = useProcessRefundMutation();
 
   if (error) {
     return <div className="text-destructive">Failed to load payments.</div>;
   }
+
+  const handleRefund = (paymentId: string) => {
+    if (confirm("Are you sure you want to process a refund for this transaction?")) {
+      refundMutation.mutate({ paymentId, reason: "Admin requested refund" });
+    }
+  };
 
   const getStatusVariant = (
     status: string,
@@ -39,7 +50,14 @@ export const PaymentsTab: React.FC = () => {
     }
   };
 
-  const getMethodBadge = (method: string) => {
+  const getMethodBadge = (method: string, type?: string) => {
+    if (type === "refund") {
+      return (
+        <Badge variant="outline" className="border-red-600 text-red-600 bg-red-50">
+          Refund
+        </Badge>
+      );
+    }
     if (!method) return null;
     const m = method.toLowerCase();
     if (m.includes("mpesa"))
@@ -75,6 +93,7 @@ export const PaymentsTab: React.FC = () => {
               <TableHead>Amount</TableHead>
               <TableHead>Method</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="w-[50px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -82,29 +101,18 @@ export const PaymentsTab: React.FC = () => {
               [...Array(5)].map((_, i) => (
                 // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
                 <TableRow key={`skeleton-payment-${i}`}>
-                  <TableCell>
-                    <Skeleton className="h-4 w-24" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-32" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-24" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-16" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-16" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-20 rounded-full" />
-                  </TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
+                  <TableCell><Skeleton className="h-8 w-8" /></TableCell>
                 </TableRow>
               ))
             ) : data?.items.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                   No payments found.
                 </TableCell>
               </TableRow>
@@ -118,10 +126,30 @@ export const PaymentsTab: React.FC = () => {
                   </TableCell>
                   <TableCell className="font-medium text-foreground">{payment.user_name}</TableCell>
                   <TableCell>{payment.plan_name}</TableCell>
-                  <TableCell className="font-medium">{formatKes(payment.amount)}</TableCell>
-                  <TableCell>{getMethodBadge(payment.method)}</TableCell>
+                  <TableCell className={`font-medium ${payment.amount < 0 ? 'text-destructive' : ''}`}>
+                    {formatKes(payment.amount)}
+                  </TableCell>
+                  <TableCell>{getMethodBadge(payment.method, (payment as any).transaction_type)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusVariant(payment.status)}>{payment.status}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-muted">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem 
+                          onClick={() => handleRefund(payment.payment_id)}
+                          disabled={payment.status !== "success" || payment.amount <= 0 || refundMutation.isPending}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Undo2 className="mr-2 h-4 w-4" />
+                          Process Refund
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))
