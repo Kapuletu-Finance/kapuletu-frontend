@@ -1,8 +1,18 @@
 "use client";
 
-import { CheckCircle, Send, ShieldAlert, User as UserIcon } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle,
+  MessageSquare,
+  Send,
+  ShieldAlert,
+  Star,
+  ThumbsDown,
+  ThumbsUp,
+  User as UserIcon,
+} from "lucide-react";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +27,11 @@ import {
   useAdminUpdateTicketMutation,
 } from "../../services/mutations";
 import { useAdminTicketDetailQuery } from "../../services/queries";
+
+const CHECKIN_DELAY_MS = 5 * 60 * 1000; // 5 minutes
+
+const CHECKIN_TEMPLATE = (firstName: string) =>
+  `Hi ${firstName}, just checking in — our team is still here and happy to continue assisting you. Please let us know if you have any further questions or if your issue has been resolved. We want to make sure you've been fully taken care of before we wrap up this session.`;
 
 interface TicketMessage {
   message_id: string;
@@ -65,6 +80,20 @@ const requestBrowserNotification = (title: string, body: string) => {
   }
 };
 
+const StarDisplay: React.FC<{ value: number | null; label: string }> = ({ value, label }) => (
+  <div className="flex justify-between items-center">
+    <span className="text-muted-foreground text-sm">{label}</span>
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <Star
+          key={s}
+          className={`w-3.5 h-3.5 ${s <= (value ?? 0) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/20"}`}
+        />
+      ))}
+    </div>
+  </div>
+);
+
 export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) => {
   const { data: ticket, isLoading } = useAdminTicketDetailQuery(ticketId);
   const { mutateAsync: reply, isPending: isReplying } = useAdminReplyTicketMutation();
@@ -72,8 +101,27 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
 
   const [replyText, setReplyText] = useState("");
   const [internalNote, setInternalNote] = useState("");
+  const [showCheckIn, setShowCheckIn] = useState(false);
+  const [checkInDismissed, setCheckInDismissed] = useState(false);
+  const [checkInText, setCheckInText] = useState("");
+
   const previousMessageCount = useRef<number>(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const checkInTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const resetCheckInTimer = useCallback(() => {
+    if (checkInTimer.current) clearTimeout(checkInTimer.current);
+    setShowCheckIn(false);
+    checkInTimer.current = setTimeout(() => {
+      setShowCheckIn(true);
+    }, CHECKIN_DELAY_MS);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (checkInTimer.current) clearTimeout(checkInTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (ticket?.messages) {
@@ -88,22 +136,43 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
             `${lastMsg.sender_name || ticket.user_name}: ${lastMsg.message.slice(0, 80)}`,
           );
           toast.info(`New message from ${ticket.user_name}`, { icon: "💬" });
+          resetCheckInTimer(); // User responded — reset 5-min clock
         }
+      }
+      // Start timer on first load if session is in-progress
+      if (previousMessageCount.current === 0 && ticket.status === "in_progress") {
+        resetCheckInTimer();
       }
       previousMessageCount.current = count;
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [ticket]);
+  }, [ticket, resetCheckInTimer]);
 
   if (isLoading || !ticket) return <Skeleton className="w-full h-[600px]" />;
+
+  const firstName = ticket.user_name?.split(" ")[0] || "there";
 
   const handleReply = async () => {
     if (!replyText.trim()) return;
     try {
       await reply({ ticketId, payload: { message: replyText } });
       setReplyText("");
+      resetCheckInTimer();
     } catch (_e) {
       // toast handled in mutation
+    }
+  };
+
+  const handleSendCheckIn = async () => {
+    if (!checkInText.trim()) return;
+    try {
+      await reply({ ticketId, payload: { message: checkInText } });
+      setCheckInDismissed(true);
+      setShowCheckIn(false);
+      resetCheckInTimer();
+      toast.success("Check-in message sent.");
+    } catch (_e) {
+      toast.error("Failed to send check-in message.");
     }
   };
 
@@ -129,6 +198,7 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
   const handleClaim = async () => {
     try {
       await updateTicket({ ticketId, payload: { status: "in_progress" } });
+      resetCheckInTimer();
     } catch (_e) {
       // toast handled in mutation
     }
@@ -175,6 +245,51 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
         </CardHeader>
 
         <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
+          {/* Admin check-in alert */}
+          {showCheckIn && !checkInDismissed && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+                    The treasurer appears inactive
+                  </p>
+                  <p className="text-xs text-amber-700/70 dark:text-amber-400/70 mt-0.5">
+                    No reply in the last 5 minutes. You may want to send a check-in message.
+                  </p>
+                </div>
+              </div>
+              <Textarea
+                className="min-h-[80px] resize-none text-sm border-amber-500/30 bg-background"
+                value={checkInText || CHECKIN_TEMPLATE(firstName)}
+                onChange={(e) => setCheckInText(e.target.value)}
+                onFocus={(e) => {
+                  if (!checkInText) setCheckInText(e.target.value);
+                }}
+              />
+              <div className="flex gap-2 justify-end">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setCheckInDismissed(true)}
+                  className="text-muted-foreground"
+                >
+                  Dismiss
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleSendCheckIn}
+                  disabled={isReplying}
+                  className="gap-2"
+                >
+                  <Send className="w-3 h-3" />
+                  Send Check-In
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Messages */}
           {(ticket.messages as TicketMessage[]).map((msg) => {
             const isAdmin = msg.sender_id !== ticket.user_id;
             const senderLabel = isAdmin
@@ -289,6 +404,49 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
             </div>
           </CardContent>
         </Card>
+
+        {/* Customer Feedback (only if rated) */}
+        {ticket.rating && (
+          <Card className="border-l-4 border-l-amber-500">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-amber-500" />
+                Customer Feedback
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Issue Resolved</span>
+                {ticket.rating.issue_resolved ? (
+                  <span className="flex items-center gap-1 text-green-600 font-medium">
+                    <ThumbsUp className="w-3.5 h-3.5" /> Yes
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-red-500 font-medium">
+                    <ThumbsDown className="w-3.5 h-3.5" /> Not fully
+                  </span>
+                )}
+              </div>
+              <Separator />
+              <StarDisplay value={ticket.rating.satisfaction_level} label="Satisfaction" />
+              {ticket.rating.response_quality && (
+                <StarDisplay value={ticket.rating.response_quality} label="Communication" />
+              )}
+              {ticket.rating.response_speed && (
+                <StarDisplay value={ticket.rating.response_speed} label="Response Speed" />
+              )}
+              {ticket.rating.comment && (
+                <>
+                  <Separator />
+                  <div>
+                    <p className="text-muted-foreground text-xs mb-1">Comment</p>
+                    <p className="text-sm italic">"{ticket.rating.comment}"</p>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Context & Actions */}
         <Card>

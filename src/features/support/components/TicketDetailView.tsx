@@ -1,8 +1,8 @@
 "use client";
 
-import { Clock, Info, Loader2, Send, ShieldAlert } from "lucide-react";
+import { AlertTriangle, Clock, Info, Loader2, Send, ShieldAlert } from "lucide-react";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useReplyTicketMutation } from "../services/mutations";
 import { useTicketDetailQuery } from "../services/queries";
 import type { TicketMessage } from "../types";
+import { SupportRatingCard } from "./SupportRatingCard";
+
+const IDLE_WARNING_MS = 10 * 60 * 1000; // 10 minutes — show warning banner
+const AUTO_RESOLVE_MS = 20 * 60 * 1000; // 20 minutes — auto-resolve session
 
 interface Props {
   ticketId: string;
@@ -55,10 +59,42 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
   const { data: ticket, isLoading } = useTicketDetailQuery(ticketId);
   const { mutateAsync: reply, isPending } = useReplyTicketMutation();
   const [replyText, setReplyText] = useState("");
+  const [showIdleWarning, setShowIdleWarning] = useState(false);
+  const [idleDismissed, setIdleDismissed] = useState(false);
 
   const previousAdminId = useRef<string | null>(null);
   const previousMessageCount = useRef<number>(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const idleWarningTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoResolveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Reset inactivity timers whenever there's fresh activity
+  const resetIdleTimers = useCallback(() => {
+    if (idleWarningTimer.current) clearTimeout(idleWarningTimer.current);
+    if (autoResolveTimer.current) clearTimeout(autoResolveTimer.current);
+    setShowIdleWarning(false);
+
+    idleWarningTimer.current = setTimeout(() => {
+      setShowIdleWarning(true);
+    }, IDLE_WARNING_MS);
+
+    autoResolveTimer.current = setTimeout(() => {
+      // Auto-resolve by sending a PATCH — the ticket polling will pick this up
+      import("@/lib/api-client").then(({ apiClient }) => {
+        apiClient.patch(`/support/tickets/${ticketId}`, { status: "resolved" }).catch(() => {
+          /* fail silently — session may already be closed */
+        });
+      });
+    }, AUTO_RESOLVE_MS);
+  }, [ticketId]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (idleWarningTimer.current) clearTimeout(idleWarningTimer.current);
+      if (autoResolveTimer.current) clearTimeout(autoResolveTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (ticket) {
@@ -74,10 +110,11 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
           "Kapuletu Support",
           "A support team member has joined your session.",
         );
+        resetIdleTimers();
       }
       previousAdminId.current = ticket.assigned_admin_id || null;
 
-      // New message arrived from support
+      // New message from support
       if (previousMessageCount.current > 0 && count > previousMessageCount.current) {
         const lastMsg = ticket.messages[count - 1];
         const isFromSupport = lastMsg.sender_id !== ticket.user_id;
@@ -87,14 +124,14 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
             "New reply from Support",
             `${lastMsg.sender_name || "Support Team"}: ${lastMsg.message.slice(0, 80)}`,
           );
+          resetIdleTimers();
         }
       }
       previousMessageCount.current = count;
 
-      // Auto-scroll
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [ticket]);
+  }, [ticket, resetIdleTimers]);
 
   const handleReply = async () => {
     if (!replyText.trim()) return;
@@ -102,9 +139,25 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
       await reply({ ticketId, payload: { message: replyText } });
       setReplyText("");
       toast.success("Message sent!");
+      resetIdleTimers(); // User activity resets the clock
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } };
       toast.error(err.response?.data?.detail || "Failed to send message");
+    }
+  };
+
+  const handleStillHere = async () => {
+    try {
+      await reply({
+        ticketId,
+        payload: { message: "I'm still here and need further assistance." },
+      });
+      setIdleDismissed(true);
+      setShowIdleWarning(false);
+      resetIdleTimers();
+      toast.success("Message sent — the support team has been notified.");
+    } catch (_e) {
+      /* fail silently */
     }
   };
 
@@ -113,6 +166,9 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
   }
 
   const isWaiting = ticket.status === "open" && !ticket.assigned_admin_id;
+  const isResolved = ticket.status === "resolved" || ticket.status === "closed";
+  const showRatingPrompt = isResolved && !ticket.has_rating;
+  const isClosed = ticket.status === "closed";
 
   return (
     <Card className="flex flex-col h-full border-0 shadow-none bg-transparent lg:border lg:shadow-sm lg:bg-card">
@@ -132,6 +188,7 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
       </CardHeader>
 
       <CardContent className="flex-1 overflow-y-auto p-6 space-y-4 relative">
+        {/* Waiting banner */}
         {isWaiting && (
           <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-2 flex items-start gap-4">
             <Loader2 className="w-5 h-5 text-primary animate-spin mt-0.5 shrink-0" />
@@ -139,12 +196,45 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
               <h4 className="font-semibold text-primary">Waiting for Our Support Team</h4>
               <p className="text-sm text-primary/80 mt-1">
                 Your ticket is in the queue. Our support team will be with you shortly.
-                {ticket.priority === "urgent" && " Your urgent request has been prioritized."}
+                {ticket.priority === "urgent" && " Your urgent request has been prioritised."}
               </p>
             </div>
           </div>
         )}
 
+        {/* Idle warning banner */}
+        {showIdleWarning && !idleDismissed && !isResolved && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-4">
+            <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <h4 className="font-semibold text-amber-700 dark:text-amber-400">Still with us?</h4>
+              <p className="text-sm text-amber-700/80 dark:text-amber-400/80 mt-1">
+                Our support team hasn't heard from you in a while. If your issue has been fully
+                resolved, you're all set! If you still need help, let us know.
+              </p>
+              <div className="flex gap-2 mt-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleStillHere}
+                  className="border-amber-500/40 text-amber-700 dark:text-amber-400 hover:bg-amber-500/10"
+                >
+                  I Still Need Help
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setIdleDismissed(true)}
+                  className="text-muted-foreground"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Messages */}
         {ticket.messages.map((msg: TicketMessage) => {
           const isUser = msg.sender_id === ticket.user_id;
           const senderLabel = isUser ? "You" : `${msg.sender_name || "Support Team"} (Support)`;
@@ -203,13 +293,31 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId }) => {
         <div ref={messagesEndRef} />
       </CardContent>
 
+      {/* Rating prompt — inline, above footer, when resolved */}
+      {showRatingPrompt && (
+        <SupportRatingCard
+          ticketId={ticketId}
+          userName={ticket.messages[0]?.sender_name || "there"}
+          subject={ticket.subject}
+        />
+      )}
+
       <CardFooter className="border-t p-4 flex flex-col gap-2 shrink-0">
-        {ticket.status === "closed" ? (
+        {isClosed ? (
           <div className="w-full p-4 text-center rounded-xl bg-muted text-muted-foreground flex flex-col items-center gap-2">
             <Info className="w-6 h-6 opacity-50" />
             <p className="font-medium">This session has been closed.</p>
             <p className="text-sm opacity-75">
               If you need further assistance, please open a new ticket.
+            </p>
+          </div>
+        ) : isResolved ? (
+          <div className="w-full p-4 text-center rounded-xl bg-muted text-muted-foreground flex flex-col items-center gap-2">
+            <Info className="w-6 h-6 opacity-50" />
+            <p className="font-medium">This session has been resolved.</p>
+            <p className="text-sm opacity-75">
+              Need more help?{" "}
+              <span className="text-primary cursor-pointer">Open a new ticket.</span>
             </p>
           </div>
         ) : (
