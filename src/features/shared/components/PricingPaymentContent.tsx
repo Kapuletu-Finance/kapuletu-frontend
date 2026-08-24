@@ -92,9 +92,9 @@ const PricingPaymentModal = () => {
   const formatPhoneNumber = (phone: string) => {
     let cleaned = phone.replace(/\D/g, "");
     if (cleaned.startsWith("0")) {
-      cleaned = "254" + cleaned.substring(1);
+      cleaned = `254${cleaned.substring(1)}`;
     } else if (cleaned.length === 9 && (cleaned.startsWith("7") || cleaned.startsWith("1"))) {
-      cleaned = "254" + cleaned;
+      cleaned = `254${cleaned}`;
     }
     return cleaned;
   };
@@ -125,8 +125,11 @@ const PricingPaymentModal = () => {
         name: userProfile ? `${userProfile.first_name} ${userProfile.last_name}` : "KapuLetu User",
       });
       setCheckoutId(response.checkout_id);
-    } catch (_error) {
-      toast.error("Failed to initiate checkout");
+    } catch (error: unknown) {
+      // biome-ignore lint/suspicious/noExplicitAny: api error
+      const message = (error as any)?.response?.data?.detail || "Failed to initiate checkout";
+      toast.error(message);
+      console.error("Checkout initiation error:", error);
     }
   };
 
