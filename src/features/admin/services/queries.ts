@@ -549,3 +549,91 @@ export const useAdminActiveUsersQuery = () => {
     refetchInterval: 15000, // Refetch every 15 seconds
   });
 };
+
+// --- Performance ---
+
+export interface SystemHealthKPIs {
+  uptime_percent: number;
+  avg_response_time_ms: number;
+  cpu_load_percent: number;
+  error_rate_percent: number;
+  active_connections: number;
+}
+
+export const usePerformanceMetricsQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "performance", "health"],
+    queryFn: async () => {
+      const response = await apiClient.get<SystemHealthKPIs>("/admin/performance/health");
+      return response.data;
+    },
+    refetchInterval: 15000,
+  });
+};
+
+export interface PerformanceActivityTrend {
+  time: string;
+  active_sessions: number;
+  api_requests: number;
+}
+
+export const usePerformanceActivityQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "performance", "activity-trend"],
+    queryFn: async () => {
+      const response = await apiClient.get<PerformanceActivityTrend[]>(
+        "/admin/performance/activity-trend",
+      );
+      return response.data;
+    },
+    refetchInterval: 60000,
+  });
+};
+
+export interface ExtendedActiveUser {
+  user_id: string;
+  full_name: string;
+  email: string;
+  role: string;
+  last_active_at: string | null;
+  current_action: string;
+}
+
+export interface ExtendedActiveUsersResponse {
+  active_now: ExtendedActiveUser[];
+  active_now_count: number;
+  recent_24h_count: number;
+  total_active_24h: number;
+}
+
+export const useExtendedActiveUsersQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "performance", "active-users"],
+    queryFn: async () => {
+      const response = await apiClient.get<ExtendedActiveUsersResponse>(
+        "/admin/performance/active-users",
+      );
+      return response.data;
+    },
+    refetchInterval: 15000,
+  });
+};
+
+export interface SystemEvent {
+  id: string;
+  type: "error" | "info" | "warning";
+  message: string;
+  timestamp: string;
+  source: string;
+}
+
+export const usePerformanceEventsQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "performance", "events"],
+    queryFn: async () => {
+      const response = await apiClient.get<SystemEvent[]>("/admin/performance/events");
+      return response.data;
+    },
+    refetchInterval: 15000,
+  });
+};

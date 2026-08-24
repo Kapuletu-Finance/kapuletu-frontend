@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { useAdminOverviewQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { ActiveUsersTracker } from "./ActiveUsersTracker";
 import { KpiCards } from "./KpiCards";
 import { RecentGroups } from "./RecentGroups";
 import { RecentPayments } from "./RecentPayments";
@@ -51,8 +50,7 @@ export const AdminOverviewPage: React.FC = () => {
         />
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <ActiveUsersTracker />
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
         <RecentSignups data={data?.recent_signups} isLoading={isLoading} />
         <RecentPayments data={data?.recent_payments} isLoading={isLoading} />
         <RecentGroups data={data?.recent_groups} isLoading={isLoading} />

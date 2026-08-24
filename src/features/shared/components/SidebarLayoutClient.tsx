@@ -43,7 +43,9 @@ import { cn } from "@/lib/utils";
 
 const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin/overview", icon: "analytics", label: "Overview" },
+  { href: "/admin/performance", icon: "activity", label: "Platform Performance" },
   { href: "/admin/users", icon: "group", label: "Users" },
+  { href: "/admin/finance/plans", icon: "credit-card", label: "Billing & Plans" },
   { href: "/admin/finance", icon: "credit-card", label: "Finance" },
   { href: "/admin/broadcast", icon: "radio", label: "Broadcast" },
   { href: "/admin/feedback", icon: "feedback", label: "Feedback" },

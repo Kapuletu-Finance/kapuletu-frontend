@@ -1,4 +1,5 @@
 import {
+  Activity,
   AlertCircle,
   ArrowLeft,
   ArrowRight,
@@ -59,6 +60,7 @@ import {
   RefreshCw,
   RotateCcw,
   Search,
+  Server,
   Settings,
   Share2,
   Shield,
@@ -85,6 +87,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 const ICON_MAP = {
+  activity: <Activity />,
   add: <Plus />,
   "add-circle": <PlusCircle />,
   alert: <AlertCircle />,
@@ -151,6 +154,7 @@ const ICON_MAP = {
   report: <FileChartLine />,
   "rotate-ccw": <RotateCcw />,
   search: <Search />,
+  server: <Server />,
   settings: <Settings />,
   share: <Share2 />,
   shield: <Shield />,
