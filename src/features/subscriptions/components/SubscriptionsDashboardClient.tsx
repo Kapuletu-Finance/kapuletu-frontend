@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -83,9 +84,11 @@ export const SubscriptionsDashboardClient = () => {
               If you have any issues with your billing or would like to request a refund, please
               contact our support team.
             </p>
-            <Button variant="link" className="px-0 mt-2 h-auto text-primary">
-              Contact Support &rarr;
-            </Button>
+            <Link href="/support">
+              <Button variant="link" className="px-0 mt-2 h-auto text-primary">
+                Contact Support &rarr;
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
