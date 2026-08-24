@@ -107,15 +107,24 @@ export const AdminSupportPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">
-              {STATUS_TABS.find((t) => t.value === statusFilter)?.label} Tickets
-            </CardTitle>
-            <MessageCircle className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{tickets?.length || 0}</div>
+        <Card className="overflow-hidden">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <MessageCircle className="size-6" />
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-medium text-muted-foreground">
+                  {STATUS_TABS.find((t) => t.value === statusFilter)?.label} Tickets
+                </p>
+                <div className="flex items-baseline gap-2">
+                  <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                    {isLoading ? "..." : tickets?.length || 0}
+                  </h3>
+                  <span className="text-xs font-medium text-muted-foreground">in queue</span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

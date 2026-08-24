@@ -187,9 +187,7 @@ export const TicketList: React.FC<Props> = ({
                       variant="outline"
                       className={`shrink-0 text-[10px] font-semibold tracking-wide ${cfg.colour} border-current flex items-center gap-1`}
                     >
-                      <Icon
-                        className={`w-3 h-3 ${t.status === "in_progress" ? "animate-spin" : ""}`}
-                      />
+                      <Icon className="w-3 h-3" />
                       {cfg.label}
                     </Badge>
                   </div>
