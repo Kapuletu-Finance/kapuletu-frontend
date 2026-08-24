@@ -2,14 +2,13 @@
 
 import { AlertTriangle, Clock, Loader2, MessageCircle } from "lucide-react";
 import type React from "react";
-import { useState } from "react";
+import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdminSupportTicketsQuery } from "../../services/queries";
-import { TicketResolutionView } from "./TicketResolutionView";
 
 type StatusFilter = "open" | "in_progress" | "resolved" | "closed";
 
@@ -32,24 +31,16 @@ const STATUS_TABS: { value: StatusFilter; label: string }[] = [
   { value: "closed", label: "Closed" },
 ];
 
-export const AdminSupportPage: React.FC = () => {
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("open");
-  const { data: tickets, isLoading } = useAdminSupportTicketsQuery(statusFilter);
-  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
+const AdminSupportContent: React.FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const statusFilter = (searchParams.get("status") || "open") as StatusFilter;
 
-  if (selectedTicketId) {
-    return (
-      <div className="space-y-4">
-        <Button variant="ghost" onClick={() => setSelectedTicketId(null)}>
-          &larr; Back to Support Desk
-        </Button>
-        <TicketResolutionView
-          ticketId={selectedTicketId}
-          onResolved={() => setSelectedTicketId(null)}
-        />
-      </div>
-    );
-  }
+  const { data: tickets, isLoading } = useAdminSupportTicketsQuery(statusFilter);
+
+  const handleTabChange = (value: string) => {
+    router.push(`/admin/support?status=${value}`);
+  };
 
   const renderSLABadge = (deadline: string | null) => {
     if (!deadline) return null;
@@ -135,7 +126,7 @@ export const AdminSupportPage: React.FC = () => {
           <CardDescription>Sorted by urgency and SLA deadline.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Tabs value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
+          <Tabs value={statusFilter} onValueChange={handleTabChange}>
             <TabsList>
               {STATUS_TABS.map((tab) => (
                 <TabsTrigger key={tab.value} value={tab.value}>
@@ -166,7 +157,7 @@ export const AdminSupportPage: React.FC = () => {
                 <button
                   key={t.ticket_id}
                   type="button"
-                  onClick={() => setSelectedTicketId(t.ticket_id)}
+                  onClick={() => router.push(`/admin/support/${t.ticket_id}`)}
                   className="w-full text-left flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
                 >
                   <div className="space-y-1">
@@ -183,9 +174,11 @@ export const AdminSupportPage: React.FC = () => {
                   <div className="text-sm text-right mt-2 sm:mt-0 shrink-0">
                     <div className="flex items-center text-muted-foreground justify-end gap-1">
                       <Clock className="w-3 h-3" />
-                      {t.last_reply_at
-                        ? new Date(t.last_reply_at).toLocaleDateString()
-                        : "No replies yet"}
+                      <span suppressHydrationWarning>
+                        {t.last_reply_at
+                          ? new Date(t.last_reply_at).toLocaleDateString()
+                          : "No replies yet"}
+                      </span>
                     </div>
                   </div>
                 </button>
@@ -195,5 +188,13 @@ export const AdminSupportPage: React.FC = () => {
         </CardContent>
       </Card>
     </div>
+  );
+};
+
+export const AdminSupportPage: React.FC = () => {
+  return (
+    <Suspense fallback={<div className="p-8">Loading queue...</div>}>
+      <AdminSupportContent />
+    </Suspense>
   );
 };
