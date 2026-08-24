@@ -35,10 +35,7 @@ export const AdminOverviewPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-lg font-semibold text-foreground">Platform Overview</h1>
-        <p className="text-sm text-muted-foreground">
-          High-level statistics and recent activity across KapuLetu.
-        </p>
+        <h1 className="text-lg font-semibold text-foreground">Overview</h1>
       </div>
 
       <KpiCards data={data?.kpis} isLoading={isLoading} />

@@ -32,8 +32,13 @@ export const UserDetailPage: React.FC = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
 
+  const parseSafeDate = (dateStr: string) => {
+    if (!dateStr) return new Date();
+    return new Date(dateStr.replace(" ", "T"));
+  };
+
   const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString("en-KE", { day: "numeric", month: "short", year: "numeric" });
+    parseSafeDate(iso).toLocaleDateString("en-KE", { day: "numeric", month: "short", year: "numeric" });
 
   if (isLoadingDetails) {
     return (
@@ -283,7 +288,7 @@ export const UserDetailPage: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-foreground">{log.action}</span>
                         <span className="text-xs text-muted-foreground">
-                          {new Date(log.timestamp).toLocaleString("en-KE", {
+                          {parseSafeDate(log.timestamp).toLocaleString("en-KE", {
                             dateStyle: "medium",
                             timeStyle: "short",
                           })}

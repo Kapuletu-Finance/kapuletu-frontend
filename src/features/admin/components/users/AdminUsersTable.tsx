@@ -107,7 +107,7 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
               <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                 {formatDate(user.created_at)}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-8 w-8 p-0"
