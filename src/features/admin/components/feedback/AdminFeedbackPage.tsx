@@ -143,7 +143,7 @@ export const AdminFeedbackPage: React.FC = () => {
       <FeedbackTable
         items={data?.items ?? []}
         isLoading={isLoading}
-        onSelect={(item) => router.push(`/admin/feedback/${item.reference_number}`)}
+        onSelect={(item) => router.push(`/admin/feedback/${item.feedback_id}`)}
         currentPage={filters.page ?? 1}
         totalPages={data?.pages ?? 1}
         onPageChange={(p) => setFilters((prev) => ({ ...prev, page: p }))}

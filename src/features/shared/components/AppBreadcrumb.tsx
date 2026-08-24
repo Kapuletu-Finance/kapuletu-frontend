@@ -58,6 +58,9 @@ const formatSegment = (segment: string, index: number, segments: string[]): stri
     if (prevSegment === "support") {
       return `Ticket ${segment.substring(0, 8).toUpperCase()}`;
     }
+    if (prevSegment === "feedback") {
+      return `Feedback ${segment.substring(0, 8).toUpperCase()}`;
+    }
     return `Details`;
   }
 
