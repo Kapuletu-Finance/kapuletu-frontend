@@ -7,8 +7,10 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
 import {
@@ -25,12 +27,19 @@ import { formatCurrency } from "@/lib/formatters";
 
 const PricingPaymentModal = () => {
   const [rawTier] = useQueryState("tier", { defaultValue: "professional" });
+  const [actionQuery, setActionQuery] = useQueryState("action");
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [hasAddons, setHasAddons] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [checkoutId, setCheckoutId] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [skipTrial, setSkipTrial] = useState(false);
+
+  // Trial Activation State
+  const [isTrialModalOpen, setIsTrialModalOpen] = useState(false);
+  const [trialStep, setTrialStep] = useState<"idle" | "provisioning" | "success">("idle");
+  const [provisionProgress, setProvisionProgress] = useState(0);
+  const [provisionText, setProvisionText] = useState("Initializing workspace...");
 
   const { data: plans, isLoading: isPlansLoading } = useGetAvailablePlansQuery();
   const { data: paymentStatus } = useGetPaymentStatusQuery(checkoutId);
@@ -52,6 +61,14 @@ const PricingPaymentModal = () => {
 
   const basePrice = billingCycle === "annual" ? annualPrice : monthlyPrice;
   const totalPrice = basePrice + (hasAddons ? addonPrice : 0);
+
+  useEffect(() => {
+    if (actionQuery === "start_trial" && tier === "professional") {
+      setIsTrialModalOpen(true);
+      // Remove query param to prevent re-opening on reload
+      setActionQuery(null);
+    }
+  }, [actionQuery, tier, setActionQuery]);
 
   useEffect(() => {
     if (paymentStatus?.status === "success") {
@@ -90,13 +107,43 @@ const PricingPaymentModal = () => {
   };
 
   const handleActivateTrial = async () => {
+    setIsTrialModalOpen(true);
+    setTrialStep("provisioning");
+
+    // Simulate provisioning stages
+    setProvisionProgress(25);
+    setProvisionText("Configuring premium features...");
+
+    await new Promise((r) => setTimeout(r, 1000));
+    setProvisionProgress(50);
+    setProvisionText("Setting up analytics engine...");
+
+    await new Promise((r) => setTimeout(r, 1000));
+    setProvisionProgress(80);
+    setProvisionText("Finalizing your account...");
+
     try {
       await activateTrial.mutateAsync();
-      toast.success("Trial activated successfully!");
-      refetchSubscription();
-      setIsSuccess(true);
-    } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to activate trial");
+      setProvisionProgress(100);
+      setProvisionText("Success!");
+
+      await new Promise((r) => setTimeout(r, 500));
+      setTrialStep("success");
+
+      // Close modal and refresh after short delay
+      setTimeout(() => {
+        setIsTrialModalOpen(false);
+        setIsSuccess(true);
+        refetchSubscription();
+      }, 2000);
+    } catch (error: unknown) {
+      setTrialStep("idle");
+      setIsTrialModalOpen(false);
+      const message =
+        error instanceof Error
+          ? error.message
+          : (error as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
+      toast.error(message || "Failed to activate trial");
     }
   };
 
@@ -157,7 +204,7 @@ const PricingPaymentModal = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-background border border-border shadow-lg rounded-3xl">
+    <div className="max-w-4xl mx-auto p-8 bg-background border border-border shadow-lg rounded-3xl relative">
       <h2 className="text-2xl font-bold text-center mb-8">Complete your subscription</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -238,10 +285,9 @@ const PricingPaymentModal = () => {
                 </p>
                 <Button
                   className={`w-full py-6 ${styles.btnClass}`}
-                  onClick={handleActivateTrial}
-                  disabled={activateTrial.isPending}
+                  onClick={() => setIsTrialModalOpen(true)}
                 >
-                  {activateTrial.isPending ? "Activating..." : "Activate Trial"}
+                  Activate Trial
                 </Button>
                 <div className="text-center pt-2">
                   <Button
@@ -330,6 +376,85 @@ const PricingPaymentModal = () => {
         </Link>
         .
       </p>
+
+      {/* Trial Activation Modal */}
+      <Dialog
+        open={isTrialModalOpen}
+        onOpenChange={(open) => {
+          if (!open && trialStep !== "provisioning") {
+            setIsTrialModalOpen(false);
+            setTrialStep("idle");
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-background border-border shadow-2xl rounded-2xl">
+          <div className="p-8 space-y-6">
+            {trialStep === "idle" && (
+              <div className="text-center space-y-6">
+                <div
+                  className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center bg-primary/10 text-primary`}
+                >
+                  <IconLibrary name="star" className="h-8 w-8 fill-primary" />
+                </div>
+                <div className="space-y-2">
+                  <DialogTitle className="text-2xl font-bold">Unlock Professional</DialogTitle>
+                  <p className="text-muted-foreground">
+                    You're about to start a 21-day free trial. Experience advanced analytics,
+                    priority support, and unlimited groups.
+                  </p>
+                </div>
+                <div className="pt-4 space-y-3">
+                  <Button
+                    className="w-full py-6 text-lg rounded-xl shadow-md transition-all hover:scale-[1.02]"
+                    onClick={handleActivateTrial}
+                  >
+                    Start Provisioning
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => setIsTrialModalOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {trialStep === "provisioning" && (
+              <div className="text-center space-y-8 py-4">
+                <DialogTitle className="sr-only">Provisioning Account</DialogTitle>
+                <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
+                  <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+                  <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+                  <IconLibrary name="settings" className="h-8 w-8 text-primary animate-pulse" />
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold animate-pulse">{provisionText}</h3>
+                  <Progress value={provisionProgress} className="h-2 w-full" />
+                </div>
+              </div>
+            )}
+
+            {trialStep === "success" && (
+              <div className="text-center space-y-6 py-4">
+                <DialogTitle className="sr-only">Success</DialogTitle>
+                <div className="mx-auto w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center scale-in-center">
+                  <IconLibrary name="check-circle" className="h-10 w-10 text-green-500" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold text-green-600 dark:text-green-500">
+                    Welcome to Pro!
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Your workspace has been successfully upgraded. Redirecting...
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

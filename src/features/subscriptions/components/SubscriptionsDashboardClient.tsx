@@ -63,7 +63,7 @@ export const SubscriptionsDashboardClient = () => {
     >
       {showPlans && (
         <div className="animate-in fade-in slide-in-from-top-4 duration-300 border-b border-border pb-8 mb-8">
-          <PricingSection />
+          <PricingSection currentPlan={subscription.active_plan} isLoggedIn={true} />
         </div>
       )}
 

@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 
 interface CheckoutPayload {
@@ -25,12 +25,17 @@ export const useInitiateCheckoutMutation = () => {
 };
 
 export const useActivateTrialMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (): Promise<{ message: string; status: string }> => {
       const response = await apiClient.post<{ message: string; status: string }>(
         "/finance/activate-trial",
       );
       return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-subscription"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 };

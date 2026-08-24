@@ -13,9 +13,16 @@ import { cn } from "@/lib/utils";
 interface PricingSectionProps {
   hideLogo?: boolean;
   className?: string;
+  currentPlan?: string;
+  isLoggedIn?: boolean;
 }
 
-export const PricingSection = ({ hideLogo, className }: PricingSectionProps) => {
+export const PricingSection = ({
+  hideLogo,
+  className,
+  currentPlan,
+  isLoggedIn,
+}: PricingSectionProps) => {
   const { data: dynamicPlans, isLoading } = useGetAvailablePlansQuery();
   return (
     <section id="pricing" className={cn("py-16 px-4 max-w-7xl mx-auto space-y-12", className)}>
@@ -31,7 +38,9 @@ export const PricingSection = ({ hideLogo, className }: PricingSectionProps) => 
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
         {isLoading &&
-          [...Array(4)].map((_, i) => <Skeleton key={i} className="h-[500px] w-full rounded-xl" />)}
+          ["sk1", "sk2", "sk3", "sk4"].map((id) => (
+            <Skeleton key={id} className="h-[500px] w-full rounded-xl" />
+          ))}
         {!isLoading &&
           pricings.map((pricing) => {
             const styles = getTierStyles(pricing.id);
@@ -90,11 +99,27 @@ export const PricingSection = ({ hideLogo, className }: PricingSectionProps) => 
                 </div>
 
                 <CardFooter>
-                  <Button className={`py-6 uppercase ${styles.btnClass}`}>
+                  <Button
+                    className={`py-6 uppercase ${styles.btnClass}`}
+                    disabled={currentPlan?.toLowerCase() === pricing.id.toLowerCase()}
+                  >
                     <Link
-                      href={pricing.id === "basic" ? "/sign-up" : `/checkout?tier=${pricing.id}`}
+                      href={
+                        currentPlan?.toLowerCase() === pricing.id.toLowerCase()
+                          ? "#"
+                          : pricing.id === "basic"
+                            ? isLoggedIn
+                              ? "/checkout?tier=basic"
+                              : "/sign-up"
+                            : `/checkout?tier=${pricing.id}`
+                      }
+                      className="w-full h-full flex items-center justify-center"
                     >
-                      {pricing.ctaText}
+                      {currentPlan?.toLowerCase() === pricing.id.toLowerCase()
+                        ? "Current Plan"
+                        : isLoggedIn && pricing.id === "basic"
+                          ? "Select Plan"
+                          : pricing.ctaText}
                     </Link>
                   </Button>
                 </CardFooter>

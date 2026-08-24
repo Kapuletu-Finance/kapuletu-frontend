@@ -62,7 +62,9 @@ const CurrentPlanCard = () => {
           </div>
 
           <Link
-            href={plan === "free" ? "/subscriptions?tier=professional" : "/subscriptions"}
+            href={
+              plan === "free" ? "/checkout?tier=professional&action=start_trial" : "/subscriptions"
+            }
             className="w-full"
             onClick={handleClick}
           >
@@ -75,7 +77,7 @@ const CurrentPlanCard = () => {
 
       {/* Collapsed Icon View */}
       <Link
-        href={plan === "free" ? "/subscriptions?tier=professional" : "/subscriptions"}
+        href={plan === "free" ? "/checkout?tier=professional&action=start_trial" : "/subscriptions"}
         onClick={handleClick}
         className="hidden group-data-[collapsible=icon]:flex w-full"
       >
