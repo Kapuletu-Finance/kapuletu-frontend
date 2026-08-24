@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { use } from "react";
+import { Suspense, use } from "react";
 import { TicketResolutionView } from "@/features/admin/components/support/TicketResolutionView";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function AdminTicketDetailRoute({ params }: { params: Promise<{ ticketId: string }> }) {
+function AdminTicketContent({ params }: { params: Promise<{ ticketId: string }> }) {
   const router = useRouter();
   const { ticketId } = use(params);
 
@@ -20,5 +21,13 @@ export default function AdminTicketDetailRoute({ params }: { params: Promise<{ t
         onResolved={() => router.push("/admin/support")}
       />
     </div>
+  );
+}
+
+export default function AdminTicketDetailRoute({ params }: { params: Promise<{ ticketId: string }> }) {
+  return (
+    <Suspense fallback={<Skeleton className="w-full h-[600px] rounded-lg" />}>
+      <AdminTicketContent params={params} />
+    </Suspense>
   );
 }
