@@ -33,7 +33,7 @@ const formSchema = z.object({
 
 export const PlanEditor = ({ planId }: { planId: string }) => {
   const isCreateMode = planId === "create";
-  const { data: plan, isLoading } = useAdminPlanQuery(isCreateMode ? "" : planId);
+  const { data: plan, isPending } = useAdminPlanQuery(isCreateMode ? "" : planId);
   const updateMutation = useUpdatePlanMutation();
   const createMutation = useCreatePlanMutation();
   const router = useRouter();
@@ -60,7 +60,7 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
     },
   });
 
-  if (isLoading && !isCreateMode) {
+  if (isPending && !isCreateMode) {
     return (
       <div className="p-6 space-y-4">
         <Skeleton className="h-8 w-64" />
