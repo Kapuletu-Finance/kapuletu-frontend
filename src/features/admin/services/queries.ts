@@ -71,10 +71,10 @@ export const useAdminFeedbackDetailsQuery = (feedbackId: string) => {
   return useQuery({
     queryKey: ["admin", "feedback", feedbackId],
     queryFn: async () => {
-      const { data } = await apiClient.get<AdminFeedbackDetailsResponse>(
+      const { data } = await apiClient.get<AdminFeedbackItem>(
         `/feedback/admin/${feedbackId}`,
       );
-      return data.data;
+      return data;
     },
     enabled: !!feedbackId,
   });
