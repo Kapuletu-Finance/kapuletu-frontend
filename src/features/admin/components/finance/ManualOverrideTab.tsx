@@ -62,7 +62,25 @@ export const ManualOverrideTab: React.FC = () => {
 
   const handleConfirm = () => {
     if (!confirmData) return;
-    mutation.mutate(confirmData, {
+
+    // biome-ignore lint/suspicious/noExplicitAny: Workaround for extending mutation payload
+    let submitPayload: any = { ...confirmData };
+
+    if (confirmData.plan_id === "PRO_TRIAL") {
+      const proPlan = plans?.find((p) => p.name === "Professional");
+      if (!proPlan) {
+        setConfirmData(null);
+        return;
+      }
+      submitPayload = {
+        ...confirmData,
+        plan_id: proPlan.plan_id,
+        duration: 21,
+        is_trial: true,
+      };
+    }
+
+    mutation.mutate(submitPayload, {
       onSuccess: () => {
         form.reset();
         setConfirmData(null);
@@ -73,7 +91,10 @@ export const ManualOverrideTab: React.FC = () => {
     });
   };
 
-  const selectedPlan = plans?.find((p) => p.plan_id === form.watch("plan_id"));
+  const selectedPlan =
+    confirmData?.plan_id === "PRO_TRIAL"
+      ? { name: "Professional (21-Day Trial)" }
+      : plans?.find((p) => p.plan_id === confirmData?.plan_id);
 
   return (
     <>
@@ -109,7 +130,15 @@ export const ManualOverrideTab: React.FC = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Target Plan</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={(val) => {
+                        field.onChange(val);
+                        if (val === "PRO_TRIAL") {
+                          form.setValue("duration", 21);
+                        }
+                      }}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a subscription plan" />
@@ -121,6 +150,7 @@ export const ManualOverrideTab: React.FC = () => {
                             {plan.name}
                           </SelectItem>
                         ))}
+                        <SelectItem value="PRO_TRIAL">Professional (21-Day Trial)</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

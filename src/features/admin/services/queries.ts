@@ -266,6 +266,7 @@ export interface AdminUserDetailsResponse {
     phone: string;
     role: string;
     is_active: boolean;
+    plan_name?: string;
     created_at: string;
   };
   stats: {

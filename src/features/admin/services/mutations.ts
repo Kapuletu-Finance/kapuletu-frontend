@@ -145,14 +145,16 @@ export const useUpgradeUserPlanMutation = () => {
       userId,
       plan_id,
       duration,
+      is_trial,
     }: {
       userId: string;
       plan_id: string;
       duration: number;
+      is_trial?: boolean;
     }) => {
       const response = await apiClient.post<{ message: string }>(
         `/admin/users/treasurers/${userId}/plan`,
-        { plan_id, duration },
+        { plan_id, duration, is_trial },
       );
       return response.data;
     },
@@ -285,7 +287,12 @@ export const useProcessRefundMutation = () => {
 export const useManualOverrideMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { user_id: string; plan_id: string; duration?: number }) => {
+    mutationFn: async (data: {
+      user_id: string;
+      plan_id: string;
+      duration?: number;
+      is_trial?: boolean;
+    }) => {
       const response = await apiClient.post<{ message: string }>(
         "/admin/finance/payments/override",
         data,

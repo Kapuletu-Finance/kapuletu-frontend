@@ -46,14 +46,30 @@ export const OverridePlanDialog: React.FC<OverridePlanDialogProps> = ({
 
   const handleConfirm = () => {
     if (!planId) return;
-    overridePlan.mutate(
-      { userId, plan_id: planId, duration: parseInt(duration, 10) },
-      {
-        onSuccess: () => {
-          onOpenChange(false);
-        },
+
+    let submitPayload = {
+      userId,
+      plan_id: planId,
+      duration: parseInt(duration, 10),
+      is_trial: false,
+    };
+
+    if (planId === "PRO_TRIAL") {
+      const proPlan = plans?.find((p) => p.name === "Professional");
+      if (!proPlan) return;
+      submitPayload = {
+        userId,
+        plan_id: proPlan.plan_id,
+        duration: 21,
+        is_trial: true,
+      };
+    }
+
+    overridePlan.mutate(submitPayload, {
+      onSuccess: () => {
+        onOpenChange(false);
       },
-    );
+    });
   };
 
   return (
@@ -71,7 +87,15 @@ export const OverridePlanDialog: React.FC<OverridePlanDialogProps> = ({
             <label htmlFor="plan" className="text-sm font-medium">
               Select Plan
             </label>
-            <Select value={planId} onValueChange={(val) => setPlanId(val || "")}>
+            <Select
+              value={planId}
+              onValueChange={(val) => {
+                setPlanId(val || "");
+                if (val === "PRO_TRIAL") {
+                  setDuration("21");
+                }
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select a plan" />
               </SelectTrigger>
@@ -81,6 +105,7 @@ export const OverridePlanDialog: React.FC<OverridePlanDialogProps> = ({
                     {plan.name} (KES {plan.price})
                   </SelectItem>
                 ))}
+                <SelectItem value="PRO_TRIAL">Professional (21-Day Trial)</SelectItem>
               </SelectContent>
             </Select>
           </div>

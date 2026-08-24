@@ -245,9 +245,8 @@ export const UserDetailPage: React.FC = () => {
                   <div className="mb-6 rounded-lg bg-muted/30 p-4 border border-border">
                     <p className="text-sm text-muted-foreground mb-1">Current Active Plan</p>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-foreground">
-                        {/* Note: This should ideally come from backend if available on detail */}
-                        Basic
+                      <span className="text-2xl font-bold text-foreground capitalize">
+                        {userDetails.profile.plan_name || "Basic"}
                       </span>
                       <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500">
                         Active

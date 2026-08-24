@@ -97,7 +97,14 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
         },
       });
     } else {
-      updateMutation.mutate({ planId, data: submitData });
+      updateMutation.mutate(
+        { planId, data: submitData },
+        {
+          onSuccess: () => {
+            router.push("/admin/finance");
+          },
+        },
+      );
     }
   };
 
