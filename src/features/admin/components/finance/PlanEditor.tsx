@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -18,9 +19,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUpdatePlanMutation, useCreatePlanMutation } from "@/features/admin/services/mutations";
+import { useCreatePlanMutation, useUpdatePlanMutation } from "@/features/admin/services/mutations";
 import { useAdminPlanQuery } from "@/features/admin/services/queries";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -68,7 +68,7 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
       createMutation.mutate(values, {
         onSuccess: () => {
           router.push("/admin/finance");
-        }
+        },
       });
     } else {
       updateMutation.mutate({ planId, data: values });
@@ -183,7 +183,8 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
             <CardHeader>
               <CardTitle>Features & Benefits</CardTitle>
               <CardDescription>
-                Add the specific features included in this plan. These will be displayed on the pricing page.
+                Add the specific features included in this plan. These will be displayed on the
+                pricing page.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -209,9 +210,18 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
 
               <div className="space-y-2 mt-4">
                 {form.watch("allowed_features").map((feature, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 border rounded-md bg-muted/50">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 border rounded-md bg-muted/50"
+                  >
                     <span className="text-sm">{feature}</span>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => removeFeature(idx)} className="text-destructive h-8 w-8">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeFeature(idx)}
+                      className="text-destructive h-8 w-8"
+                    >
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -227,7 +237,11 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
               </Button>
             </Link>
             <Button type="submit" disabled={updateMutation.isPending || createMutation.isPending}>
-              {updateMutation.isPending || createMutation.isPending ? "Saving..." : (isCreateMode ? "Create Plan" : "Save Changes")}
+              {updateMutation.isPending || createMutation.isPending
+                ? "Saving..."
+                : isCreateMode
+                  ? "Create Plan"
+                  : "Save Changes"}
             </Button>
           </div>
         </form>

@@ -197,7 +197,13 @@ export const useCreatePlanMutation = () => {
 export const useUpdatePlanMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ planId, data }: { planId: string; data: Partial<Record<string, unknown>> }) => {
+    mutationFn: async ({
+      planId,
+      data,
+    }: {
+      planId: string;
+      data: Partial<Record<string, unknown>>;
+    }) => {
       const response = await apiClient.patch<{ message: string }>(
         `/admin/finance/plans/${planId}`,
         data,

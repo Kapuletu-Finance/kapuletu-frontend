@@ -1,7 +1,7 @@
 "use client";
 
-import type React from "react";
 import Link from "next/link";
+import type React from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminFinancePlansQuery } from "@/features/admin/services/queries";
@@ -49,7 +49,6 @@ export const PlansTab: React.FC = () => {
           ))}
         </div>
       )}
-
     </div>
   );
 };
