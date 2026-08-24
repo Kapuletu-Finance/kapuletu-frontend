@@ -197,7 +197,7 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId, onBack }) => {
             <Badge variant={ticket.priority === "urgent" ? "destructive" : "outline"}>
               {ticket.priority.toUpperCase()}
             </Badge>
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1" suppressHydrationWarning>
               <Clock className="w-3 h-3 ml-1" />
               {new Date(ticket.created_at).toLocaleString()}
             </span>
@@ -297,12 +297,12 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId, onBack }) => {
                   >
                     {msg.message}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <span className="text-[10px] opacity-70 mt-1 block" suppressHydrationWarning>
                     {new Date(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
-                  </div>
+                  </span>
                 </div>
               </div>
             );

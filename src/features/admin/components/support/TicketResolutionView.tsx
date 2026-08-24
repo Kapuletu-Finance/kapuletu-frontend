@@ -335,12 +335,12 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
                   >
                     {msg.message}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <span className="text-[10px] opacity-70 mt-1 block" suppressHydrationWarning>
                     {new Date(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
-                  </div>
+                  </span>
                 </div>
               </div>
             );
