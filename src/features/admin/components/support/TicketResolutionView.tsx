@@ -77,12 +77,21 @@ const playChime = () => {
 
 const requestBrowserNotification = (title: string, body: string) => {
   if (!("Notification" in window)) return;
-  if (Notification.permission === "granted") {
-    new Notification(title, { body, icon: "/favicon.ico" });
-  } else if (Notification.permission !== "denied") {
-    Notification.requestPermission().then((perm) => {
-      if (perm === "granted") new Notification(title, { body, icon: "/favicon.ico" });
-    });
+  try {
+    if (Notification.permission === "granted") {
+      new Notification(title, { body, icon: "/favicon.ico" });
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then((perm) => {
+        if (perm === "granted") {
+          try {
+            new Notification(title, { body, icon: "/favicon.ico" });
+          } catch (_e) {}
+        }
+      });
+    }
+  } catch (_e) {
+    // Mobile browsers often throw Illegal Constructor for new Notification()
+    // requiring ServiceWorkerRegistration.showNotification() instead.
   }
 };
 
