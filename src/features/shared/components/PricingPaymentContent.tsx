@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
+import { useGetMeQuery, useGetMySubscriptionQuery } from "@/features/auth/services/queries";
 import {
   useActivateTrialMutation,
   useInitiateCheckoutMutation,
@@ -46,6 +46,13 @@ const PricingPaymentModal = () => {
   const initiateCheckout = useInitiateCheckoutMutation();
   const activateTrial = useActivateTrialMutation();
   const { refetch: refetchSubscription } = useGetMySubscriptionQuery();
+  const { data: userProfile } = useGetMeQuery();
+
+  useEffect(() => {
+    if (userProfile?.phone_number) {
+      setPhoneNumber((prev) => prev || userProfile.phone_number);
+    }
+  }, [userProfile?.phone_number]);
 
   const isValidTier = plans?.some((p) => p.name.toLowerCase() === rawTier.toLowerCase());
   const tier = isValidTier && rawTier ? rawTier.toLowerCase() : "professional";
@@ -82,11 +89,28 @@ const PricingPaymentModal = () => {
     }
   }, [paymentStatus, refetchSubscription]);
 
+  const formatPhoneNumber = (phone: string) => {
+    let cleaned = phone.replace(/\D/g, "");
+    if (cleaned.startsWith("0")) {
+      cleaned = "254" + cleaned.substring(1);
+    } else if (cleaned.length === 9 && (cleaned.startsWith("7") || cleaned.startsWith("1"))) {
+      cleaned = "254" + cleaned;
+    }
+    return cleaned;
+  };
+
   const handleUpgrade = async () => {
     if (!phoneNumber) {
       toast.error("Please enter your M-Pesa phone number");
       return;
     }
+
+    const formattedPhone = formatPhoneNumber(phoneNumber);
+    if (!formattedPhone.startsWith("254") || formattedPhone.length !== 12) {
+      toast.error("Please enter a valid Kenyan phone number (e.g., 0712345678 or 254712345678)");
+      return;
+    }
+
     if (!selectedPricing) {
       toast.error("Plan not found");
       return;
@@ -96,9 +120,9 @@ const PricingPaymentModal = () => {
       const response = await initiateCheckout.mutateAsync({
         plan_id: selectedPricing.id,
         provider: "mpesa",
-        phone_number: phoneNumber,
-        email: "user@example.com", // Assume current user email is available in context/token, using placeholder for now
-        name: "KapuLetu User",
+        phone_number: formattedPhone,
+        email: userProfile?.email || "user@example.com",
+        name: userProfile ? `${userProfile.first_name} ${userProfile.last_name}` : "KapuLetu User",
       });
       setCheckoutId(response.checkout_id);
     } catch (_error) {
