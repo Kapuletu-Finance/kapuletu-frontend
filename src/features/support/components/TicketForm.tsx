@@ -1,17 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Lock } from "lucide-react";
 import type React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -43,8 +40,6 @@ interface Props {
 
 export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
   const { mutateAsync: createTicket, isPending } = useCreateTicketMutation();
-  // Assume basic plan for demo logic; in reality this comes from user context
-  const isBasicPlan = true;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -61,12 +56,11 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
       await createTicket(values);
       toast.success("Ticket created successfully");
       onSuccess();
-    } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to create ticket");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { detail?: string } } };
+      toast.error(err.response?.data?.detail || "Failed to create ticket");
     }
   };
-
-  const selectedPriority = form.watch("priority");
 
   return (
     <Form {...form}>
@@ -123,14 +117,10 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="standard">Standard (24h SLA)</SelectItem>
-                    <SelectItem value="high">High (8h SLA)</SelectItem>
-                    <SelectItem value="urgent">
-                      <div className="flex items-center gap-2">
-                        Urgent (2h SLA){" "}
-                        {isBasicPlan && <Lock className="w-3 h-3 text-muted-foreground" />}
-                      </div>
-                    </SelectItem>
+                    <SelectItem value="low">Low — General inquiry</SelectItem>
+                    <SelectItem value="medium">Standard — Needs attention</SelectItem>
+                    <SelectItem value="high">High — Affecting my work</SelectItem>
+                    <SelectItem value="urgent">Urgent — Critical issue</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -138,20 +128,6 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
             )}
           />
         </div>
-
-        {selectedPriority === "urgent" && isBasicPlan && (
-          <Alert variant="default" className="bg-muted/50">
-            <AlertCircle className="h-4 w-4 text-primary" />
-            <AlertTitle>Upgrade Required</AlertTitle>
-            <AlertDescription className="text-sm">
-              Urgent priority tickets with a guaranteed 2-hour SLA are exclusively available on our
-              Enterprise Plan. Your ticket will be processed as Standard unless you upgrade.
-            </AlertDescription>
-            <Button variant="link" className="px-0 h-auto mt-2 text-primary">
-              Upgrade Plan Now
-            </Button>
-          </Alert>
-        )}
 
         <FormField
           control={form.control}

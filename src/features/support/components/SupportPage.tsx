@@ -1,138 +1,116 @@
 "use client";
 
-import { MessageSquare, PlusCircle } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useTicketsQuery } from "../services/queries";
+import { SupportDashboard } from "./SupportDashboard";
 import { TicketDetailView } from "./TicketDetailView";
 import { TicketForm } from "./TicketForm";
+import { TicketList } from "./TicketList";
+
+// ─── View State Machine ─────────────────────────────────────────────────────
+// dashboard → list (w/ optional filter) → chat
+// Any view can open the new-ticket dialog
+type View =
+  | { type: "dashboard" }
+  | { type: "list"; filter?: string }
+  | { type: "chat"; ticketId: string; fromFilter?: string };
 
 export const SupportPage: React.FC = () => {
   const { data: tickets, isLoading } = useTicketsQuery();
-  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
+  const [view, setView] = useState<View>({ type: "dashboard" });
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const renderStatusBadge = (status: string) => {
-    switch (status) {
-      case "open":
-        return (
-          <Badge variant="default" className="bg-blue-500">
-            Open
-          </Badge>
-        );
-      case "resolved":
-        return (
-          <Badge variant="secondary" className="bg-green-500 text-white">
-            Resolved
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline">{status}</Badge>;
+  // ── Navigation helpers ───────────────────────────────────────────────────
+
+  // From Dashboard: clicking a KPI card opens the list, optionally pre-filtered
+  // Clicking a recent ticket row opens the chat directly
+  const handleDashboardOpen = (ticketId: string, statusFilter?: string) => {
+    if (ticketId) {
+      setView({ type: "chat", ticketId, fromFilter: statusFilter });
+    } else {
+      setView({ type: "list", filter: statusFilter });
     }
   };
 
-  if (isCreating) {
-    return (
-      <div className="space-y-6 max-w-3xl mx-auto h-full p-4 md:p-6 lg:p-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Open Support Ticket</h1>
-            <p className="text-muted-foreground mt-2">
-              Describe your issue in detail. Our enterprise support team will review and respond as
-              soon as possible.
-            </p>
-          </div>
-          <Button variant="outline" onClick={() => setIsCreating(false)}>
-            Cancel
-          </Button>
-        </div>
-        <Card>
-          <CardContent className="pt-6">
-            <TicketForm onSuccess={() => setIsCreating(false)} />
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // From List: clicking a ticket opens the chat
+  const handleSelectTicket = (ticketId: string) => {
+    const currentFilter = view.type === "list" ? view.filter : undefined;
+    setView({ type: "chat", ticketId, fromFilter: currentFilter });
+  };
+
+  // Back navigation: chat → list (if came from list) or dashboard; list → dashboard
+  const handleBack = () => {
+    if (view.type === "chat") {
+      if (view.fromFilter) {
+        setView({ type: "list", filter: view.fromFilter });
+      } else {
+        setView({ type: "dashboard" });
+      }
+    } else {
+      setView({ type: "dashboard" });
+    }
+  };
+
+  // ── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)]">
-      <div className="flex items-center justify-between mb-6 shrink-0">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Support & Ticketing</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your inquiries, feature requests, and support issues in real-time.
-          </p>
-        </div>
-        <Button onClick={() => setIsCreating(true)}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          New Ticket
-        </Button>
-      </div>
+    <div className="min-h-full p-4 md:p-6 lg:p-8">
+      {/* ── Dashboard ── */}
+      {view.type === "dashboard" && (
+        <SupportDashboard
+          tickets={tickets}
+          isLoading={isLoading}
+          onOpenTicket={handleDashboardOpen}
+          onNewTicket={() => setIsFormOpen(true)}
+        />
+      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
-        {/* Left Pane: Ticket List */}
-        <div className="lg:col-span-1 border rounded-lg bg-card overflow-y-auto shadow-sm">
-          <div className="p-4 border-b bg-muted/20 sticky top-0 backdrop-blur z-10">
-            <h3 className="font-semibold text-lg">My Tickets</h3>
-          </div>
+      {/* ── Ticket List ── */}
+      {view.type === "list" && (
+        <TicketList
+          tickets={tickets}
+          isLoading={isLoading}
+          initialFilter={
+            (view.filter as "all" | "open" | "in_progress" | "resolved" | "closed") ?? "all"
+          }
+          onSelectTicket={handleSelectTicket}
+          onBack={handleBack}
+        />
+      )}
 
-          {isLoading ? (
-            <div className="p-4 space-y-4">
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-            </div>
-          ) : tickets?.length === 0 ? (
-            <div className="p-8 text-center border-dashed rounded-lg m-4">
-              <MessageSquare className="mx-auto h-12 w-12 text-muted-foreground mb-4 opacity-20" />
-              <h3 className="text-lg font-medium text-foreground">No open tickets</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                You haven't submitted any support requests yet.
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col divide-y">
-              {tickets?.map((ticket) => (
-                <button
-                  type="button"
-                  key={ticket.ticket_id}
-                  onClick={() => setSelectedTicketId(ticket.ticket_id)}
-                  className={`flex flex-col text-left p-4 hover:bg-muted/50 transition-colors ${selectedTicketId === ticket.ticket_id ? "bg-muted/80 border-l-4 border-l-primary" : "border-l-4 border-l-transparent"}`}
-                >
-                  <div className="flex items-center justify-between mb-1 w-full">
-                    <span className="font-semibold text-sm truncate pr-2">{ticket.subject}</span>
-                    {renderStatusBadge(ticket.status)}
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground w-full">
-                    <span className="truncate max-w-[120px]">{ticket.category}</span>
-                    <span>{new Date(ticket.updated_at).toLocaleDateString()}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
+      {/* ── Chat Thread ── */}
+      {view.type === "chat" && (
+        <div className="space-y-4">
+          <TicketDetailView ticketId={view.ticketId} onBack={handleBack} />
         </div>
+      )}
 
-        {/* Right Pane: Ticket Chat */}
-        <div className="lg:col-span-2 h-full min-h-0">
-          {selectedTicketId ? (
-            <TicketDetailView ticketId={selectedTicketId} />
-          ) : (
-            <div className="h-full border rounded-lg flex flex-col items-center justify-center text-center p-8 bg-muted/10">
-              <MessageSquare className="mx-auto h-12 w-12 text-muted-foreground mb-4 opacity-20" />
-              <h3 className="text-lg font-medium text-foreground">Select a ticket</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                Choose a ticket from the list on the left to view the conversation and reply to our
-                support team.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* ── New Ticket Dialog ── */}
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Open a Support Ticket</DialogTitle>
+            <DialogDescription>
+              Describe your issue and our team will get back to you as soon as possible.
+            </DialogDescription>
+          </DialogHeader>
+          <TicketForm
+            onSuccess={() => {
+              setIsFormOpen(false);
+              // After creating, go to the list so they can see the new ticket
+              setView({ type: "list", filter: "open" });
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
