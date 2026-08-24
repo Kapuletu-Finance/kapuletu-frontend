@@ -110,7 +110,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
           router.push(`/treasurer/groups/${groupId}/campaigns/${response.slug}`);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Error is handled globally by api client
     }
   };

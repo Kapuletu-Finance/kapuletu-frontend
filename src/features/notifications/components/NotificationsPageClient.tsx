@@ -8,7 +8,6 @@ import {
   useNotificationsQuery,
 } from "@/features/notifications/services/queries";
 import { notificationToDisplay } from "@/features/notifications/utils";
-import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 
 export const NotificationsPageClient = () => {

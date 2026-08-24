@@ -50,7 +50,7 @@ export const TrainingPoolTab: React.FC = () => {
           },
         },
       );
-    } catch (e) {
+    } catch (_e) {
       setJsonError("Invalid JSON format");
     }
   };

@@ -76,7 +76,7 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
         },
       });
       setOpen(false);
-    } catch (error) {
+    } catch (_error) {
       // Error handled globally
     }
   };

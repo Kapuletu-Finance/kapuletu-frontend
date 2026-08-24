@@ -1,8 +1,8 @@
 "use client";
 
-import type React from "react";
-import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import type React from "react";
+import { Suspense, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -55,7 +55,7 @@ const SupportPageContent: React.FC = () => {
         <TicketList
           tickets={tickets}
           isLoading={isLoading}
-          initialFilter={(filter as "all" | "open" | "in_progress" | "resolved" | "closed")}
+          initialFilter={filter as "all" | "open" | "in_progress" | "resolved" | "closed"}
           onSelectTicket={handleSelectTicket}
           onBack={handleBack}
         />

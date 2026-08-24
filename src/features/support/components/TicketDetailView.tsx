@@ -21,7 +21,7 @@ const AUTO_RESOLVE_MS = 20 * 60 * 1000; // 20 minutes — auto-resolve session
 const parseSafeDate = (d?: string | null) => {
   if (!d) return new Date();
   const date = new Date(d.replace(" ", "T"));
-  return isNaN(date.getTime()) ? new Date() : date;
+  return Number.isNaN(date.getTime()) ? new Date() : date;
 };
 
 interface Props {

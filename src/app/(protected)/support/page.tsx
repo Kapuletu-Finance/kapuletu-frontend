@@ -1,4 +1,3 @@
-import React from "react";
 import { SupportPage } from "@/features/support/components/SupportPage";
 
 export const metadata = {

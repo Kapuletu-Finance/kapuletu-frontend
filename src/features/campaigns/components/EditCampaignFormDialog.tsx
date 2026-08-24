@@ -85,7 +85,7 @@ const EditCampaignFormDialog = ({ children }: EditCampaignFormDialogProps) => {
           : null,
       });
       setOpen(false);
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by global query client
     }
   };

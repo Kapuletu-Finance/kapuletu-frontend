@@ -60,7 +60,7 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
       if (response?.slug) {
         router.push(`/treasurer/groups/${response.slug}`);
       }
-    } catch (error) {
+    } catch (_error) {
       // Error handled globally
     }
   };

@@ -1,9 +1,9 @@
 "use client";
 
 import { AlertTriangle, Clock, Loader2, MessageCircle } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import type React from "react";
 import { Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,7 +13,7 @@ import { useAdminSupportTicketsQuery } from "../../services/queries";
 const parseSafeDate = (d?: string | null) => {
   if (!d) return new Date();
   const date = new Date(d.replace(" ", "T"));
-  return isNaN(date.getTime()) ? new Date() : date;
+  return Number.isNaN(date.getTime()) ? new Date() : date;
 };
 
 type StatusFilter = "open" | "in_progress" | "resolved" | "closed";

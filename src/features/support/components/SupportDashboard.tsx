@@ -20,7 +20,7 @@ import type { Ticket } from "../types";
 const parseSafeDate = (d?: string | null) => {
   if (!d) return new Date();
   const date = new Date(d.replace(" ", "T"));
-  return isNaN(date.getTime()) ? new Date() : date;
+  return Number.isNaN(date.getTime()) ? new Date() : date;
 };
 
 interface Props {
@@ -78,9 +78,7 @@ const KpiCard: React.FC<{
         <span className={`text-sm font-semibold uppercase tracking-wide ${cfg.colour}`}>
           {cfg.label}
         </span>
-        <Icon
-          className={`w-4 h-4 ${cfg.colour}`}
-        />
+        <Icon className={`w-4 h-4 ${cfg.colour}`} />
       </div>
       <div className={`text-4xl font-bold ${cfg.colour}`}>{count}</div>
       <div className="text-xs text-muted-foreground mt-1 group-hover:underline">View tickets →</div>

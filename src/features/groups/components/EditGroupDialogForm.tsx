@@ -60,7 +60,7 @@ const EditGroupDialogForm: React.FC<EditGroupDialogFormProps> = ({ group, childr
         description: data.description || null,
       });
       setIsOpen(false);
-    } catch (error) {
+    } catch (_error) {
       // Error handled globally
     }
   };

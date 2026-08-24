@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
-import { Suspense, use } from "react";
-import { TicketDetailView } from "@/features/support/components/TicketDetailView";
 import { useRouter } from "next/navigation";
+import { Suspense, use } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TicketDetailView } from "@/features/support/components/TicketDetailView";
 
 function TicketContent({ params }: { params: Promise<{ ticketId: string }> }) {
   const router = useRouter();

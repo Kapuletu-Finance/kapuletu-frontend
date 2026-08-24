@@ -66,19 +66,19 @@ export const FeedbackDetailPage: React.FC = () => {
     if (item) {
       setResponse(item.admin_response || "");
       setStatus(item.status);
-      
+
       // Automatically mark as reviewing when opened
       if (item.status === "new") {
         updateMutation.mutate({ feedbackId, data: { status: "reviewing" } });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item?.feedback_id, item?.status, feedbackId]);
+  }, [item, feedbackId, updateMutation.mutate]);
 
   const formatDate = (iso: string) => {
     const normalized = iso.replace(" ", "T");
     const d = new Date(normalized);
-    if (isNaN(d.getTime())) return "N/A";
+    if (Number.isNaN(d.getTime())) return "N/A";
     return d.toLocaleDateString("en-KE", {
       day: "numeric",
       month: "short",
@@ -226,7 +226,7 @@ export const FeedbackDetailPage: React.FC = () => {
                             name="star"
                             className={cn(
                               "size-3",
-                              n <= item.overall_rating!
+                              n <= (item.overall_rating ?? 0)
                                 ? "fill-primary text-primary"
                                 : "text-muted-foreground/30",
                             )}

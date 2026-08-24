@@ -197,7 +197,7 @@ export const EngineControlTab: React.FC = () => {
                   <Input
                     type="number"
                     value={epochs}
-                    onChange={(e) => setEpochs(parseInt(e.target.value) || 10)}
+                    onChange={(e) => setEpochs(parseInt(e.target.value, 10) || 10)}
                     min={1}
                     max={100}
                   />

@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeedbackTable } from "@/features/admin/components/feedback/FeedbackTable";
-import type { AdminFeedbackItem } from "@/features/admin/services/queries";
 import {
   type AdminFeedbackFilters,
   useAdminFeedbackQuery,

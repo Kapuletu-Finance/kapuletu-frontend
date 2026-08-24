@@ -45,7 +45,7 @@ interface TicketMessage {
 const parseSafeDate = (d?: string | null) => {
   if (!d) return new Date();
   const date = new Date(d.replace(" ", "T"));
-  return isNaN(date.getTime()) ? new Date() : date;
+  return Number.isNaN(date.getTime()) ? new Date() : date;
 };
 
 interface Props {
@@ -476,7 +476,9 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
               <div className="font-semibold text-red-600 flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4" />
                 <div className="font-semibold text-right" suppressHydrationWarning>
-                  {ticket.sla_deadline ? parseSafeDate(ticket.sla_deadline).toLocaleString() : "N/A"}
+                  {ticket.sla_deadline
+                    ? parseSafeDate(ticket.sla_deadline).toLocaleString()
+                    : "N/A"}
                 </div>
               </div>
             </div>

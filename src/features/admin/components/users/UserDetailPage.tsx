@@ -38,7 +38,11 @@ export const UserDetailPage: React.FC = () => {
   };
 
   const formatDate = (iso: string) =>
-    parseSafeDate(iso).toLocaleDateString("en-KE", { day: "numeric", month: "short", year: "numeric" });
+    parseSafeDate(iso).toLocaleDateString("en-KE", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
 
   if (isLoadingDetails) {
     return (
