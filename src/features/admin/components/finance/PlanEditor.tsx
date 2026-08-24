@@ -1,18 +1,25 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, Plus, X } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useAdminPlanQuery } from "@/features/admin/services/queries";
-import { useUpdatePlanMutation } from "@/features/admin/services/mutations";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { X, Plus, ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useUpdatePlanMutation } from "@/features/admin/services/mutations";
+import { useAdminPlanQuery } from "@/features/admin/services/queries";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -42,7 +49,12 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
   });
 
   if (isLoading) {
-    return <div className="p-6 space-y-4"><Skeleton className="h-8 w-64" /><Skeleton className="h-64 w-full" /></div>;
+    return (
+      <div className="p-6 space-y-4">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
   }
 
   if (!plan) return <div className="p-6 text-destructive">Plan not found</div>;
@@ -60,7 +72,10 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
 
   const removeFeature = (idx: number) => {
     const current = form.getValues("allowed_features");
-    form.setValue("allowed_features", current.filter((_, i) => i !== idx));
+    form.setValue(
+      "allowed_features",
+      current.filter((_, i) => i !== idx),
+    );
   };
 
   return (
@@ -88,7 +103,9 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Plan Name</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -99,7 +116,9 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Price (KES/month)</FormLabel>
-                    <FormControl><Input type="number" {...field} /></FormControl>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -110,7 +129,9 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Max Groups</FormLabel>
-                    <FormControl><Input type="number" {...field} /></FormControl>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -121,7 +142,9 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Max Campaigns</FormLabel>
-                    <FormControl><Input type="number" {...field} /></FormControl>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -132,7 +155,9 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Max Monthly Transactions</FormLabel>
-                    <FormControl><Input type="number" {...field} /></FormControl>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -143,7 +168,9 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
           <Card>
             <CardHeader>
               <CardTitle>Features & Benefits</CardTitle>
-              <CardDescription>Manage the list of features shown on the pricing page.</CardDescription>
+              <CardDescription>
+                Manage the list of features shown on the pricing page.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
@@ -151,7 +178,12 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                   value={featureInput}
                   onChange={(e) => setFeatureInput(e.target.value)}
                   placeholder="e.g. Priority Support"
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addFeature(); } }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addFeature();
+                    }
+                  }}
                 />
                 <Button type="button" onClick={addFeature} variant="secondary">
                   <Plus className="size-4 mr-2" /> Add
@@ -160,9 +192,18 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
 
               <div className="space-y-2 mt-4">
                 {form.watch("allowed_features").map((feature, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 border rounded-md bg-muted/50">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 border rounded-md bg-muted/50"
+                  >
                     <span className="text-sm">{feature}</span>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => removeFeature(idx)} className="text-destructive h-8 w-8">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeFeature(idx)}
+                      className="text-destructive h-8 w-8"
+                    >
                       <X className="size-4" />
                     </Button>
                   </div>

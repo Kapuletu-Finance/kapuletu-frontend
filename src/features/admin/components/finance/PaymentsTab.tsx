@@ -1,9 +1,16 @@
 "use client";
 import { format } from "date-fns";
+import { MoreHorizontal, Undo2 } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -13,12 +20,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useProcessRefundMutation } from "@/features/admin/services/mutations";
 import { useAdminFinancePaymentsQuery } from "@/features/admin/services/queries";
 import { formatKes } from "@/lib/utils";
-
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Undo2 } from "lucide-react";
-import { useProcessRefundMutation } from "@/features/admin/services/mutations";
 
 export const PaymentsTab: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -101,13 +105,27 @@ export const PaymentsTab: React.FC = () => {
               [...Array(5)].map((_, i) => (
                 // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
                 <TableRow key={`skeleton-payment-${i}`}>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                  <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
-                  <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-8 w-8" />
+                  </TableCell>
                 </TableRow>
               ))
             ) : data?.items.length === 0 ? (
@@ -126,10 +144,14 @@ export const PaymentsTab: React.FC = () => {
                   </TableCell>
                   <TableCell className="font-medium text-foreground">{payment.user_name}</TableCell>
                   <TableCell>{payment.plan_name}</TableCell>
-                  <TableCell className={`font-medium ${payment.amount < 0 ? 'text-destructive' : ''}`}>
+                  <TableCell
+                    className={`font-medium ${payment.amount < 0 ? "text-destructive" : ""}`}
+                  >
                     {formatKes(payment.amount)}
                   </TableCell>
-                  <TableCell>{getMethodBadge(payment.method, (payment as any).transaction_type)}</TableCell>
+                  <TableCell>
+                    {getMethodBadge(payment.method, (payment as any).transaction_type)}
+                  </TableCell>
                   <TableCell>
                     <Badge variant={getStatusVariant(payment.status)}>{payment.status}</Badge>
                   </TableCell>
@@ -140,9 +162,13 @@ export const PaymentsTab: React.FC = () => {
                         <MoreHorizontal className="h-4 w-4" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => handleRefund(payment.payment_id)}
-                          disabled={payment.status !== "success" || payment.amount <= 0 || refundMutation.isPending}
+                          disabled={
+                            payment.status !== "success" ||
+                            payment.amount <= 0 ||
+                            refundMutation.isPending
+                          }
                           className="text-destructive focus:text-destructive"
                         >
                           <Undo2 className="mr-2 h-4 w-4" />
