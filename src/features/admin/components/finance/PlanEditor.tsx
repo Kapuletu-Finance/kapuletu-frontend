@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,14 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     // biome-ignore lint/suspicious/noExplicitAny: Zod typing workaround
     resolver: zodResolver(formSchema) as any,
+    defaultValues: {
+      name: "",
+      price: 0,
+      max_groups: 1,
+      max_campaigns: 1,
+      max_transactions: 100,
+      allowed_features: [],
+    },
     values: {
       name: plan?.name || "",
       price: plan?.price || 0,
@@ -209,8 +217,9 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
               </div>
 
               <div className="space-y-2 mt-4">
-                {form.watch("allowed_features").map((feature, idx) => (
+                {(form.watch("allowed_features") || []).map((feature, idx) => (
                   <div
+                    // biome-ignore lint/suspicious/noArrayIndexKey: feature list is stable
                     key={idx}
                     className="flex items-center justify-between p-3 border rounded-md bg-muted/50"
                   >
