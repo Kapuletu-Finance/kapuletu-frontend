@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { ErrorStateUI } from "@/features/shared/components/ErrorStateUI";
 
-export default function ErrorBoundary({
+export default function GlobalError({
   error,
   reset,
 }: {
@@ -12,14 +12,14 @@ export default function ErrorBoundary({
 }) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error("Support Ticket Error Boundary Caught:", error);
+    console.error("Global Application Error Caught:", error);
   }, [error]);
 
   return (
     <ErrorStateUI
       statusCode={500}
-      title="Something went wrong!"
-      message="We encountered an unexpected error while trying to load this ticket. Please try again or contact support if the issue persists."
+      title="Application Error"
+      message="We encountered an unexpected error while trying to process your request. Our team has been notified. Please try again."
       actionLabel="Try Again"
       onAction={() => reset()}
       error={error}
