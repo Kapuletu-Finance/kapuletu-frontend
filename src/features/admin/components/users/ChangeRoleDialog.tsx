@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -33,6 +34,7 @@ export const ChangeRoleDialog: React.FC<ChangeRoleDialogProps> = ({
   onOpenChange,
 }) => {
   const [role, setRole] = useState(currentRole);
+  const [confirmText, setConfirmText] = useState("");
   const upgradeRole = useUpgradeUserRoleMutation();
 
   useEffect(() => {
@@ -74,13 +76,34 @@ export const ChangeRoleDialog: React.FC<ChangeRoleDialogProps> = ({
               <SelectItem value="super_admin">Super Admin</SelectItem>
             </SelectContent>
           </Select>
+
+          {(role === "admin" || role === "super_admin") && role !== currentRole && (
+            <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-md">
+              <p className="text-xs text-amber-600 dark:text-amber-400 font-medium mb-2">
+                Warning: You are granting elevated access. Type CONFIRM below to proceed.
+              </p>
+              <Input
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder="CONFIRM"
+                className="h-8 text-sm border-amber-500/50 focus-visible:ring-amber-500"
+              />
+            </div>
+          )}
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleConfirm} disabled={upgradeRole.isPending || role === currentRole}>
+          <Button
+            onClick={handleConfirm}
+            disabled={
+              upgradeRole.isPending ||
+              role === currentRole ||
+              ((role === "admin" || role === "super_admin") && confirmText !== "CONFIRM")
+            }
+          >
             {upgradeRole.isPending ? "Applying..." : "Change Role"}
           </Button>
         </DialogFooter>

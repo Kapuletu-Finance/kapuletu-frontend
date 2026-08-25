@@ -455,3 +455,48 @@ export const useUpdateAIConfigMutation = () => {
     },
   });
 };
+
+export const useVerifyAdminPinMutation = () => {
+  return useMutation({
+    mutationFn: async (payload: { pin: string }) => {
+      const response = await apiClient.post("/admin/auth/verify-pin", payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Access unlocked.");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Invalid PIN.");
+    },
+  });
+};
+
+export const useTriggerPasswordResetMutation = () => {
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await apiClient.post(`/admin/users/treasurers/${userId}/reset-password`, {});
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Password reset instructions sent.");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to trigger password reset.");
+    },
+  });
+};
+
+export const useSetAdminPinMutation = () => {
+  return useMutation({
+    mutationFn: async (payload: { pin: string }) => {
+      const response = await apiClient.post("/admin/auth/set-pin", payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Admin PIN updated successfully.");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update Admin PIN.");
+    },
+  });
+};

@@ -67,6 +67,7 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
             <TableHead className="font-semibold">Name</TableHead>
             <TableHead className="font-semibold">Contact</TableHead>
             <TableHead className="font-semibold">Status</TableHead>
+            <TableHead className="font-semibold">Role</TableHead>
             <TableHead className="font-semibold">Plan</TableHead>
             <TableHead className="font-semibold">Joined</TableHead>
             <TableHead className="text-right font-semibold">Actions</TableHead>
@@ -99,6 +100,20 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
                 </Badge>
               </TableCell>
               <TableCell>
+                <Badge
+                  variant="outline"
+                  className={`text-xs capitalize ${
+                    user.role === "super_admin"
+                      ? "bg-purple-500/10 text-purple-500 border-purple-500/20"
+                      : user.role === "admin"
+                        ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                        : "bg-muted/50 text-foreground border-border"
+                  }`}
+                >
+                  {user.role ? user.role.replace("_", " ") : "Unknown"}
+                </Badge>
+              </TableCell>
+              <TableCell>
                 <Badge variant="outline" className="text-xs bg-muted/50 text-foreground">
                   {user.plan_name}
                 </Badge>
@@ -108,12 +123,10 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
               </TableCell>
               <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu>
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenuTrigger className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <IconLibrary name="more-horizontal" className="h-4 w-4" />
-                    </DropdownMenuTrigger>
-                  </div>
+                  <DropdownMenuTrigger className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-8 w-8 p-0">
+                    <span className="sr-only">Open menu</span>
+                    <IconLibrary name="more-horizontal" className="h-4 w-4" />
+                  </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />

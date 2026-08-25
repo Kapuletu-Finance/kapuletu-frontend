@@ -14,12 +14,15 @@ import {
 import { useAdminUsersQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { AdminUsersTable } from "./AdminUsersTable";
+import { SetPinDialog } from "./SetPinDialog";
 
 export const AdminUsersPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<string>("all");
+  const [role, setRole] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [pinDialogOpen, setPinDialogOpen] = useState(false);
   const router = useRouter();
 
   // Debounce search input
@@ -35,6 +38,7 @@ export const AdminUsersPage: React.FC = () => {
     page,
     limit: 10,
     status: status !== "all" ? status : undefined,
+    role: role !== "all" ? role : undefined,
     q: debouncedSearch || undefined,
   });
 
@@ -64,11 +68,16 @@ export const AdminUsersPage: React.FC = () => {
 
   return (
     <div className="space-y-6 flex flex-col h-[calc(100vh-8rem)]">
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">User Management</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage platform treasurers, suspend accounts, and override plans.
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">User Management</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            View and manage all platform users, their status, and roles.
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => setPinDialogOpen(true)}>
+          <IconLibrary name="shield" className="mr-2 size-4 text-primary" /> Security Settings
+        </Button>
       </div>
 
       {data?.kpis && (
@@ -135,6 +144,23 @@ export const AdminUsersPage: React.FC = () => {
               <SelectItem value="suspended">Suspended</SelectItem>
             </SelectContent>
           </Select>
+          <Select
+            value={role}
+            onValueChange={(val) => {
+              setRole(val || "all");
+              setPage(1);
+            }}
+          >
+            <SelectTrigger className="w-full sm:w-40">
+              <SelectValue placeholder="Role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value="treasurer">Treasurer</SelectItem>
+              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="super_admin">Super Admin</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div className="text-sm text-muted-foreground whitespace-nowrap">
           {data ? `${data.total} users found` : "Loading..."}
@@ -176,6 +202,8 @@ export const AdminUsersPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      <SetPinDialog isOpen={pinDialogOpen} onOpenChange={setPinDialogOpen} />
     </div>
   );
 };

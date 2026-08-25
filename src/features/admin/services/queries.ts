@@ -231,6 +231,7 @@ export interface AdminUserItem {
   full_name: string;
   email: string;
   phone: string;
+  role?: string;
   is_active: boolean;
   plan_name: string;
   created_at: string;
@@ -251,6 +252,7 @@ export interface AdminUsersResponse {
 
 export interface AdminUsersFilters {
   status?: string;
+  role?: string;
   q?: string;
   page?: number;
   limit?: number;
@@ -307,6 +309,7 @@ export const useAdminUsersQuery = (filters: AdminUsersFilters = {}) => {
     queryFn: async () => {
       const params = new URLSearchParams();
       if (filters.status) params.set("status", filters.status);
+      if (filters.role) params.set("role", filters.role);
       if (filters.q) params.set("q", filters.q);
       if (filters.page) params.set("page", String(filters.page));
       if (filters.limit) params.set("limit", String(filters.limit));

@@ -27,6 +27,7 @@ export const SuspendUserDialog: React.FC<SuspendUserDialogProps> = ({
   onOpenChange,
 }) => {
   const [reason, setReason] = useState("");
+  const [confirmText, setConfirmText] = useState("");
   const updateStatus = useUpdateUserStatusMutation();
 
   const handleConfirm = () => {
@@ -66,6 +67,18 @@ export const SuspendUserDialog: React.FC<SuspendUserDialogProps> = ({
                 placeholder="Violation of terms, non-payment, etc."
               />
             </div>
+            <div className="space-y-2">
+              <label htmlFor="confirm" className="text-sm font-medium text-destructive">
+                Type SUSPEND to confirm
+              </label>
+              <Input
+                id="confirm"
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder="SUSPEND"
+                className="border-destructive/50 focus-visible:ring-destructive"
+              />
+            </div>
           </div>
         )}
 
@@ -76,7 +89,9 @@ export const SuspendUserDialog: React.FC<SuspendUserDialogProps> = ({
           <Button
             variant={isActive ? "destructive" : "default"}
             onClick={handleConfirm}
-            disabled={updateStatus.isPending || (isActive && !reason.trim())}
+            disabled={
+              updateStatus.isPending || (isActive && (!reason.trim() || confirmText !== "SUSPEND"))
+            }
           >
             {updateStatus.isPending ? "Applying..." : isActive ? "Suspend User" : "Reactivate User"}
           </Button>
