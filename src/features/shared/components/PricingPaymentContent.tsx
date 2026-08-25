@@ -124,6 +124,8 @@ const PricingPaymentModal = () => {
         phone_number: formattedPhone,
         email: userProfile?.email || "user@example.com",
         name: userProfile ? `${userProfile.first_name} ${userProfile.last_name}` : "KapuLetu User",
+        billing_cycle: billingCycle,
+        has_addons: hasAddons,
       });
       setCheckoutId(response.checkout_id);
     } catch (error: unknown) {
@@ -400,11 +402,11 @@ const PricingPaymentModal = () => {
 
       <p className="text-center text-xs text-muted-foreground mt-8">
         By clicking subscribing, you agree to our{" "}
-        <Link href="#" className="underline">
+        <Link href="/terms" className="underline">
           Terms of Service
         </Link>{" "}
         and{" "}
-        <Link href="#" className="underline">
+        <Link href="/privacy" className="underline">
           Privacy Policy
         </Link>
         .

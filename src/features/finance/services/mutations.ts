@@ -4,9 +4,11 @@ import { apiClient } from "@/lib/api-client";
 interface CheckoutPayload {
   plan_id: string;
   provider: string;
-  phone_number: string;
-  email: string;
-  name: string;
+  phone_number?: string;
+  email?: string;
+  name?: string;
+  billing_cycle?: string;
+  has_addons?: boolean;
 }
 
 interface CheckoutResponse {
