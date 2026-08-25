@@ -55,7 +55,7 @@ export const OverridePlanDialog: React.FC<OverridePlanDialogProps> = ({
     };
 
     if (planId === "PRO_TRIAL") {
-      const proPlan = plans?.find((p) => p.name === "Professional");
+      const proPlan = plans?.find((p) => p.name === "Professional" || p.name === "Pro");
       if (!proPlan) return;
       submitPayload = {
         userId,
