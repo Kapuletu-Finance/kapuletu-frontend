@@ -42,7 +42,8 @@ const PricingPaymentModal = () => {
   const [provisionText, setProvisionText] = useState("Initializing workspace...");
 
   const { data: plans, isLoading: isPlansLoading } = useGetAvailablePlansQuery();
-  const { data: paymentStatus } = useGetPaymentStatusQuery(checkoutId);
+  const { data: paymentStatus, isLoading: isPaymentStatusLoading } =
+    useGetPaymentStatusQuery(checkoutId);
   const initiateCheckout = useInitiateCheckoutMutation();
   const activateTrial = useActivateTrialMutation();
   const { refetch: refetchSubscription } = useGetMySubscriptionQuery();
@@ -204,7 +205,12 @@ const PricingPaymentModal = () => {
     );
   }
 
-  if (checkoutId && paymentStatus?.status === "pending") {
+  if (
+    checkoutId &&
+    (isPaymentStatusLoading ||
+      paymentStatus?.status === "pending" ||
+      paymentStatus?.status === "initiated")
+  ) {
     return (
       <div className="max-w-md mx-auto p-8 bg-background border border-border shadow-lg rounded-3xl text-center space-y-6">
         <div className="animate-pulse bg-primary/10 p-6 rounded-full inline-block">
