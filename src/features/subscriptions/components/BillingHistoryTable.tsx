@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { BillingHistoryOut } from "@/features/auth/types";
+import { useExportReceiptPdfMutation } from "@/features/finance/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 interface Props {
@@ -18,6 +19,8 @@ interface Props {
 }
 
 export const BillingHistoryTable: React.FC<Props> = ({ history }) => {
+  const exportPdf = useExportReceiptPdfMutation();
+
   return (
     <Card className="border-border bg-card">
       <CardHeader>
@@ -39,6 +42,7 @@ export const BillingHistoryTable: React.FC<Props> = ({ history }) => {
                   <TableHead>Amount</TableHead>
                   <TableHead>Method</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -70,6 +74,23 @@ export const BillingHistoryTable: React.FC<Props> = ({ history }) => {
                         </Badge>
                       ) : (
                         <Badge variant="outline">{invoice.status}</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {invoice.status === "success" && (
+                        <button
+                          type="button"
+                          onClick={() => exportPdf.mutate(invoice.payment_id)}
+                          disabled={exportPdf.isPending}
+                          className="p-2 hover:bg-muted rounded-full transition-colors inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
+                          title="Download Receipt"
+                        >
+                          {exportPdf.isPending ? (
+                            <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <IconLibrary name="download" className="w-4 h-4" />
+                          )}
+                        </button>
                       )}
                     </TableCell>
                   </TableRow>

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
 
 interface CheckoutPayload {
@@ -38,6 +39,30 @@ export const useActivateTrialMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-subscription"] });
       queryClient.invalidateQueries({ queryKey: ["me"] });
+    },
+  });
+};
+
+export const useExportReceiptPdfMutation = () => {
+  return useMutation({
+    mutationFn: async (paymentId: string) => {
+      const response = await apiClient.get(`/finance/receipt/${paymentId}`, {
+        responseType: "blob",
+      });
+      return { data: response.data, paymentId };
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to download receipt.");
+    },
+    onSuccess: ({ data, paymentId }) => {
+      const url = window.URL.createObjectURL(new Blob([data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `receipt-${paymentId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
     },
   });
 };

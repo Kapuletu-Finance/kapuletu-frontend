@@ -1,6 +1,8 @@
 "use client";
 
+import confetti from "canvas-confetti";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -26,6 +28,7 @@ import { getTierStyles } from "@/features/shared/utils/pricing";
 import { formatCurrency } from "@/lib/formatters";
 
 const PricingPaymentModal = () => {
+  const router = useRouter();
   const [rawTier] = useQueryState("tier", { defaultValue: "professional" });
   const [actionQuery, setActionQuery] = useQueryState("action");
   const [billingCycle, setBillingCycle] = useState("monthly");
@@ -79,16 +82,45 @@ const PricingPaymentModal = () => {
   }, [actionQuery, tier, setActionQuery]);
 
   useEffect(() => {
-    if (paymentStatus?.status === "success") {
+    if (paymentStatus?.status === "success" && checkoutId) {
       toast.success("Payment successful! Your plan has been upgraded.");
       refetchSubscription();
       setIsSuccess(true);
       setCheckoutId(null);
+
+      const duration = 3 * 1000;
+      const end = Date.now() + duration;
+
+      const frame = () => {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ["#10b981", "#3b82f6", "#f59e0b"],
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ["#10b981", "#3b82f6", "#f59e0b"],
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      };
+      frame();
+
+      setTimeout(() => {
+        router.push("/subscriptions");
+      }, 4000);
     } else if (paymentStatus?.status === "failed") {
       toast.error("Payment failed. Please try again.");
       setCheckoutId(null);
     }
-  }, [paymentStatus, refetchSubscription]);
+  }, [paymentStatus, refetchSubscription, checkoutId, router]);
 
   const formatPhoneNumber = (phone: string) => {
     let cleaned = phone.replace(/\D/g, "");
@@ -188,20 +220,19 @@ const PricingPaymentModal = () => {
   if (isSuccess) {
     return (
       <div className="max-w-md mx-auto p-8 bg-background border border-border shadow-lg rounded-3xl text-center space-y-6">
-        <div className="bg-green-500/10 p-6 rounded-full inline-block">
+        <div className="bg-green-500/10 p-6 rounded-full inline-block scale-in-center">
           <IconLibrary name="check-circle" className="h-12 w-12 text-green-500 mx-auto" />
         </div>
-        <h2 className="text-2xl font-bold text-green-600 dark:text-green-500">
+        <h2 className="text-2xl font-bold text-green-600 dark:text-green-500 animate-pulse">
           Upgrade Successful!
         </h2>
         <p className="text-muted-foreground">
           Welcome to the <strong className={styles.titleColor}>{capitalizedTier}</strong> tier. Your
           new limits and features are now unlocked.
         </p>
-        <div className="pt-4">
-          <Link href="/subscriptions">
-            <Button className="w-full">Return to Dashboard</Button>
-          </Link>
+        <p className="text-sm text-muted-foreground">Redirecting to your dashboard...</p>
+        <div className="pt-4 flex justify-center">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
         </div>
       </div>
     );
