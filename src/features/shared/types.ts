@@ -167,6 +167,7 @@ export interface PendingInboxOut {
   assigned_campaign_name?: string;
   assigned_campaign_slug?: string;
   processed_at?: string;
+  rejection_reason?: string | null;
 }
 
 export interface PaginatedPendingResponse {

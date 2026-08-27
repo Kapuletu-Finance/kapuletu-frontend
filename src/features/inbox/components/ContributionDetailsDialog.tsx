@@ -273,184 +273,203 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
 
           <div className="w-full h-px bg-border my-1" />
 
-          {/* Form Section */}
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <Label className="text-sm text-foreground">
-                Select Group <span className="text-destructive">*</span>
-              </Label>
-              <GroupSelect
-                value={selectedGroupId}
-                onChange={(id, slug) => {
-                  setSelectedGroupId(id);
-                  if (slug) setSelectedGroupSlug(slug);
-                }}
-              />
+          {item.workflow_status === "rejected" ? (
+            <div className="flex flex-col gap-2 bg-destructive/10 text-destructive p-4 rounded-xl border border-destructive/20">
+              <div className="flex items-center gap-2 font-semibold">
+                <IconLibrary name="close" className="w-5 h-5" />
+                Contribution Rejected
+              </div>
+              {item.rejection_reason && (
+                <p className="text-sm">
+                  <span className="font-medium">Reason:</span> {item.rejection_reason}
+                </p>
+              )}
             </div>
+          ) : (
+            <>
+              {/* Form Section */}
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <Label className="text-sm text-foreground">
+                    Select Group <span className="text-destructive">*</span>
+                  </Label>
+                  <GroupSelect
+                    value={selectedGroupId}
+                    onChange={(id, slug) => {
+                      setSelectedGroupId(id);
+                      if (slug) setSelectedGroupSlug(slug);
+                    }}
+                  />
+                </div>
 
-            <div className="flex flex-col gap-2">
-              <Label className="text-sm text-foreground">
-                Select Campaign <span className="text-destructive">*</span>
-              </Label>
-              <CampaignSelect
-                groupId={selectedGroupId}
-                value={selectedCampaignId}
-                onChange={(id, slug) => {
-                  setSelectedCampaignId(id);
-                  if (slug) setSelectedCampaignSlug(slug);
-                }}
-                disabled={!selectedGroupId}
-              />
-            </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-sm text-foreground">
+                    Select Campaign <span className="text-destructive">*</span>
+                  </Label>
+                  <CampaignSelect
+                    groupId={selectedGroupId}
+                    value={selectedCampaignId}
+                    onChange={(id, slug) => {
+                      setSelectedCampaignId(id);
+                      if (slug) setSelectedCampaignSlug(slug);
+                    }}
+                    disabled={!selectedGroupId}
+                  />
+                </div>
 
-            <div className="flex flex-col gap-3 mt-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <IconLibrary name="split" className="w-5 h-5 text-primary" />
-                  <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-foreground">
-                      Split contribution
-                    </span>
-                    <span className="text-[10px] text-muted-foreground leading-tight">
-                      Allocate a payment to multiple contributors
-                    </span>
+                <div className="flex flex-col gap-3 mt-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <IconLibrary name="split" className="w-5 h-5 text-primary" />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-foreground">
+                          Split contribution
+                        </span>
+                        <span className="text-[10px] text-muted-foreground leading-tight">
+                          Allocate a payment to multiple contributors
+                        </span>
+                      </div>
+                    </div>
                   </div>
+
+                  {isSplitting && (
+                    <div className="flex flex-col pt-2 gap-2">
+                      <div className="text-xs text-muted-foreground italic mb-1">
+                        Tip: If the sender's allocation falls to 0, they will be omitted from the
+                        split.
+                      </div>
+
+                      <div className="flex flex-col bg-card">
+                        <div className="grid grid-cols-[1fr_80px_40px] items-center gap-2 px-2 pb-2 text-sm text-muted-foreground border-b border-border">
+                          <span>Name</span>
+                          <span>Amount</span>
+                          <span></span>
+                        </div>
+
+                        {/* Sender Row */}
+                        <div
+                          className={cn(
+                            "grid grid-cols-[1fr_80px_40px] items-center gap-2 py-2 px-2 border-b border-border transition-opacity",
+                            senderAmount <= 0 && "opacity-40 grayscale",
+                          )}
+                        >
+                          <div className="flex flex-col justify-center">
+                            <span className="text-sm font-medium text-foreground">
+                              {item.sender_name || "Unknown"}
+                            </span>
+                            <span className="text-[10px] text-primary font-bold tracking-wider uppercase">
+                              Sender
+                            </span>
+                          </div>
+                          <div className="text-sm font-medium text-foreground text-left px-2">
+                            {Math.max(0, senderAmount).toLocaleString()}
+                          </div>
+                          <div></div>
+                        </div>
+
+                        {/* Other Allocations */}
+                        {otherAllocations.map((alloc, idx) => (
+                          <div
+                            key={alloc.id}
+                            className="grid grid-cols-[1fr_80px_40px] items-center gap-2 py-1 px-1 border-b border-border last:border-0"
+                          >
+                            <Input
+                              type="text"
+                              placeholder="John Doe"
+                              value={alloc.name}
+                              onChange={(e) => {
+                                const newAlloc = [...otherAllocations];
+                                newAlloc[idx].name = e.target.value;
+                                setOtherAllocations(newAlloc);
+                              }}
+                              className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium"
+                            />
+                            <Input
+                              type="number"
+                              placeholder="500"
+                              value={alloc.amount}
+                              onChange={(e) => {
+                                const newAlloc = [...otherAllocations];
+                                newAlloc[idx].amount = e.target.value ? Number(e.target.value) : "";
+                                setOtherAllocations(newAlloc);
+                              }}
+                              className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium"
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10 justify-self-center"
+                              onClick={() =>
+                                setOtherAllocations(
+                                  otherAllocations.filter((a) => a.id !== alloc.id),
+                                )
+                              }
+                            >
+                              <IconLibrary name="trash" className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+
+                      {isOverAllocated && (
+                        <div className="text-xs text-destructive mt-1 font-medium px-1 flex items-center gap-1">
+                          <IconLibrary name="close" className="w-3.5 h-3.5" />
+                          Warning: Total splits exceed the original amount by {-senderAmount}.
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-1 border-dashed bg-transparent text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:text-emerald-300 dark:border-emerald-900/50 dark:hover:bg-emerald-950/30 transition-colors"
+                    onClick={() =>
+                      setOtherAllocations([
+                        ...otherAllocations,
+                        { id: Date.now().toString(), name: "", amount: "" },
+                      ])
+                    }
+                  >
+                    <IconLibrary name="add" className="w-4 h-4 mr-2" />
+                    {isSplitting ? "Add another contributor" : "Split this contribution"}
+                  </Button>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <Label className="text-sm text-foreground font-medium">Notes</Label>
+                  <Textarea
+                    placeholder="E.g. Confirmed the amount and purpose."
+                    className="resize-none h-24 bg-background border-border text-sm"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
                 </div>
               </div>
 
-              {isSplitting && (
-                <div className="flex flex-col pt-2 gap-2">
-                  <div className="text-xs text-muted-foreground italic mb-1">
-                    Tip: If the sender's allocation falls to 0, they will be omitted from the split.
-                  </div>
-
-                  <div className="flex flex-col bg-card">
-                    <div className="grid grid-cols-[1fr_80px_40px] items-center gap-2 px-2 pb-2 text-sm text-muted-foreground border-b border-border">
-                      <span>Name</span>
-                      <span>Amount</span>
-                      <span></span>
-                    </div>
-
-                    {/* Sender Row */}
-                    <div
-                      className={cn(
-                        "grid grid-cols-[1fr_80px_40px] items-center gap-2 py-2 px-2 border-b border-border transition-opacity",
-                        senderAmount <= 0 && "opacity-40 grayscale",
-                      )}
-                    >
-                      <div className="flex flex-col justify-center">
-                        <span className="text-sm font-medium text-foreground">
-                          {item.sender_name || "Unknown"}
-                        </span>
-                        <span className="text-[10px] text-primary font-bold tracking-wider uppercase">
-                          Sender
-                        </span>
-                      </div>
-                      <div className="text-sm font-medium text-foreground text-left px-2">
-                        {Math.max(0, senderAmount).toLocaleString()}
-                      </div>
-                      <div></div>
-                    </div>
-
-                    {/* Other Allocations */}
-                    {otherAllocations.map((alloc, idx) => (
-                      <div
-                        key={alloc.id}
-                        className="grid grid-cols-[1fr_80px_40px] items-center gap-2 py-1 px-1 border-b border-border last:border-0"
-                      >
-                        <Input
-                          type="text"
-                          placeholder="John Doe"
-                          value={alloc.name}
-                          onChange={(e) => {
-                            const newAlloc = [...otherAllocations];
-                            newAlloc[idx].name = e.target.value;
-                            setOtherAllocations(newAlloc);
-                          }}
-                          className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium"
-                        />
-                        <Input
-                          type="number"
-                          placeholder="500"
-                          value={alloc.amount}
-                          onChange={(e) => {
-                            const newAlloc = [...otherAllocations];
-                            newAlloc[idx].amount = e.target.value ? Number(e.target.value) : "";
-                            setOtherAllocations(newAlloc);
-                          }}
-                          className="h-9 px-2 text-sm border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground font-medium"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-destructive hover:bg-destructive/10 justify-self-center"
-                          onClick={() =>
-                            setOtherAllocations(otherAllocations.filter((a) => a.id !== alloc.id))
-                          }
-                        >
-                          <IconLibrary name="trash" className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-
-                  {isOverAllocated && (
-                    <div className="text-xs text-destructive mt-1 font-medium px-1 flex items-center gap-1">
-                      <IconLibrary name="close" className="w-3.5 h-3.5" />
-                      Warning: Total splits exceed the original amount by {-senderAmount}.
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="w-full mt-1 border-dashed bg-transparent text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:text-emerald-300 dark:border-emerald-900/50 dark:hover:bg-emerald-950/30 transition-colors"
-                onClick={() =>
-                  setOtherAllocations([
-                    ...otherAllocations,
-                    { id: Date.now().toString(), name: "", amount: "" },
-                  ])
-                }
-              >
-                <IconLibrary name="add" className="w-4 h-4 mr-2" />
-                {isSplitting ? "Add another contributor" : "Split this contribution"}
-              </Button>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label className="text-sm text-foreground font-medium">Notes</Label>
-              <Textarea
-                placeholder="E.g. Confirmed the amount and purpose."
-                className="resize-none h-24 bg-background border-border text-sm"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-4 mt-2">
-            <Button
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-11"
-              onClick={handleApprove}
-              disabled={!selectedGroupId || (isSplitting && isOverAllocated)}
-            >
-              <IconLibrary name="check" className="w-5 h-5" />
-              Approve {isSplitting ? "Split" : ""}
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1 border-destructive text-destructive hover:bg-destructive/10 gap-2 h-11"
-              onClick={handleReject}
-            >
-              <IconLibrary name="close" className="w-5 h-5" />
-              Reject
-            </Button>
-          </div>
+              {/* Actions */}
+              <div className="flex items-center gap-4 mt-2">
+                <Button
+                  className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-11"
+                  onClick={handleApprove}
+                  disabled={!selectedGroupId || (isSplitting && isOverAllocated)}
+                >
+                  <IconLibrary name="check" className="w-5 h-5" />
+                  Approve {isSplitting ? "Split" : ""}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 border-destructive text-destructive hover:bg-destructive/10 gap-2 h-11"
+                  onClick={handleReject}
+                >
+                  <IconLibrary name="close" className="w-5 h-5" />
+                  Reject
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>
