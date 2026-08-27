@@ -262,6 +262,8 @@ export interface TransactionOut {
   payment_method: string;
   status: string;
   date: string;
+  is_split?: boolean;
+  notes?: string | null;
 }
 
 export interface PaginatedTransactionResponse {

@@ -215,15 +215,35 @@ export const TreasurerInboxPageClient = () => {
     );
   };
 
-  const handleBulkReject = () => {
-    bulkRejectMutation.mutate(
-      { pending_ids: Array.from(selectedIds) },
-      {
-        onSuccess: () => {
-          setSelectedIds(new Set());
+  const handleBulkReject = (reason: string) => {
+    if (singleRejectId) {
+      rejectMutation.mutate(
+        { id: singleRejectId, reason },
+        {
+          onSuccess: () => {
+            toast.success("Contribution rejected!", {
+              duration: 60000,
+              closeButton: true,
+              cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleRejectId) },
+              classNames: {
+                cancelButton:
+                  "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
+              },
+            });
+            setSingleRejectId(null);
+          },
         },
-      },
-    );
+      );
+    } else {
+      bulkRejectMutation.mutate(
+        { pending_ids: Array.from(selectedIds), internal_note: reason },
+        {
+          onSuccess: () => {
+            setSelectedIds(new Set());
+          },
+        },
+      );
+    }
   };
 
   return (
@@ -377,25 +397,8 @@ export const TreasurerInboxPageClient = () => {
           }
         }}
         selectedCount={singleRejectId ? 1 : selectedIds.size}
-        onConfirm={() => {
-          if (singleRejectId) {
-            rejectMutation.mutate(singleRejectId, {
-              onSuccess: () => {
-                toast.success("Contribution rejected!", {
-                  duration: 60000,
-                  closeButton: true,
-                  cancel: { label: "Undo", onClick: () => undoMutation.mutate(singleRejectId) },
-                  classNames: {
-                    cancelButton:
-                      "!bg-secondary !text-secondary-foreground hover:!bg-secondary/80 !px-3 !py-1.5 !rounded-md !text-xs !font-semibold",
-                  },
-                });
-                setSingleRejectId(null);
-              },
-            });
-          } else {
-            handleBulkReject();
-          }
+        onConfirm={(reason) => {
+          handleBulkReject(reason);
         }}
       />
 

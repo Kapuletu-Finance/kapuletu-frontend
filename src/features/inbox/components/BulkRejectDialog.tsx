@@ -1,6 +1,7 @@
 "use client";
 
-import type * as React from "react";
+import type React from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,13 +10,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export interface BulkRejectDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedCount: number;
-  onConfirm: () => void;
+  onConfirm: (reason: string) => void;
 }
 
 export const BulkRejectDialog: React.FC<BulkRejectDialogProps> = ({
@@ -24,8 +26,11 @@ export const BulkRejectDialog: React.FC<BulkRejectDialogProps> = ({
   selectedCount,
   onConfirm,
 }) => {
+  const [reason, setReason] = useState("");
+
   const handleReject = () => {
-    onConfirm();
+    onConfirm(reason);
+    setReason("");
     onOpenChange(false);
   };
 
@@ -58,6 +63,16 @@ export const BulkRejectDialog: React.FC<BulkRejectDialogProps> = ({
                 Rejected contributions will not be added to your records.
               </p>
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-medium">Rejection Reason (Optional)</span>
+            <Textarea
+              placeholder="e.g. Invalid receipt, duplicate, or mismatch..."
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="resize-none h-20"
+            />
           </div>
 
           {/* Actions */}

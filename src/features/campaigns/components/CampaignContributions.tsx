@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCampaignTransactionsQuery } from "@/features/campaigns/services/queries";
+import {
+  useCampaignQuery,
+  useCampaignTransactionsQuery,
+} from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import Pagination from "@/features/shared/components/Pagination";
@@ -40,12 +43,16 @@ const CampaignContributions = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [timeFilter, setTimeFilter] = useState("This year");
   const [sort, setSort] = useState("date-desc");
+  const [methodFilter, setMethodFilter] = useState("All");
   const limit = 50;
+
+  const { data: campaignData } = useCampaignQuery(campaignSlug);
 
   const { data, isLoading } = useCampaignTransactionsQuery(campaignSlug, {
     skip: (page - 1) * limit,
     limit,
     search: debouncedSearch || undefined,
+    filter: methodFilter !== "All" ? methodFilter : undefined,
     sort_by: sort.split("-")[0],
     sort_order: sort.split("-")[1] as "asc" | "desc",
   });
@@ -114,6 +121,29 @@ const CampaignContributions = () => {
                   className="h-12 px-6 border-border bg-transparent font-medium gap-2 shadow-sm w-full sm:w-auto shrink-0"
                 >
                   <IconLibrary name="filter" className="w-4 h-4 text-muted-foreground" />
+                  {methodFilter}
+                  <IconLibrary name="chevron-down" className="w-4 h-4 text-muted-foreground" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setMethodFilter("All")}>
+                All Methods
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setMethodFilter("M-Pesa")}>M-Pesa</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setMethodFilter("Cash")}>Cash</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setMethodFilter("Pledge")}>Pledges</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="outline"
+                  className="h-12 px-6 border-border bg-transparent font-medium gap-2 shadow-sm w-full sm:w-auto shrink-0"
+                >
+                  <IconLibrary name="filter" className="w-4 h-4 text-muted-foreground" />
                   {sort === "date-desc"
                     ? "Newest First"
                     : sort === "date-asc"
@@ -142,6 +172,45 @@ const CampaignContributions = () => {
         <Pagination currentPage={page} totalPages={totalPages} onPageChange={(p) => setPage(p)} />
       }
     >
+      {/* Stats Summary */}
+      {campaignData && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div className="bg-card p-4 rounded-xl border border-border shadow-sm flex flex-col">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Total Received
+            </span>
+            <span className="text-2xl font-bold mt-1 text-foreground">
+              Ksh. {campaignData.total_raised?.toLocaleString()}
+            </span>
+          </div>
+          <div className="bg-card p-4 rounded-xl border border-border shadow-sm flex flex-col">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              M-Pesa
+            </span>
+            <span className="text-2xl font-bold mt-1 text-primary">
+              Ksh. {campaignData.total_mpesa?.toLocaleString()}
+            </span>
+          </div>
+          <div className="bg-card p-4 rounded-xl border border-border shadow-sm flex flex-col">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Cash & Bank
+            </span>
+            <span className="text-2xl font-bold mt-1 text-emerald-600 dark:text-emerald-500">
+              Ksh.{" "}
+              {((campaignData.total_cash || 0) + (campaignData.total_bank || 0)).toLocaleString()}
+            </span>
+          </div>
+          <div className="bg-card p-4 rounded-xl border border-border shadow-sm flex flex-col">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Pledges
+            </span>
+            <span className="text-2xl font-bold mt-1 text-burnt-amber">
+              Ksh. {campaignData.total_pledges?.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="bg-card border border-border shadow-sm rounded-xl overflow-hidden mt-6">
         <CardContent className="p-0 overflow-x-auto">
           <div className="min-w-full md:min-w-[700px]">
@@ -237,6 +306,27 @@ const CampaignContributions = () => {
                           </Badge>
                         </div>
                       </div>
+
+                      {/* Split Info & Notes */}
+                      {(item.is_split || item.notes) && (
+                        <div className="md:col-span-4 mt-3 ml-[3.25rem] md:ml-14 mr-4 bg-muted/30 p-3 rounded-lg border border-border">
+                          {item.is_split && (
+                            <Badge
+                              variant="outline"
+                              className="bg-primary/10 text-primary border-primary/20 text-[10px] mb-2 inline-flex items-center gap-1"
+                            >
+                              <IconLibrary name="split" className="w-3 h-3" />
+                              Split Contribution
+                            </Badge>
+                          )}
+                          {item.notes && (
+                            <div className="flex items-start gap-2 text-xs text-muted-foreground">
+                              <IconLibrary name="info" className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                              <span className="italic">{item.notes}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   );
                 })

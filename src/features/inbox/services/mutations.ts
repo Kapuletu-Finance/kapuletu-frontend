@@ -99,8 +99,8 @@ export const useSplitMutation = () => {
 export const useRejectMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: string) => {
-      const response = await apiClient.post(INBOX_URLS.reject(id));
+    mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
+      const response = await apiClient.post(INBOX_URLS.reject(id), { internal_note: reason });
       return response.data;
     },
     onSuccess: () => {
@@ -167,7 +167,7 @@ export const useBulkApproveMutation = () => {
 export const useBulkRejectMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { pending_ids: string[] }) => {
+    mutationFn: async (data: { pending_ids: string[]; internal_note?: string }) => {
       const response = await apiClient.post(INBOX_URLS.BULK_REJECT, data);
       return response.data;
     },

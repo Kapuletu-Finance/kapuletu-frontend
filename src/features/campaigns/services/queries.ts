@@ -48,6 +48,7 @@ export interface InboxQueryParams {
   skip?: number;
   limit?: number;
   search?: string;
+  filter?: string;
   sort_by?: string;
   sort_order?: "asc" | "desc";
 }
