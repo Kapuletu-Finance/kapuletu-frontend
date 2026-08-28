@@ -142,14 +142,14 @@ export const useBulkApproveMutation = () => {
 
       if (failed.length > 0 && succeeded.length > 0) {
         toast.warning(
-          `Approved ${succeeded.length} contribution(s), but failed on ${failed.length}. ${failed[0]?.message?.split("\n")[0]}`,
+          `Approved ${succeeded.length} contribution${succeeded.length === 1 ? "" : "s"}, but failed on ${failed.length}.`,
         );
       } else if (failed.length > 0) {
         toast.error(
-          `Failed to approve ${failed.length} contribution(s). ${failed[0]?.message?.split("\n")[0]}`,
+          `Failed to approve ${failed.length} contribution${failed.length === 1 ? "" : "s"}.`,
         );
       } else {
-        toast.success(`Approved ${results.length} contribution(s)!`);
+        toast.success(`Approved ${results.length} contribution${results.length === 1 ? "" : "s"}!`);
       }
 
       queryClient.invalidateQueries({ queryKey: pendingInboxKey });
@@ -182,14 +182,14 @@ export const useBulkRejectMutation = () => {
 
       if (failed.length > 0 && succeeded.length > 0) {
         toast.warning(
-          `Rejected ${succeeded.length} contribution(s), but failed on ${failed.length}. ${failed[0]?.message?.split("\n")[0]}`,
+          `Rejected ${succeeded.length} contribution${succeeded.length === 1 ? "" : "s"}, but failed on ${failed.length}.`,
         );
       } else if (failed.length > 0) {
         toast.error(
-          `Failed to reject ${failed.length} contribution(s). ${failed[0]?.message?.split("\n")[0]}`,
+          `Failed to reject ${failed.length} contribution${failed.length === 1 ? "" : "s"}.`,
         );
       } else {
-        toast.success(`Rejected ${results.length} contribution(s)!`);
+        toast.success(`Rejected ${results.length} contribution${results.length === 1 ? "" : "s"}!`);
       }
 
       queryClient.invalidateQueries({ queryKey: pendingInboxKey });

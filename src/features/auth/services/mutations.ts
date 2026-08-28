@@ -46,11 +46,11 @@ export const useSignInMutation = () => {
     },
     onSuccess: (data) => {
       if (data.requires_2fa) {
-        toast.success("Verification code sent to your 2FA channel.");
+        toast.success("We've sent a 6-digit code to your phone and email.");
         return; // UI will handle transition
       }
 
-      toast.success("Sign in successful!");
+      toast.success("Welcome back!");
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
@@ -87,7 +87,7 @@ export const useVerify2FAMutation = () => {
       toast.error(error instanceof Error ? error.message : "Invalid verification code.");
     },
     onSuccess: (data) => {
-      toast.success("2FA verification successful!");
+      toast.success("Welcome back!");
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 

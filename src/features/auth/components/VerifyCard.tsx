@@ -82,7 +82,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
       const params = new URLSearchParams(window.location.search);
       const token = params.get("token") || "";
       if (!token) {
-        toast.error("Invalid or missing 2FA token.");
+        toast.error("Your verification session has expired. Please sign in again.");
         return;
       }
       // Note: verify2FAMutation internal onSuccess handles the routing.
@@ -95,7 +95,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     // If phone verification, we need the identifier
     if (isPhone) {
       if (!finalIdentifier) {
-        toast.error("Value error, identifier cannot be empty");
+        toast.error("We couldn't find your phone number. Please contact support.");
         return;
       }
 
@@ -121,7 +121,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
       const params = new URLSearchParams(window.location.search);
       const token = params.get("token") || "";
       if (!token) {
-        toast.error("Invalid or missing 2FA token.");
+        toast.error("Your verification session has expired. Please sign in again.");
         return;
       }
       resend2FAMutation.mutate({ token });
@@ -132,7 +132,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
 
     if (isPhone) {
       if (!finalIdentifier) {
-        toast.error("Value error, identifier cannot be empty");
+        toast.error("We couldn't find your phone number. Please contact support.");
         return;
       }
       phoneRequestMutation.mutate({ identifier: finalIdentifier });
@@ -207,7 +207,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
           {isError
             ? "The code you entered is wrong. Please try again"
             : is2FA
-              ? "We sent a 6-digit code to your 2FA channel"
+              ? "We've sent a 6-digit verification code to your phone and email"
               : `We sent a 6-digit code to your ${isPhone ? "WhatsApp" : "email address"}`}
         </p>
       </div>

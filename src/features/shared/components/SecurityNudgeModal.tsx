@@ -64,18 +64,18 @@ export const SecurityNudgeModal = () => {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 mb-4">
             <ShieldAlert className="h-6 w-6 text-amber-600" />
           </div>
-          <DialogTitle className="text-center text-xl">Protect Your Account</DialogTitle>
+          <DialogTitle className="text-center text-xl">Secure Your Kapuletu Account</DialogTitle>
           <DialogDescription className="text-center text-base pt-2">
-            We highly recommend enabling Two-Factor Authentication (2FA) to keep your Kapuletu
-            account secure. It adds an extra layer of protection against unauthorized access.
+            Add an extra layer of security to your finances. Two-step verification protects your
+            account even if someone discovers your password.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-3 py-4">
           <Button onClick={handleEnable} className="w-full text-md font-semibold h-12">
-            Enable 2FA Now
+            Secure my account
           </Button>
           <Button variant="outline" onClick={handleSnooze} className="w-full h-12">
-            Remind Me Later
+            I'll do this later
           </Button>
         </div>
       </DialogContent>
