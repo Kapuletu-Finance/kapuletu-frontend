@@ -641,3 +641,19 @@ export const usePerformanceEventsQuery = () => {
     refetchInterval: 15000,
   });
 };
+
+// --- System Config ---
+
+export interface SystemConfigResponse {
+  [key: string]: any;
+}
+
+export const useSystemConfigQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "system-config"],
+    queryFn: async () => {
+      const response = await apiClient.get<SystemConfigResponse>("/admin/config");
+      return response.data;
+    },
+  });
+};

@@ -500,3 +500,26 @@ export const useSetAdminPinMutation = () => {
     },
   });
 };
+
+// --- System Config ---
+
+export const useUpdateSystemConfigMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (configs: { key: string; value: any }[]) => {
+      const response = await apiClient.patch<{ message: string }>("/admin/config", {
+        configs,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Platform configurations updated.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "system-config"] });
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update platform configurations.",
+      );
+    },
+  });
+};
