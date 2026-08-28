@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/input-otp";
 import { PasswordInput } from "@/components/ui/password-input";
 import { type SignInFormData, signInSchema } from "@/features/auth/schemas";
-import { useSignInMutation, useVerify2FAMutation } from "@/features/auth/services/mutations";
+import { useSignInMutation, useVerify2FAMutation, useResend2FAMutation } from "@/features/auth/services/mutations";
 
 export const SignInForm = () => {
   const searchParams = useSearchParams();
@@ -37,6 +37,7 @@ export const SignInForm = () => {
 
   const signInMutation = useSignInMutation();
   const verify2FAMutation = useVerify2FAMutation();
+  const resend2FAMutation = useResend2FAMutation();
 
   const onSubmit = (data: SignInFormData) => {
     signInMutation.mutate(data, {
@@ -94,19 +95,31 @@ export const SignInForm = () => {
                 type="submit"
                 className="w-full font-medium py-6"
                 isLoading={verify2FAMutation.isPending}
-                disabled={otpCode.length !== 6}
+                disabled={otpCode.length !== 6 || resend2FAMutation.isPending}
               >
                 Verify Code
               </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                className="w-full"
-                onClick={() => setStep("credentials")}
-                disabled={verify2FAMutation.isPending}
-              >
-                Back to Sign in
-              </Button>
+              <div className="flex gap-2 w-full">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full flex-1"
+                  onClick={() => resend2FAMutation.mutate({ token: twoFaToken })}
+                  disabled={verify2FAMutation.isPending || resend2FAMutation.isPending}
+                  isLoading={resend2FAMutation.isPending}
+                >
+                  Resend Code
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full flex-1"
+                  onClick={() => setStep("credentials")}
+                  disabled={verify2FAMutation.isPending || resend2FAMutation.isPending}
+                >
+                  Back
+                </Button>
+              </div>
             </div>
           </fieldset>
         </form>

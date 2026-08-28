@@ -77,7 +77,10 @@ export const useSignInMutation = () => {
 export const useVerify2FAMutation = () => {
   return useMutation({
     mutationFn: async (data: { token: string; code: string }) => {
-      const response = await apiClient.post<SignInResponse>("/auth/verify-2fa", data);
+      const response = await apiClient.post<SignInResponse>("/auth/verify-2fa", {
+        two_fa_token: data.token,
+        code: data.code,
+      });
       return response.data;
     },
     onError: (error) => {
@@ -103,6 +106,23 @@ export const useVerify2FAMutation = () => {
       } else {
         window.location.href = "/treasurer";
       }
+    },
+  });
+};
+
+export const useResend2FAMutation = () => {
+  return useMutation({
+    mutationFn: async (data: { token: string }) => {
+      const response = await apiClient.post<{ message: string }>("/auth/resend-2fa", {
+        two_fa_token: data.token,
+      });
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to resend 2FA code.");
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "2FA code resent successfully.");
     },
   });
 };

@@ -657,3 +657,22 @@ export const useSystemConfigQuery = () => {
     },
   });
 };
+export interface AdminBroadcastItem {
+  id: string;
+  title: string;
+  target_audience: string;
+  channels: string[];
+  status: string;
+  recipients_count: number;
+  created_at: string;
+}
+
+export const useAdminBroadcastsQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "broadcasts"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminBroadcastItem[]>("/admin/crm/broadcasts");
+      return response.data;
+    },
+  });
+};

@@ -311,25 +311,25 @@ export const useManualOverrideMutation = () => {
 };
 
 export const useSendBroadcastMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: {
       title: string;
       message: string;
       channels: ("in_app" | "email" | "whatsapp")[];
-      target_type: "all_members" | "specific_member" | "custom_selection";
+      target_type: "all_members" | "active_subscribers" | "treasurers";
       target_ids?: string[];
     }) => {
       const response = await apiClient.post<{
         status: string;
-        dispatched: { in_app: number; email: number; whatsapp: number; total_targets: number };
-      }>("/notifications/broadcast", data);
+        campaign_id: string;
+        recipients: number;
+      }>("/admin/crm/broadcast", data);
       return response.data;
     },
     onSuccess: (data) => {
-      const d = data.dispatched;
-      toast.success(
-        `Broadcast sent! (In-App: ${d.in_app}, Email: ${d.email}, WhatsApp: ${d.whatsapp})`,
-      );
+      queryClient.invalidateQueries({ queryKey: ["admin", "broadcasts"] });
+      toast.success(`Broadcast queued! Sending to ${data.recipients} users.`);
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to send broadcast.");
