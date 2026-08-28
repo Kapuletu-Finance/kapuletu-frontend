@@ -53,6 +53,7 @@ const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin/support", icon: "ticket", label: "Support" },
   { href: "/admin/ai-governance", icon: "brain", label: "AI Governance" },
   { href: "/admin/audit", icon: "shield-ellipsis", label: "Audit Logs" },
+  { href: "/admin/profile", icon: "settings", label: "Settings" },
 ];
 
 const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [

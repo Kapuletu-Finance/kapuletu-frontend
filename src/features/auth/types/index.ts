@@ -57,6 +57,7 @@ export type SignUpRequest = {
   email: string;
   phone_number: string;
   password: string;
+  marketing_consent?: boolean;
 };
 
 export type ForgotPasswordRequest = {

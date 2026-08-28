@@ -317,7 +317,7 @@ export const useSendBroadcastMutation = () => {
       title: string;
       message: string;
       channels: ("in_app" | "email" | "whatsapp")[];
-      target_type: "all_members" | "active_subscribers" | "treasurers";
+      target_type: "all_members" | "active_subscribers" | "treasurers" | "marketing_opt_in";
       target_ids?: string[];
     }) => {
       const response = await apiClient.post<{
@@ -506,7 +506,7 @@ export const useSetAdminPinMutation = () => {
 export const useUpdateSystemConfigMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (configs: { key: string; value: any }[]) => {
+    mutationFn: async (configs: { key: string; value: unknown }[]) => {
       const response = await apiClient.patch<{ message: string }>("/admin/config", {
         configs,
       });

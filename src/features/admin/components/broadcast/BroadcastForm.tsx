@@ -40,7 +40,7 @@ import {
 import { useSendBroadcastMutation } from "@/features/admin/services/mutations";
 
 const formSchema = z.object({
-  target_type: z.enum(["all_members", "active_subscribers", "treasurers"]),
+  target_type: z.enum(["all_members", "active_subscribers", "treasurers", "marketing_opt_in"]),
   title: z.string().min(5, "Title must be at least 5 characters"),
   message: z.string().min(10, "Message must be at least 10 characters"),
   channels: z.array(z.enum(["in_app", "email", "whatsapp"])).min(1, "Select at least one channel"),
@@ -121,6 +121,9 @@ export const BroadcastForm: React.FC = () => {
                       <SelectItem value="all_members">All Active Members</SelectItem>
                       <SelectItem value="active_subscribers">Active Subscribers Only</SelectItem>
                       <SelectItem value="treasurers">Treasurers Only</SelectItem>
+                      <SelectItem value="marketing_opt_in">
+                        Marketing Opt-In (Consented Users)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>Select who should receive this broadcast.</FormDescription>
@@ -271,6 +274,7 @@ export const BroadcastForm: React.FC = () => {
           </div>
           <div
             className="p-6 prose dark:prose-invert max-w-none flex-1"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: intentionally rendering rich text preview
             dangerouslySetInnerHTML={{
               __html:
                 form.watch("message") ||

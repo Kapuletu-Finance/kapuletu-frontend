@@ -20,6 +20,7 @@ export const SignUpForm = () => {
     defaultValues: {
       confirmPassword: "",
       consent: false,
+      marketingConsent: false,
       email: "",
       firstName: "",
       lastName: "",
@@ -251,8 +252,36 @@ export const SignUpForm = () => {
                       .
                     </FieldLabel>
                     {form.formState.errors.consent && (
-                      <FieldError>{form.formState.errors.consent.message}</FieldError>
+                      <FieldError className="mt-1">
+                        {form.formState.errors.consent.message}
+                      </FieldError>
                     )}
+                  </div>
+                </Field>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="marketingConsent"
+              render={({ field }) => (
+                <Field
+                  orientation="horizontal"
+                  className="flex flex-row items-start space-x-3 space-y-0 pt-2"
+                >
+                  <Checkbox
+                    id={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    className="mt-0.5 size-5 border-2"
+                  />
+                  <div className="space-y-1 leading-none flex-1">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="block text-sm text-muted-foreground font-normal leading-relaxed"
+                    >
+                      I would like to receive updates, marketing, and promotional offers.
+                    </FieldLabel>
                   </div>
                 </Field>
               )}

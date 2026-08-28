@@ -15,6 +15,7 @@ export const signUpSchema = z
     consent: z.boolean().refine((val) => val === true, {
       message: "You must accept the terms and privacy policy.",
     }),
+    marketingConsent: z.boolean(),
     email: z.email("Please enter a valid email address.").min(1, "Email is required."),
     firstName: z
       .string({ message: "First name is required." })

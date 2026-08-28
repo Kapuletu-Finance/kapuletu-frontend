@@ -11,7 +11,7 @@ export const useGetMeQuery = (options?: { enabled?: boolean }) => {
       return response.data;
     },
     queryKey: ["auth", "me"],
-    enabled: options?.enabled ?? true,
+    enabled: options?.enabled,
   });
 };
 
