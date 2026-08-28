@@ -34,7 +34,7 @@ interface VerifyCardProps {
 
 export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const router = useRouter();
-  const { data: user } = useGetMeQuery();
+  const { data: user } = useGetMeQuery({ enabled: type !== "2fa" });
   const isPhone = type === "phone";
   const is2FA = type === "2fa";
 

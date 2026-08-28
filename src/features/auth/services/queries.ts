@@ -4,13 +4,14 @@ import { AUTH_URLS } from "@/features/auth/urls";
 import type { UserSettings } from "@/features/shared/types";
 import { apiClient } from "@/lib/api-client";
 
-export const useGetMeQuery = () => {
+export const useGetMeQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryFn: async () => {
       const response = await apiClient.get<AuthResponse>(AUTH_URLS.ME);
       return response.data;
     },
     queryKey: ["auth", "me"],
+    enabled: options?.enabled ?? true,
   });
 };
 
