@@ -17,7 +17,9 @@ import {
 } from "@/components/ui/input-otp";
 import { type VerifyFormData, verifySchema } from "@/features/auth/schemas";
 import {
+  useResend2FAMutation,
   useResendCodeMutation,
+  useVerify2FAMutation,
   useVerifyEmailConfirmMutation,
   useVerifyEmailRequestMutation,
   useVerifyPhoneConfirmMutation,
@@ -27,13 +29,14 @@ import { SuccessLoader } from "@/features/shared/components/SuccessLoader";
 import { cn } from "@/lib/utils";
 
 interface VerifyCardProps {
-  type: "email" | "phone";
+  type: "email" | "phone" | "2fa";
 }
 
 export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const router = useRouter();
   const { data: user } = useGetMeQuery();
   const isPhone = type === "phone";
+  const is2FA = type === "2fa";
 
   const form = useForm<VerifyFormData>({
     defaultValues: {
@@ -46,6 +49,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const otp = params.get("otp");
+      const token = params.get("token");
       if (otp) {
         form.setValue("code", otp, { shouldValidate: true });
       }
@@ -57,12 +61,35 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const emailRequestMutation = useVerifyEmailRequestMutation();
   const phoneRequestMutation = useResendCodeMutation();
 
-  const verifyMutation = isPhone ? phoneConfirmMutation : emailConfirmMutation;
-  const requestMutation = isPhone ? phoneRequestMutation : emailRequestMutation;
+  const verify2FAMutation = useVerify2FAMutation();
+  const resend2FAMutation = useResend2FAMutation();
+
+  const verifyMutation = is2FA
+    ? verify2FAMutation
+    : isPhone
+      ? phoneConfirmMutation
+      : emailConfirmMutation;
+  const requestMutation = is2FA
+    ? resend2FAMutation
+    : isPhone
+      ? phoneRequestMutation
+      : emailRequestMutation;
 
   const isError = !!form.formState.errors.code || verifyMutation.isError;
 
   const onSubmit = (data: VerifyFormData) => {
+    if (is2FA) {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token") || "";
+      if (!token) {
+        toast.error("Invalid or missing 2FA token.");
+        return;
+      }
+      // Note: verify2FAMutation internal onSuccess handles the routing.
+      verify2FAMutation.mutate({ token, code: data.code });
+      return;
+    }
+
     const finalIdentifier = user?.phone_number || "";
 
     // If phone verification, we need the identifier
@@ -90,6 +117,17 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   };
 
   const handleResend = useCallback(() => {
+    if (is2FA) {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token") || "";
+      if (!token) {
+        toast.error("Invalid or missing 2FA token.");
+        return;
+      }
+      resend2FAMutation.mutate({ token });
+      return;
+    }
+
     const finalIdentifier = user?.phone_number || "";
 
     if (isPhone) {
@@ -101,18 +139,26 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     } else {
       emailRequestMutation.mutate();
     }
-  }, [user?.phone_number, isPhone, phoneRequestMutation, emailRequestMutation]);
+  }, [
+    user?.phone_number,
+    isPhone,
+    is2FA,
+    phoneRequestMutation,
+    emailRequestMutation,
+    resend2FAMutation,
+  ]);
 
   const hasRequestedRef = useRef(false);
 
   useEffect(() => {
+    if (is2FA) return; // For 2FA, the initial login request sent the code already
     if (isPhone && !user?.phone_number) return;
 
     if (!hasRequestedRef.current) {
       hasRequestedRef.current = true;
       handleResend();
     }
-  }, [user?.phone_number, isPhone, handleResend]);
+  }, [user?.phone_number, isPhone, is2FA, handleResend]);
 
   if (verifyMutation.isPending) {
     return (
@@ -135,9 +181,13 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
           <SuccessLoader size={48} />
         </div>
         <div className="flex flex-col items-center text-center">
-          <h1 className="text-[17px] font-bold text-foreground mb-1">Verification complete!</h1>
+          <h1 className="text-[17px] font-bold text-foreground mb-1">
+            {is2FA ? "Login successful!" : "Verification complete!"}
+          </h1>
           <p className="text-[13px] text-muted-foreground">
-            Your {isPhone ? "phone number" : "email address"} has been verified.
+            {is2FA
+              ? "Your identity has been confirmed. Redirecting..."
+              : `Your ${isPhone ? "phone number" : "email address"} has been verified.`}
           </p>
         </div>
       </div>
@@ -156,7 +206,9 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
         >
           {isError
             ? "The code you entered is wrong. Please try again"
-            : `We sent a 6-digit code to your ${isPhone ? "WhatsApp" : "email address"}`}
+            : is2FA
+              ? "We sent a 6-digit code to your 2FA channel"
+              : `We sent a 6-digit code to your ${isPhone ? "WhatsApp" : "email address"}`}
         </p>
       </div>
 
@@ -247,7 +299,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
               </Button>
             </div>
 
-            {!isPhone && (
+            {!isPhone && !is2FA && (
               <div className="text-center pt-2">
                 <Button
                   variant="link"
