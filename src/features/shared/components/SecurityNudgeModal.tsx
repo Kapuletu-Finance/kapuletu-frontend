@@ -8,13 +8,14 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 
 const SNOOZE_KEY = "kapuletu_2fa_snooze_until";
+const SKIP_COUNT_KEY = "kapuletu_2fa_skip_count";
+const BACKOFF_DAYS = [1, 3, 7, 14, 30, 90];
 
 export const SecurityNudgeModal = () => {
   const { data: user, isLoading } = useGetMeQuery();
@@ -39,10 +40,15 @@ export const SecurityNudgeModal = () => {
   }, [user, isLoading]);
 
   const handleSnooze = () => {
-    // 90 days snooze
+    const currentSkipCount = parseInt(localStorage.getItem(SKIP_COUNT_KEY) || "0", 10);
+    const snoozeDays = BACKOFF_DAYS[Math.min(currentSkipCount, BACKOFF_DAYS.length - 1)];
+
     const snoozeDate = new Date();
-    snoozeDate.setDate(snoozeDate.getDate() + 90);
+    snoozeDate.setDate(snoozeDate.getDate() + snoozeDays);
+
     localStorage.setItem(SNOOZE_KEY, snoozeDate.getTime().toString());
+    localStorage.setItem(SKIP_COUNT_KEY, (currentSkipCount + 1).toString());
+
     setIsOpen(false);
   };
 
@@ -69,7 +75,7 @@ export const SecurityNudgeModal = () => {
             Enable 2FA Now
           </Button>
           <Button variant="outline" onClick={handleSnooze} className="w-full h-12">
-            Remind Me Later (90 days)
+            Remind Me Later
           </Button>
         </div>
       </DialogContent>
