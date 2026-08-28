@@ -3,18 +3,29 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { PasswordInput } from "@/components/ui/password-input";
 import { type SignInFormData, signInSchema } from "@/features/auth/schemas";
-import { useSignInMutation } from "@/features/auth/services/mutations";
+import { useSignInMutation, useVerify2FAMutation } from "@/features/auth/services/mutations";
 
 export const SignInForm = () => {
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
+
+  const [step, setStep] = useState<"credentials" | "2fa">("credentials");
+  const [twoFaToken, setTwoFaToken] = useState<string>("");
+  const [otpCode, setOtpCode] = useState("");
 
   const form = useForm<SignInFormData>({
     defaultValues: {
@@ -25,10 +36,83 @@ export const SignInForm = () => {
   });
 
   const signInMutation = useSignInMutation();
+  const verify2FAMutation = useVerify2FAMutation();
 
   const onSubmit = (data: SignInFormData) => {
-    signInMutation.mutate(data);
+    signInMutation.mutate(data, {
+      onSuccess: (res) => {
+        if (res.requires_2fa && res.two_fa_token) {
+          setTwoFaToken(res.two_fa_token);
+          setStep("2fa");
+        }
+      },
+    });
   };
+
+  const onVerify2FA = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otpCode.length !== 6) return;
+    verify2FAMutation.mutate({ token: twoFaToken, code: otpCode });
+  };
+
+  if (step === "2fa") {
+    return (
+      <div className="w-full pb-4">
+        <div className="flex flex-col items-center mb-8 text-center">
+          <h1 className="text-2xl font-bold tracking-tight mb-2">Two-Factor Authentication</h1>
+          <p className="text-sm text-muted-foreground px-4">
+            Enter the 6-digit code sent to your 2FA channel to continue.
+          </p>
+        </div>
+
+        <form onSubmit={onVerify2FA} className="space-y-6 flex flex-col items-center">
+          <fieldset
+            disabled={verify2FAMutation.isPending}
+            className="space-y-6 w-full flex flex-col items-center"
+          >
+            <InputOTP
+              maxLength={6}
+              value={otpCode}
+              onChange={setOtpCode}
+              disabled={verify2FAMutation.isPending}
+            >
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+              </InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup>
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+
+            <div className="w-full pt-4 space-y-3">
+              <Button
+                type="submit"
+                className="w-full font-medium py-6"
+                isLoading={verify2FAMutation.isPending}
+                disabled={otpCode.length !== 6}
+              >
+                Verify Code
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setStep("credentials")}
+                disabled={verify2FAMutation.isPending}
+              >
+                Back to Sign in
+              </Button>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full pb-4">

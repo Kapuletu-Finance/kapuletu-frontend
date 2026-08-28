@@ -15,6 +15,8 @@ export type User = {
   email_verified: boolean;
   phone_number_verified: boolean;
   role: UserRole;
+  two_factor_enabled: boolean;
+  two_factor_channel: string | null;
 };
 
 /**
@@ -39,6 +41,8 @@ export type RegisterOut = {
 export type SignInResponse = {
   role: string;
   phone_number_verified?: boolean;
+  requires_2fa?: boolean;
+  two_fa_token?: string;
 };
 
 export type SignInRequest = {

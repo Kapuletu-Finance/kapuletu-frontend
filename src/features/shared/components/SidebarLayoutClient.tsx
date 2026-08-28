@@ -34,6 +34,7 @@ import { GroupsFlyoutPanel } from "@/features/shared/components/GroupsFlyout";
 import type { IconName } from "@/features/shared/components/IconLibrary";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import NotificationsDropdown from "@/features/shared/components/NotificationsDropdown";
+import { SecurityNudgeModal } from "@/features/shared/components/SecurityNudgeModal";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { TrialBanner } from "@/features/shared/components/TrialBanner";
 import { UserProfileDropdown } from "@/features/shared/components/UserProfileDropdown";
@@ -365,6 +366,9 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
 
       {/* Floating feedback widget — treasurer workspace only */}
       {!isAdminOrSuperAdmin && <FeedbackWidget />}
+
+      {/* 2FA Nudge Modal */}
+      <SecurityNudgeModal />
     </>
   );
 };

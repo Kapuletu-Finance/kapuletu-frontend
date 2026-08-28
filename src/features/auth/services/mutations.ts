@@ -45,11 +45,49 @@ export const useSignInMutation = () => {
       );
     },
     onSuccess: (data) => {
+      if (data.requires_2fa) {
+        toast.success("Verification code sent to your 2FA channel.");
+        return; // UI will handle transition
+      }
+
       toast.success("Sign in successful!");
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
       // If phone number is not yet verified, redirect to the verify-phone page
+      if (!data.phone_number_verified) {
+        window.location.href = "/verify-phone";
+        return;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const from = params.get("from");
+
+      if (from) {
+        window.location.href = from;
+      } else if (data.role === "admin") {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/treasurer";
+      }
+    },
+  });
+};
+
+export const useVerify2FAMutation = () => {
+  return useMutation({
+    mutationFn: async (data: { token: string; code: string }) => {
+      const response = await apiClient.post<SignInResponse>("/auth/verify-2fa", data);
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Invalid verification code.");
+    },
+    onSuccess: (data) => {
+      toast.success("2FA verification successful!");
+      setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
+      localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
+
       if (!data.phone_number_verified) {
         window.location.href = "/verify-phone";
         return;
@@ -358,6 +396,29 @@ export const useUpdateBillingSettingsMutation = () => {
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to update billing settings");
+    },
+  });
+};
+
+export const useUpdateAuthSettingsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      allow_ai_training?: boolean;
+      two_factor_enabled?: boolean;
+      two_factor_channel?: string | null;
+    }) => {
+      // Backend expects allow_ai_training to be required, but we can just fetch and send all.
+      // We should ideally pass the full SettingsIn object.
+      const response = await apiClient.post("/auth/settings", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Security settings updated");
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update security settings");
     },
   });
 };

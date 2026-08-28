@@ -29,6 +29,7 @@ import { Separator } from "@/components/ui/separator";
 import { ChangePasswordDialog } from "@/features/auth/components/ChangePasswordDialog";
 import { type UpdateProfileFormData, updateProfileSchema } from "@/features/auth/schemas";
 import {
+  useUpdateAuthSettingsMutation,
   useUpdateAutomationSettingsMutation,
   useUpdateProfileMutation,
   useUpdateReportingSettingsMutation,
@@ -44,6 +45,7 @@ export const ProfileSettingsForm = () => {
   const updateProfileMutation = useUpdateProfileMutation();
   const updateAutomationMutation = useUpdateAutomationSettingsMutation();
   const updateReportingMutation = useUpdateReportingSettingsMutation();
+  const updateAuthSettingsMutation = useUpdateAuthSettingsMutation();
 
   const form = useForm<UpdateProfileFormData>({
     resolver: zodResolver(updateProfileSchema),
@@ -58,7 +60,6 @@ export const ProfileSettingsForm = () => {
 
   // Dummy state for fields missing in backend
   const [language, setLanguage] = React.useState("english");
-  const [twoFactorEnabled, setTwoFactorEnabled] = React.useState(true);
   const [subscriptionsEnabled, setSubscriptionsEnabled] = React.useState(false);
   const [showAutoApproveWarning, setShowAutoApproveWarning] = React.useState(false);
   const [pendingGroupId, setPendingGroupId] = React.useState<string | undefined>(undefined);
@@ -239,19 +240,56 @@ export const ProfileSettingsForm = () => {
                     <h3 className="font-semibold text-lg text-foreground">Security & Access</h3>
                   </div>
 
-                  <div className="flex items-center justify-between py-2">
-                    <div className="space-y-1">
-                      <h4 className="font-semibold text-sm text-foreground">
-                        Two-factor Authentication
-                      </h4>
-                      <p className="text-xs text-muted-foreground">
-                        Adds an extra layer of security to your account
-                      </p>
+                  <div className="flex flex-col py-2 gap-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h4 className="font-semibold text-sm text-foreground">
+                          Two-factor Authentication
+                        </h4>
+                        <p className="text-xs text-muted-foreground">
+                          Adds an extra layer of security to your account
+                        </p>
+                      </div>
+                      <LabeledSwitch
+                        checked={user?.two_factor_enabled ?? false}
+                        onCheckedChange={(checked) => {
+                          updateAuthSettingsMutation.mutate({
+                            two_factor_enabled: checked,
+                          });
+                        }}
+                        disabled={updateAuthSettingsMutation.isPending}
+                      />
                     </div>
-                    <LabeledSwitch
-                      checked={twoFactorEnabled}
-                      onCheckedChange={setTwoFactorEnabled}
-                    />
+
+                    {user?.two_factor_enabled && (
+                      <div className="bg-muted/30 p-4 rounded-xl border border-border flex items-center justify-between mt-2">
+                        <div className="space-y-1">
+                          <h4 className="font-semibold text-sm text-foreground">
+                            Authentication Channel
+                          </h4>
+                          <p className="text-xs text-muted-foreground">
+                            Where should we send your verification codes?
+                          </p>
+                        </div>
+                        <Select
+                          value={user?.two_factor_channel || "whatsapp"}
+                          onValueChange={(value) => {
+                            updateAuthSettingsMutation.mutate({
+                              two_factor_channel: value,
+                            });
+                          }}
+                          disabled={updateAuthSettingsMutation.isPending}
+                        >
+                          <SelectTrigger className="w-[180px] bg-background border-border">
+                            <SelectValue placeholder="Select channel" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
 
                   <Separator className="w-full" />

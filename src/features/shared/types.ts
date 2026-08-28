@@ -23,7 +23,16 @@ export interface ReportingSettings {
   public_ledger_pin?: string | null;
 }
 
+export interface SecuritySettings {
+  require_2fa: boolean;
+  two_fa_method: string;
+  session_timeout_minutes: number;
+  require_pin_for_export: boolean;
+  audit_log_retention_days: number;
+}
+
 export interface UserSettings {
+  security: SecuritySettings;
   automation: AutomationSettings;
   reporting: ReportingSettings;
   billing?: {
