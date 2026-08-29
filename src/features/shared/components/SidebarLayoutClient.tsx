@@ -96,23 +96,25 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
 
   return (
     <Sidebar collapsible="icon" className="border-border bg-background">
+      {/* Notch Toggle for Desktop */}
+      {!isMobile && (
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className="absolute -right-3 top-7 z-50 hidden md:flex h-6 w-6 items-center justify-center rounded-full border border-border bg-background shadow-md hover:bg-muted text-muted-foreground hover:text-foreground transition-transform hover:scale-110"
+        >
+          <IconLibrary name={isCollapsed ? "chevron-right" : "chevron-left"} className="size-3.5" />
+        </button>
+      )}
+
       <SidebarHeader className="py-6 flex flex-col items-center justify-center relative">
-        <div className="flex w-full items-center justify-between px-4 transition-all duration-200 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:justify-center">
+        <div className="flex flex-col items-center justify-center transition-all duration-200 group-data-[collapsible=icon]:px-2">
           <SiteLogo
             variant={isCollapsed && !isMobile ? "icon" : "full"}
             className="text-2xl"
             logoClassName={`w-auto object-contain transition-all duration-200 ${isCollapsed && !isMobile ? "h-10" : "h-10"}`}
           />
-          {!isMobile && (
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              className="hidden md:flex p-1.5 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors group-data-[collapsible=icon]:hidden"
-              aria-label="Toggle Sidebar"
-            >
-              <IconLibrary name="panel-left" className="size-5" />
-            </button>
-          )}
         </div>
         <div className="absolute bottom-0 w-4/5 h-px bg-linear-to-r from-transparent via-border to-transparent group-data-[collapsible=icon]:w-1/2" />
       </SidebarHeader>
