@@ -281,6 +281,20 @@ interface SidebarLayoutClientProps {
   role: UserRole;
 }
 
+const MobileSidebarTrigger = () => {
+  const { toggleSidebar } = useSidebar();
+  return (
+    <button
+      type="button"
+      onClick={toggleSidebar}
+      className="md:hidden flex h-9 w-9 items-center justify-center rounded-md border border-border bg-background hover:bg-muted text-muted-foreground transition-colors -ml-1"
+      aria-label="Toggle Menu"
+    >
+      <IconLibrary name="menu" className="size-5" />
+    </button>
+  );
+};
+
 export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
   const isAdminOrSuperAdmin = role === "admin" || role === "super_admin";
   const links = isAdminOrSuperAdmin ? ADMIN_LINKS : TREASURER_LINKS;
@@ -308,7 +322,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
           {/* Header */}
           <header className="h-20 shrink-0 flex items-center justify-between px-4 sm:px-6 bg-background border-b border-border z-10 sticky top-0 transition-colors">
             <div className="flex items-center gap-3 sm:gap-4">
-              <SidebarTrigger className="-ml-1 md:hidden" />
+              <MobileSidebarTrigger />
 
               {/* Mobile-only Logo */}
               <div className="flex md:hidden mr-2">
