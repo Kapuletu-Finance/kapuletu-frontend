@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
 import { useRef, useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Sidebar,
   SidebarContent,
@@ -25,14 +24,13 @@ import { useNewFeedbackCountQuery } from "@/features/admin/services/queries";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
 import { usePendingInboxCountQuery } from "@/features/inbox/services/queries";
-import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 import AppBreadcrumb from "@/features/shared/components/AppBreadcrumb";
 import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
-import { FeedbackWidget } from "@/features/shared/components/FeedbackWidget";
 import { GlobalSearch } from "@/features/shared/components/GlobalSearch";
 import { GroupsFlyoutPanel } from "@/features/shared/components/GroupsFlyout";
 import type { IconName } from "@/features/shared/components/IconLibrary";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { KapuletuAssistant } from "@/features/shared/components/KapuletuAssistant";
 import NotificationsDropdown from "@/features/shared/components/NotificationsDropdown";
 import { SecurityNudgeModal } from "@/features/shared/components/SecurityNudgeModal";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
@@ -44,9 +42,17 @@ import { cn } from "@/lib/utils";
 
 const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin/overview", icon: "analytics", label: "Overview" },
-  { href: "/admin/performance", icon: "activity", label: "Platform Performance" },
+  {
+    href: "/admin/performance",
+    icon: "activity",
+    label: "Platform Performance",
+  },
   { href: "/admin/users", icon: "group", label: "Users" },
-  { href: "/admin/finance/plans", icon: "credit-card", label: "Billing & Plans" },
+  {
+    href: "/admin/finance/plans",
+    icon: "credit-card",
+    label: "Billing & Plans",
+  },
   { href: "/admin/finance", icon: "credit-card", label: "Finance" },
   { href: "/admin/broadcast", icon: "radio", label: "Broadcast" },
   { href: "/admin/feedback", icon: "feedback", label: "Feedback" },
@@ -270,7 +276,6 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   const { data: pendingCount } = usePendingInboxCountQuery();
   const { data: feedbackCount } = useNewFeedbackCountQuery();
   const { data: ticketsCount } = usePendingTicketsCountQuery();
-  const [isFaqsOpen, setIsFaqsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const hour = new Date().getHours();
@@ -322,14 +327,13 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
                   <span className="text-xs">⌘</span>K
                 </kbd>
               </button>
-              <button
-                type="button"
-                onClick={() => setIsFaqsOpen(true)}
+              <Link
+                href="/support"
                 className="relative shrink-0 size-9 inline-flex items-center justify-center hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
-                aria-label="Help and FAQs"
+                aria-label="Help and Support"
               >
                 <IconLibrary name="help" className="h-5 w-5 text-muted-foreground" />
-              </button>
+              </Link>
               <NotificationsDropdown />
               <UserProfileDropdown role={role} />
             </div>
@@ -354,19 +358,10 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
         </SidebarInset>
       </SidebarProvider>
 
-      <Dialog open={isFaqsOpen} onOpenChange={setIsFaqsOpen}>
-        <DialogContent className="max-w-4xl p-0 border-none bg-background shadow-lg overflow-hidden sm:rounded-xl">
-          <DialogTitle className="sr-only">Frequently Asked Questions</DialogTitle>
-          <div className="relative max-h-[85vh] overflow-y-auto w-full">
-            <FaqsSection />
-          </div>
-        </DialogContent>
-      </Dialog>
-
       <GlobalSearch open={isSearchOpen} onOpenChange={setIsSearchOpen} />
 
-      {/* Floating feedback widget — treasurer workspace only */}
-      {!isAdminOrSuperAdmin && <FeedbackWidget />}
+      {/* Floating assistant widget — treasurer workspace only */}
+      {!isAdminOrSuperAdmin && <KapuletuAssistant />}
 
       {/* 2FA Nudge Modal */}
       <SecurityNudgeModal />

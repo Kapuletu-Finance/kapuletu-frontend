@@ -1,10 +1,12 @@
-"use client";
+import "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import type { FeedbackSubmission } from "@/features/admin/services/mutations";
 import { useSubmitFeedbackMutation } from "@/features/admin/services/mutations";
@@ -51,7 +53,12 @@ const FEEDBACK_TYPES: {
   icon: "bug" | "lightbulb" | "layout" | "zap" | "message-circle";
   hint: string;
 }[] = [
-  { value: "bug", label: "Bug Report", icon: "bug", hint: "Something isn't working" },
+  {
+    value: "bug",
+    label: "Bug Report",
+    icon: "bug",
+    hint: "Something isn't working",
+  },
   {
     value: "feature_request",
     label: "Feature Request",
@@ -70,7 +77,12 @@ const FEEDBACK_TYPES: {
     icon: "zap",
     hint: "Slowness or loading issues",
   },
-  { value: "general", label: "General", icon: "message-circle", hint: "Other feedback" },
+  {
+    value: "general",
+    label: "General",
+    icon: "message-circle",
+    hint: "Other feedback",
+  },
 ];
 
 const APP_AREAS: { value: string; label: string }[] = [
@@ -433,12 +445,117 @@ const SuccessState: React.FC<{ onReset: () => void; onClose: () => void }> = ({
 
 // ─── Main Widget ──────────────────────────────────────────────────────────────
 
-export const FeedbackWidget: React.FC = () => {
+const playPopSound = () => {
+  try {
+    const AudioContext =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(400, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.1);
+  } catch (_e) {}
+};
+
+type ChatMessage = {
+  id: string;
+  role: "assistant" | "user";
+  text: string;
+  action?: "feedback" | "support";
+};
+
+const INITIAL_MESSAGES: ChatMessage[] = [
+  {
+    id: "1",
+    role: "assistant",
+    text: "Hi there! 👋 How can I help you today?",
+  },
+];
+
+export const KapuletuAssistant: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [showProactiveBubble, setShowProactiveBubble] = useState(false);
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Chat State
+  const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
+  const [isTyping, setIsTyping] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: needed to trigger scroll
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isTyping, popoverOpen]);
+
+  const handleSend = (text: string) => {
+    if (!text.trim()) return;
+
+    const newUserMsg: ChatMessage = {
+      id: Date.now().toString(),
+      role: "user",
+      text,
+    };
+
+    setMessages((prev) => [...prev, newUserMsg]);
+    setInputValue("");
+    setIsTyping(true);
+
+    setTimeout(() => {
+      setIsTyping(false);
+      if (text.toLowerCase().includes("feedback")) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            role: "assistant",
+            text: "I appreciate your willingness to help us improve! Please fill out our feedback form so our engineers can review it.",
+            action: "feedback",
+          },
+        ]);
+      } else if (text.toLowerCase().includes("help") || text.toLowerCase().includes("assist")) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            role: "assistant",
+            text: "I can certainly help you with that! Our Help Center contains guides, FAQs, and support tickets.",
+            action: "support",
+          },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            role: "assistant",
+            text: "I'm currently still learning and can't answer custom questions just yet! But our human support team is ready to help you.",
+            action: "support",
+          },
+        ]);
+      }
+    }, 800);
+  };
 
   const { mutate: submit, isPending } = useSubmitFeedbackMutation();
 
@@ -450,9 +567,28 @@ export const FeedbackWidget: React.FC = () => {
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  // Proactive Trigger Logic
+  useEffect(() => {
+    const lastShown = localStorage.getItem("kapuletu_assistant_last_shown");
+    const now = Date.now();
+
+    const shouldShow = !lastShown || now - parseInt(lastShown, 10) > 1000 * 60 * 60; // 1 hour for demo
+
+    if (shouldShow) {
+      const timer = setTimeout(() => {
+        setShowProactiveBubble(true);
+        playPopSound();
+        localStorage.setItem("kapuletu_assistant_last_shown", now.toString());
+      }, 8000); // Trigger after 8s of active session
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   const patch = (p: Partial<FormState>) => setForm((prev) => ({ ...prev, ...p }));
 
-  const handleOpen = () => {
+  const handleOpenFeedback = () => {
+    setPopoverOpen(false);
+    setShowProactiveBubble(false);
     setOpen(true);
     handleReset();
   };
@@ -496,21 +632,179 @@ export const FeedbackWidget: React.FC = () => {
 
   return (
     <>
-      {/* Floating Action Button */}
-      <button
-        type="button"
-        id="feedback-widget-trigger"
-        onClick={handleOpen}
-        aria-label="Send feedback"
-        className={cn(
-          "fixed z-40 flex items-center gap-2 rounded-full shadow-lg transition-all duration-200",
-          "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xl",
-          "bottom-6 right-6 px-4 py-3",
+      <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3">
+        {/* Proactive Bubble */}
+        {showProactiveBubble && !popoverOpen && !open && (
+          <div className="animate-in slide-in-from-bottom-2 fade-in duration-300 mr-2 max-w-[240px] rounded-2xl rounded-br-none bg-primary p-3.5 text-sm font-medium text-primary-foreground shadow-lg relative">
+            Hi there! 👋 How is your experience with Kapuletu today? I'm here if you need help or
+            want to share feedback!
+            <button
+              type="button"
+              onClick={() => setShowProactiveBubble(false)}
+              className="absolute top-1 right-2 text-primary-foreground/70 hover:text-primary-foreground text-xs"
+            >
+              ×
+            </button>
+          </div>
         )}
-      >
-        <IconLibrary name="feedback" className="size-4 shrink-0" />
-        <span className="hidden text-sm font-medium sm:inline">Feedback</span>
-      </button>
+
+        {/* Assistant Avatar Trigger */}
+        <Popover
+          open={popoverOpen}
+          onOpenChange={(val) => {
+            setPopoverOpen(val);
+            if (val) setShowProactiveBubble(false);
+          }}
+        >
+          <PopoverTrigger
+            id="assistant-widget-trigger"
+            aria-label="Kapuletu Assistant"
+            className={cn(
+              "flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-background shadow-lg transition-transform duration-200 hover:scale-105 hover:shadow-xl",
+              (popoverOpen || showProactiveBubble) && "ring-4 ring-primary/20",
+            )}
+          >
+            <img
+              src="/assistant-avatar.jpg"
+              alt="Assistant"
+              className="h-full w-full object-cover"
+            />
+          </PopoverTrigger>
+          <PopoverContent
+            side="top"
+            align="end"
+            className="w-[340px] p-0 mb-2 rounded-2xl rounded-br-none shadow-xl border border-border overflow-hidden flex flex-col h-[480px]"
+          >
+            {/* Header */}
+            <div className="bg-primary p-3 flex items-center gap-3 shrink-0 relative">
+              <div className="relative size-10 rounded-full overflow-hidden border border-primary-foreground/20 shrink-0 bg-background shadow-xs">
+                <img
+                  src="/assistant-avatar.jpg"
+                  alt="Assistant"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex flex-col text-primary-foreground">
+                <p className="text-sm font-semibold tracking-tight">Kapuletu Assistant</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-400"></span>
+                  </span>
+                  <p className="text-[11px] font-medium opacity-90">Online</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setPopoverOpen(false)}
+                className="absolute top-3 right-3 text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+              >
+                <IconLibrary name="close" className="size-4" />
+              </button>
+            </div>
+
+            {/* Chat Area */}
+            <div
+              className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 bg-muted/30"
+              ref={scrollRef}
+            >
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={cn(
+                    "flex flex-col max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300",
+                    msg.role === "user" ? "self-end items-end" : "self-start items-start",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "px-3.5 py-2.5 text-[13px] shadow-sm font-medium",
+                      msg.role === "user"
+                        ? "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm"
+                        : "bg-background border border-border rounded-2xl rounded-tl-sm text-foreground",
+                    )}
+                  >
+                    {msg.text}
+                  </div>
+                  {msg.action === "feedback" && (
+                    <Button
+                      size="sm"
+                      className="mt-2.5 text-xs h-9 w-full shadow-sm rounded-xl"
+                      onClick={handleOpenFeedback}
+                    >
+                      <IconLibrary name="feedback" className="mr-2 size-3.5" />
+                      Open Feedback Form
+                    </Button>
+                  )}
+                  {msg.action === "support" && (
+                    <Link href="/support" className="w-full" onClick={() => setPopoverOpen(false)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mt-2.5 text-xs h-9 w-full shadow-sm rounded-xl"
+                      >
+                        <IconLibrary name="ticket" className="mr-2 size-3.5" />
+                        Go to Help Center
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              ))}
+
+              {isTyping && (
+                <div className="self-start bg-background border border-border shadow-sm rounded-2xl rounded-tl-sm px-3.5 py-3 flex items-center gap-1.5 w-fit">
+                  <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce" />
+                  <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:150ms]" />
+                  <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]" />
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-background border-t border-border shrink-0 shadow-sm z-10">
+              <div className="flex flex-wrap gap-2 mb-3">
+                <button
+                  type="button"
+                  onClick={() => handleSend("I want to leave feedback")}
+                  className="text-[11px] font-medium px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-full text-foreground border border-border transition-colors"
+                >
+                  Leave feedback
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSend("I need assistance")}
+                  className="text-[11px] font-medium px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-full text-foreground border border-border transition-colors"
+                >
+                  I need assistance
+                </button>
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSend(inputValue);
+                }}
+                className="relative flex items-center"
+              >
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Type a message..."
+                  className="flex h-10 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-[13px] shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-10"
+                />
+                <button
+                  type="submit"
+                  disabled={!inputValue.trim() || isTyping}
+                  className="absolute right-1 size-8 flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg disabled:opacity-50 transition-all cursor-pointer"
+                >
+                  <IconLibrary name="arrow-right" className="size-4" />
+                </button>
+              </form>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
 
       {/* Modal */}
       <Dialog open={open} onOpenChange={setOpen}>

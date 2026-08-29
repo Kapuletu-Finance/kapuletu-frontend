@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 import { useTicketsQuery } from "../services/queries";
 import { SupportDashboard } from "./SupportDashboard";
 import { TicketForm } from "./TicketForm";
@@ -43,12 +44,20 @@ const SupportPageContent: React.FC = () => {
   return (
     <div className="min-h-full p-4 md:p-6 lg:p-8">
       {viewType === "dashboard" && (
-        <SupportDashboard
-          tickets={tickets}
-          isLoading={isLoading}
-          onOpenTicket={handleDashboardOpen}
-          onNewTicket={() => setIsFormOpen(true)}
-        />
+        <div className="space-y-8 flex flex-col">
+          <SupportDashboard
+            tickets={tickets}
+            isLoading={isLoading}
+            onOpenTicket={handleDashboardOpen}
+            onNewTicket={() => setIsFormOpen(true)}
+          />
+
+          <div className="mt-6 rounded-xl bg-background border border-border p-1 overflow-hidden shadow-sm">
+            <div className="relative max-h-[85vh] overflow-y-auto w-full">
+              <FaqsSection />
+            </div>
+          </div>
+        </div>
       )}
 
       {viewType === "list" && (
