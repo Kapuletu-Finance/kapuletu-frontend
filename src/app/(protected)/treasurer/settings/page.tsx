@@ -1,5 +1,5 @@
-import { ProfileSettingsForm } from "@/features/auth/components/ProfileSettingsForm";
+import { UserSettingsLayout } from "@/features/auth/components/settings/UserSettingsLayout";
 
 export default function SettingsPage() {
-  return <ProfileSettingsForm />;
+  return <UserSettingsLayout />;
 }

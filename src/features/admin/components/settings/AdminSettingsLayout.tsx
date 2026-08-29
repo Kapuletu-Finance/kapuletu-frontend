@@ -2,19 +2,16 @@
 
 import { Loader2 } from "lucide-react";
 import type React from "react";
-import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ProfileSettingsForm } from "@/features/auth/components/ProfileSettingsForm";
+import { GeneralProfileTab } from "@/features/auth/components/settings/tabs/GeneralProfileTab";
 import { useUpdateSystemConfigMutation } from "../../services/mutations";
 import { useSystemConfigQuery } from "../../services/queries";
-import {
-  BillingRulesTab,
-  DataRetentionTab,
-  GlobalNotificationsTab,
-  GlobalSecurityTab,
-  IntegrationsTab,
-  PlatformOpsTab,
-} from "./AdminTabs";
+import { BillingRulesTab } from "./tabs/BillingRulesTab";
+import { DataRetentionTab } from "./tabs/DataRetentionTab";
+import { GlobalNotificationsTab } from "./tabs/GlobalNotificationsTab";
+import { GlobalSecurityTab } from "./tabs/GlobalSecurityTab";
+import { IntegrationsTab } from "./tabs/IntegrationsTab";
+import { PlatformOpsTab } from "./tabs/PlatformOpsTab";
 
 export const AdminSettingsLayout: React.FC = () => {
   const { data: config, isLoading, isError } = useSystemConfigQuery();
@@ -41,63 +38,63 @@ export const AdminSettingsLayout: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full max-w-5xl mx-auto space-y-6 pb-20">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Platform Settings</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Platform Settings</h1>
+        <p className="text-muted-foreground text-sm mt-1">
           Manage your personal profile and global platform configurations.
         </p>
       </div>
 
-      <Tabs defaultValue="profile" className="flex flex-col md:flex-row gap-6">
+      <Tabs defaultValue="profile" className="flex flex-col md:flex-row gap-8">
         <TabsList className="flex flex-col h-auto w-full md:w-64 bg-transparent space-y-1 items-start p-0">
           <TabsTrigger
             value="profile"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md"
+            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground"
           >
             Personal Profile
           </TabsTrigger>
           <TabsTrigger
             value="platform"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md"
+            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground"
           >
             Platform Operations
           </TabsTrigger>
           <TabsTrigger
             value="security"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md"
+            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground"
           >
             Global Security
           </TabsTrigger>
           <TabsTrigger
             value="integrations"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md"
+            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground"
           >
             Integrations
           </TabsTrigger>
           <TabsTrigger
             value="billing"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md"
+            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground"
           >
             Billing Rules
           </TabsTrigger>
           <TabsTrigger
             value="privacy"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md"
+            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground"
           >
             Data & Privacy
           </TabsTrigger>
           <TabsTrigger
             value="notifications"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md"
+            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground"
           >
             Global Alerts
           </TabsTrigger>
         </TabsList>
 
-        <div className="flex-1 w-full max-w-4xl">
+        <div className="flex-1 w-full max-w-3xl bg-card border border-border shadow-sm rounded-2xl p-6 md:p-8">
           <TabsContent value="profile" className="mt-0 outline-none">
-            <ProfileSettingsForm />
+            <GeneralProfileTab />
           </TabsContent>
           <TabsContent value="platform" className="mt-0 outline-none">
             <PlatformOpsTab
