@@ -494,7 +494,8 @@ export const KapuletuAssistant: React.FC = () => {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const lastScrollY = useRef(0);
 
   // Chat State
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
@@ -574,9 +575,18 @@ export const KapuletuAssistant: React.FC = () => {
 
     const handleScroll = (e: Event) => {
       const target = e.target as HTMLElement | Window;
-      const scrollY = target instanceof Window ? target.scrollY : (target as HTMLElement).scrollTop;
-      // Fade out if scrolled down more than 100px
-      setIsScrolled(scrollY > 100);
+      const currentScrollY =
+        target instanceof Window ? target.scrollY : (target as HTMLElement).scrollTop;
+
+      if (currentScrollY < 50) {
+        setIsHidden(false); // Always show at top
+      } else if (currentScrollY > lastScrollY.current + 10) {
+        setIsHidden(true); // Scrolling down
+      } else if (currentScrollY < lastScrollY.current - 10) {
+        setIsHidden(false); // Scrolling up
+      }
+
+      lastScrollY.current = currentScrollY;
     };
 
     scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
@@ -586,7 +596,8 @@ export const KapuletuAssistant: React.FC = () => {
       scrollContainer instanceof Window
         ? scrollContainer.scrollY
         : (scrollContainer as HTMLElement).scrollTop;
-    setIsScrolled(initialScrollY > 100);
+    lastScrollY.current = initialScrollY;
+    setIsHidden(initialScrollY > 50);
 
     return () => scrollContainer.removeEventListener("scroll", handleScroll);
   }, []);
@@ -684,12 +695,12 @@ export const KapuletuAssistant: React.FC = () => {
             id="assistant-widget-trigger"
             aria-label="Kapuletu Assistant"
             className={cn(
-              "flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-background shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:opacity-100",
+              "flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-background shadow-lg transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-xl hover:opacity-100",
               popoverOpen || showProactiveBubble
-                ? "ring-4 ring-primary/20 opacity-100"
-                : isScrolled
-                  ? "opacity-40"
-                  : "opacity-100",
+                ? "ring-4 ring-primary/20 opacity-100 translate-y-0"
+                : isHidden
+                  ? "opacity-0 translate-y-16 pointer-events-none"
+                  : "opacity-100 translate-y-0",
             )}
           >
             <img
