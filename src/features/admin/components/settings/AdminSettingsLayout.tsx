@@ -46,53 +46,53 @@ export const AdminSettingsLayout: React.FC = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="profile" className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
-        <TabsList className="flex flex-row md:flex-col h-auto w-full md:w-64 bg-transparent space-x-2 md:space-x-0 md:space-y-1 items-start p-0 overflow-x-auto md:overflow-visible scrollbar-hide shrink-0 pb-2 md:pb-0">
+      <Tabs defaultValue="profile" className="flex flex-col gap-6 w-full">
+        <TabsList className="flex h-auto w-full bg-transparent items-center justify-start p-0 overflow-x-auto scrollbar-hide border-b border-border rounded-none shrink-0 gap-6">
           <TabsTrigger
             value="profile"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground whitespace-nowrap md:whitespace-normal"
+            className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
           >
             Personal Profile
           </TabsTrigger>
           <TabsTrigger
             value="platform"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground whitespace-nowrap md:whitespace-normal"
+            className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
           >
             Platform Operations
           </TabsTrigger>
           <TabsTrigger
             value="security"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground whitespace-nowrap md:whitespace-normal"
+            className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
           >
             Global Security
           </TabsTrigger>
           <TabsTrigger
             value="integrations"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground whitespace-nowrap md:whitespace-normal"
+            className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
           >
             Integrations
           </TabsTrigger>
           <TabsTrigger
             value="billing"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground whitespace-nowrap md:whitespace-normal"
+            className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
           >
             Billing Rules
           </TabsTrigger>
           <TabsTrigger
             value="privacy"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground whitespace-nowrap md:whitespace-normal"
+            className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
           >
             Data & Privacy
           </TabsTrigger>
           <TabsTrigger
             value="notifications"
-            className="w-full justify-start px-4 py-2 data-[state=active]:bg-muted data-[state=active]:shadow-none hover:bg-muted/50 rounded-md text-sm font-semibold text-muted-foreground data-[state=active]:text-foreground whitespace-nowrap md:whitespace-normal"
+            className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
           >
             Global Alerts
           </TabsTrigger>
         </TabsList>
 
-        <div className="flex-1 min-w-0 w-full max-w-3xl bg-card border border-border shadow-sm rounded-2xl p-5 md:p-8">
+        <div className="w-full bg-card border border-border shadow-sm rounded-2xl p-5 md:p-8 min-h-[400px]">
           <TabsContent value="profile" className="mt-0 outline-none">
             <GeneralProfileTab />
           </TabsContent>
