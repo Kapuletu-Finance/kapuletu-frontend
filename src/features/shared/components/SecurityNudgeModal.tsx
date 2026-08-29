@@ -1,6 +1,5 @@
 "use client";
 
-import { ShieldAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useGetMeQuery } from "@/features/auth/services/queries";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const SNOOZE_KEY = "kapuletu_2fa_snooze_until";
 const SKIP_COUNT_KEY = "kapuletu_2fa_skip_count";
@@ -62,12 +62,12 @@ export const SecurityNudgeModal = () => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 mb-4">
-            <ShieldAlert className="h-6 w-6 text-amber-600" />
+            <SiteLogo variant="icon" href={null} logoClassName="h-6 w-6 text-amber-600" />
           </div>
           <DialogTitle className="text-center text-xl">Secure Your Kapuletu Account</DialogTitle>
           <DialogDescription className="text-center text-base pt-2">
-            Add an extra layer of security to your finances. Two-step verification protects your
-            account even if someone discovers your password.
+            Add an extra layer of security to your information. Two-step verification is an optional
+            feature that adds an extra layer of security to your account.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-3 py-4">
