@@ -570,15 +570,25 @@ export const KapuletuAssistant: React.FC = () => {
 
   // Scroll detection for fading avatar
   useEffect(() => {
-    const handleScroll = () => {
+    const scrollContainer = document.getElementById("main-scroll-container") || window;
+
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLElement | Window;
+      const scrollY = target instanceof Window ? target.scrollY : (target as HTMLElement).scrollTop;
       // Fade out if scrolled down more than 100px
-      setIsScrolled(window.scrollY > 100);
+      setIsScrolled(scrollY > 100);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // Check initial state
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Check initial state
+    const initialScrollY =
+      scrollContainer instanceof Window
+        ? scrollContainer.scrollY
+        : (scrollContainer as HTMLElement).scrollTop;
+    setIsScrolled(initialScrollY > 100);
+
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Proactive Trigger Logic
