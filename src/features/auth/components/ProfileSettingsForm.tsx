@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ChangePasswordDialog } from "@/features/auth/components/ChangePasswordDialog";
+
 import { type UpdateProfileFormData, updateProfileSchema } from "@/features/auth/schemas";
 import {
   useUpdateAuthSettingsMutation,
@@ -158,24 +158,6 @@ export const ProfileSettingsForm = () => {
                         value={user?.email || ""}
                         readOnly
                       />
-                    </Field>
-
-                    <Field className="space-y-2">
-                      <FieldLabel htmlFor="password" className="font-semibold text-sm">
-                        Password
-                      </FieldLabel>
-                      <ChangePasswordDialog>
-                        <div className="relative cursor-pointer group">
-                          <Input
-                            id="password"
-                            type="password"
-                            className="bg-background border-border cursor-pointer group-hover:border-primary/50 transition-colors pointer-events-none"
-                            value="************"
-                            readOnly
-                          />
-                          <div className="absolute inset-0 z-10" />
-                        </div>
-                      </ChangePasswordDialog>
                     </Field>
 
                     <Field className="space-y-2">

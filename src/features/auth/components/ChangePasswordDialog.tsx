@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
+import { PasswordRequirements } from "@/features/auth/components/PasswordRequirements";
 import { type ChangePasswordFormData, changePasswordSchema } from "@/features/auth/schemas";
 import { useChangePasswordMutation } from "@/features/auth/services/mutations";
 
@@ -69,12 +70,11 @@ export const ChangePasswordDialog = ({ children }: { children: React.ReactNode }
                       Current Password
                     </FieldLabel>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                         <Lock className="h-4 w-4 text-muted-foreground" />
                       </div>
-                      <Input
+                      <PasswordInput
                         id={field.name}
-                        type="password"
                         className="pl-10"
                         {...field}
                         aria-invalid={!!fieldState.error}
@@ -94,17 +94,17 @@ export const ChangePasswordDialog = ({ children }: { children: React.ReactNode }
                       New Password
                     </FieldLabel>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                         <RefreshCw className="h-4 w-4 text-muted-foreground" />
                       </div>
-                      <Input
+                      <PasswordInput
                         id={field.name}
-                        type="password"
                         className="pl-10"
                         {...field}
                         aria-invalid={!!fieldState.error}
                       />
                     </div>
+                    <PasswordRequirements password={field.value} />
                     <FieldError>{fieldState.error?.message}</FieldError>
                   </Field>
                 )}
@@ -119,12 +119,11 @@ export const ChangePasswordDialog = ({ children }: { children: React.ReactNode }
                       Confirm New Password
                     </FieldLabel>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                         <Lock className="h-4 w-4 text-muted-foreground" />
                       </div>
-                      <Input
+                      <PasswordInput
                         id={field.name}
-                        type="password"
                         className="pl-10"
                         {...field}
                         aria-invalid={!!fieldState.error}

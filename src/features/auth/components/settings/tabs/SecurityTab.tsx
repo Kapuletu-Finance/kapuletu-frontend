@@ -1,5 +1,6 @@
 import { Loader2, Lock } from "lucide-react";
 import type * as React from "react";
+import { Button } from "@/components/ui/button";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import {
   Select,
@@ -8,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ChangePasswordDialog } from "@/features/auth/components/ChangePasswordDialog";
 import { useUpdateAuthSettingsMutation } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 
@@ -78,6 +80,20 @@ export const SecurityTab: React.FC = () => {
             </Select>
           </div>
         )}
+
+        <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
+          <div className="space-y-1">
+            <h4 className="font-semibold text-sm text-foreground">Password Authentication</h4>
+            <p className="text-xs text-muted-foreground">
+              Update your password to keep your account secure
+            </p>
+          </div>
+          <ChangePasswordDialog>
+            <Button variant="outline" size="sm">
+              Change Password
+            </Button>
+          </ChangePasswordDialog>
+        </div>
       </div>
     </div>
   );
