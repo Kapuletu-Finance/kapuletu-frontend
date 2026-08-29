@@ -89,7 +89,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   pendingTicketsCount = 0,
 }) => {
   const pathname = usePathname();
-  const { state, isMobile, setOpenMobile } = useSidebar();
+  const { state, isMobile, setOpenMobile, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
   const [isFlyoutOpen, setIsFlyoutOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -97,12 +97,22 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   return (
     <Sidebar collapsible="icon" className="border-border bg-background">
       <SidebarHeader className="py-6 flex flex-col items-center justify-center relative">
-        <div className="flex flex-col items-center justify-center transition-all duration-200 group-data-[collapsible=icon]:px-2">
+        <div className="flex w-full items-center justify-between px-4 transition-all duration-200 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:justify-center">
           <SiteLogo
             variant={isCollapsed && !isMobile ? "icon" : "full"}
             className="text-2xl"
             logoClassName={`w-auto object-contain transition-all duration-200 ${isCollapsed && !isMobile ? "h-10" : "h-10"}`}
           />
+          {!isMobile && (
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="hidden md:flex p-1.5 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors group-data-[collapsible=icon]:hidden"
+              aria-label="Toggle Sidebar"
+            >
+              <IconLibrary name="panel-left" className="size-5" />
+            </button>
+          )}
         </div>
         <div className="absolute bottom-0 w-4/5 h-px bg-linear-to-r from-transparent via-border to-transparent group-data-[collapsible=icon]:w-1/2" />
       </SidebarHeader>
@@ -294,9 +304,15 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
 
         <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">
           {/* Header */}
-          <header className="h-20 shrink-0 flex items-center justify-between px-6 bg-background border-b border-border z-10 sticky top-0 transition-colors">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="-ml-1" />
+          <header className="h-20 shrink-0 flex items-center justify-between px-4 sm:px-6 bg-background border-b border-border z-10 sticky top-0 transition-colors">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <SidebarTrigger className="-ml-1 md:hidden" />
+
+              {/* Mobile-only Logo */}
+              <div className="flex md:hidden mr-2">
+                <SiteLogo variant="icon" logoClassName="h-8 w-auto object-contain" />
+              </div>
+
               <div className="hidden sm:flex sm:flex-col">
                 <h2 className="text-base tracking-tight uppercase">
                   {greeting},{" "}

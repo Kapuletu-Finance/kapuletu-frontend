@@ -72,7 +72,7 @@ export const SecurityNudgeModal = () => {
         </DialogHeader>
         <div className="flex flex-col gap-3 py-4">
           <Button onClick={handleEnable} className="w-full text-md font-semibold h-12">
-            Secure my account
+            Enable Two Factor Authentication
           </Button>
           <Button variant="outline" onClick={handleSnooze} className="w-full h-12">
             I'll do this later
