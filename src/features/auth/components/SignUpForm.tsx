@@ -37,10 +37,7 @@ export const SignUpForm = () => {
   return (
     <div className="w-full pb-4">
       <div className="flex flex-col items-center mb-8 text-center">
-        <h1 className="text-xl font-bold mb-2">
-          Welcome to <span className="text-primary">Kapu</span>
-          <span className="text-refined-blue">Letu</span>
-        </h1>
+        <h1 className="text-xl font-bold mb-2">Create an account</h1>
         <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link href="/sign-in" className="text-sm font-medium text-refined-blue hover:underline">
