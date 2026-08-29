@@ -35,20 +35,15 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
   );
 
   const fullContent = (
-    <>
-      <span className={textClassName}>Kap</span>
-      <div className={cn("mx-1 flex shrink-0 items-center justify-center", logoClassName)}>
-        <Image
-          src="/shared/logo.webp"
-          alt="Kapuletu Logo"
-          width={width}
-          height={height}
-          className="h-full w-full object-contain"
-          priority
-        />
-      </div>
-      <span className={cn("text-refined-blue", textClassName)}>Letu</span>
-    </>
+    <Image
+      src="/shared/kapuletu-logo.png"
+      alt="Kapuletu Logo"
+      width={140}
+      height={40}
+      className={cn("object-contain", logoClassName)}
+      style={{ height: "auto", width: "auto" }}
+      priority
+    />
   );
 
   const content = variant === "icon" ? iconContent : fullContent;
