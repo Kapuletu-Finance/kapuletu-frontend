@@ -494,6 +494,7 @@ export const KapuletuAssistant: React.FC = () => {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Chat State
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
@@ -565,6 +566,19 @@ export const KapuletuAssistant: React.FC = () => {
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // Scroll detection for fading avatar
+  useEffect(() => {
+    const handleScroll = () => {
+      // Fade out if scrolled down more than 100px
+      setIsScrolled(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Check initial state
+
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Proactive Trigger Logic
@@ -660,8 +674,12 @@ export const KapuletuAssistant: React.FC = () => {
             id="assistant-widget-trigger"
             aria-label="Kapuletu Assistant"
             className={cn(
-              "flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-background shadow-lg transition-transform duration-200 hover:scale-105 hover:shadow-xl",
-              (popoverOpen || showProactiveBubble) && "ring-4 ring-primary/20",
+              "flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-background shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:opacity-100",
+              popoverOpen || showProactiveBubble
+                ? "ring-4 ring-primary/20 opacity-100"
+                : isScrolled
+                  ? "opacity-40"
+                  : "opacity-100",
             )}
           >
             <img
