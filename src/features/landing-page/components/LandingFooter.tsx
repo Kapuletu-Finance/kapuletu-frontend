@@ -12,8 +12,8 @@ export const LandingFooter = () => {
             <div className="flex items-center gap-2">
               <SiteLogo
                 variant="full"
-                className="text-2xl text-primary-foreground"
-                logoClassName="h-[1em] w-[1em] text-primary-foreground"
+                className="text-2xl"
+                logoClassName="h-8 w-auto brightness-0 invert"
               />
             </div>
             <p className="text-sm text-primary-foreground/80 leading-relaxed max-w-xs">
