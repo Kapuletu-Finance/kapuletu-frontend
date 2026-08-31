@@ -71,6 +71,9 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
   };
 
   const handleOpenChange = (open: boolean) => {
+    if (open && !isPending && !canCreateGroup) {
+      return; // Do not open the original dialog if limit is reached
+    }
     setIsOpen(open);
   };
 

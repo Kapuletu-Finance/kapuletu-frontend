@@ -23,8 +23,6 @@ import {
   useUpdateCampaignMutation,
 } from "@/features/campaigns/services/mutations";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
-import { usePlanLimits } from "@/features/shared/hooks/usePlanLimits";
-import { useUpgradeModal } from "@/features/shared/providers/UpgradeModalProvider";
 import type { CampaignInfo } from "./CampaignCard";
 
 const campaignSchema = z.object({
@@ -56,9 +54,6 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
 
   const createMutation = useCreateCampaignMutation(groupId);
   const updateMutation = useUpdateCampaignMutation(campaign?.id ?? "");
-
-  const { canCreateCampaign, isPending: limitsPending } = usePlanLimits();
-  const { openModal } = useUpgradeModal();
 
   const form = useForm<CampaignFormData>({
     resolver: zodResolver(campaignSchema),
@@ -122,17 +117,8 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
 
   const isPending = createMutation.isPending || updateMutation.isPending;
 
-  const handleOpenChange = (open: boolean) => {
-    // Only block if we are creating a new campaign, not editing
-    if (open && !isEditing && !limitsPending && !canCreateCampaign) {
-      openModal("You've reached the maximum number of campaigns allowed on your current plan.");
-      return;
-    }
-    onOpenChange(open);
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-100 p-6 gap-6">
         <DialogHeader className="flex flex-col items-center gap-3">
           <SiteLogo variant="icon" href={null} logoClassName="w-12 h-12 text-primary" />
