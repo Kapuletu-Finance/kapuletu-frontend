@@ -9,6 +9,8 @@ import {
 } from "@/features/campaigns/services/mutations";
 import { useCampaignQuery } from "@/features/campaigns/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { usePlanLimits } from "@/features/shared/hooks/usePlanLimits";
+import { useUpgradeModal } from "@/features/shared/providers/UpgradeModalProvider";
 
 const PdfIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 48 48" className={className} xmlns="http://www.w3.org/2000/svg">
@@ -51,8 +53,10 @@ const DownloadCampaignReportCard = () => {
   const { data: campaignData } = useCampaignQuery(campaignSlug);
   const campaignId = campaignData?.id || campaignSlug;
 
-  const { mutateAsync: exportPdf } = useExportCampaignPdfMutation(campaignId);
   const { mutateAsync: exportExcel } = useExportCampaignExcelMutation(campaignId);
+  const { mutateAsync: exportPdf } = useExportCampaignPdfMutation(campaignId);
+  const { hasFeature, isPending: limitsPending } = usePlanLimits();
+  const { openModal } = useUpgradeModal();
 
   const handleDownloadPdf = async () => {
     try {
@@ -63,9 +67,13 @@ const DownloadCampaignReportCard = () => {
   };
 
   const handleDownloadExcel = async () => {
+    if (!limitsPending && !hasFeature("excel_exports")) {
+      openModal("Excel Exports are a premium feature available on Pro plans.");
+      return;
+    }
     try {
       await exportExcel();
-    } catch {
+    } catch (_e) {
       // silently fail
     }
   };

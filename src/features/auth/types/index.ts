@@ -111,6 +111,7 @@ export interface SubscriptionResponse {
     groups: string;
     campaigns: string;
   };
+  allowed_features?: Record<string, boolean>;
 }
 
 export type BillingHistoryOut = {

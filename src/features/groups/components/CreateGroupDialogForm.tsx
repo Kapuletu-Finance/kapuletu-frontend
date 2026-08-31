@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateGroupMutation } from "@/features/groups/services/mutations";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
+import { usePlanLimits } from "@/features/shared/hooks/usePlanLimits";
+import { useUpgradeModal } from "@/features/shared/providers/UpgradeModalProvider";
 
 const createGroupSchema = z.object({
   currency: z.string(),
@@ -36,6 +38,9 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const createGroupMutation = useCreateGroupMutation();
+
+  const { canCreateGroup, isPending } = usePlanLimits();
+  const { openModal } = useUpgradeModal();
 
   const form = useForm<CreateGroupFormData>({
     defaultValues: {
@@ -65,8 +70,16 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (open && !isPending && !canCreateGroup) {
+      openModal("You've reached the maximum number of groups allowed on your current plan.");
+      return;
+    }
+    setIsOpen(open);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       {children && React.isValidElement(children) ? (
         <DialogTrigger render={children} />
       ) : children ? (
