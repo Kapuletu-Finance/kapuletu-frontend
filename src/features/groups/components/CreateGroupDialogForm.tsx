@@ -71,19 +71,22 @@ const CreateGroupDialogForm: React.FC<CreateGroupDialogFormProps> = ({ children 
   };
 
   const handleOpenChange = (open: boolean) => {
-    if (open && !isPending && !canCreateGroup) {
-      openModal("You've reached the maximum number of groups allowed on your current plan.");
-      return;
-    }
     setIsOpen(open);
+  };
+
+  const handleTriggerClick = (e: React.MouseEvent) => {
+    if (!isPending && !canCreateGroup) {
+      e.preventDefault();
+      openModal("You've reached the maximum number of groups allowed on your current plan.");
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       {children && React.isValidElement(children) ? (
-        <DialogTrigger render={children} />
+        <DialogTrigger render={children} onClick={handleTriggerClick} />
       ) : children ? (
-        <DialogTrigger>{children}</DialogTrigger>
+        <DialogTrigger onClick={handleTriggerClick}>{children}</DialogTrigger>
       ) : null}
 
       <DialogContent className="sm:max-w-112.5">

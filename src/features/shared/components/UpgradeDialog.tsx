@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
@@ -25,7 +25,6 @@ const UpgradeDialog: React.FC<UpgradeDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogOverlay className="z-[100]" />
       <DialogContent showCloseButton={false} className="max-w-md w-full border-none p-0 z-[101]">
         <div className="flex flex-col items-center text-center space-y-6 p-8">
           <SiteLogo />
