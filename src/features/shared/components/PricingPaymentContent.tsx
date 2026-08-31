@@ -87,7 +87,15 @@ const PricingPaymentModal = () => {
       refetchSubscription();
       setIsSuccess(true);
       setCheckoutId(null);
+    } else if (paymentStatus?.status === "failed") {
+      toast.error("Payment failed. Please try again.");
+      setCheckoutId(null);
+    }
+  }, [paymentStatus, refetchSubscription, checkoutId]);
 
+  // Unified Success Handler for Confetti & Redirection
+  useEffect(() => {
+    if (isSuccess) {
       const duration = 3 * 1000;
       const end = Date.now() + duration;
 
@@ -113,14 +121,13 @@ const PricingPaymentModal = () => {
       };
       frame();
 
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         router.push("/subscriptions");
       }, 4000);
-    } else if (paymentStatus?.status === "failed") {
-      toast.error("Payment failed. Please try again.");
-      setCheckoutId(null);
+
+      return () => clearTimeout(timer);
     }
-  }, [paymentStatus, refetchSubscription, checkoutId, router]);
+  }, [isSuccess, router]);
 
   const formatPhoneNumber = (phone: string) => {
     let cleaned = phone.replace(/\D/g, "");
