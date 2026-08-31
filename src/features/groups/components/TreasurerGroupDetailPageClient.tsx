@@ -16,10 +16,10 @@ import { useCampaignsQuery } from "@/features/campaigns/services/queries";
 import { useGroupsQuery } from "@/features/groups/services/queries";
 import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { LimitBouncerModal } from "@/features/shared/components/LimitBouncerModal";
 import PageLayout from "@/features/shared/components/PageLayout";
 import StatCard from "@/features/shared/components/StatCard";
 import { usePlanLimits } from "@/features/shared/hooks/usePlanLimits";
-import { useUpgradeModal } from "@/features/shared/providers/UpgradeModalProvider";
 import type { CampaignOut } from "@/features/shared/types";
 import { getAvatarColor } from "@/lib/colors";
 import { cn } from "@/lib/utils";
@@ -43,6 +43,7 @@ const mapCampaignToInfo = (campaign: CampaignOut): CampaignInfo => ({
 export const TreasurerGroupDetailPageClient = () => {
   const [view] = useQueryState("view", parseAsString.withDefault("grid"));
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+  const [showLimitBouncer, setShowLimitBouncer] = React.useState(false);
   const [editingCampaign, setEditingCampaign] = React.useState<CampaignInfo | null>(null);
   const { data: subscription } = useGetMySubscriptionQuery();
   const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
@@ -91,12 +92,11 @@ export const TreasurerGroupDetailPageClient = () => {
   );
 
   const { canCreateCampaign, isPending: limitsPending } = usePlanLimits();
-  const { openModal } = useUpgradeModal();
 
   const handleCreateClick = (e: React.MouseEvent) => {
     if (!limitsPending && !canCreateCampaign) {
       e.preventDefault();
-      openModal("You've reached the maximum number of campaigns allowed on your current plan.");
+      setShowLimitBouncer(true);
     } else {
       setIsCreateModalOpen(true);
     }
@@ -240,6 +240,12 @@ export const TreasurerGroupDetailPageClient = () => {
         groupId={groupId}
         isOpen={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
+      />
+
+      <LimitBouncerModal
+        isOpen={showLimitBouncer}
+        onClose={() => setShowLimitBouncer(false)}
+        limitType="campaigns"
       />
 
       <CampaignFormModal
