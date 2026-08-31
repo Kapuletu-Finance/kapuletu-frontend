@@ -6,6 +6,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type * as React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { UpgradeModalProvider } from "@/features/shared/providers/UpgradeModalProvider";
 import { queryClient } from "@/lib/query-client";
 
 interface ProvidersProps {
@@ -23,7 +24,7 @@ export const Providers: React.FC<ProvidersProps> = ({ children }) => {
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <UpgradeModalProvider>{children}</UpgradeModalProvider>
           </NextThemesProvider>
           <Toaster richColors position="bottom-right" />
         </TooltipProvider>
