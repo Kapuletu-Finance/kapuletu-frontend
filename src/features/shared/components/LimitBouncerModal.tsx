@@ -1,16 +1,11 @@
 "use client";
 
-import { Lock, Zap } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type React from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import IconLibrary from "@/features/shared/components/IconLibrary";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 interface LimitBouncerModalProps {
   isOpen: boolean;
@@ -23,6 +18,8 @@ export const LimitBouncerModal: React.FC<LimitBouncerModalProps> = ({
   onClose,
   limitType,
 }) => {
+  const router = useRouter();
+
   const titles = {
     groups: "Group Limit Reached",
     campaigns: "Campaign Limit Reached",
@@ -36,35 +33,43 @@ export const LimitBouncerModal: React.FC<LimitBouncerModalProps> = ({
     transactions: "You've reached your monthly transaction limit.",
   };
 
+  const handleUpgradeClick = () => {
+    onClose();
+    router.push("/subscriptions");
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md text-center border-t-4 border-t-amber-500">
-        <DialogHeader className="flex flex-col items-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30 mb-4">
-            <Lock className="h-6 w-6 text-amber-600 dark:text-amber-500" />
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent showCloseButton={false} className="max-w-md w-full border-none p-0 z-[101]">
+        <div className="flex flex-col items-center text-center space-y-6 p-8">
+          <SiteLogo />
+
+          <div className="bg-amber-500/10 dark:bg-amber-500/20 p-4 rounded-full mt-4">
+            <IconLibrary name="lock" className="w-12 h-12 text-amber-600 dark:text-amber-500" strokeWidth={1.5} />
           </div>
-          <DialogTitle className="text-xl">{titles[limitType]}</DialogTitle>
-          <DialogDescription className="text-center pt-2">
-            {descriptions[limitType]}
-          </DialogDescription>
-        </DialogHeader>
 
-        <div className="bg-muted/50 p-4 rounded-lg my-4 flex flex-col items-center">
-          <Zap className="h-8 w-8 text-primary mb-2" />
-          <h4 className="font-semibold text-foreground">Upgrade to Professional</h4>
-          <p className="text-sm text-muted-foreground mt-1">
-            Unlock unlimited groups, campaigns, and advanced analytics by upgrading to the Pro plan
-            today.
-          </p>
-        </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-foreground">
+              {titles[limitType]}
+            </h2>
+            <p className="text-muted-foreground text-sm">{descriptions[limitType]}</p>
+          </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center w-full mt-2">
-          <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
-            Maybe Later
-          </Button>
-          <Link href="/subscriptions" onClick={onClose} className="w-full sm:w-auto">
-            <Button className="w-full">View Upgrade Plans</Button>
-          </Link>
+          <div className="w-full space-y-3 pt-4">
+            <Button
+              onClick={handleUpgradeClick}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 font-semibold"
+            >
+              View Upgrade Plans
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              className="w-full py-6 text-muted-foreground hover:text-foreground"
+            >
+              Maybe Later
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
