@@ -73,6 +73,11 @@ export const LandingFooter = () => {
             <h3 className="text-lg font-semibold mb-4">Support</h3>
             <ul className="space-y-3 text-sm text-primary-foreground/80">
               <li>
+                <Link href="/docs" className="hover:text-primary-foreground transition-colors">
+                  Help & Learning Centre
+                </Link>
+              </li>
+              <li>
                 <Link href="/blogs" className="hover:text-primary-foreground transition-colors">
                   Blog & News
                 </Link>
@@ -83,7 +88,7 @@ export const LandingFooter = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/support" className="hover:text-primary-foreground transition-colors">
+                <Link href="/contact" className="hover:text-primary-foreground transition-colors">
                   Contact Support
                 </Link>
               </li>
