@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type * as React from "react";
 import { useState } from "react";
+import { parseAsString, useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import ContributionDetailsDialog from "@/features/inbox/components/ContributionDetailsDialog";
@@ -8,6 +9,7 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { PendingInboxOut } from "@/features/shared/types";
 import { getAvatarColor } from "@/lib/colors";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface InboxListRowProps {
   item: PendingInboxOut;
@@ -42,6 +44,8 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
   onReject,
 }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const [view] = useQueryState("view", parseAsString.withDefault(isMobile ? "stack" : "table"));
 
   const initials = (item.sender_name || "?").substring(0, 2).toUpperCase();
   const avatarColor = getAvatarColor(item.sender_name || "?");
@@ -55,160 +59,260 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
   const dateStr =
     rawDateStr.endsWith("Z") || rawDateStr.includes("+") ? rawDateStr : `${rawDateStr}Z`;
 
+  const renderStatus = () => {
+    if (item.workflow_status === "pending") return null;
+    return (
+      <div
+        className={cn(
+          "px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider min-w-[120px] text-center border",
+          item.workflow_status === "approved" &&
+            "text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/30",
+          item.workflow_status === "split_approved" &&
+            "text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30",
+          item.workflow_status === "rejected" &&
+            "text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30",
+        )}
+      >
+        {item.workflow_status === "approved" && "Approved"}
+        {item.workflow_status === "split_approved" && "Split & Approved"}
+        {item.workflow_status === "rejected" && "Rejected"}
+      </div>
+    );
+  };
+
+  const renderActions = () => {
+    if (item.workflow_status !== "pending") return renderStatus();
+    return (
+      <>
+        <Button
+          variant="default"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsDialogOpen(true);
+          }}
+          className="bg-primary hover:bg-primary/90 gap-1.5 flex-1 md:flex-none"
+        >
+          <IconLibrary name="check" className="w-4 h-4" />
+          Approve
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onReject(item.pending_id);
+          }}
+          className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive gap-1.5 flex-1 md:flex-none"
+        >
+          <IconLibrary name="close" className="w-4 h-4" />
+          Reject
+        </Button>
+      </>
+    );
+  };
+
+  const isCardView = view === "grid" || view === "stack";
+
   return (
     <>
       {/* biome-ignore lint/a11y/useSemanticElements: This row contains interactive child elements so it cannot be a native button */}
       <div
-        className="flex items-center gap-4 py-4 px-4 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
+        className={cn(
+          "transition-colors cursor-pointer bg-card",
+          !isCardView && "flex flex-col md:flex-row md:items-center gap-4 py-4 px-4 border-b border-border hover:bg-muted/50",
+          isCardView && "flex flex-col gap-4 p-5 rounded-xl border border-border shadow-sm hover:border-primary/40 w-full hover:shadow-md",
+        )}
         onClick={() => setIsDialogOpen(true)}
         onKeyDown={(e) => e.key === "Enter" && setIsDialogOpen(true)}
         role="button"
         tabIndex={0}
       >
-        <div className="flex items-center gap-4 flex-1">
-          {item.workflow_status === "pending" ? (
-            // biome-ignore lint/a11y/noStaticElementInteractions: Need to stop propagation for checkbox inside clickable row
-            <div
-              onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => e.stopPropagation()}
-              role="presentation"
-            >
-              <Checkbox
-                checked={isSelected}
-                onCheckedChange={(checked) => onSelect(item.pending_id, checked === true)}
-              />
-            </div>
-          ) : (
-            <div className="w-4 h-4 shrink-0" />
-          )}
-
-          <div
-            className={cn(
-              "w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm",
-              avatarColor,
-            )}
-          >
-            {initials}
-          </div>
-
-          <div className="flex flex-col min-w-0 w-48 shrink-0 text-left">
-            <span className="font-semibold text-sm text-foreground truncate w-full">
-              {item.sender_name || "Unknown Sender"}
-            </span>
-            <span className="text-xs text-muted-foreground truncate w-full">
-              {item.sender_phone || "No phone number"}
-            </span>
-          </div>
-
-          <div className="w-24 shrink-0 font-medium text-sm">{amount}</div>
-
-          <div className="w-48 shrink-0 text-muted-foreground text-sm">
-            {new Intl.DateTimeFormat("en-GB", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            }).format(new Date(dateStr))}
-          </div>
-
-          <div className="w-32 shrink-0 truncate text-sm">
-            {item.assigned_group_name ? (
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Link
-                  href={
-                    item.assigned_group_slug
-                      ? `/treasurer/groups/${item.assigned_group_slug}/overview`
-                      : `/treasurer/groups/${item.assigned_group_id}/overview`
-                  }
-                  className="hover:text-primary transition-colors font-medium truncate"
-                  onClick={(e) => e.stopPropagation()}
+        {isCardView ? (
+          // CARD LAYOUT (Grid / Stack)
+          <>
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start gap-3 overflow-hidden">
+                {item.workflow_status === "pending" && (
+                  // biome-ignore lint/a11y/noStaticElementInteractions: Need to stop propagation for checkbox
+                  <div
+                    className="mt-2 shrink-0"
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    role="presentation"
+                  >
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={(checked) => onSelect(item.pending_id, checked === true)}
+                    />
+                  </div>
+                )}
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm",
+                    avatarColor,
+                  )}
                 >
-                  {item.assigned_group_name}
-                </Link>
-                {item.assigned_campaign_name && (
-                  <>
-                    <span>/</span>
+                  {initials}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-semibold text-sm text-foreground truncate w-full">
+                    {item.sender_name || "Unknown Sender"}
+                  </span>
+                  <span className="text-xs text-muted-foreground truncate w-full">
+                    {item.sender_phone || "No phone number"}
+                  </span>
+                  <div className="font-semibold text-lg text-foreground mt-1">{amount}</div>
+                </div>
+              </div>
+              <span
+                className={cn(
+                  "px-2 py-1 rounded-full text-xs font-medium shrink-0",
+                  isMpesa
+                    ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                    : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
+                )}
+              >
+                {paymentMethod}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1.5 text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border/50">
+              <div className="flex items-center gap-2">
+                <IconLibrary name="calendar" className="w-3.5 h-3.5 opacity-70" />
+                <span>
+                  {new Intl.DateTimeFormat("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  }).format(new Date(dateStr))}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 truncate">
+                <IconLibrary name="folder" className="w-3.5 h-3.5 opacity-70 shrink-0" />
+                <span className="truncate">
+                  {item.assigned_group_name ? (
+                    <span className="font-medium text-foreground">{item.assigned_group_name}</span>
+                  ) : (
+                    item.purpose || "No associated group"
+                  )}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border mt-auto justify-end">
+              {renderActions()}
+            </div>
+          </>
+        ) : (
+          // TABLE ROW LAYOUT
+          <>
+            <div className="flex flex-nowrap items-center gap-4 flex-1 w-full">
+              {item.workflow_status === "pending" ? (
+                // biome-ignore lint/a11y/noStaticElementInteractions: Need to stop propagation for checkbox inside clickable row
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  role="presentation"
+                >
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={(checked) => onSelect(item.pending_id, checked === true)}
+                  />
+                </div>
+              ) : (
+                <div className="w-4 h-4 shrink-0" />
+              )}
+
+              <div
+                className={cn(
+                  "w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm",
+                  avatarColor,
+                )}
+              >
+                {initials}
+              </div>
+
+              <div className="flex flex-col min-w-0 w-48 shrink-0 text-left">
+                <span className="font-semibold text-sm text-foreground truncate w-full">
+                  {item.sender_name || "Unknown Sender"}
+                </span>
+                <span className="text-xs text-muted-foreground truncate w-full">
+                  {item.sender_phone || "No phone number"}
+                </span>
+              </div>
+
+              <div className="w-24 shrink-0 font-medium text-sm">{amount}</div>
+
+              <div className="w-48 shrink-0 text-muted-foreground text-sm">
+                {new Intl.DateTimeFormat("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                }).format(new Date(dateStr))}
+              </div>
+
+              <div className="w-32 shrink-0 truncate text-sm">
+                {item.assigned_group_name ? (
+                  <div className="flex items-center gap-1 text-muted-foreground">
                     <Link
                       href={
-                        item.assigned_group_slug && item.assigned_campaign_slug
-                          ? `/treasurer/groups/${item.assigned_group_slug}/campaigns/${item.assigned_campaign_slug}/contributions`
-                          : `/treasurer/groups/${item.assigned_group_id}/campaigns/${item.assigned_campaign_id}/contributions`
+                        item.assigned_group_slug
+                          ? `/treasurer/groups/${item.assigned_group_slug}/overview`
+                          : `/treasurer/groups/${item.assigned_group_id}/overview`
                       }
                       className="hover:text-primary transition-colors font-medium truncate"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {item.assigned_campaign_name}
+                      {item.assigned_group_name}
                     </Link>
-                  </>
+                    {item.assigned_campaign_name && (
+                      <>
+                        <span>/</span>
+                        <Link
+                          href={
+                            item.assigned_group_slug && item.assigned_campaign_slug
+                              ? `/treasurer/groups/${item.assigned_group_slug}/campaigns/${item.assigned_campaign_slug}/contributions`
+                              : `/treasurer/groups/${item.assigned_group_id}/campaigns/${item.assigned_campaign_id}/contributions`
+                          }
+                          className="hover:text-primary transition-colors font-medium truncate"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {item.assigned_campaign_name}
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground">{item.purpose || "No associated group"}</span>
                 )}
               </div>
-            ) : (
-              <span className="text-muted-foreground">{item.purpose || "No associated group"}</span>
-            )}
-          </div>
 
-          <div className="w-20 shrink-0">
-            <span
-              className={cn(
-                "px-2 py-1 rounded-full text-xs font-medium",
-                isMpesa
-                  ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                  : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
-              )}
-            >
-              {paymentMethod}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 ml-auto">
-          {item.workflow_status === "pending" ? (
-            <>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsDialogOpen(true);
-                }}
-                className="bg-primary hover:bg-primary/90 gap-1.5"
-              >
-                <IconLibrary name="check" className="w-4 h-4" />
-                Approve
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onReject(item.pending_id);
-                }}
-                className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive gap-1.5"
-              >
-                <IconLibrary name="close" className="w-4 h-4" />
-                Reject
-              </Button>
-            </>
-          ) : (
-            <div
-              className={cn(
-                "px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider min-w-[120px] text-center border",
-                item.workflow_status === "approved" &&
-                  "text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/30",
-                item.workflow_status === "split_approved" &&
-                  "text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30",
-                item.workflow_status === "rejected" &&
-                  "text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30",
-              )}
-            >
-              {item.workflow_status === "approved" && "Approved"}
-              {item.workflow_status === "split_approved" && "Split & Approved"}
-              {item.workflow_status === "rejected" && "Rejected"}
+              <div className="w-20 shrink-0">
+                <span
+                  className={cn(
+                    "px-2 py-1 rounded-full text-xs font-medium",
+                    isMpesa
+                      ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                      : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
+                  )}
+                >
+                  {paymentMethod}
+                </span>
+              </div>
             </div>
-          )}
-        </div>
+
+            <div className="flex items-center gap-2 shrink-0 ml-auto sticky right-0 bg-inherit z-10 pl-4 py-1">
+              {renderActions()}
+            </div>
+          </>
+        )}
       </div>
 
       <ContributionDetailsDialog

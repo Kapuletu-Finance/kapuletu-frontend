@@ -157,6 +157,11 @@ export interface WorkspaceOverviewOut {
   recent_activities: WorkspaceActivity[];
 }
 
+export interface GlobalSearchOut {
+  groups: GroupOverview[];
+  campaigns: CampaignOverview[];
+}
+
 export interface PendingInboxOut {
   pending_id: string;
   raw_message: string;

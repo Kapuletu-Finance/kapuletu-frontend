@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,6 +45,8 @@ export const TreasurerInboxPageClient = () => {
   const [status, setStatus] = useQueryState("status", parseAsString.withDefault("pending"));
   const [sort, setSort] = useQueryState("sort", parseAsString.withDefault("date-desc"));
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
+  const isMobile = useIsMobile();
+  const [view] = useQueryState("view", parseAsString.withDefault(isMobile ? "stack" : "table"));
   const limit = 50;
   const router = useRouter();
   const undoMutation = useUndoMutation();
@@ -248,6 +251,7 @@ export const TreasurerInboxPageClient = () => {
 
   return (
     <PageLayout
+      showViewToggle
       title={`Inbox (${totalItems})`}
       subtitle="Review new contributions before adding them to your records"
       actionButton={
@@ -309,17 +313,29 @@ export const TreasurerInboxPageClient = () => {
         ) : undefined
       }
     >
-      <div className="w-full overflow-x-auto pb-4 mt-6">
-        <div className="flex flex-col min-w-[1150px] bg-card rounded-xl border border-border shadow-sm">
+      <div className={cn("w-full pb-4 mt-6", view === "table" && "overflow-x-auto")}>
+        <div
+          className={cn(
+            view === "table" && "flex flex-col min-w-[1150px] bg-card rounded-xl border border-border shadow-sm",
+            (view === "grid" || view === "stack") && "flex flex-col gap-4"
+          )}
+        >
           {status === "pending" ? (
-            <InboxBulkActions
-              selectedCount={selectedIds.size}
-              onClearSelection={() => setSelectedIds(new Set())}
-              onApproveAll={() => setIsBulkApproveOpen(true)}
-              onRejectAll={() => setIsBulkRejectOpen(true)}
-            />
+            <div className={cn((view === "grid" || view === "stack") && "bg-card rounded-xl border border-border shadow-sm overflow-hidden")}>
+              <InboxBulkActions
+                selectedCount={selectedIds.size}
+                onClearSelection={() => setSelectedIds(new Set())}
+                onApproveAll={() => setIsBulkApproveOpen(true)}
+                onRejectAll={() => setIsBulkRejectOpen(true)}
+              />
+            </div>
           ) : (
-            <div className="flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-10">
+            <div
+              className={cn(
+                "flex items-center justify-between p-4 bg-card sticky top-0 z-10",
+                view === "table" ? "border-b border-border" : "rounded-xl border border-border shadow-sm"
+              )}
+            >
               <span className="text-sm font-medium text-muted-foreground">
                 {selectedIds.size > 0 ? `${selectedIds.size} selected` : "Processed History"}
               </span>
@@ -336,28 +352,30 @@ export const TreasurerInboxPageClient = () => {
           )}
 
           {isLoading ? (
-            <div className="flex flex-col w-full">
+            <div
+              className={cn(
+                "w-full",
+                view === "table" ? "flex flex-col" : (view === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-4")
+              )}
+            >
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex items-center gap-4 py-4 px-4 border-b border-border">
+                <div key={i} className={cn("flex items-center gap-4 py-4 px-4 border-border", view === "table" ? "border-b" : "border rounded-xl bg-card")}>
                   <Skeleton className="w-4 h-4 rounded" />
                   <Skeleton className="w-10 h-10 rounded-full shrink-0" />
                   <div className="flex flex-col gap-2 w-32">
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-3 w-2/3" />
                   </div>
-                  <Skeleton className="h-4 w-24 ml-4" />
-                  <Skeleton className="h-4 w-32 ml-4" />
-                  <Skeleton className="h-4 w-24 ml-4" />
-                  <Skeleton className="h-6 w-16 rounded-full ml-4" />
-                  <div className="ml-auto flex gap-2">
-                    <Skeleton className="h-9 w-24" />
-                    <Skeleton className="h-9 w-24" />
-                  </div>
                 </div>
               ))}
             </div>
           ) : inboxItems.length > 0 ? (
-            <div className="flex flex-col w-full animate-in fade-in duration-500">
+            <div
+              className={cn(
+                "w-full animate-in fade-in duration-500",
+                view === "table" ? "flex flex-col" : (view === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-4")
+              )}
+            >
               {inboxItems.map((item) => (
                 <InboxListRow
                   key={item.pending_id}
@@ -371,7 +389,7 @@ export const TreasurerInboxPageClient = () => {
               ))}
             </div>
           ) : (
-            <div className="py-16 animate-in fade-in duration-500">
+            <div className={cn("py-16 animate-in fade-in duration-500", (view === "grid" || view === "stack") && "bg-card border border-border shadow-sm rounded-xl")}>
               <EmptyState message="No new inbox items found." />
             </div>
           )}

@@ -30,7 +30,7 @@ export interface GroupInfo {
 export interface GroupCardProps {
   group: GroupInfo;
   className?: string;
-  variant?: "grid" | "list";
+  variant?: "table" | "grid" | "stack";
   onViewDetails?: () => void;
   onToggleFavorite?: () => void;
 }
@@ -45,7 +45,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
   const campaigns = group.campaigns ?? [];
   const isArchived = group.status === "Archived";
 
-  if (variant === "list") {
+  if (variant === "table") {
     return (
       <Card
         className={cn(

@@ -1,6 +1,7 @@
 import {
   Activity,
   AlertCircle,
+  AlignJustify,
   ArrowLeft,
   ArrowRight,
   BadgeCheck,
@@ -27,9 +28,11 @@ import {
   Eye,
   EyeOff,
   FileChartLine,
+  Folder,
   Gem,
   Gift,
   Globe,
+  Grid,
   Heart,
   HelpCircle,
   Home,
@@ -39,6 +42,7 @@ import {
   LayoutTemplate,
   Lightbulb,
   Link as LinkIcon,
+  List,
   Loader2,
   Lock,
   LogOut,
@@ -91,6 +95,7 @@ const ICON_MAP = {
   add: <Plus />,
   "add-circle": <PlusCircle />,
   alert: <AlertCircle />,
+  "align-justify": <AlignJustify />,
   analytics: <BarChart3 />,
   "arrow-left": <ArrowLeft />,
   "arrow-right": <ArrowRight />,
@@ -122,9 +127,11 @@ const ICON_MAP = {
   favorite: <Heart />,
   feedback: <MessageSquareDot />,
   filter: <SlidersHorizontal />,
+  folder: <Folder />,
   gem: <Gem />,
   gift: <Gift />,
   globe: <Globe />,
+  grid: <Grid />,
   group: <Users />,
   help: <HelpCircle />,
   home: <Home />,
@@ -133,6 +140,7 @@ const ICON_MAP = {
   layout: <LayoutTemplate />,
   lightbulb: <Lightbulb />,
   link: <LinkIcon />,
+  list: <List />,
   loading: <Loader2 className="animate-spin" />,
   lock: <Lock />,
   "log-out": <LogOut />,
@@ -185,6 +193,10 @@ interface IconLibraryProps {
 
 const IconLibrary: React.FC<IconLibraryProps> = ({ name, className, strokeWidth }) => {
   const iconElement = ICON_MAP[name];
+  if (!iconElement) {
+    console.warn(`Icon "${name}" not found in IconLibrary`);
+    return null;
+  }
   return React.cloneElement(iconElement, {
     className: cn(iconElement.props.className, className),
     strokeWidth: strokeWidth ?? iconElement.props.strokeWidth,

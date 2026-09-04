@@ -2,6 +2,7 @@
 
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -35,7 +36,8 @@ const mapGroupToInfo = (group: GroupOut): GroupInfo => ({
 });
 
 export const TreasurerGroupsPageClient = () => {
-  const [view] = useQueryState("view", parseAsString.withDefault("grid"));
+  const isMobile = useIsMobile();
+  const [view] = useQueryState("view", parseAsString.withDefault(isMobile ? "stack" : "grid"));
   const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
   const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("all"));
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
@@ -75,6 +77,7 @@ export const TreasurerGroupsPageClient = () => {
 
   return (
     <PageLayout
+      showViewToggle
       actionButton={<CreateGroupButtonDialogForm />}
       stats={
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
@@ -183,7 +186,7 @@ export const TreasurerGroupsPageClient = () => {
             <GroupCard
               key={group.id}
               group={group}
-              variant={view as "grid" | "list"}
+              variant={view as "table" | "grid" | "stack"}
               onToggleFavorite={() => toggleFavorite.mutate(group.id)}
             />
           ))}

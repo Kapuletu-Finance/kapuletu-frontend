@@ -1,6 +1,8 @@
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
+import ViewToggleGroup from "./ViewToggleGroup";
+
 export interface PageLayoutProps {
   title?: React.ReactNode;
   subtitle?: React.ReactNode;
@@ -10,6 +12,7 @@ export interface PageLayoutProps {
   children: React.ReactNode;
   pagination?: React.ReactNode;
   className?: string;
+  showViewToggle?: boolean;
 }
 
 export const PageLayout: React.FC<PageLayoutProps> = ({
@@ -21,6 +24,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   children,
   pagination,
   className,
+  showViewToggle,
 }) => {
   return (
     <div className={cn("flex flex-col gap-6 w-full max-w-7xl mx-auto pb-12", className)}>
@@ -42,8 +46,12 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
       {/* Stats Row */}
       {stats && <div className="w-full">{stats}</div>}
 
-      {/* Controls Row */}
-      {controls && <div className="w-full">{controls}</div>}
+      {(controls || showViewToggle) && (
+        <div className="w-full flex items-end justify-between gap-4">
+          <div className="flex-1 min-w-0">{controls}</div>
+          {showViewToggle && <div className="shrink-0"><ViewToggleGroup /></div>}
+        </div>
+      )}
 
       {/* Data / Content */}
       <div className="w-full">{children}</div>

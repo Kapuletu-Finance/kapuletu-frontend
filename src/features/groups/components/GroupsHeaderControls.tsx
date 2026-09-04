@@ -36,7 +36,6 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({
   filterValue,
 }) => {
   const [selectedFilter, setSelectedFilter] = useState<FilterValue>(filterValue ?? "all");
-  const [view, setView] = useQueryState("view", parseAsString.withDefault("grid"));
 
   const handleSelectFilter = (value: FilterValue) => {
     setSelectedFilter(value);
@@ -75,15 +74,6 @@ const GroupsHeaderControls: React.FC<GroupsHeaderControlsProps> = ({
             ))}
           </SelectContent>
         </Select>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setView(view === "grid" ? "list" : "grid")}
-          className="h-10 w-10 text-muted-foreground hover:text-foreground shrink-0"
-        >
-          <IconLibrary name={view === "grid" ? "menu" : "dashboard"} className="h-5 w-5" />
-        </Button>
       </div>
     </div>
   );
