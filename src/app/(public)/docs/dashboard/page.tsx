@@ -1,7 +1,7 @@
-import React from 'react';
-import { DocsArticle } from '@/features/docs/components/DocsArticle';
-import { DocsCallout } from '@/features/docs/components/DocsCallout';
-import Link from 'next/link';
+import Link from "next/link";
+import React from "react";
+import { DocsArticle } from "@/features/docs/components/DocsArticle";
+import { DocsCallout } from "@/features/docs/components/DocsCallout";
 
 export default function DashboardIndexPage() {
   const guides = [
@@ -15,18 +15,23 @@ export default function DashboardIndexPage() {
   ];
 
   return (
-    <DocsArticle 
+    <DocsArticle
       title="Dashboard Guides"
       description="Learn how to read and interpret your treasury's financial overview."
       difficulty="Beginner"
     >
       <DocsCallout type="info">
-        The dashboard is the nerve center of KapuLetu, providing an at-a-glance summary of your group's financial health.
+        The dashboard is the nerve center of KapuLetu, providing an at-a-glance summary of your
+        group's financial health.
       </DocsCallout>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
         {guides.map((guide, idx) => (
-          <Link key={idx} href={guide.link} className="p-4 border border-border rounded-lg bg-card hover:border-primary/50 transition-colors">
+          <Link
+            key={idx}
+            href={guide.link}
+            className="p-4 border border-border rounded-lg bg-card hover:border-primary/50 transition-colors"
+          >
             <h3 className="font-semibold text-foreground text-sm">{guide.title}</h3>
           </Link>
         ))}

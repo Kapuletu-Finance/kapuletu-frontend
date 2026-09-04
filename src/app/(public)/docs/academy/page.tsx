@@ -1,10 +1,10 @@
-import React from 'react';
-import { DocsArticle } from '@/features/docs/components/DocsArticle';
-import { DocsVideo } from '@/features/docs/components/DocsVideo';
+import React from "react";
+import { DocsArticle } from "@/features/docs/components/DocsArticle";
+import { DocsVideo } from "@/features/docs/components/DocsVideo";
 
 export default function AcademyIndexPage() {
   return (
-    <DocsArticle 
+    <DocsArticle
       title="Video Academy"
       description="Watch and learn. Master KapuLetu through our comprehensive video library."
       difficulty="Beginner"

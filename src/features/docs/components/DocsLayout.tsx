@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import { DocsSidebar } from './DocsSidebar';
-import { DocsHeader } from './DocsHeader';
-import { DocsBreadcrumbs } from './DocsBreadcrumbs';
-import { DocsTOC } from './DocsTOC';
+import { usePathname } from "next/navigation";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { DocsBreadcrumbs } from "./DocsBreadcrumbs";
+import { DocsHeader } from "./DocsHeader";
+import { DocsSidebar } from "./DocsSidebar";
+import { DocsTOC } from "./DocsTOC";
 
 interface DocsLayoutProps {
   children: React.ReactNode;
@@ -22,10 +23,7 @@ export const DocsLayout: React.FC<DocsLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground font-sans">
-      <DocsSidebar 
-        isOpen={isMobileSidebarOpen} 
-        onClose={() => setIsMobileSidebarOpen(false)} 
-      />
+      <DocsSidebar isOpen={isMobileSidebarOpen} onClose={() => setIsMobileSidebarOpen(false)} />
       <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden">
         <DocsHeader onOpenMobileNav={() => setIsMobileSidebarOpen(true)} />
         <main className="flex-1 overflow-y-auto">
