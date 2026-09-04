@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import type { FeedbackSubmission } from "@/features/admin/services/mutations";
 import { useSubmitFeedbackMutation } from "@/features/admin/services/mutations";
@@ -506,7 +507,12 @@ export const KapuletuAssistant: React.FC = () => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: needed to trigger scroll
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      const viewport = scrollRef.current.querySelector('[data-slot="scroll-area-viewport"]');
+      if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+      } else {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
     }
   }, [messages, isTyping, popoverOpen]);
 
@@ -744,10 +750,12 @@ export const KapuletuAssistant: React.FC = () => {
             </div>
 
             {/* Chat Area */}
-            <div
-              className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 bg-muted/30"
+            <ScrollArea
+              className="flex-1 bg-muted/30"
               ref={scrollRef}
+              orientation="vertical"
             >
+              <div className="p-4 flex flex-col gap-4">
               {messages.map((msg) => (
                 <div
                   key={msg.id}
@@ -799,6 +807,7 @@ export const KapuletuAssistant: React.FC = () => {
                 </div>
               )}
             </div>
+            </ScrollArea>
 
             {/* Input Area */}
             <div className="p-3 bg-background border-t border-border shrink-0 shadow-sm z-10">
@@ -847,12 +856,7 @@ export const KapuletuAssistant: React.FC = () => {
 
       {/* Modal */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent
-          className={cn(
-            "flex flex-col p-0 gap-0 overflow-hidden",
-            isMobile ? "max-h-[92dvh] w-full" : "w-full max-w-[540px] max-h-[85vh]",
-          )}
-        >
+        <DialogContent className="sm:max-w-lg p-0 h-[80vh] flex flex-col overflow-hidden">
           {/* Header */}
           <DialogHeader className="shrink-0 px-6 py-5 border-b border-border">
             <div className="flex items-center justify-between">
@@ -868,7 +872,8 @@ export const KapuletuAssistant: React.FC = () => {
           </DialogHeader>
 
           {/* Content — scrollable */}
-          <div className="flex-1 overflow-y-auto px-6 py-5">
+          <ScrollArea className="flex-1 w-full" orientation="vertical">
+            <div className="px-6 py-5">
             {submitted ? (
               <SuccessState onReset={handleReset} onClose={handleClose} />
             ) : (
@@ -878,7 +883,8 @@ export const KapuletuAssistant: React.FC = () => {
                 {step === 3 && <Step3 form={form} onChange={patch} />}
               </>
             )}
-          </div>
+            </div>
+          </ScrollArea>
 
           {/* Footer — sticky actions */}
           {!submitted && (

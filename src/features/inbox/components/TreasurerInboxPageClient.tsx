@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddContributionFormDialog from "@/features/contributions/components/AddContributionFormDialog";
 import BulkApproveDialog from "@/features/inbox/components/BulkApproveDialog";
@@ -313,7 +314,7 @@ export const TreasurerInboxPageClient = () => {
         ) : undefined
       }
     >
-      <div className={cn("w-full pb-4 mt-6", view === "table" && "overflow-x-auto")}>
+      <ScrollArea orientation={view === "table" ? "horizontal" : undefined} className={cn("w-full pb-4 mt-6", view !== "table" && "h-auto")}>
         <div
           className={cn(
             view === "table" && "flex flex-col min-w-[1150px] bg-card rounded-xl border border-border shadow-sm",
@@ -394,7 +395,7 @@ export const TreasurerInboxPageClient = () => {
             </div>
           )}
         </div>
-      </div>
+      </ScrollArea>
 
       <BulkApproveDialog
         open={isBulkApproveOpen}

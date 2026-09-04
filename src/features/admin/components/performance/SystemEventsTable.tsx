@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import type React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SystemEvent } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
@@ -61,7 +62,7 @@ export const SystemEventsTable: React.FC<Props> = ({ data, isLoading }) => {
         <CardTitle>Recent System Events</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
+        <ScrollArea orientation="horizontal" className="w-full">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/10 text-muted-foreground text-left">
@@ -90,7 +91,7 @@ export const SystemEventsTable: React.FC<Props> = ({ data, isLoading }) => {
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );

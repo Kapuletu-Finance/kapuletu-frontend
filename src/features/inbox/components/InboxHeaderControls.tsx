@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const filterOptions = [
@@ -97,7 +98,7 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
       </div>
 
       {/* Filters row — horizontally scrollable on mobile, never truncates */}
-      <div className="overflow-x-auto pb-1">
+      <ScrollArea orientation="horizontal" className="pb-1 w-full">
         <div className="flex items-center gap-3 min-w-max">
           {/* Status Filter */}
           <Select
@@ -165,7 +166,7 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
             </SelectContent>
           </Select>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 };

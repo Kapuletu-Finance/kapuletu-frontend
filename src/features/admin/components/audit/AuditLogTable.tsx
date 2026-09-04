@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -87,7 +88,8 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading })
 
   return (
     <div className="rounded-md border border-border mt-4 overflow-hidden bg-background">
-      <Table>
+      <ScrollArea orientation="horizontal" className="w-full">
+        <Table>
         <TableHeader>
           <TableRow className="bg-muted/40 hover:bg-muted/40">
             <TableHead className="w-[40px]"></TableHead>
@@ -156,9 +158,11 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading })
                   <TableRow className="bg-muted/10 hover:bg-muted/10">
                     <TableCell colSpan={5} className="p-0 border-b">
                       <div className="p-4 pl-12 border-l-2 border-l-primary/30 bg-muted/20">
-                        <pre className="text-xs font-mono text-foreground whitespace-pre-wrap rounded-md bg-background border border-border p-4 overflow-x-auto">
-                          {JSON.stringify(log.details, null, 2)}
-                        </pre>
+                        <ScrollArea orientation="horizontal" className="w-full rounded-md bg-background border border-border">
+                          <pre className="text-xs font-mono text-foreground whitespace-pre-wrap p-4">
+                            {JSON.stringify(log.details, null, 2)}
+                          </pre>
+                        </ScrollArea>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -167,7 +171,8 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading })
             );
           })}
         </TableBody>
-      </Table>
+        </Table>
+      </ScrollArea>
     </div>
   );
 };

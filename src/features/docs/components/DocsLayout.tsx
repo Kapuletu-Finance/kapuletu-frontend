@@ -7,6 +7,7 @@ import { DocsBreadcrumbs } from "./DocsBreadcrumbs";
 import { DocsHeader } from "./DocsHeader";
 import { DocsSidebar } from "./DocsSidebar";
 import { DocsTOC } from "./DocsTOC";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface DocsLayoutProps {
   children: React.ReactNode;
@@ -26,7 +27,8 @@ export const DocsLayout: React.FC<DocsLayoutProps> = ({ children }) => {
       <DocsSidebar isOpen={isMobileSidebarOpen} onClose={() => setIsMobileSidebarOpen(false)} />
       <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden">
         <DocsHeader onOpenMobileNav={() => setIsMobileSidebarOpen(true)} />
-        <main className="flex-1 overflow-y-auto">
+        <ScrollArea className="flex-1 bg-background" orientation="vertical">
+        <main className="flex-1">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col xl:flex-row xl:gap-8 relative items-start">
             <div className="flex-1 min-w-0 w-full max-w-4xl">
               <DocsBreadcrumbs />
@@ -35,6 +37,7 @@ export const DocsLayout: React.FC<DocsLayoutProps> = ({ children }) => {
             <DocsTOC />
           </div>
         </main>
+        </ScrollArea>
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import {
 import type React from "react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Ticket } from "../types";
 
@@ -109,38 +110,40 @@ export const TicketList: React.FC<Props> = ({
       </div>
 
       {/* Status Tabs — horizontally scrollable on mobile */}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-        {TABS.map((tab) => {
-          const count =
-            tab.value === "all"
-              ? (tickets?.length ?? 0)
-              : (tickets?.filter((t) => t.status === tab.value).length ?? 0);
-          const isActive = filter === tab.value;
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => setFilter(tab.value)}
-              className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-150 ${
-                isActive
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {tab.label}
-              {count > 0 && (
-                <span
-                  className={`text-[10px] font-bold rounded-full px-1.5 min-w-[18px] text-center ${
-                    isActive ? "bg-primary-foreground/20" : "bg-background"
-                  }`}
-                >
-                  {count}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+      <ScrollArea orientation="horizontal" className="pb-1 -mx-1 px-1">
+        <div className="flex gap-2">
+          {TABS.map((tab) => {
+            const count =
+              tab.value === "all"
+                ? (tickets?.length ?? 0)
+                : (tickets?.filter((t) => t.status === tab.value).length ?? 0);
+            const isActive = filter === tab.value;
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setFilter(tab.value)}
+                className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-150 ${
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+                {count > 0 && (
+                  <span
+                    className={`text-[10px] font-bold rounded-full px-1.5 min-w-[18px] text-center ${
+                      isActive ? "bg-primary-foreground/20" : "bg-background"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </ScrollArea>
 
       {/* Ticket Rows */}
       {isLoading ? (

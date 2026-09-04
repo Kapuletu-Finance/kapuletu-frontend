@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { env } from "@/env";
 import {
@@ -102,7 +103,8 @@ const WhatsappUpdatePreviewCard = () => {
             <Skeleton className="h-4 w-56" />
           </div>
         ) : preview ? (
-          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 font-mono text-xs md:text-sm text-foreground space-y-4 max-w-2xl mx-auto leading-relaxed max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+          <ScrollArea className="max-h-[500px] w-full max-w-2xl mx-auto rounded-2xl" orientation="vertical">
+          <div className="bg-primary/5 border border-primary/10 p-6 font-mono text-xs md:text-sm text-foreground space-y-4 leading-relaxed">
             <div>
               <p className="font-bold underline">*{reportTitle}*</p>
               {preview.description && (
@@ -203,6 +205,7 @@ const WhatsappUpdatePreviewCard = () => {
               </div>
             )}
           </div>
+          </ScrollArea>
         ) : (
           <div className="py-8 text-center text-sm text-muted-foreground">
             No preview available.

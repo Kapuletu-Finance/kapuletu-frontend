@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useReplyTicketMutation } from "../services/mutations";
@@ -219,7 +220,8 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId, onBack }) => {
           </div>
         </CardHeader>
 
-        <CardContent className="flex-1 overflow-y-auto p-6 space-y-4 relative">
+        <ScrollArea className="flex-1 w-full" orientation="vertical">
+          <CardContent className="p-6 space-y-4 relative">
           {/* Waiting banner */}
           {isWaiting && (
             <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-2 flex items-start gap-4">
@@ -324,6 +326,7 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId, onBack }) => {
           })}
           <div ref={messagesEndRef} />
         </CardContent>
+        </ScrollArea>
 
         {/* Rating prompt — inline, above footer, when resolved */}
         {showRatingPrompt && (

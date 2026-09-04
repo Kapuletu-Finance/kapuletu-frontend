@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { useGlobalSearchQuery } from "@/features/treasurer/services/queries";
 
@@ -89,7 +90,8 @@ export const GlobalSearch = ({
           </kbd>
         </div>
 
-        <div className="max-h-[300px] overflow-y-auto overflow-x-hidden p-2 flex flex-col gap-1">
+        <ScrollArea className="max-h-[300px] w-full" orientation="vertical">
+        <div className="p-2 flex flex-col gap-1">
           {isLoading && query.length >= 2 && (
              <div className="py-6 flex justify-center items-center text-sm text-muted-foreground">
                <Loader2 className="h-4 w-4 animate-spin mr-2" /> Searching...
@@ -166,9 +168,10 @@ export const GlobalSearch = ({
                   ))}
                 </>
                )}
-             </>
+              </>
           )}
         </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -49,7 +50,8 @@ export const FeedbackQueueTab: React.FC = () => {
   return (
     <div className="space-y-4">
       <div className="rounded-xl border bg-background overflow-hidden">
-        <Table>
+        <ScrollArea orientation="horizontal" className="w-full">
+          <Table>
           <TableHeader>
             <TableRow className="bg-muted/30">
               <TableHead className="w-[40px]"></TableHead>
@@ -129,18 +131,22 @@ export const FeedbackQueueTab: React.FC = () => {
                             <h4 className="text-sm font-semibold text-destructive flex items-center gap-2">
                               <IconLibrary name="close" className="h-4 w-4" /> Original Parsed Data
                             </h4>
-                            <pre className="text-xs bg-destructive/5 text-destructive-foreground p-4 rounded-md overflow-x-auto border border-destructive/10">
-                              {JSON.stringify(item.original, null, 2)}
-                            </pre>
+                            <ScrollArea orientation="horizontal" className="w-full bg-destructive/5 border border-destructive/10 rounded-md">
+                              <pre className="text-xs text-destructive-foreground p-4">
+                                {JSON.stringify(item.original, null, 2)}
+                              </pre>
+                            </ScrollArea>
                           </div>
                           <div className="space-y-2">
                             <h4 className="text-sm font-semibold text-emerald-500 flex items-center gap-2">
                               <IconLibrary name="check-circle" className="h-4 w-4" /> Corrected
                               Ground Truth
                             </h4>
-                            <pre className="text-xs bg-emerald-500/5 text-emerald-500 p-4 rounded-md overflow-x-auto border border-emerald-500/10">
-                              {JSON.stringify(item.corrected, null, 2)}
-                            </pre>
+                            <ScrollArea orientation="horizontal" className="w-full bg-emerald-500/5 border border-emerald-500/10 rounded-md">
+                              <pre className="text-xs text-emerald-500 p-4">
+                                {JSON.stringify(item.corrected, null, 2)}
+                              </pre>
+                            </ScrollArea>
                           </div>
                         </div>
                       </TableCell>
@@ -151,6 +157,7 @@ export const FeedbackQueueTab: React.FC = () => {
             })}
           </TableBody>
         </Table>
+        </ScrollArea>
       </div>
     </div>
   );

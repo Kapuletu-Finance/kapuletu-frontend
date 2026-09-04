@@ -8,6 +8,7 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { CampaignOverview, GroupOverview } from "@/features/shared/types";
 import { useWorkspaceOverviewQuery } from "@/features/treasurer/services/queries";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 // ─── Campaign Sub-Panel ────────────────────────────────────────────────────
@@ -234,7 +235,8 @@ export const GroupsFlyoutPanel = ({ open, onClose, anchorRef }: GroupsFlyoutProp
         </div>
 
         {/* Group list */}
-        <ul className="overflow-y-auto overflow-x-hidden flex-1 sm:max-h-[60vh] max-h-full">
+        <ScrollArea className="flex-1 sm:max-h-[60vh] max-h-full" orientation="vertical">
+        <ul className="flex flex-col">
           {groups.length === 0 ? (
             <li className="text-sm text-muted-foreground px-4 py-3 list-none">No groups found.</li>
           ) : (
@@ -248,6 +250,7 @@ export const GroupsFlyoutPanel = ({ open, onClose, anchorRef }: GroupsFlyoutProp
             ))
           )}
         </ul>
+        </ScrollArea>
 
         {/* Footer: View all link */}
         <div className="mt-1 pt-2 pb-2 sm:pb-0 sm:pt-1.5 border-t border-border px-4 sm:px-3 shrink-0">

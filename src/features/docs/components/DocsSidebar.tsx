@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import type React from "react";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 interface DocsSidebarProps {
@@ -48,10 +49,11 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ isOpen, onClose }) => 
       {/* Sidebar Drawer */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-border h-screen overflow-y-auto transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:w-64 md:sticky md:top-0",
+          "fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-border h-screen overflow-hidden transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:w-64 md:sticky md:top-0",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
+        <ScrollArea className="h-full w-full" orientation="vertical">
         <div className="p-4 relative">
           {/* Mobile Close Button */}
           <button
@@ -143,6 +145,7 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ isOpen, onClose }) => 
             </div>
           </nav>
         </div>
+        </ScrollArea>
       </aside>
     </>
   );

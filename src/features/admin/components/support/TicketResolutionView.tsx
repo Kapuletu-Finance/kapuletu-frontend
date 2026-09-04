@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -259,7 +260,8 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
           </div>
         </CardHeader>
 
-        <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
+        <ScrollArea className="flex-1 w-full" orientation="vertical">
+          <CardContent className="p-6 space-y-4">
           {/* Admin check-in alert */}
           {showCheckIn && !checkInDismissed && (
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 space-y-3">
@@ -362,6 +364,7 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
           })}
           <div ref={messagesEndRef} />
         </CardContent>
+        </ScrollArea>
 
         <CardFooter className="border-t p-4 flex gap-3 shrink-0">
           <Textarea
@@ -388,7 +391,8 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
       </Card>
 
       {/* Right Pane: Context & Actions */}
-      <div className="space-y-4 overflow-y-auto">
+      <ScrollArea className="h-[800px] w-full" orientation="vertical">
+        <div className="space-y-4 p-1">
         {/* Identity Verification */}
         <Card className="border-l-4 border-l-primary">
           <CardHeader className="pb-2">
@@ -538,6 +542,7 @@ export const TicketResolutionView: React.FC<Props> = ({ ticketId, onResolved }) 
           </CardContent>
         </Card>
       </div>
+      </ScrollArea>
     </div>
   );
 };

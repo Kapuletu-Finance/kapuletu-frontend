@@ -20,6 +20,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNewFeedbackCountQuery } from "@/features/admin/services/queries";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
@@ -378,9 +379,10 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
             </div>
           </div>
 
-          <div
+          <ScrollArea
             id="main-scroll-container"
-            className="flex-1 min-h-0 overflow-y-auto bg-muted transition-colors"
+            className="flex-1 min-h-0 bg-muted transition-colors"
+            orientation="vertical"
           >
             <main className="p-4 md:p-6 lg:p-8">
               <div className="max-w-6xl mx-auto space-y-4">
@@ -389,7 +391,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
                 {children}
               </div>
             </main>
-          </div>
+          </ScrollArea>
         </SidebarInset>
       </SidebarProvider>
 

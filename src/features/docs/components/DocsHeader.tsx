@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const DocsHeader: React.FC<{ onOpenMobileNav: () => void }> = ({ onOpenMobileNav }) => {
@@ -97,7 +98,8 @@ export const DocsHeader: React.FC<{ onOpenMobileNav: () => void }> = ({ onOpenMo
                 ESC
               </button>
             </div>
-            <div className="p-4 max-h-[60vh] overflow-y-auto">
+            <ScrollArea className="max-h-[60vh] w-full" orientation="vertical">
+            <div className="p-4 flex flex-col gap-1">
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                 Recent Searches
               </div>
@@ -126,6 +128,7 @@ export const DocsHeader: React.FC<{ onOpenMobileNav: () => void }> = ({ onOpenMo
                 </span>
               </Link>
             </div>
+            </ScrollArea>
             <div className="bg-muted px-4 py-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
               <span>
                 <strong className="font-medium text-foreground">KapuLetu</strong> Enterprise Search

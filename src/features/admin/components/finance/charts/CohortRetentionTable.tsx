@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminCohortsQuery } from "@/features/admin/services/queries";
 
@@ -29,7 +30,7 @@ export const CohortRetentionTable: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
+        <ScrollArea orientation="horizontal" className="w-full">
           <table className="w-full text-sm text-left border-collapse">
             <thead>
               <tr>
@@ -87,7 +88,7 @@ export const CohortRetentionTable: React.FC = () => {
               )}
             </tbody>
           </table>
-        </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );

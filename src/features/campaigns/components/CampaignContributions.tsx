@@ -11,7 +11,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   useCampaignQuery,
@@ -212,128 +214,130 @@ const CampaignContributions = () => {
       )}
 
       <div className="bg-card border border-border shadow-sm rounded-xl overflow-hidden mt-6">
-        <CardContent className="p-0 overflow-x-auto">
-          <div className="min-w-full md:min-w-[700px]">
-            <div className="hidden md:grid grid-cols-4 text-sm font-semibold text-muted-foreground py-4 px-6 border-b border-border bg-card">
-              <span>Name</span>
-              <span>Amount</span>
-              <span>Date</span>
-              <span className="text-right sm:text-center">Payment method</span>
-            </div>
+        <ScrollArea orientation="horizontal" className="w-full">
+          <CardContent className="p-0">
+            <div className="min-w-full md:min-w-[700px]">
+              <div className="hidden md:grid grid-cols-4 text-sm font-semibold text-muted-foreground py-4 px-6 border-b border-border bg-card">
+                <span>Name</span>
+                <span>Amount</span>
+                <span>Date</span>
+                <span className="text-right sm:text-center">Payment method</span>
+              </div>
 
-            <div className="divide-y divide-border animate-in fade-in duration-500">
-              {isLoading ? (
-                ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((key) => (
-                  <div
-                    key={key}
-                    className="flex flex-col md:grid md:grid-cols-4 md:items-center py-4 md:py-5 px-4 md:px-6 text-sm gap-3 md:gap-0"
-                  >
-                    <div className="flex items-center justify-between md:contents">
-                      <div className="flex items-center gap-3 md:gap-4">
-                        <Skeleton className="w-10 h-10 rounded-full" />
-                        <Skeleton className="h-4 w-32" />
-                      </div>
-                      <Skeleton className="h-4 w-20 md:hidden" />
-                    </div>
-                    <Skeleton className="h-4 w-20 hidden md:block" />
-                    <div className="flex items-center justify-between md:contents ml-13 md:ml-0">
-                      <Skeleton className="h-4 w-28" />
-                      <Skeleton className="h-6 w-20 md:mx-auto" />
-                    </div>
-                  </div>
-                ))
-              ) : contributions.length === 0 ? (
-                <div className="py-16 flex flex-col items-center justify-center text-center">
-                  <div className="bg-muted/50 p-4 rounded-full mb-4">
-                    <IconLibrary name="info" className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground">No contributions yet</h3>
-                  <p className="text-sm text-muted-foreground max-w-sm mt-1">
-                    When this campaign receives its first contribution, it will appear here.
-                  </p>
-                </div>
-              ) : (
-                contributions.map((item, index) => {
-                  const avatarColor = avatarColors[index % avatarColors.length];
-                  return (
+              <div className="divide-y divide-border animate-in fade-in duration-500">
+                {isLoading ? (
+                  ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((key) => (
                     <div
-                      key={item.transaction_id || `tx-${index}`}
-                      className="flex flex-col md:grid md:grid-cols-4 md:items-center gap-2 md:gap-0 py-4 md:py-5 px-4 md:px-6 text-sm transition-colors hover:bg-muted/50 border-b border-border md:border-none last:border-none"
+                      key={key}
+                      className="flex flex-col md:grid md:grid-cols-4 md:items-center py-4 md:py-5 px-4 md:px-6 text-sm gap-3 md:gap-0"
                     >
                       <div className="flex items-center justify-between md:contents">
                         <div className="flex items-center gap-3 md:gap-4">
-                          <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarColor}`}
-                          >
-                            {getInitials(item.name || "")}
+                          <Skeleton className="w-10 h-10 rounded-full" />
+                          <Skeleton className="h-4 w-32" />
+                        </div>
+                        <Skeleton className="h-4 w-20 md:hidden" />
+                      </div>
+                      <Skeleton className="h-4 w-20 hidden md:block" />
+                      <div className="flex items-center justify-between md:contents ml-13 md:ml-0">
+                        <Skeleton className="h-4 w-28" />
+                        <Skeleton className="h-6 w-20 md:mx-auto" />
+                      </div>
+                    </div>
+                  ))
+                ) : contributions.length === 0 ? (
+                  <div className="py-16 flex flex-col items-center justify-center text-center">
+                    <div className="bg-muted/50 p-4 rounded-full mb-4">
+                      <IconLibrary name="info" className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground">No contributions yet</h3>
+                    <p className="text-sm text-muted-foreground max-w-sm mt-1">
+                      When this campaign receives its first contribution, it will appear here.
+                    </p>
+                  </div>
+                ) : (
+                  contributions.map((item, index) => {
+                    const avatarColor = avatarColors[index % avatarColors.length];
+                    return (
+                      <div
+                        key={item.transaction_id || `tx-${index}`}
+                        className="flex flex-col md:grid md:grid-cols-4 md:items-center gap-2 md:gap-0 py-4 md:py-5 px-4 md:px-6 text-sm transition-colors hover:bg-muted/50 border-b border-border md:border-none last:border-none"
+                      >
+                        <div className="flex items-center justify-between md:contents">
+                          <div className="flex items-center gap-3 md:gap-4">
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarColor}`}
+                            >
+                              {getInitials(item.name || "")}
+                            </div>
+                            <span className="font-semibold text-foreground truncate text-base md:text-sm">
+                              {item.name || "Unknown"}
+                            </span>
                           </div>
-                          <span className="font-semibold text-foreground truncate text-base md:text-sm">
-                            {item.name || "Unknown"}
+
+                          {/* Mobile amount */}
+                          <span className="font-bold text-foreground md:hidden">
+                            Ksh. {item.amount.toLocaleString("en-KE")}
                           </span>
                         </div>
 
-                        {/* Mobile amount */}
-                        <span className="font-bold text-foreground md:hidden">
+                        {/* Desktop amount */}
+                        <span className="hidden md:block font-medium text-foreground">
                           Ksh. {item.amount.toLocaleString("en-KE")}
                         </span>
-                      </div>
 
-                      {/* Desktop amount */}
-                      <span className="hidden md:block font-medium text-foreground">
-                        Ksh. {item.amount.toLocaleString("en-KE")}
-                      </span>
+                        <div className="flex items-center justify-between md:contents mt-1 md:mt-0 ml-[3.25rem] md:ml-0">
+                          <span className="text-muted-foreground text-xs md:text-sm">
+                            {new Date(item.date).toLocaleDateString("en-KE", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
 
-                      <div className="flex items-center justify-between md:contents mt-1 md:mt-0 ml-[3.25rem] md:ml-0">
-                        <span className="text-muted-foreground text-xs md:text-sm">
-                          {new Date(item.date).toLocaleDateString("en-KE", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-
-                        <div className="text-right md:text-center">
-                          <Badge
-                            variant="secondary"
-                            className={`px-3 md:px-4 py-1 md:py-1.5 font-medium shadow-sm text-[10px] md:text-xs ${
-                              paymentMethodColors[item.payment_method] ||
-                              "bg-secondary text-secondary-foreground"
-                            }`}
-                          >
-                            {item.payment_method}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      {/* Split Info & Notes */}
-                      {(item.is_split || item.notes) && (
-                        <div className="md:col-span-4 mt-3 ml-[3.25rem] md:ml-14 mr-4 bg-muted/30 p-3 rounded-lg border border-border">
-                          {item.is_split && (
+                          <div className="text-right md:text-center">
                             <Badge
-                              variant="outline"
-                              className="bg-primary/10 text-primary border-primary/20 text-[10px] mb-2 inline-flex items-center gap-1"
+                              variant="secondary"
+                              className={`px-3 md:px-4 py-1 md:py-1.5 font-medium shadow-sm text-[10px] md:text-xs ${
+                                paymentMethodColors[item.payment_method] ||
+                                "bg-secondary text-secondary-foreground"
+                              }`}
                             >
-                              <IconLibrary name="split" className="w-3 h-3" />
-                              Split Contribution
+                              {item.payment_method}
                             </Badge>
-                          )}
-                          {item.notes && (
-                            <div className="flex items-start gap-2 text-xs text-muted-foreground">
-                              <IconLibrary name="info" className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                              <span className="italic">{item.notes}</span>
-                            </div>
-                          )}
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
+
+                        {/* Split Info & Notes */}
+                        {(item.is_split || item.notes) && (
+                          <div className="md:col-span-4 mt-3 ml-[3.25rem] md:ml-14 mr-4 bg-muted/30 p-3 rounded-lg border border-border">
+                            {item.is_split && (
+                              <Badge
+                                variant="outline"
+                                className="bg-primary/10 text-primary border-primary/20 text-[10px] mb-2 inline-flex items-center gap-1"
+                              >
+                                <IconLibrary name="split" className="w-3 h-3" />
+                                Split Contribution
+                              </Badge>
+                            )}
+                            {item.notes && (
+                              <div className="flex items-start gap-2 text-xs text-muted-foreground">
+                                <IconLibrary name="info" className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                                <span className="italic">{item.notes}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
-          </div>
-        </CardContent>
+          </CardContent>
+        </ScrollArea>
       </div>
     </PageLayout>
   );

@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 import { useTicketsQuery } from "../services/queries";
 import { SupportDashboard } from "./SupportDashboard";
@@ -53,9 +54,9 @@ const SupportPageContent: React.FC = () => {
           />
 
           <div className="mt-6 rounded-xl bg-background border border-border p-1 overflow-hidden shadow-sm">
-            <div className="relative max-h-[85vh] overflow-y-auto w-full">
+            <ScrollArea className="relative h-[85vh] w-full" orientation="vertical">
               <FaqsSection />
-            </div>
+            </ScrollArea>
           </div>
         </div>
       )}
