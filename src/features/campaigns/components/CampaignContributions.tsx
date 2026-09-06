@@ -47,7 +47,7 @@ const CampaignContributions = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [timeFilter, setTimeFilter] = useState("This year");
-  const [sort, setSort] = useState("date-asc");
+  const [sort, setSort] = useState("date-desc");
   const [methodFilter, setMethodFilter] = useState("All");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedEditItem, setSelectedEditItem] = useState<TransactionOut | null>(null);
