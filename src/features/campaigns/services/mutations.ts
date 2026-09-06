@@ -176,3 +176,39 @@ export const useExportCampaignExcelMutation = (campaignId: string) => {
     },
   });
 };
+
+import { INBOX_URLS } from "@/features/inbox/urls";
+import type { TransactionEditPayload, TransactionOut } from "@/features/shared/types";
+
+export const useEditApprovedTransaction = (campaignId?: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      transactionId,
+      data,
+    }: {
+      transactionId: string;
+      data: TransactionEditPayload;
+    }) => {
+      const response = await apiClient.patch<TransactionOut>(
+        INBOX_URLS.editApproved(transactionId),
+        data,
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to edit transaction.");
+    },
+    onSuccess: () => {
+      toast.success("Transaction edited successfully!");
+      if (campaignId) {
+        queryClient.invalidateQueries({ queryKey: ["campaign", campaignId] });
+        queryClient.invalidateQueries({ queryKey: ["campaign-transactions", campaignId] });
+        queryClient.invalidateQueries({ queryKey: ["campaign-report-preview", campaignId] });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
+      }
+    },
+  });
+};

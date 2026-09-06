@@ -280,6 +280,15 @@ export interface TransactionOut {
   is_split?: boolean;
   notes?: string | null;
   source_evidence?: string | null;
+  campaign_id?: string;
+}
+
+export interface TransactionEditPayload {
+  amount?: number;
+  sender_name?: string;
+  group_id?: string;
+  campaign_id?: string;
+  notes?: string;
 }
 
 export interface PaginatedTransactionResponse {

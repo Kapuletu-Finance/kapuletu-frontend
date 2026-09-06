@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import EditContributionDialog from "@/features/campaigns/components/EditContributionDialog";
 import {
   useCampaignQuery,
   useCampaignTransactionsQuery,
@@ -22,6 +23,7 @@ import {
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import Pagination from "@/features/shared/components/Pagination";
+import type { TransactionOut } from "@/features/shared/types";
 import { getInitials } from "@/lib/utils";
 
 const avatarColors = [
@@ -46,6 +48,8 @@ const CampaignContributions = () => {
   const [timeFilter, setTimeFilter] = useState("This year");
   const [sort, setSort] = useState("date-desc");
   const [methodFilter, setMethodFilter] = useState("All");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedEditItem, setSelectedEditItem] = useState<TransactionOut | null>(null);
   const limit = 50;
 
   const { data: campaignData } = useCampaignQuery(campaignSlug);
@@ -309,9 +313,6 @@ const CampaignContributions = () => {
                                       onClick={(e) => {
                                         e.stopPropagation();
                                       }}
-                                      onKeyDown={(e) => {
-                                        e.stopPropagation();
-                                      }}
                                     >
                                       <IconLibrary name="info" className="w-3.5 h-3.5" />
                                     </Button>
@@ -330,6 +331,19 @@ const CampaignContributions = () => {
                                 </Tooltip>
                               </TooltipProvider>
                             )}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="w-6 h-6 shrink-0 text-muted-foreground hover:bg-muted rounded-full"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedEditItem(item);
+                                setIsEditDialogOpen(true);
+                              }}
+                              title="Edit Contribution"
+                            >
+                              <IconLibrary name="edit" className="w-3.5 h-3.5" />
+                            </Button>
                             <Badge
                               variant="secondary"
                               className={`px-3 md:px-4 py-1 md:py-1.5 font-medium shadow-sm text-[10px] md:text-xs ${
@@ -384,6 +398,14 @@ const CampaignContributions = () => {
           </CardContent>
         </ScrollArea>
       </div>
+
+      <EditContributionDialog
+        item={selectedEditItem}
+        groupId={campaignData?.group_id || ""}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        campaignIdContext={campaignData?.id}
+      />
     </PageLayout>
   );
 };
