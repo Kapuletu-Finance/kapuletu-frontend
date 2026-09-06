@@ -180,7 +180,7 @@ export const useExportCampaignExcelMutation = (campaignId: string) => {
 import { INBOX_URLS } from "@/features/inbox/urls";
 import type { TransactionEditPayload, TransactionOut } from "@/features/shared/types";
 
-export const useEditApprovedTransaction = (campaignId?: string) => {
+export const useEditApprovedTransaction = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -202,13 +202,13 @@ export const useEditApprovedTransaction = (campaignId?: string) => {
     },
     onSuccess: () => {
       toast.success("Transaction edited successfully!");
-      if (campaignId) {
-        queryClient.invalidateQueries({ queryKey: ["campaign", campaignId] });
-        queryClient.invalidateQueries({ queryKey: ["campaign-transactions", campaignId] });
-        queryClient.invalidateQueries({ queryKey: ["campaign-report-preview", campaignId] });
-      } else {
-        queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
-      }
+      // Aggressively invalidate all related queries because a transaction edit could
+      // change its campaign or group, and we want all lists and totals to sync instantly.
+      // We drop the specific ID because the frontend might fetch by slug or UUID.
+      queryClient.invalidateQueries({ queryKey: ["campaign"] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-report-preview"] });
+      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
     },
   });
 };

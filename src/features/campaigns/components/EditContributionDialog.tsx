@@ -36,7 +36,7 @@ export const EditContributionDialog: React.FC<EditContributionDialogProps> = ({
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
 
-  const editMutation = useEditApprovedTransaction(campaignIdContext);
+  const editMutation = useEditApprovedTransaction();
 
   useEffect(() => {
     if (item) {

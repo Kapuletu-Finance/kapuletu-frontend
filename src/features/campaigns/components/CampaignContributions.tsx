@@ -16,6 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import EditContributionDialog from "@/features/campaigns/components/EditContributionDialog";
+import TransactionDetailsDialog from "@/features/campaigns/components/TransactionDetailsDialog";
 import {
   useCampaignQuery,
   useCampaignTransactionsQuery,
@@ -50,6 +51,8 @@ const CampaignContributions = () => {
   const [methodFilter, setMethodFilter] = useState("All");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedEditItem, setSelectedEditItem] = useState<TransactionOut | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [selectedViewItem, setSelectedViewItem] = useState<TransactionOut | null>(null);
   const limit = 50;
 
   const { data: campaignData } = useCampaignQuery(campaignSlug);
@@ -265,7 +268,20 @@ const CampaignContributions = () => {
                     return (
                       <div
                         key={item.transaction_id || `tx-${index}`}
-                        className="flex flex-col md:grid md:grid-cols-4 md:items-center gap-2 md:gap-0 py-4 md:py-5 px-4 md:px-6 text-sm transition-colors hover:bg-muted/50 border-b border-border md:border-none last:border-none"
+                        className="flex flex-col md:grid md:grid-cols-4 md:items-center gap-2 md:gap-0 py-4 md:py-5 px-4 md:px-6 text-sm transition-colors hover:bg-muted/50 border-b border-border md:border-none last:border-none cursor-pointer group"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => {
+                          setSelectedViewItem(item);
+                          setIsViewDialogOpen(true);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setSelectedViewItem(item);
+                            setIsViewDialogOpen(true);
+                          }
+                        }}
                       >
                         <div className="flex items-center justify-between md:contents">
                           <div className="flex items-center gap-3 md:gap-4">
@@ -302,35 +318,14 @@ const CampaignContributions = () => {
                           </span>
 
                           <div className="text-right md:text-center flex items-center justify-end md:justify-center gap-2">
-                            {item.source_evidence && (
-                              <TooltipProvider delay={300}>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="w-6 h-6 shrink-0 text-muted-foreground hover:bg-muted rounded-full"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                      }}
-                                    >
-                                      <IconLibrary name="info" className="w-3.5 h-3.5" />
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent
-                                    side="top"
-                                    className="max-w-[280px] p-3 text-xs bg-popover text-popover-foreground shadow-md border border-border"
-                                  >
-                                    <div className="font-semibold mb-1 text-foreground/80 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
-                                      <IconLibrary name="info" className="w-3 h-3" /> Evidence
-                                    </div>
-                                    <p className="italic text-muted-foreground break-words leading-relaxed">
-                                      {item.source_evidence}
-                                    </p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="w-6 h-6 shrink-0 text-muted-foreground hover:bg-muted rounded-full opacity-0 group-hover:opacity-100 transition-opacity md:flex hidden"
+                              title="View Details"
+                            >
+                              <IconLibrary name="eye" className="w-3.5 h-3.5" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -353,42 +348,22 @@ const CampaignContributions = () => {
                             >
                               {item.payment_method}
                             </Badge>
+                            {item.is_split && (
+                              <TooltipProvider delay={300}>
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary">
+                                      <IconLibrary name="split" className="w-3.5 h-3.5" />
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="text-xs">
+                                    Split Contribution
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
                           </div>
                         </div>
-
-                        {/* Split Info, Notes & Evidence */}
-                        {(item.is_split || item.notes || item.source_evidence) && (
-                          <div className="md:col-span-4 mt-3 ml-[3.25rem] md:ml-14 mr-4 bg-muted/30 p-3 rounded-lg border border-border">
-                            {item.is_split && (
-                              <Badge
-                                variant="outline"
-                                className="bg-primary/10 text-primary border-primary/20 text-[10px] mb-2 inline-flex items-center gap-1"
-                              >
-                                <IconLibrary name="split" className="w-3 h-3" />
-                                Split Contribution
-                              </Badge>
-                            )}
-                            {item.notes && (
-                              <div className="flex items-start gap-2 text-xs text-muted-foreground mb-2 last:mb-0">
-                                <IconLibrary name="info" className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                                <span className="italic">{item.notes}</span>
-                              </div>
-                            )}
-                            {item.source_evidence && (
-                              <div className="flex items-start gap-2 text-xs text-muted-foreground">
-                                <IconLibrary name="info" className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                                <div>
-                                  <span className="font-semibold block mb-0.5 text-foreground/80 uppercase tracking-wider text-[10px]">
-                                    Original Evidence
-                                  </span>
-                                  <span className="italic break-words leading-relaxed">
-                                    {item.source_evidence}
-                                  </span>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
                       </div>
                     );
                   })
@@ -405,6 +380,12 @@ const CampaignContributions = () => {
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         campaignIdContext={campaignData?.id}
+      />
+
+      <TransactionDetailsDialog
+        item={selectedViewItem}
+        open={isViewDialogOpen}
+        onOpenChange={setIsViewDialogOpen}
       />
     </PageLayout>
   );
