@@ -279,6 +279,7 @@ export interface TransactionOut {
   date: string;
   is_split?: boolean;
   notes?: string | null;
+  source_evidence?: string | null;
 }
 
 export interface PaginatedTransactionResponse {

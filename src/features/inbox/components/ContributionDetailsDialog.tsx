@@ -273,6 +273,21 @@ export const ContributionDetailsDialog: React.FC<ContributionDetailsDialogProps>
 
           <div className="w-full h-px bg-border my-1" />
 
+          {/* Original Message / Evidence Block */}
+          {item.raw_message && (
+            <div className="bg-muted/30 p-3 rounded-lg border border-border">
+              <div className="flex items-center gap-2 mb-1 text-muted-foreground font-semibold text-[10px] uppercase tracking-wider">
+                <IconLibrary name="info" className="w-3.5 h-3.5" />
+                Original Message
+              </div>
+              <p className="text-xs text-foreground/90 italic leading-relaxed break-words">
+                {item.raw_message}
+              </p>
+            </div>
+          )}
+
+          <div className="w-full h-px bg-border my-1" />
+
           {item.workflow_status === "rejected" ? (
             <div className="flex flex-col gap-2 bg-destructive/10 text-destructive p-4 rounded-xl border border-destructive/20">
               <div className="flex items-center gap-2 font-semibold">

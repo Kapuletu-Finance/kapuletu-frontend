@@ -1,15 +1,16 @@
 import Link from "next/link";
+import { parseAsString, useQueryState } from "nuqs";
 import type * as React from "react";
 import { useState } from "react";
-import { parseAsString, useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ContributionDetailsDialog from "@/features/inbox/components/ContributionDetailsDialog";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { PendingInboxOut } from "@/features/shared/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { getAvatarColor } from "@/lib/colors";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface InboxListRowProps {
   item: PendingInboxOut;
@@ -120,8 +121,10 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
       <div
         className={cn(
           "transition-colors cursor-pointer bg-card",
-          !isCardView && "flex flex-col md:flex-row md:items-center gap-4 py-4 px-4 border-b border-border hover:bg-muted/50",
-          isCardView && "flex flex-col gap-4 p-5 rounded-xl border border-border shadow-sm hover:border-primary/40 w-full hover:shadow-md",
+          !isCardView &&
+            "flex flex-col md:flex-row md:items-center gap-4 py-4 px-4 border-b border-border hover:bg-muted/50",
+          isCardView &&
+            "flex flex-col gap-4 p-5 rounded-xl border border-border shadow-sm hover:border-primary/40 w-full hover:shadow-md",
         )}
         onClick={() => setIsDialogOpen(true)}
         onKeyDown={(e) => e.key === "Enter" && setIsDialogOpen(true)}
@@ -165,16 +168,50 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
                   <div className="font-semibold text-lg text-foreground mt-1">{amount}</div>
                 </div>
               </div>
-              <span
-                className={cn(
-                  "px-2 py-1 rounded-full text-xs font-medium shrink-0",
-                  isMpesa
-                    ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
+              <div className="flex items-center gap-2">
+                {item.raw_message && (
+                  <TooltipProvider delay={300}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="w-6 h-6 shrink-0 text-muted-foreground hover:bg-muted rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          onKeyDown={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <IconLibrary name="info" className="w-3.5 h-3.5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        className="max-w-[280px] p-3 text-xs bg-popover text-popover-foreground shadow-md border border-border"
+                      >
+                        <div className="font-semibold mb-1 text-foreground/80 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+                          <IconLibrary name="info" className="w-3 h-3" /> Original Message
+                        </div>
+                        <p className="italic text-muted-foreground break-words leading-relaxed">
+                          {item.raw_message}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
-              >
-                {paymentMethod}
-              </span>
+                <span
+                  className={cn(
+                    "px-2 py-1 rounded-full text-xs font-medium shrink-0",
+                    isMpesa
+                      ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                      : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
+                  )}
+                >
+                  {paymentMethod}
+                </span>
+              </div>
             </div>
 
             <div className="flex flex-col gap-1.5 text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border/50">
@@ -290,11 +327,45 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
                     )}
                   </div>
                 ) : (
-                  <span className="text-muted-foreground">{item.purpose || "No associated group"}</span>
+                  <span className="text-muted-foreground">
+                    {item.purpose || "No associated group"}
+                  </span>
                 )}
               </div>
 
-              <div className="w-20 shrink-0">
+              <div className="w-32 shrink-0 flex items-center gap-2">
+                {item.raw_message && (
+                  <TooltipProvider delay={300}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="w-6 h-6 shrink-0 text-muted-foreground hover:bg-muted rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          onKeyDown={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <IconLibrary name="info" className="w-3.5 h-3.5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        className="max-w-[280px] p-3 text-xs bg-popover text-popover-foreground shadow-md border border-border"
+                      >
+                        <div className="font-semibold mb-1 text-foreground/80 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+                          <IconLibrary name="info" className="w-3 h-3" /> Original Message
+                        </div>
+                        <p className="italic text-muted-foreground break-words leading-relaxed">
+                          {item.raw_message}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
                 <span
                   className={cn(
                     "px-2 py-1 rounded-full text-xs font-medium",
