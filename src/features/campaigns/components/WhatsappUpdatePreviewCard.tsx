@@ -103,108 +103,111 @@ const WhatsappUpdatePreviewCard = () => {
             <Skeleton className="h-4 w-56" />
           </div>
         ) : preview ? (
-          <ScrollArea className="max-h-[500px] w-full max-w-2xl mx-auto rounded-2xl" orientation="vertical">
-          <div className="bg-primary/5 border border-primary/10 p-6 font-mono text-xs md:text-sm text-foreground space-y-4 leading-relaxed">
-            <div>
-              <p className="font-bold underline">*{reportTitle}*</p>
-              {preview.description && (
-                <p className="text-muted-foreground mt-2">{preview.description}</p>
-              )}
-            </div>
-
-            <div>
-              <p className="font-bold">
-                {isGoalMet ? "*Goal Achieved Update! \ud83c\udf1f*" : "*Progress Update:*"}
-              </p>
-              <p>
-                So far, we have raised Ksh {preview.raised.toLocaleString("en-KE")}
-                {isGoalMet
-                  ? `, successfully surpassing our initial goal of Ksh ${preview.target.toLocaleString("en-KE")}! Thank you to everyone who made this possible. The campaign remains open, and any further contributions are still greatly appreciated.`
-                  : ` against our goal of Ksh ${preview.target.toLocaleString("en-KE")}. We have an amount remaining of Ksh ${Math.max(0, preview.target - preview.raised).toLocaleString("en-KE")} to meet our goal. Every contribution counts.`}
-              </p>
-            </div>
-
-            <div>
-              {preview.total_mpesa > 0 && (
-                <p>
-                  <span className="font-bold">*Amount Received (M-Pesa):*</span> Ksh{" "}
-                  {preview.total_mpesa.toLocaleString("en-KE")}
-                </p>
-              )}
-              {preview.total_cash > 0 && (
-                <p>
-                  <span className="font-bold">*Amount Received (Cash):*</span> Ksh{" "}
-                  {preview.total_cash.toLocaleString("en-KE")}
-                </p>
-              )}
-              {preview.total_bank > 0 && (
-                <p>
-                  <span className="font-bold">*Amount Received (Bank):*</span> Ksh{" "}
-                  {preview.total_bank.toLocaleString("en-KE")}
-                </p>
-              )}
-              {preview.total_pledges > 0 && (
-                <p>
-                  <span className="font-bold">*Amount Received (Pledge):*</span> Ksh{" "}
-                  {preview.total_pledges.toLocaleString("en-KE")}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <p>To send your contributions, the payment instructions are as follows:</p>
-              {preview.payment_instructions && (
-                <p className="font-medium bg-background px-1.5 py-0.5 rounded border border-border mt-1 inline-block">
-                  {preview.payment_instructions}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <p className="font-bold">*Contributions Received:*</p>
-              <div className="space-y-1 mt-1">
-                {preview.contributors.map((c, i) => (
-                  <p key={`contrib-${i}-${c.name}`}>
-                    {i + 1}. {c.name} - Ksh {c.amount.toLocaleString("en-KE")} {paidIndicator}
-                  </p>
-                ))}
-                {Array.from({ length: blankSlotsCount }).map((_, i) => (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: this is a static list of blank slots
-                  <p key={`blank-${i}`}>{preview.contributors.length + i + 1}.</p>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p>
-                {isGoalMet
-                  ? "Thank you to everyone who has contributed so far. Your overwhelming support has helped us successfully reach our goal! The campaign is still ongoing, and we encourage you to continue supporting the cause."
-                  : "Thank you to everyone who has contributed so far. Your continued support is greatly appreciated as we work towards our goal."}
-              </p>
-              {reportFooter && <p className="mt-2">{reportFooter}</p>}
-            </div>
-
-            <div>
-              <p>To view a more comprehensive report, click the link below:</p>
-              <p>
-                <a href={publicUrl} className="text-refined-blue underline">
-                  {publicUrl}
-                </a>
-              </p>
-            </div>
-
-            {requirePin && accessPin && (
+          <ScrollArea
+            className="h-[500px] w-full max-w-2xl mx-auto rounded-2xl"
+            orientation="vertical"
+          >
+            <div className="bg-primary/5 border border-primary/10 p-6 font-mono text-xs md:text-sm text-foreground space-y-4 leading-relaxed">
               <div>
-                <p>Access PIN: {accessPin}</p>
+                <p className="font-bold underline">*{reportTitle}*</p>
+                {preview.description && (
+                  <p className="text-muted-foreground mt-2">{preview.description}</p>
+                )}
               </div>
-            )}
 
-            {!removeWatermark && (
-              <div className="pt-2 font-sans font-bold text-xs text-muted-foreground">
-                *Generated via KapuLetu*
+              <div>
+                <p className="font-bold">
+                  {isGoalMet ? "*Goal Achieved Update! \ud83c\udf1f*" : "*Progress Update:*"}
+                </p>
+                <p>
+                  So far, we have raised Ksh {preview.raised.toLocaleString("en-KE")}
+                  {isGoalMet
+                    ? `, successfully surpassing our initial goal of Ksh ${preview.target.toLocaleString("en-KE")}! Thank you to everyone who made this possible. The campaign remains open, and any further contributions are still greatly appreciated.`
+                    : ` against our goal of Ksh ${preview.target.toLocaleString("en-KE")}. We have an amount remaining of Ksh ${Math.max(0, preview.target - preview.raised).toLocaleString("en-KE")} to meet our goal. Every contribution counts.`}
+                </p>
               </div>
-            )}
-          </div>
+
+              <div>
+                {preview.total_mpesa > 0 && (
+                  <p>
+                    <span className="font-bold">*Amount Received (M-Pesa):*</span> Ksh{" "}
+                    {preview.total_mpesa.toLocaleString("en-KE")}
+                  </p>
+                )}
+                {preview.total_cash > 0 && (
+                  <p>
+                    <span className="font-bold">*Amount Received (Cash):*</span> Ksh{" "}
+                    {preview.total_cash.toLocaleString("en-KE")}
+                  </p>
+                )}
+                {preview.total_bank > 0 && (
+                  <p>
+                    <span className="font-bold">*Amount Received (Bank):*</span> Ksh{" "}
+                    {preview.total_bank.toLocaleString("en-KE")}
+                  </p>
+                )}
+                {preview.total_pledges > 0 && (
+                  <p>
+                    <span className="font-bold">*Amount Received (Pledge):*</span> Ksh{" "}
+                    {preview.total_pledges.toLocaleString("en-KE")}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <p>To send your contributions, the payment instructions are as follows:</p>
+                {preview.payment_instructions && (
+                  <p className="font-medium bg-background px-1.5 py-0.5 rounded border border-border mt-1 inline-block">
+                    {preview.payment_instructions}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <p className="font-bold">*Contributions Received:*</p>
+                <div className="space-y-1 mt-1">
+                  {preview.contributors.map((c, i) => (
+                    <p key={`contrib-${i}-${c.name}`}>
+                      {i + 1}. {c.name} - Ksh {c.amount.toLocaleString("en-KE")} {paidIndicator}
+                    </p>
+                  ))}
+                  {Array.from({ length: blankSlotsCount }).map((_, i) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: this is a static list of blank slots
+                    <p key={`blank-${i}`}>{preview.contributors.length + i + 1}.</p>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p>
+                  {isGoalMet
+                    ? "Thank you to everyone who has contributed so far. Your overwhelming support has helped us successfully reach our goal! The campaign is still ongoing, and we encourage you to continue supporting the cause."
+                    : "Thank you to everyone who has contributed so far. Your continued support is greatly appreciated as we work towards our goal."}
+                </p>
+                {reportFooter && <p className="mt-2">{reportFooter}</p>}
+              </div>
+
+              <div>
+                <p>To view a more comprehensive report, click the link below:</p>
+                <p>
+                  <a href={publicUrl} className="text-refined-blue underline">
+                    {publicUrl}
+                  </a>
+                </p>
+              </div>
+
+              {requirePin && accessPin && (
+                <div>
+                  <p>Access PIN: {accessPin}</p>
+                </div>
+              )}
+
+              {!removeWatermark && (
+                <div className="pt-2 font-sans font-bold text-xs text-muted-foreground">
+                  *Generated via KapuLetu*
+                </div>
+              )}
+            </div>
           </ScrollArea>
         ) : (
           <div className="py-8 text-center text-sm text-muted-foreground">
