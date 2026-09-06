@@ -218,37 +218,56 @@ const CampaignTemplateCard = () => {
             </div>
 
             <div className="flex flex-col gap-4 pt-1">
-              <div className="flex items-center gap-2">
-                {pinDigits.map((digit, index) => (
-                  <div
-                    key={`pin-${index}-${digit}`}
-                    className="w-12 h-12 rounded-xl border border-border bg-background flex items-center justify-center font-bold text-foreground shadow-xs text-lg"
-                  >
-                    {digit}
+              {requirePin ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    {pinDigits.map((digit, index) => (
+                      <div
+                        key={`pin-${index}-${digit}`}
+                        className="w-12 h-12 rounded-xl border border-border bg-background flex items-center justify-center font-bold text-foreground shadow-xs text-lg"
+                      >
+                        {digit}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9 rounded-full px-4"
-                  onClick={handleRegeneratePin}
-                  isLoading={regeneratePin.isPending}
-                >
-                  <IconLibrary name="refresh" className="w-3.5 h-3.5" /> Regenerate PIN
-                </Button>
-                {requirePin && (
-                  <DisableCampaignAccessPinDialog campaignSlug={campaignSlug}>
+                  <div className="flex items-center gap-2">
                     <Button
                       size="sm"
-                      variant="outline"
-                      className="gap-1.5 text-xs font-semibold h-9 rounded-full px-4 border-destructive/30 text-destructive hover:bg-destructive/10"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9 rounded-full px-4"
+                      onClick={handleRegeneratePin}
+                      isLoading={regeneratePin.isPending}
                     >
-                      <IconLibrary name="lock" className="w-3.5 h-3.5" /> Disable PIN
+                      <IconLibrary name="refresh" className="w-3.5 h-3.5" /> Regenerate PIN
                     </Button>
-                  </DisableCampaignAccessPinDialog>
-                )}
-              </div>
+                    <DisableCampaignAccessPinDialog campaignSlug={campaignSlug}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1.5 text-xs font-semibold h-9 rounded-full px-4 border-destructive/30 text-destructive hover:bg-destructive/10"
+                      >
+                        <IconLibrary name="lock" className="w-3.5 h-3.5" /> Disable PIN
+                      </Button>
+                    </DisableCampaignAccessPinDialog>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl border border-dashed border-destructive/30 bg-destructive/5">
+                  <div>
+                    <p className="text-sm font-semibold text-destructive">PIN is disabled</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Your campaign link is public.
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs font-semibold h-9 rounded-full px-4"
+                    onClick={() => handleUpdateSetting({ require_pin: true })}
+                    isLoading={updateCampaign.isPending}
+                  >
+                    <IconLibrary name="lock" className="w-3.5 h-3.5" /> Enable PIN
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
