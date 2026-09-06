@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
 import { useRef, useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sidebar,
   SidebarContent,
@@ -20,7 +21,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNewFeedbackCountQuery } from "@/features/admin/services/queries";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
@@ -68,8 +68,8 @@ const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/treasurer/groups", icon: "group", label: "Groups" },
   { href: "/treasurer/inbox", icon: "mail", label: "Inbox" },
   { href: "/notifications", icon: "notification", label: "Notifications" },
-  { href: "/treasurer/reports", icon: "report", label: "Reports" },
-  { href: "/treasurer/analytics", icon: "analytics", label: "Analytics" },
+  // { href: "/treasurer/reports", icon: "report", label: "Reports" },
+  // { href: "/treasurer/analytics", icon: "analytics", label: "Analytics" },
   { href: "/support", icon: "ticket", label: "Help Center" },
   { href: "/treasurer/settings", icon: "settings", label: "Settings" },
 ];
