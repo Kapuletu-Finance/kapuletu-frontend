@@ -7,8 +7,8 @@ export const proxy = (request: NextRequest) => {
 
   const isTreasurerRoute = pathname.startsWith("/treasurer");
   const isAdminRoute = pathname.startsWith("/admin");
-  const isAuthRoute = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password"].includes(
-    pathname,
+  const isAuthRoute = ["/sign-in", "/sign-up", "/forgot-password"].some((route) =>
+    pathname.startsWith(route),
   );
   // Routes that require authentication but are not role-scoped dashboard routes
   const isAuthenticatedOnlyRoute = ["/verify-email", "/verify-phone"].includes(pathname);
@@ -29,14 +29,24 @@ export const proxy = (request: NextRequest) => {
 
   const accessToken = request.cookies.get(accessTokenCookieName)?.value;
   const userRole = request.cookies.get(roleCookieName)?.value;
+  const phoneVerified = request.cookies.get("phone_verified")?.value;
 
   // Signed-in user logic
   if (accessToken && userRole) {
+    // If phone is not verified, restrict access to only the verify-phone page
+    if (phoneVerified === "false") {
+      if (!isAuthenticatedOnlyRoute && !isAuthRoute) {
+        return NextResponse.redirect(new URL("/verify-phone", request.url));
+      }
+      return NextResponse.next();
+    }
+
     // Redirect away from root and auth pages to their dashboard
     if (isRootRoute || isAuthRoute) {
       if (userRole === "treasurer")
         return NextResponse.redirect(new URL("/treasurer", request.url));
-      if (userRole === "admin") return NextResponse.redirect(new URL("/admin", request.url));
+      if (userRole === "admin" || userRole === "super_admin")
+        return NextResponse.redirect(new URL("/admin", request.url));
       return NextResponse.next();
     }
 
@@ -45,7 +55,7 @@ export const proxy = (request: NextRequest) => {
       return NextResponse.redirect(new URL("/treasurer", request.url));
     }
 
-    if (userRole === "admin" && isTreasurerRoute) {
+    if ((userRole === "admin" || userRole === "super_admin") && isTreasurerRoute) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
 
@@ -73,8 +83,7 @@ export const config = {
     "/",
     "/sign-in",
     "/sign-up",
-    "/forgot-password",
-    "/reset-password",
+    "/forgot-password/:path*",
     "/verify-email",
     "/verify-phone",
   ],

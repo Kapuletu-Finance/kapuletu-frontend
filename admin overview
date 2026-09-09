@@ -1,0 +1,255 @@
+# Phase 1 — Platform Overview (`/admin/overview`)
+
+## Audit
+
+### What the backend currently returns (`GET /admin/overview`)
+```json
+{
+  "total_treasurers": 124,
+  "total_revenue_kes": 580000.0,
+  "active_subscriptions": 98,
+  "pending_tickets": 7,
+  "ai_accuracy_rate": 0.94
+}
+```
+This is a single endpoint — 5 flat scalars. No time-series, no recent activities, no breakdowns.
+
+### What's available in the DB (verified from models)
+| Model | Table | Useful fields |
+|---|---|---|
+| `User` | `users` | `created_at`, `role`, `is_active` |
+| `SubscriptionPayment` | `subscription_payments` | `amount`, `status`, `payment_method`, `created_at`, `user_id` |
+| `Subscription` | `subscriptions` | `status`, `start_date`, `end_date`, `plan_id`, `user_id` |
+| `Plan` | `plans` | `name`, `price` |
+| `Group` | `groups` | `group_name`, `created_at`, `owner_id`, `status` |
+| `AuditLog` | `audit_logs` | `action`, `entity_type`, `actor_id`, `created_at` |
+| `AppFeedback` | `app_feedback` | `feedback_type`, `status`, `created_at` |
+| `SupportTicket` | `support_tickets` | `status`, `priority`, `created_at` |
+
+---
+
+## Backend Enhancement
+
+### [MODIFY] `services/admin/analytics_service.py`
+
+Replace the single `get_platform_overview()` with an enriched response:
+
+```python
+def get_platform_overview(self) -> dict:
+    return {
+        "kpis": self._kpis(),
+        "revenue_trend": self._revenue_trend_30d(),
+        "recent_signups": self._recent_signups(limit=8),
+        "recent_payments": self._recent_payments(limit=8),
+        "recent_groups": self._recent_groups(limit=6),
+        "subscription_breakdown": self._subscription_breakdown(),
+        "feedback_summary": self._feedback_summary(),
+    }
+```
+
+**`_kpis()` — 6 KPI cards:**
+| Key | Source | Description |
+|---|---|---|
+| `total_treasurers` | `COUNT(users WHERE role='treasurer')` | All-time signups |
+| `active_treasurers` | `COUNT(users WHERE is_active=True AND role='treasurer')` | Currently active |
+| `total_revenue_kes` | `SUM(subscription_payments.amount WHERE status='success')` | All-time revenue |
+| `active_subscriptions` | `COUNT(subscriptions WHERE status='active')` | Active subscribers |
+| `pending_tickets` | `COUNT(support_tickets WHERE status='open')` | Open support queue |
+| `ai_accuracy_rate` | Heuristic (existing logic) | Parser accuracy |
+
+**`_revenue_trend_30d()` — daily revenue for past 30 days:**
+```python
+# Groups subscription_payments by date, returns array of {date, amount}
+# Used to render a sparkline / bar chart
+```
+Returns: `[{"date": "2026-08-01", "amount": 12000}, ...]` — 30 items
+
+**`_recent_signups(limit=8)` — latest treasurer registrations:**
+Returns: `[{"user_id", "name", "email", "is_active", "created_at"}]`
+
+**`_recent_payments(limit=8)` — latest subscription payments:**
+Joins `SubscriptionPayment` + `User` + `Plan`.
+Returns: `[{"payment_id", "user_name", "plan_name", "amount", "currency", "method", "status", "created_at"}]`
+
+**`_recent_groups(limit=6)` — latest groups created:**
+Joins `Group` + `User`.
+Returns: `[{"group_id", "group_name", "owner_name", "status", "created_at"}]`
+
+**`_subscription_breakdown()` — plan distribution:**
+Groups active subscriptions by `plan.name`.
+Returns: `[{"plan": "Professional", "count": 45}, ...]`
+
+**`_feedback_summary()` — feedback counts by status:**
+Groups `app_feedback` by `status`.
+Returns: `{"new": 12, "reviewing": 3, "planned": 5, "shipped": 2, "declined": 1}`
+
+---
+
+## Frontend Layout
+
+### Overall page structure
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ KPI Row (6 cards — 3 per row on desktop)                        │
+├─────────────────────────────┬───────────────────────────────────┤
+│ Revenue Trend (30d)         │ Subscription Breakdown            │
+│ Bar sparkline               │ Plan distribution list            │
+│                             │ + Feedback Summary badges         │
+├─────────────────────────────┴───────────────────────────────────┤
+│ Recent Signups       │ Recent Payments    │ Recent Groups        │
+│ (8 items, table)     │ (8 items, table)   │ (6 items, table)     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+All cards use `Card` from shadcn/ui. No hardcoded colors. All text tokens from design system.
+
+---
+
+## KPI Cards — Detail
+
+6 cards in a responsive grid (`grid-cols-2 md:grid-cols-3`):
+
+| Card | Icon | Value | Sub-label |
+|---|---|---|---|
+| Total Treasurers | `group` | `total_treasurers` | `active_treasurers` active |
+| Total Revenue | `credit-card` | `KES {total_revenue_kes}` | All-time |
+| Active Subscriptions | `badge-check` | `active_subscriptions` | of `total_treasurers` |
+| Open Tickets | `ticket` | `pending_tickets` | In support queue |
+| AI Accuracy | `brain` | `{ai_accuracy_rate * 100}%` | Parser confidence |
+| Feedback | `feedback` | total feedback items | `{new}` new |
+
+Each card has:
+- Icon (top-left, in a `bg-primary/10` rounded box)
+- Value (large, `text-2xl font-bold`)
+- Label (small, `text-muted-foreground`)
+- Sub-label or badge (secondary info)
+
+---
+
+## Revenue Trend (30d)
+
+A thin bar chart or sparkline using **Recharts** (already available in the project via shadcn/ui charts if present, or a lightweight import).
+
+If Recharts is not in the project, render a **pure CSS bar chart** using Tailwind dynamic heights — no external dependency added.
+
+Bar chart:
+- X-axis: abbreviated date (e.g. "Aug 1")
+- Y-axis: KES amount
+- Hover tooltip: `KES {amount}` on `{date}`
+- Bar color: `hsl(var(--primary))`
+- Zero-amount bars: `bg-muted`
+
+> [!IMPORTANT]
+> Before implementing, I will check `package.json` to confirm whether Recharts or any charting library is already installed. If not, I will use a pure CSS solution — no new dependencies without confirmation.
+
+---
+
+## Recent Signups (table)
+
+Columns: **Name** · **Email** · **Status badge** (`active` / `inactive`) · **Joined**
+
+8 rows. No pagination — "View all" links to `/admin/users`.
+
+---
+
+## Recent Payments (table)
+
+Columns: **User** · **Plan** · **Amount** · **Method badge** (`mpesa` / `card` / `override`) · **Status badge** · **Date**
+
+8 rows. "View all" links to `/admin/finance`.
+
+---
+
+## Recent Groups (table)
+
+Columns: **Group Name** · **Owner** · **Status badge** · **Created**
+
+6 rows. "View all" links to `/admin/users`.
+
+---
+
+## Subscription Breakdown
+
+A simple list with plan name + count + a visual proportion bar:
+```
+Professional  ████████████░░░░  45 (46%)
+Basic         ██████░░░░░░░░░░  31 (32%)
+Enterprise    ████░░░░░░░░░░░░  22 (22%)
+```
+Uses `bg-primary` for filled, `bg-muted` for unfilled. No external chart library.
+
+---
+
+## Feedback Summary
+
+Small compact section inside the right card:
+```
+12 New   3 Reviewing   5 Planned   2 Shipped   1 Declined
+```
+Each count is a `Badge` with lifecycle color. Links to `/admin/feedback`.
+
+---
+
+## Files
+
+### Backend — Modified
+
+| File | Change |
+|---|---|
+| [`services/admin/analytics_service.py`](file:///c:/Users/josep/kapuletu-backend/services/admin/analytics_service.py) | Add 6 new private methods, replace return dict |
+
+### Frontend — New
+
+| File | Purpose |
+|---|---|
+| `src/features/admin/components/overview/AdminOverviewPage.tsx` | Page shell — assembles all sections |
+| `src/features/admin/components/overview/KpiCards.tsx` | 6-card KPI grid |
+| `src/features/admin/components/overview/RevenueTrend.tsx` | 30-day revenue bar chart |
+| `src/features/admin/components/overview/SubscriptionBreakdown.tsx` | Plan distribution + feedback summary |
+| `src/features/admin/components/overview/RecentSignups.tsx` | Latest 8 treasurer signups |
+| `src/features/admin/components/overview/RecentPayments.tsx` | Latest 8 subscription payments |
+| `src/features/admin/components/overview/RecentGroups.tsx` | Latest 6 groups |
+
+### Frontend — Modified
+
+| File | Change |
+|---|---|
+| [`src/features/admin/services/queries.ts`](file:///c:/Users/josep/kapuletu-frontend/src/features/admin/services/queries.ts) | Add `useAdminOverviewQuery()` |
+| [`src/app/(protected)/admin/overview/page.tsx`](file:///c:/Users/josep/kapuletu-frontend/src/app/%28protected%29/admin/overview/page.tsx) | Replace `<ComingSoon />` with `<AdminOverviewPage />` |
+
+---
+
+## Build Order
+
+| Step | Work |
+|---|---|
+| 1 | Enhance `AnalyticsService` — add all 6 private methods |
+| 2 | Verify `GET /admin/overview` response shape manually |
+| 3 | Add `useAdminOverviewQuery()` to `queries.ts` + full typed response interface |
+| 4 | Build `KpiCards.tsx` |
+| 5 | Check `package.json` → build `RevenueTrend.tsx` (CSS or Recharts) |
+| 6 | Build `SubscriptionBreakdown.tsx` + `FeedbackSummary` section |
+| 7 | Build `RecentSignups.tsx` |
+| 8 | Build `RecentPayments.tsx` |
+| 9 | Build `RecentGroups.tsx` |
+| 10 | Assemble `AdminOverviewPage.tsx` |
+| 11 | Wire `admin/overview/page.tsx` |
+| 12 | `npm run lint` — fix all errors |
+
+---
+
+## Verification
+
+- `GET /admin/overview` returns all 7 top-level keys
+- KPI cards display correct values with no hardcoded colors
+- Revenue trend renders 30 daily bars; zero-revenue days show muted bar
+- All 3 "Recent" tables show live data; empty state renders correctly
+- Subscription breakdown proportions sum to 100%
+- "View all" links navigate to correct sibling pages
+- Page renders correctly on mobile (stacks to single column)
+- Breadcrumb reads "Overview"
+- Active sidebar item highlights "Overview"
+
+> [!NOTE]
+> No changes to `ADMIN_LINKS` or sidebar needed — "Overview" link was already added in Phase 0.

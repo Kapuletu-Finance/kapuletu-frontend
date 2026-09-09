@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { BlogCard } from "@/features/blog/components/BlogCard";
-import { blogPosts } from "@/features/blog/data/posts";
-import { LandingFooter } from "@/features/landing/components/LandingFooter";
-import { LandingHeader } from "@/features/landing/components/LandingHeader";
+import { BlogCard } from "@/features/landing-page/components/BlogCard";
+import { LandingFooter } from "@/features/landing-page/components/LandingFooter";
+import { LandingHeader } from "@/features/landing-page/components/LandingHeader";
+import { blogPosts } from "@/features/landing-page/data/posts";
 
 export const metadata: Metadata = {
   description:

@@ -2,9 +2,11 @@
 
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type * as React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { UpgradeModalProvider } from "@/features/shared/providers/UpgradeModalProvider";
 import { queryClient } from "@/lib/query-client";
 
 interface ProvidersProps {
@@ -13,18 +15,20 @@ interface ProvidersProps {
 
 export const Providers: React.FC<ProvidersProps> = ({ children }) => {
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
+    <NuqsAdapter>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          {children}
-          <Toaster richColors />
+          <NextThemesProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <UpgradeModalProvider>{children}</UpgradeModalProvider>
+          </NextThemesProvider>
+          <Toaster richColors position="bottom-right" />
         </TooltipProvider>
       </QueryClientProvider>
-    </NextThemesProvider>
+    </NuqsAdapter>
   );
 };

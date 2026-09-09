@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Info } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { PasswordInput } from "@/components/ui/password-input";
+import { PasswordRequirements } from "@/features/auth/components/PasswordRequirements";
 import { type SignUpFormData, signUpSchema } from "@/features/auth/schemas";
 import { useSignUpMutation } from "@/features/auth/services/mutations";
 
@@ -20,12 +20,12 @@ export const SignUpForm = () => {
     defaultValues: {
       confirmPassword: "",
       consent: false,
+      marketingConsent: false,
       email: "",
       firstName: "",
       lastName: "",
       password: "",
       phoneNumber: "",
-      showPassword: false,
     },
     resolver: zodResolver(signUpSchema),
   });
@@ -37,16 +37,10 @@ export const SignUpForm = () => {
   return (
     <div className="w-full pb-4">
       <div className="flex flex-col items-center mb-8 text-center">
-        <h1 className="text-xl font-bold mb-2">
-          Welcome to <span className="text-primary">Kapu</span>
-          <span className="text-refined-blue">Letu</span>
-        </h1>
+        <h1 className="text-xl font-bold mb-2">Create an account</h1>
         <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link
-            href="/sign-in"
-            className="text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground"
-          >
+          <Link href="/sign-in" className="text-sm font-medium text-refined-blue hover:underline">
             Sign in
           </Link>
         </p>
@@ -61,14 +55,18 @@ export const SignUpForm = () => {
                 name="firstName"
                 render={({ field }) => (
                   <Field data-invalid={!!form.formState.errors.firstName}>
-                    <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-xs font-bold text-foreground"
+                      isRequired
+                    >
                       First Name
                     </FieldLabel>
                     <Input
                       id={field.name}
                       placeholder="John"
                       {...field}
-                      className="bg-muted/50 rounded-xl"
+                      className="bg-muted/50"
                       aria-invalid={!!form.formState.errors.firstName}
                     />
                     {form.formState.errors.firstName && (
@@ -83,14 +81,18 @@ export const SignUpForm = () => {
                 name="lastName"
                 render={({ field }) => (
                   <Field data-invalid={!!form.formState.errors.lastName}>
-                    <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-xs font-bold text-foreground"
+                      isRequired
+                    >
                       Last Name
                     </FieldLabel>
                     <Input
                       id={field.name}
                       placeholder="Doe"
                       {...field}
-                      className="bg-muted/50 rounded-xl"
+                      className="bg-muted/50"
                       aria-invalid={!!form.formState.errors.lastName}
                     />
                     {form.formState.errors.lastName && (
@@ -106,14 +108,18 @@ export const SignUpForm = () => {
               name="email"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.email}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-foreground"
+                    isRequired
+                  >
                     Email Address
                   </FieldLabel>
                   <Input
                     id={field.name}
                     type="email"
                     placeholder="m@example.com"
-                    className="bg-muted/50 rounded-xl"
+                    className="bg-muted/50"
                     {...field}
                     aria-invalid={!!form.formState.errors.email}
                   />
@@ -129,14 +135,18 @@ export const SignUpForm = () => {
               name="phoneNumber"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.phoneNumber}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-foreground"
+                    isRequired
+                  >
                     Phone Number
                   </FieldLabel>
                   <Input
                     id={field.name}
                     type="tel"
                     placeholder="+254..."
-                    className="bg-muted/50 rounded-xl"
+                    className="bg-muted/50"
                     {...field}
                     aria-invalid={!!form.formState.errors.phoneNumber}
                   />
@@ -152,37 +162,23 @@ export const SignUpForm = () => {
               name="password"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.password}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-foreground"
+                    isRequired
+                  >
                     Password
                   </FieldLabel>
                   <div className="relative">
-                    <Input
+                    <PasswordInput
                       id={field.name}
-                      type="password"
                       placeholder="Enter password"
-                      className="bg-muted/50 pr-10 rounded-xl"
+                      className="bg-muted/50"
                       {...field}
                       aria-invalid={!!form.formState.errors.password}
                     />
-                    <div className="absolute right-0 top-0 h-full flex items-center justify-center">
-                      <Tooltip>
-                        <TooltipTrigger
-                          type="button"
-                          className="px-3 py-2 text-muted-foreground hover:text-foreground focus:outline-none flex items-center justify-center"
-                        >
-                          <Info className="h-4 w-4" />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="bg-refined-blue text-white [&_.fill-foreground]:bg-refined-blue [&_.fill-foreground]:fill-refined-blue"
-                          side="top"
-                          align="center"
-                          sideOffset={8}
-                        >
-                          <p>Password must be at least 8 characters</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
                   </div>
+                  <PasswordRequirements password={form.watch("password")} />
                   {form.formState.errors.password && (
                     <FieldError>{form.formState.errors.password.message}</FieldError>
                   )}
@@ -195,14 +191,17 @@ export const SignUpForm = () => {
               name="confirmPassword"
               render={({ field }) => (
                 <Field data-invalid={!!form.formState.errors.confirmPassword}>
-                  <FieldLabel htmlFor={field.name} className="text-xs font-bold text-foreground">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-foreground"
+                    isRequired
+                  >
                     Confirm Password
                   </FieldLabel>
-                  <Input
+                  <PasswordInput
                     id={field.name}
-                    type="password"
                     placeholder="Enter password"
-                    className="bg-muted/50 rounded-xl"
+                    className="bg-muted/50"
                     {...field}
                     aria-invalid={!!form.formState.errors.confirmPassword}
                   />
@@ -212,16 +211,6 @@ export const SignUpForm = () => {
                 </Field>
               )}
             />
-            <div className="pt-2">
-              <Button
-                type="submit"
-                className="w-full rounded-xl font-medium py-6"
-                isLoading={signUpMutation.isPending}
-              >
-                Create Account
-              </Button>
-            </div>
-
             <FormField
               control={form.control}
               name="consent"
@@ -236,7 +225,7 @@ export const SignUpForm = () => {
                     checked={field.value}
                     onCheckedChange={field.onChange}
                     aria-invalid={!!form.formState.errors.consent}
-                    className="mt-0.5 size-5 border-2 rounded-sm"
+                    className="mt-0.5 size-5 border-2"
                   />
                   <div className="space-y-1 leading-none flex-1">
                     <FieldLabel
@@ -260,12 +249,50 @@ export const SignUpForm = () => {
                       .
                     </FieldLabel>
                     {form.formState.errors.consent && (
-                      <FieldError>{form.formState.errors.consent.message}</FieldError>
+                      <FieldError className="mt-1">
+                        {form.formState.errors.consent.message}
+                      </FieldError>
                     )}
                   </div>
                 </Field>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="marketingConsent"
+              render={({ field }) => (
+                <Field
+                  orientation="horizontal"
+                  className="flex flex-row items-start space-x-3 space-y-0 pt-2"
+                >
+                  <Checkbox
+                    id={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    className="mt-0.5 size-5 border-2"
+                  />
+                  <div className="space-y-1 leading-none flex-1">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="block text-sm text-muted-foreground font-normal leading-relaxed"
+                    >
+                      I would like to receive updates, marketing, and promotional offers.
+                    </FieldLabel>
+                  </div>
+                </Field>
+              )}
+            />
+
+            <div className="pt-2">
+              <Button
+                type="submit"
+                className="w-full font-medium py-6"
+                isLoading={signUpMutation.isPending}
+              >
+                Create Account
+              </Button>
+            </div>
           </fieldset>
         </form>
       </Form>

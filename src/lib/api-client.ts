@@ -1,9 +1,12 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { deleteCookie } from "cookies-next";
 import { env } from "@/env";
+import { getQueryClient } from "@/lib/query-client";
 import type { ApiErrorResponse } from "@/types/api";
 
 const CSRF_HEADER_NAME = env.NEXT_PUBLIC_CSRF_HEADER_NAME;
+
+let isRedirecting = false;
 
 /**
  * Instantiate a global Axios client instance targeting our BFF endpoint.
@@ -40,37 +43,65 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    // If we receive a 401 Unauthorized or 403 Forbidden after the proxy's
-    // resilience loop has already tried (and failed) to refresh, we must log out.
+    // Check if this is a billing/premium limit error (402 or specific 403s)
+    const errData = error.response?.data as Record<string, unknown> | undefined;
+    const errDetail = typeof errData?.detail === "string" ? errData.detail : "";
+    const errCode = typeof errData?.code === "string" ? errData.code : "";
+
+    if (
+      error.response?.status === 402 ||
+      (error.response?.status === 403 &&
+        (errDetail.includes("limit reached") ||
+          errDetail.includes("Upgrade required") ||
+          errCode === "UPGRADE_REQUIRED"))
+    ) {
+      if (typeof window !== "undefined") {
+        let message = "You've discovered a premium feature!";
+        if (error.response.data && typeof error.response.data === "object") {
+          const data = error.response.data as ApiErrorResponse;
+          if (typeof data.detail === "string") message = data.detail;
+        }
+        window.dispatchEvent(new CustomEvent("upgrade_required", { detail: { message } }));
+      }
+      return Promise.reject(error);
+    }
+
+    // If we receive a 401 Unauthorized, or a true 403 Forbidden (not billing related),
+    // after the proxy's resilience loop has already tried (and failed) to refresh, we must log out.
     if (error.response?.status === 401 || error.response?.status === 403) {
       if (typeof window !== "undefined") {
         // We ensure we only redirect if we aren't already on the sign in page
-        if (!window.location.pathname.startsWith("/sign-in")) {
+        if (!window.location.pathname.startsWith("/sign-in") && !isRedirecting) {
+          isRedirecting = true;
           console.warn("Session explicitly terminated or CSRF blocked. Redirecting to sign in.");
 
-          // Note: In a full app, you might also clear TanStack Query cache here
-          // e.g., queryClient.clear();
+          // Clear TanStack Query cache
+          getQueryClient().clear();
 
           // Clear any non-HTTP-only client cookies explicitly if needed
           deleteCookie("user_role", { path: "/" });
 
-          // Force route to sign in, appending the attempted URL
-          window.location.href = `/sign-in?from=${encodeURIComponent(window.location.pathname)}`;
+          // Force redirect to sign in with reason
+          window.location.href = "/sign-in?reason=session_expired";
         }
       }
     }
 
     // Try to extract a human-readable message from the response payload
-    if (error.response?.data && typeof error.response.data === "object") {
+    if (error.response?.status === 500) {
+      error.message = "Oops! Something went wrong on our end. Please try again later.";
+    } else if (error.response?.data && typeof error.response.data === "object") {
       const data = error.response.data as ApiErrorResponse;
       if (typeof data.detail === "string") {
         error.message = data.detail;
       } else if (Array.isArray(data.detail)) {
-        // Handle Pydantic validation errors
-        error.message = data.detail.map((err) => err.msg).join(", ");
+        // Sanitize Pydantic validation errors
+        error.message = "Please check the highlighted fields and try again.";
       } else if (typeof data.message === "string") {
         error.message = data.message;
       }
+    } else if (!error.response) {
+      error.message = "Please check your internet connection and try again.";
     }
 
     return Promise.reject(error);

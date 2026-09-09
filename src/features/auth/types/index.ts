@@ -15,6 +15,8 @@ export type User = {
   email_verified: boolean;
   phone_number_verified: boolean;
   role: UserRole;
+  two_factor_enabled: boolean;
+  two_factor_channel: string | null;
 };
 
 /**
@@ -38,6 +40,9 @@ export type RegisterOut = {
  */
 export type SignInResponse = {
   role: string;
+  phone_number_verified?: boolean;
+  requires_2fa?: boolean;
+  two_fa_token?: string;
 };
 
 export type SignInRequest = {
@@ -52,6 +57,7 @@ export type SignUpRequest = {
   email: string;
   phone_number: string;
   password: string;
+  marketing_consent?: boolean;
 };
 
 export type ForgotPasswordRequest = {
@@ -93,4 +99,32 @@ export type VerifyPhoneRequest = {
 export type ResendCodeRequest = {
   /** Email address or phone number — backend IdentifierBase */
   identifier: string;
+};
+
+export interface SubscriptionResponse {
+  active_plan: string;
+  is_on_trial: boolean;
+  has_used_trial: boolean;
+  days_remaining: number;
+  expiry_date: string | null;
+  usage: {
+    groups: string;
+    campaigns: string;
+  };
+  allowed_features?: Record<string, boolean>;
+}
+
+export type BillingHistoryOut = {
+  payment_id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  payment_method: string | null;
+  provider_reference: string | null;
+  created_at: string;
+};
+
+export type BillingSettings = {
+  auto_renew_subscription: boolean;
+  billing_email: string | null;
 };

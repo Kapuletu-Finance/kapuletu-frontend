@@ -14,11 +14,11 @@ import {
 } from "@/features/auth/utils";
 import { campaignsSecurityRules } from "@/features/campaigns/security";
 import { groupsSecurityRules } from "@/features/groups/security";
-import { transactionsSecurityRules } from "@/features/transactions/security";
+import { inboxSecurityRules } from "@/features/inbox/security";
 
 const securityRegistry = [
   ...authSecurityRules,
-  ...transactionsSecurityRules,
+  ...inboxSecurityRules,
   ...campaignsSecurityRules,
   ...groupsSecurityRules,
 ];
@@ -30,7 +30,13 @@ const BACKEND_URL = env.NEXT_PUBLIC_BACKEND_URL;
  */
 const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promise<NextResponse> => {
   const url = new URL(request.url);
-  const backendPath = url.pathname.replace(/^\/api/, "");
+  let backendPath = url.pathname.replace(/^\/api/, "");
+
+  // Forward /inbox API requests to the backend as /transactions
+  if (backendPath.startsWith("/inbox")) {
+    backendPath = backendPath.replace(/^\/inbox/, "/transactions");
+  }
+
   const targetUrl = `${BACKEND_URL}${backendPath}${url.search}`;
 
   if (!validateCsrfShield(request)) {
@@ -130,9 +136,9 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
       }
     }
 
-    // Handle Auth Sign in Interception
+    // Handle Auth Sign in / 2FA Interception
     if (
-      backendPath === AUTH_URLS.SIGN_IN &&
+      (backendPath === AUTH_URLS.SIGN_IN || backendPath === AUTH_URLS.VERIFY_2FA) &&
       axiosResponse.status >= 200 &&
       axiosResponse.status < 300
     ) {
@@ -148,21 +154,31 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
 
       // Fetch /auth/me with the new token to get the user's role
       let role = "treasurer"; // safe default
+      let phone_number_verified = false; // safe default
       try {
         const meResponse = await axios.get(`${BACKEND_URL}/auth/me`, {
           headers: { Authorization: `Bearer ${access_token}` },
           validateStatus: () => true,
         });
-        if (meResponse.status >= 200 && meResponse.status < 300 && meResponse.data?.role) {
-          role = meResponse.data.role;
+        if (meResponse.status >= 200 && meResponse.status < 300) {
+          if (meResponse.data?.role) {
+            role = meResponse.data.role;
+          }
+          if (typeof meResponse.data?.phone_number_verified === "boolean") {
+            phone_number_verified = meResponse.data.phone_number_verified;
+          }
         }
       } catch {
         // If /auth/me fails, fall back to default role
       }
 
       cookieStore.set(ROLE_COOKIE_NAME, role, PUBLIC_COOKIE_OPTIONS);
+      cookieStore.set("phone_verified", String(phone_number_verified), PUBLIC_COOKIE_OPTIONS);
 
-      return NextResponse.json({ ...rest, role }, { status: axiosResponse.status });
+      return NextResponse.json(
+        { ...rest, role, phone_number_verified },
+        { status: axiosResponse.status },
+      );
     }
 
     // Handle Auth Logout Interception
@@ -170,6 +186,7 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
       cookieStore.delete(ACCESS_TOKEN_COOKIE_NAME);
       cookieStore.delete(REFRESH_TOKEN_COOKIE_NAME);
       cookieStore.delete(ROLE_COOKIE_NAME);
+      cookieStore.delete("phone_verified");
       return NextResponse.json(
         { message: "Logged out successfully" },
         { status: axiosResponse.status },

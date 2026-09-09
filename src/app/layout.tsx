@@ -1,5 +1,6 @@
 import "@/app/globals.css";
 import { Figtree, Geist_Mono } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import { Providers } from "@/features/shared/components/Providers";
 import { PublicThemeToggle } from "@/features/shared/components/PublicThemeToggle";
 import { SEOConfig } from "@/features/shared/components/SEOConfig";
@@ -28,6 +29,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col relative">
+        <NextTopLoader color="#097255" showSpinner={false} />
         <SEOConfig />
         <Providers>
           <PublicThemeToggle />

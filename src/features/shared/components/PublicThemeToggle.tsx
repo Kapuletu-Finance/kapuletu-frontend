@@ -7,7 +7,16 @@ import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
 export const PublicThemeToggle = () => {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/admin") || pathname.startsWith("/treasurer") || pathname === "/") {
+  const publicRoutes = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-phone",
+    "/verify-email",
+  ];
+
+  if (!publicRoutes.some((route) => pathname.startsWith(route))) {
     return null;
   }
 
@@ -16,7 +25,7 @@ export const PublicThemeToggle = () => {
   return (
     <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
       {isVerifyPage && <SignOutButton />}
-      <ThemeToggle />
+      <ThemeToggle variant="ghost" />
     </div>
   );
 };

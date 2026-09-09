@@ -1,5 +1,5 @@
-const Component = () => {
-  return null;
-};
+import { redirect } from "next/navigation";
 
-export default Component;
+export default function AdminPage() {
+  redirect("/admin/overview");
+}

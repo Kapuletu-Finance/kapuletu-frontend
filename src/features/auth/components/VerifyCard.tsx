@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -17,22 +17,26 @@ import {
 } from "@/components/ui/input-otp";
 import { type VerifyFormData, verifySchema } from "@/features/auth/schemas";
 import {
+  useResend2FAMutation,
   useResendCodeMutation,
+  useVerify2FAMutation,
   useVerifyEmailConfirmMutation,
   useVerifyEmailRequestMutation,
   useVerifyPhoneConfirmMutation,
 } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
+import { SuccessLoader } from "@/features/shared/components/SuccessLoader";
 import { cn } from "@/lib/utils";
 
 interface VerifyCardProps {
-  type: "email" | "phone";
+  type: "email" | "phone" | "2fa";
 }
 
 export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const router = useRouter();
-  const { data: user } = useGetMeQuery();
+  const { data: user } = useGetMeQuery({ enabled: type !== "2fa" });
   const isPhone = type === "phone";
+  const is2FA = type === "2fa";
 
   const form = useForm<VerifyFormData>({
     defaultValues: {
@@ -45,6 +49,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const otp = params.get("otp");
+      const token = params.get("token");
       if (otp) {
         form.setValue("code", otp, { shouldValidate: true });
       }
@@ -56,18 +61,41 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const emailRequestMutation = useVerifyEmailRequestMutation();
   const phoneRequestMutation = useResendCodeMutation();
 
-  const verifyMutation = isPhone ? phoneConfirmMutation : emailConfirmMutation;
-  const requestMutation = isPhone ? phoneRequestMutation : emailRequestMutation;
+  const verify2FAMutation = useVerify2FAMutation();
+  const resend2FAMutation = useResend2FAMutation();
+
+  const verifyMutation = is2FA
+    ? verify2FAMutation
+    : isPhone
+      ? phoneConfirmMutation
+      : emailConfirmMutation;
+  const requestMutation = is2FA
+    ? resend2FAMutation
+    : isPhone
+      ? phoneRequestMutation
+      : emailRequestMutation;
 
   const isError = !!form.formState.errors.code || verifyMutation.isError;
 
   const onSubmit = (data: VerifyFormData) => {
+    if (is2FA) {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token") || "";
+      if (!token) {
+        toast.error("Your verification session has expired. Please sign in again.");
+        return;
+      }
+      // Note: verify2FAMutation internal onSuccess handles the routing.
+      verify2FAMutation.mutate({ token, code: data.code });
+      return;
+    }
+
     const finalIdentifier = user?.phone_number || "";
 
     // If phone verification, we need the identifier
     if (isPhone) {
       if (!finalIdentifier) {
-        toast.error("Value error, identifier cannot be empty");
+        toast.error("We couldn't find your phone number. Please contact support.");
         return;
       }
 
@@ -75,7 +103,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
         { ...data, identifier: finalIdentifier },
         {
           onSuccess: () => {
-            setTimeout(() => router.push("/sign-in"), 2000);
+            setTimeout(() => router.push("/treasurer"), 2000);
           },
         },
       );
@@ -88,19 +116,83 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     }
   };
 
-  const handleResend = () => {
+  const handleResend = useCallback(() => {
+    if (is2FA) {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token") || "";
+      if (!token) {
+        toast.error("Your verification session has expired. Please sign in again.");
+        return;
+      }
+      resend2FAMutation.mutate({ token });
+      return;
+    }
+
     const finalIdentifier = user?.phone_number || "";
 
     if (isPhone) {
       if (!finalIdentifier) {
-        toast.error("Value error, identifier cannot be empty");
+        toast.error("We couldn't find your phone number. Please contact support.");
         return;
       }
       phoneRequestMutation.mutate({ identifier: finalIdentifier });
     } else {
       emailRequestMutation.mutate();
     }
-  };
+  }, [
+    user?.phone_number,
+    isPhone,
+    is2FA,
+    phoneRequestMutation,
+    emailRequestMutation,
+    resend2FAMutation,
+  ]);
+
+  const hasRequestedRef = useRef(false);
+
+  useEffect(() => {
+    if (is2FA) return; // For 2FA, the initial login request sent the code already
+    if (isPhone && !user?.phone_number) return;
+
+    if (!hasRequestedRef.current) {
+      hasRequestedRef.current = true;
+      handleResend();
+    }
+  }, [user?.phone_number, isPhone, is2FA, handleResend]);
+
+  if (verifyMutation.isPending) {
+    return (
+      <div className="w-full pb-4 flex flex-col items-center">
+        <div className="mb-6 mt-4">
+          <div className="w-12 h-12 border-[3.5px] border-transparent border-t-primary rounded-full animate-spin" />
+        </div>
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-[17px] font-bold text-foreground mb-1">Verifying</h1>
+          <p className="text-[13px] text-muted-foreground">Almost there...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (verifyMutation.isSuccess) {
+    return (
+      <div className="w-full pb-4 flex flex-col items-center">
+        <div className="mb-6 mt-4">
+          <SuccessLoader size={48} />
+        </div>
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-[17px] font-bold text-foreground mb-1">
+            {is2FA ? "Login successful!" : "Verification complete!"}
+          </h1>
+          <p className="text-[13px] text-muted-foreground">
+            {is2FA
+              ? "Your identity has been confirmed. Redirecting..."
+              : `Your ${isPhone ? "phone number" : "email address"} has been verified.`}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full pb-4">
@@ -114,7 +206,9 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
         >
           {isError
             ? "The code you entered is wrong. Please try again"
-            : `We sent a 6-digit code to your ${isPhone ? "phone number" : "email address"}`}
+            : is2FA
+              ? "We've sent a 6-digit verification code to your phone and email"
+              : `We sent a 6-digit code to your ${isPhone ? "WhatsApp" : "email address"}`}
         </p>
       </div>
 
@@ -131,45 +225,45 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
                       <InputOTPSlot
                         index={0}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={1}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={2}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
                     </InputOTPGroup>
-                    <InputOTPSeparator className="px-4" />
+                    <InputOTPSeparator className="px-2" />
                     <InputOTPGroup className="gap-2">
                       <InputOTPSlot
                         index={3}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={4}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
                       <InputOTPSlot
                         index={5}
                         className={cn(
-                          "w-12 h-14 text-xl rounded-md border-black border-2",
+                          "w-12 h-14 text-lg border-black border",
                           isError && "border-destructive",
                         )}
                       />
@@ -198,14 +292,14 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
             <div className="pt-2">
               <Button
                 type="submit"
-                className="w-full rounded-xl font-medium py-6"
+                className="w-full font-medium py-6"
                 isLoading={verifyMutation.isPending}
               >
                 Verify
               </Button>
             </div>
 
-            {!isPhone && (
+            {!isPhone && !is2FA && (
               <div className="text-center pt-2">
                 <Button
                   variant="link"

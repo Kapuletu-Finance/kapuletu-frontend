@@ -1,10 +1,7 @@
-const Component = () => {
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold">Treasurer Dashboard</h1>
-      <p>Welcome inside the app!</p>
-    </div>
-  );
+import TreasurerPageClient from "@/features/treasurer/components/TreasurerPageClient";
+
+const TreasurerPage = () => {
+  return <TreasurerPageClient />;
 };
 
-export default Component;
+export default TreasurerPage;

@@ -13,4 +13,5 @@ export const AUTH_URLS = {
   VERIFY_EMAIL_REQUEST: "/auth/verify-email/request",
   /** Verify phone during registration (requires identifier + code) */
   VERIFY_PHONE: "/auth/verify",
+  VERIFY_2FA: "/auth/verify-2fa",
 } as const;

@@ -1,11 +1,11 @@
 "use client";
 
-import { AlertCircle, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AUTH_EVENTS, AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
 import { useGetMeQuery } from "@/features/auth/services/queries";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const VerifyEmailAlert = () => {
   const { data: user, isLoading } = useGetMeQuery();
@@ -43,7 +43,7 @@ export const VerifyEmailAlert = () => {
         <div className="bg-burnt-amber/10 border border-burnt-amber/20 rounded-xl p-4 flex items-center justify-between hover:bg-burnt-amber/20 transition-colors cursor-pointer group">
           <div className="flex items-center space-x-3">
             <div className="bg-burnt-amber/20 p-2 rounded-lg group-hover:bg-burnt-amber/30 transition-colors">
-              <AlertCircle className="w-5 h-5 text-burnt-amber" />
+              <IconLibrary name="alert" className="w-5 h-5 text-burnt-amber" />
             </div>
             <div>
               <h3 className="text-sm font-semibold text-burnt-amber">Please verify your email</h3>
@@ -59,7 +59,7 @@ export const VerifyEmailAlert = () => {
             onClick={dismissAlert}
             className="h-7 w-7 hover:bg-burnt-amber/20 text-burnt-amber/70 hover:text-burnt-amber"
           >
-            <X className="w-4 h-4" />
+            <IconLibrary name="close" className="w-4 h-4" />
           </Button>
         </div>
       </Link>

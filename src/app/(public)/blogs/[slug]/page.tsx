@@ -1,11 +1,12 @@
-import { ArrowLeft, Calendar, User } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BlogContent } from "@/features/blog/components/BlogContent";
-import { blogPosts, getPostBySlug } from "@/features/blog/data/posts";
-import { LandingFooter } from "@/features/landing/components/LandingFooter";
-import { LandingHeader } from "@/features/landing/components/LandingHeader";
+import { Badge } from "@/components/ui/badge";
+import { BlogContent } from "@/features/landing-page/components/BlogContent";
+import { LandingFooter } from "@/features/landing-page/components/LandingFooter";
+import { LandingHeader } from "@/features/landing-page/components/LandingHeader";
+import { blogPosts, getPostBySlug } from "@/features/landing-page/data/posts";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -43,16 +44,14 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
               href="/blogs"
               className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <IconLibrary name="arrow-left" className="h-4 w-4" />
               Back to Blog
             </Link>
 
             <div className="flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
-                {post.category}
-              </span>
+              <Badge variant="secondary">{post.category}</Badge>
               <span className="text-xs text-muted-foreground flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
+                <IconLibrary name="calendar" className="h-3 w-3" />
                 {new Date(post.date).toLocaleDateString("en-KE", {
                   day: "numeric",
                   month: "long",
@@ -66,7 +65,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
             </h1>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-10">
-              <User className="h-4 w-4" />
+              <IconLibrary name="member" className="h-4 w-4" />
               <span>{post.author}</span>
               <span className="text-border">·</span>
               <span>{post.authorRole}</span>

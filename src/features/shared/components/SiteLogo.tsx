@@ -10,7 +10,7 @@ interface SiteLogoProps {
   variant?: "full" | "icon";
   logoClassName?: string;
   textClassName?: string;
-  href?: string;
+  href?: string | null;
 }
 
 export const SiteLogo: React.FC<SiteLogoProps> = ({
@@ -22,45 +22,46 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
   textClassName,
   href = "/",
 }) => {
-  if (variant === "icon") {
+  const iconContent = (
+    <Image
+      src="/shared/logo.webp"
+      alt="Kapuletu Logo"
+      width={width}
+      height={height}
+      className={cn("object-contain", logoClassName)}
+      style={{ height: "auto", width: "auto" }}
+      priority
+    />
+  );
+
+  const fullContent = (
+    <Image
+      src="/shared/kapuletu-logo.png"
+      alt="Kapuletu Logo"
+      width={140}
+      height={40}
+      className={cn("object-contain", logoClassName)}
+      style={{ height: "auto", width: "auto" }}
+      priority
+    />
+  );
+
+  const content = variant === "icon" ? iconContent : fullContent;
+  const wrapperClass =
+    variant === "icon"
+      ? cn("inline-flex items-center justify-center shrink-0", className)
+      : cn(
+          "flex items-center justify-center font-bold tracking-tight text-primary transition-all",
+          className,
+        );
+
+  if (href) {
     return (
-      <Link
-        href={href}
-        className={cn("inline-flex items-center justify-center shrink-0", className)}
-      >
-        <Image
-          src="/shared/logo.webp"
-          alt="Kapuletu Logo"
-          width={width}
-          height={height}
-          className={cn("object-contain", logoClassName)}
-          style={{ height: "auto", width: "auto" }}
-          priority
-        />
+      <Link href={href} className={wrapperClass}>
+        {content}
       </Link>
     );
   }
 
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "flex items-center justify-center font-bold tracking-tight text-primary transition-all",
-        className,
-      )}
-    >
-      <span className={textClassName}>Kap</span>
-      <div className={cn("mx-1 flex shrink-0 items-center justify-center", logoClassName)}>
-        <Image
-          src="/shared/logo.webp"
-          alt="Kapuletu Logo"
-          width={width}
-          height={height}
-          className="h-full w-full object-contain"
-          priority
-        />
-      </div>
-      <span className={cn("text-refined-blue", textClassName)}>Letu</span>
-    </Link>
-  );
+  return <div className={wrapperClass}>{content}</div>;
 };

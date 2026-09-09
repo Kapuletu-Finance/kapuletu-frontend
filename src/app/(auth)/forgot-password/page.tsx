@@ -1,7 +1,5 @@
-import { ForgotPasswordForm } from "@/features/auth/components/ForgotPasswordForm";
+import { ForgotPasswordRequestForm } from "@/features/auth/components/ForgotPasswordRequestForm";
 
-const ForgotPasswordPage = () => {
-  return <ForgotPasswordForm />;
-};
-
-export default ForgotPasswordPage;
+export default function ForgotPasswordRequestPage() {
+  return <ForgotPasswordRequestForm />;
+}

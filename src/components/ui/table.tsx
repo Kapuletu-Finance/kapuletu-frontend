@@ -1,3 +1,116 @@
-const Component = () => { return null; }
+"use client"
 
-export default Component;
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+function Table({ className, ...props }: React.ComponentProps<"table">) {
+  return (
+    <div
+      data-slot="table-container"
+      className="relative w-full overflow-x-auto"
+    >
+      <table
+        data-slot="table"
+        className={cn("w-full caption-bottom text-sm max-md:block", className)}
+        {...props}
+      />
+    </div>
+  )
+}
+
+function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
+  return (
+    <thead
+      data-slot="table-header"
+      className={cn("[&_tr]:border-b max-md:hidden", className)}
+      {...props}
+    />
+  )
+}
+
+function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
+  return (
+    <tbody
+      data-slot="table-body"
+      className={cn("[&_tr:last-child]:border-0 max-md:block max-md:w-full", className)}
+      {...props}
+    />
+  )
+}
+
+function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
+  return (
+    <tfoot
+      data-slot="table-footer"
+      className={cn(
+        "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
+  return (
+    <tr
+      data-slot="table-row"
+      className={cn(
+        "border-b transition-colors bg-background hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted max-md:flex max-md:flex-col max-md:border max-md:rounded-lg max-md:p-4 max-md:mb-4 max-md:bg-card max-md:shadow-sm md:[&>th:last-child]:sticky md:[&>th:last-child]:right-0 md:[&>th:last-child]:bg-inherit md:[&>th:last-child]:z-10 md:[&>th:last-child]:shadow-[-2px_0_5px_rgba(0,0,0,0.05)] md:[&>td:last-child]:sticky md:[&>td:last-child]:right-0 md:[&>td:last-child]:bg-inherit md:[&>td:last-child]:z-10 md:[&>td:last-child]:shadow-[-2px_0_5px_rgba(0,0,0,0.05)]",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+  return (
+    <th
+      data-slot="table-head"
+      className={cn(
+        "h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+  return (
+    <td
+      data-slot="table-cell"
+      className={cn(
+        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 max-md:flex max-md:justify-between max-md:items-center max-md:border-b max-md:last:border-0 max-md:py-3 max-md:px-0 max-md:text-right max-md:before:content-[attr(data-label)] max-md:before:float-left max-md:before:font-medium max-md:before:text-muted-foreground",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableCaption({
+  className,
+  ...props
+}: React.ComponentProps<"caption">) {
+  return (
+    <caption
+      data-slot="table-caption"
+      className={cn("mt-4 text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+}
