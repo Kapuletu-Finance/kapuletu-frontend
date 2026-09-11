@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useUpdateSystemConfigMutation } from "@/features/admin/services/mutations";
 import { useSystemConfigQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { Separator } from "@/components/ui/separator";
 
 export const AccessControlsPanel: React.FC = () => {
   const { data: config, isLoading: isConfigLoading } = useSystemConfigQuery();
@@ -111,7 +112,6 @@ export const AccessControlsPanel: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <Label htmlFor="web_app" className="text-sm cursor-pointer">Web Dashboard & API</Label>
                   <LabeledSwitch
-                    id="web_app"
                     checked={maintenanceModules.web_app}
                     onCheckedChange={(checked) => setMaintenanceModules(prev => ({ ...prev, web_app: checked }))}
                   />
@@ -119,7 +119,6 @@ export const AccessControlsPanel: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <Label htmlFor="whatsapp_bot" className="text-sm cursor-pointer">WhatsApp AI Bot</Label>
                   <LabeledSwitch
-                    id="whatsapp_bot"
                     checked={maintenanceModules.whatsapp_bot}
                     onCheckedChange={(checked) => setMaintenanceModules(prev => ({ ...prev, whatsapp_bot: checked }))}
                   />
@@ -127,7 +126,6 @@ export const AccessControlsPanel: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <Label htmlFor="public_api" className="text-sm cursor-pointer">Public API (Integrations)</Label>
                   <LabeledSwitch
-                    id="public_api"
                     checked={maintenanceModules.public_api}
                     onCheckedChange={(checked) => setMaintenanceModules(prev => ({ ...prev, public_api: checked }))}
                   />
