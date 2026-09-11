@@ -16,46 +16,39 @@ export const AdminCommunicationsPage: React.FC = () => {
       title="Communications Hub"
       subtitle="Central nerve center for outbound messaging, tester invites, and system access controls."
     >
-      <div className="bg-card border-border border rounded-2xl shadow-xs overflow-hidden">
-        <Tabs defaultValue="broadcasts" className="w-full flex flex-col sm:flex-row">
-          {/* Vertical Sidebar for Tabs on Desktop, Horizontal on Mobile */}
-          <div className="sm:w-64 shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/20 p-4 sm:min-h-[calc(100vh-14rem)]">
-            <TabsList className="flex sm:flex-col h-auto w-full bg-transparent gap-2 p-0">
-              <TabsTrigger
-                value="broadcasts"
-                className="w-full justify-start gap-3 py-2.5 px-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border-border data-[state=active]:border transition-all duration-300"
-              >
-                <IconLibrary name="megaphone" className="size-4" />
-                <span className="font-medium">Broadcasts</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="invites"
-                className="w-full justify-start gap-3 py-2.5 px-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border-border data-[state=active]:border transition-all duration-300"
-              >
-                <IconLibrary name="mail" className="size-4" />
-                <span className="font-medium">VIP Invites</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="access"
-                className="w-full justify-start gap-3 py-2.5 px-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border-border data-[state=active]:border transition-all duration-300"
-              >
-                <IconLibrary name="shield-check" className="size-4" />
-                <span className="font-medium">Access Controls</span>
-              </TabsTrigger>
-              <div className="h-px w-full bg-border my-2 hidden sm:block" />
-              <TabsTrigger
-                value="logs"
-                className="w-full justify-start gap-3 py-2.5 px-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border-border data-[state=active]:border transition-all duration-300 text-muted-foreground"
-              >
-                <IconLibrary name="list" className="size-4" />
-                <span className="font-medium">Delivery Logs</span>
-              </TabsTrigger>
-            </TabsList>
-          </div>
+      <Tabs defaultValue="broadcasts" className="flex flex-col gap-6 w-full">
+        <div className="w-full border-b border-border overflow-x-auto">
+          <TabsList className="flex h-auto w-max bg-transparent items-center justify-start p-0 rounded-none shrink-0 gap-6 min-w-full">
+            <TabsTrigger
+              value="broadcasts"
+              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
+            >
+              Broadcasts
+            </TabsTrigger>
+            <TabsTrigger
+              value="invites"
+              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
+            >
+              VIP Invites
+            </TabsTrigger>
+            <TabsTrigger
+              value="access"
+              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
+            >
+              Access Controls
+            </TabsTrigger>
+            <TabsTrigger
+              value="logs"
+              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
+            >
+              Delivery Logs
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-          {/* Content Area */}
-          <div className="flex-1 p-6 md:p-8 overflow-y-auto bg-background/50">
-            <TabsContent
+        {/* Content Area */}
+        <div className="w-full bg-card border border-border shadow-sm rounded-2xl p-5 md:p-8 min-h-[400px]">
+          <TabsContent
               value="broadcasts"
               className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300"
             >
@@ -130,9 +123,8 @@ export const AdminCommunicationsPage: React.FC = () => {
               </div>
               <CommunicationLogs />
             </TabsContent>
-          </div>
-        </Tabs>
-      </div>
+        </div>
+      </Tabs>
     </PageLayout>
   );
 };
