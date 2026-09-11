@@ -73,7 +73,7 @@ apiClient.interceptors.response.use(
       errData.error_code === "MAINTENANCE_MODE_ACTIVE"
     ) {
       if (typeof window !== "undefined") {
-        if (!window.location.pathname.startsWith("/maintenance") && !isRedirecting) {
+        if (!window.location.pathname.startsWith("/maintenance") && !window.location.pathname.startsWith("/admin") && !isRedirecting) {
           isRedirecting = true;
           console.warn("Maintenance mode active. Redirecting to /maintenance.");
           window.location.href = "/maintenance";
