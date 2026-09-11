@@ -29,9 +29,11 @@ export const BroadcastHistory: React.FC = () => {
   }
 
   return (
-    <div className="bg-card p-6 rounded-lg border shadow-sm">
-      <h2 className="text-xl font-semibold mb-4">Broadcast History</h2>
-      <div className="rounded-md border">
+    <div className="p-0">
+      <div className="p-4 border-b border-border bg-muted/30 font-semibold text-sm flex items-center justify-between">
+        <span>Broadcast History</span>
+      </div>
+      <div className="w-full">
         <Table>
           <TableHeader>
             <TableRow>

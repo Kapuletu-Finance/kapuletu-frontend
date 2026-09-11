@@ -54,7 +54,6 @@ const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
     label: "Billing & Plans",
   },
   { href: "/admin/finance", icon: "credit-card", label: "Finance" },
-  { href: "/admin/broadcast", icon: "radio", label: "Broadcast" },
   { href: "/admin/communications", icon: "mail", label: "Communications" },
   { href: "/admin/feedback", icon: "feedback", label: "Feedback" },
   { href: "/admin/support", icon: "ticket", label: "Support" },

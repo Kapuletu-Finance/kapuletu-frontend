@@ -53,15 +53,8 @@ export const CommunicationLogs = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Communication Logs</h2>
-        <p className="text-muted-foreground">
-          Track all outgoing emails, SMS, and WhatsApp messages.
-        </p>
-      </div>
-
-      <div className="rounded-md border">
+    <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm flex flex-col">
+      <div className="p-0">
         <Table>
           <TableHeader>
             <TableRow>

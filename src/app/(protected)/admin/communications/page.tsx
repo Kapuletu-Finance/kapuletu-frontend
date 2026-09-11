@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { CommunicationLogs } from "@/features/admin/components/communications/CommunicationLogs";
+import { AdminCommunicationsPage } from "@/features/admin/components/communications/AdminCommunicationsPage";
 
 export const metadata: Metadata = {
-  title: "Communication Logs | Kapuletu Admin",
-  description: "View and manage all outgoing communications.",
+  title: "Communications Hub | Kapuletu Admin",
+  description: "Centralized hub for all outgoing communications and platform access controls.",
 };
 
 export default function CommunicationsPage() {
-  return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
-      <CommunicationLogs />
-    </div>
-  );
+  return <AdminCommunicationsPage />;
 }
