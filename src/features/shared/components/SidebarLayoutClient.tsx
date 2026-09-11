@@ -17,7 +17,6 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -56,6 +55,7 @@ const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   },
   { href: "/admin/finance", icon: "credit-card", label: "Finance" },
   { href: "/admin/broadcast", icon: "radio", label: "Broadcast" },
+  { href: "/admin/communications", icon: "mail", label: "Communications" },
   { href: "/admin/feedback", icon: "feedback", label: "Feedback" },
   { href: "/admin/support", icon: "ticket", label: "Support" },
   { href: "/admin/ai-governance", icon: "brain", label: "AI Governance" },

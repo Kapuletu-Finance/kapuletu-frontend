@@ -66,6 +66,22 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Maintenance Mode Check
+    if (
+      error.response?.status === 503 &&
+      typeof errData?.error_code === "string" &&
+      errData.error_code === "MAINTENANCE_MODE_ACTIVE"
+    ) {
+      if (typeof window !== "undefined") {
+        if (!window.location.pathname.startsWith("/maintenance") && !isRedirecting) {
+          isRedirecting = true;
+          console.warn("Maintenance mode active. Redirecting to /maintenance.");
+          window.location.href = "/maintenance";
+        }
+      }
+      return Promise.reject(error);
+    }
+
     // If we receive a 401 Unauthorized, or a true 403 Forbidden (not billing related),
     // after the proxy's resilience loop has already tried (and failed) to refresh, we must log out.
     if (error.response?.status === 401 || error.response?.status === 403) {

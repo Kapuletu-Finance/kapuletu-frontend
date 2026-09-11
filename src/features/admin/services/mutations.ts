@@ -523,3 +523,21 @@ export const useUpdateSystemConfigMutation = () => {
     },
   });
 };
+
+export const useSendInviteMutation = () => {
+  return useMutation({
+    mutationFn: async (data: { email?: string; phone_number?: string }) => {
+      const response = await apiClient.post<{ message: string; token: string }>(
+        "/admin/invites",
+        data,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Invite sent successfully.");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to send invite.");
+    },
+  });
+};

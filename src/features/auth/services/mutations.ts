@@ -65,7 +65,7 @@ export const useSignInMutation = () => {
 
       if (from) {
         window.location.href = from;
-      } else if (data.role === "admin") {
+      } else if (data.role === "admin" || data.role === "super_admin") {
         window.location.href = "/admin";
       } else {
         window.location.href = "/treasurer";
@@ -101,7 +101,7 @@ export const useVerify2FAMutation = () => {
 
       if (from) {
         window.location.href = from;
-      } else if (data.role === "admin") {
+      } else if (data.role === "admin" || data.role === "super_admin") {
         window.location.href = "/admin";
       } else {
         window.location.href = "/treasurer";
