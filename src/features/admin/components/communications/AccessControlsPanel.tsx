@@ -17,6 +17,11 @@ export const AccessControlsPanel: React.FC = () => {
 
   const [maintenance, setMaintenance] = useState<boolean>(false);
   const [maintenanceMsg, setMaintenanceMsg] = useState("");
+  const [maintenanceModules, setMaintenanceModules] = useState({
+    web_app: true,
+    whatsapp_bot: false,
+    public_api: true,
+  });
 
   const [openSignups, setOpenSignups] = useState<boolean>(true);
   const [signupMsg, setSignupMsg] = useState("");
@@ -29,6 +34,9 @@ export const AccessControlsPanel: React.FC = () => {
         (config.maintenance_message as string) ||
           "The platform is currently undergoing scheduled maintenance.",
       );
+      if (config.maintenance_modules) {
+        setMaintenanceModules(config.maintenance_modules as any);
+      }
 
       setOpenSignups(config.open_signups !== undefined ? Boolean(config.open_signups) : true);
       setSignupMsg(
@@ -43,6 +51,7 @@ export const AccessControlsPanel: React.FC = () => {
     try {
       await updateMutation.mutateAsync([
         { key: "maintenance_mode", value: maintenance },
+        { key: "maintenance_modules", value: maintenanceModules },
         { key: "maintenance_message", value: maintenanceMsg },
         { key: "open_signups", value: openSignups },
         { key: "signup_restricted_message", value: signupMsg },
@@ -88,7 +97,46 @@ export const AccessControlsPanel: React.FC = () => {
             </div>
             <LabeledSwitch checked={maintenance} onCheckedChange={setMaintenance} />
           </div>
-          <div className="p-6 bg-card flex flex-col gap-4 transition-all duration-300">
+          <div className="p-6 bg-card flex flex-col gap-6 transition-all duration-300">
+            {/* Granular Module Settings */}
+            <div className="space-y-4">
+              <div>
+                <h5 className="text-sm font-semibold mb-1">Targeted Modules</h5>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Select which parts of the platform should be temporarily blocked.
+                </p>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="web_app" className="text-sm cursor-pointer">Web Dashboard & API</Label>
+                  <LabeledSwitch
+                    id="web_app"
+                    checked={maintenanceModules.web_app}
+                    onCheckedChange={(checked) => setMaintenanceModules(prev => ({ ...prev, web_app: checked }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="whatsapp_bot" className="text-sm cursor-pointer">WhatsApp AI Bot</Label>
+                  <LabeledSwitch
+                    id="whatsapp_bot"
+                    checked={maintenanceModules.whatsapp_bot}
+                    onCheckedChange={(checked) => setMaintenanceModules(prev => ({ ...prev, whatsapp_bot: checked }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="public_api" className="text-sm cursor-pointer">Public API (Integrations)</Label>
+                  <LabeledSwitch
+                    id="public_api"
+                    checked={maintenanceModules.public_api}
+                    onCheckedChange={(checked) => setMaintenanceModules(prev => ({ ...prev, public_api: checked }))}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
             <div className="space-y-2">
               <Label>Maintenance Display Note</Label>
               <Textarea
@@ -98,7 +146,7 @@ export const AccessControlsPanel: React.FC = () => {
                 onChange={(e) => setMaintenanceMsg(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                Users will see this exact message when they visit the app during maintenance.
+                Users will see this exact message when they visit blocked modules.
               </p>
             </div>
           </div>
