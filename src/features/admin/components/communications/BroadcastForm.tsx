@@ -20,6 +20,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -29,6 +38,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -36,8 +46,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { useSendBroadcastMutation } from "@/features/admin/services/mutations";
+import { useAdminUsersQuery } from "@/features/admin/services/queries";
 
 const formSchema = z.object({
   target_type: z.enum([
@@ -52,6 +62,71 @@ const formSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters"),
   channels: z.array(z.enum(["in_app", "email", "whatsapp"])).min(1, "Select at least one channel"),
 });
+
+const BrowseUsersDialog = ({ onAdd }: { onAdd: (emails: string[]) => void }) => {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+  const { data, isLoading } = useAdminUsersQuery({ limit: 500 });
+
+  const handleAdd = () => {
+    onAdd(selected);
+    setOpen(false);
+    setSelected([]);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger>
+        <Button type="button" variant="outline" size="sm" className="mt-2">
+          Browse Users
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Select Users</DialogTitle>
+          <DialogDescription>Select users to add to the custom broadcast.</DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="h-[300px] border rounded-md p-4">
+          {isLoading ? (
+            <div className="text-center text-sm text-muted-foreground p-4">Loading users...</div>
+          ) : data?.users.length === 0 ? (
+            <div className="text-center text-sm text-muted-foreground p-4">No users found.</div>
+          ) : (
+            <div className="space-y-4">
+              {data?.users.map((user) => (
+                <div key={user.user_id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`user-${user.user_id}`}
+                    checked={selected.includes(user.email)}
+                    onCheckedChange={(c) => {
+                      if (c) setSelected([...selected, user.email]);
+                      else setSelected(selected.filter((e) => e !== user.email));
+                    }}
+                  />
+                  <label
+                    htmlFor={`user-${user.user_id}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {user.full_name}{" "}
+                    <span className="text-muted-foreground font-normal">({user.email})</span>
+                  </label>
+                </div>
+              ))}
+            </div>
+          )}
+        </ScrollArea>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
+          <Button type="button" onClick={handleAdd} disabled={selected.length === 0}>
+            Add {selected.length} Selected
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 export const BroadcastForm: React.FC = () => {
   const mutation = useSendBroadcastMutation();
@@ -166,6 +241,14 @@ export const BroadcastForm: React.FC = () => {
                     <FormDescription>
                       Enter a comma-separated list of exact user emails.
                     </FormDescription>
+                    <BrowseUsersDialog
+                      onAdd={(emails) => {
+                        const current = field.value || "";
+                        const newEmails = emails.join(", ");
+                        const separator = current && !current.endsWith(",") ? ", " : "";
+                        field.onChange(current ? `${current}${separator}${newEmails}` : newEmails);
+                      }}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
