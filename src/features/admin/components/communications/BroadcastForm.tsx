@@ -40,7 +40,14 @@ import {
 import { useSendBroadcastMutation } from "@/features/admin/services/mutations";
 
 const formSchema = z.object({
-  target_type: z.enum(["all_members", "active_subscribers", "treasurers", "marketing_opt_in"]),
+  target_type: z.enum([
+    "all_members",
+    "active_subscribers",
+    "treasurers",
+    "marketing_opt_in",
+    "custom_selection",
+  ]),
+  target_emails_input: z.string().optional(),
   title: z.string().min(5, "Title must be at least 5 characters"),
   message: z.string().min(10, "Message must be at least 10 characters"),
   channels: z.array(z.enum(["in_app", "email", "whatsapp"])).min(1, "Select at least one channel"),
@@ -55,6 +62,7 @@ export const BroadcastForm: React.FC = () => {
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       target_type: "all_members",
+      target_emails_input: "",
       title: "",
       message: "",
       channels: ["email"],
@@ -76,7 +84,17 @@ export const BroadcastForm: React.FC = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    setConfirmData(values);
+    // Transform custom emails string into array if needed
+    // biome-ignore lint/suspicious/noExplicitAny: Required for generic form submit
+    const submitData = { ...values } as any;
+    if (values.target_type === "custom_selection" && values.target_emails_input) {
+      submitData.target_emails = values.target_emails_input
+        .split(",")
+        .map((e: string) => e.trim())
+        .filter((e: string) => e);
+    }
+    delete submitData.target_emails_input;
+    setConfirmData(submitData);
   };
 
   const handleConfirm = () => {
@@ -124,6 +142,9 @@ export const BroadcastForm: React.FC = () => {
                       <SelectItem value="marketing_opt_in">
                         Marketing Opt-In (Consented Users)
                       </SelectItem>
+                      <SelectItem value="custom_selection">
+                        Custom Selection (Specific Emails)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>Select who should receive this broadcast.</FormDescription>
@@ -131,6 +152,25 @@ export const BroadcastForm: React.FC = () => {
                 </FormItem>
               )}
             />
+
+            {form.watch("target_type") === "custom_selection" && (
+              <FormField
+                control={form.control}
+                name="target_emails_input"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Recipient Emails</FormLabel>
+                    <FormControl>
+                      <Input placeholder="john@example.com, jane@example.com" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter a comma-separated list of exact user emails.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}

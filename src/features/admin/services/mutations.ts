@@ -317,8 +317,14 @@ export const useSendBroadcastMutation = () => {
       title: string;
       message: string;
       channels: ("in_app" | "email" | "whatsapp")[];
-      target_type: "all_members" | "active_subscribers" | "treasurers" | "marketing_opt_in";
+      target_type:
+        | "all_members"
+        | "active_subscribers"
+        | "treasurers"
+        | "marketing_opt_in"
+        | "custom_selection";
       target_ids?: string[];
+      target_emails?: string[];
     }) => {
       const response = await apiClient.post<{
         status: string;
