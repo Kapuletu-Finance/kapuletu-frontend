@@ -6,11 +6,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateSystemConfigMutation } from "@/features/admin/services/mutations";
 import { useSystemConfigQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { Separator } from "@/components/ui/separator";
 
 export const AccessControlsPanel: React.FC = () => {
   const { data: config, isLoading: isConfigLoading } = useSystemConfigQuery();
@@ -20,7 +20,7 @@ export const AccessControlsPanel: React.FC = () => {
   const [maintenanceMsg, setMaintenanceMsg] = useState("");
   const [maintenanceModules, setMaintenanceModules] = useState({
     web_app: true,
-    whatsapp_bot: false,
+    whatsapp_bot: true,
     public_api: true,
   });
 
@@ -36,7 +36,7 @@ export const AccessControlsPanel: React.FC = () => {
           "The platform is currently undergoing scheduled maintenance.",
       );
       if (config.maintenance_modules) {
-        setMaintenanceModules(config.maintenance_modules as any);
+        setMaintenanceModules(config.maintenance_modules as typeof maintenanceModules);
       }
 
       setOpenSignups(config.open_signups !== undefined ? Boolean(config.open_signups) : true);
@@ -58,7 +58,7 @@ export const AccessControlsPanel: React.FC = () => {
         { key: "signup_restricted_message", value: signupMsg },
       ]);
       toast.success("Platform access controls updated.");
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to update access controls.");
     }
   };
@@ -107,27 +107,39 @@ export const AccessControlsPanel: React.FC = () => {
                   Select which parts of the platform should be temporarily blocked.
                 </p>
               </div>
-              
+
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="web_app" className="text-sm cursor-pointer">Web Dashboard & API</Label>
+                  <Label htmlFor="web_app" className="text-sm cursor-pointer">
+                    Web Dashboard & API
+                  </Label>
                   <LabeledSwitch
                     checked={maintenanceModules.web_app}
-                    onCheckedChange={(checked) => setMaintenanceModules(prev => ({ ...prev, web_app: checked }))}
+                    onCheckedChange={(checked) =>
+                      setMaintenanceModules((prev) => ({ ...prev, web_app: checked }))
+                    }
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="whatsapp_bot" className="text-sm cursor-pointer">WhatsApp AI Bot</Label>
+                  <Label htmlFor="whatsapp_bot" className="text-sm cursor-pointer">
+                    WhatsApp AI Bot
+                  </Label>
                   <LabeledSwitch
                     checked={maintenanceModules.whatsapp_bot}
-                    onCheckedChange={(checked) => setMaintenanceModules(prev => ({ ...prev, whatsapp_bot: checked }))}
+                    onCheckedChange={(checked) =>
+                      setMaintenanceModules((prev) => ({ ...prev, whatsapp_bot: checked }))
+                    }
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="public_api" className="text-sm cursor-pointer">Public API (Integrations)</Label>
+                  <Label htmlFor="public_api" className="text-sm cursor-pointer">
+                    Public API (Integrations)
+                  </Label>
                   <LabeledSwitch
                     checked={maintenanceModules.public_api}
-                    onCheckedChange={(checked) => setMaintenanceModules(prev => ({ ...prev, public_api: checked }))}
+                    onCheckedChange={(checked) =>
+                      setMaintenanceModules((prev) => ({ ...prev, public_api: checked }))
+                    }
                   />
                 </div>
               </div>
