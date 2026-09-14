@@ -14,6 +14,7 @@ import {
 import { useAdminUsersQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { AdminUsersTable } from "./AdminUsersTable";
+import { InviteUserModal } from "./InviteUserModal";
 import { SetPinDialog } from "./SetPinDialog";
 
 export const AdminUsersPage: React.FC = () => {
@@ -23,6 +24,7 @@ export const AdminUsersPage: React.FC = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const router = useRouter();
 
   // Debounce search input
@@ -75,9 +77,14 @@ export const AdminUsersPage: React.FC = () => {
             View and manage all platform users, their status, and roles.
           </p>
         </div>
-        <Button variant="outline" onClick={() => setPinDialogOpen(true)}>
-          <IconLibrary name="shield" className="mr-2 size-4 text-primary" /> Security Settings
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setInviteModalOpen(true)}>
+            <IconLibrary name="mail" className="mr-2 size-4 text-primary" /> Invite User
+          </Button>
+          <Button variant="outline" onClick={() => setPinDialogOpen(true)}>
+            <IconLibrary name="shield" className="mr-2 size-4 text-primary" /> Security Settings
+          </Button>
+        </div>
       </div>
 
       {data?.kpis && (
@@ -204,6 +211,7 @@ export const AdminUsersPage: React.FC = () => {
       )}
 
       <SetPinDialog isOpen={pinDialogOpen} onOpenChange={setPinDialogOpen} />
+      <InviteUserModal isOpen={inviteModalOpen} onOpenChange={setInviteModalOpen} />
     </div>
   );
 };

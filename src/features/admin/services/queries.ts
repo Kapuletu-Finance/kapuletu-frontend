@@ -645,6 +645,7 @@ export const usePerformanceEventsQuery = () => {
 // --- System Config ---
 
 export interface SystemConfigResponse {
+  // biome-ignore lint/suspicious/noExplicitAny: generic system config response
   [key: string]: any;
 }
 
@@ -674,5 +675,27 @@ export const useAdminBroadcastsQuery = () => {
       const response = await apiClient.get<AdminBroadcastItem[]>("/admin/crm/broadcasts");
       return response.data;
     },
+  });
+};
+
+export interface AdminBroadcastRecipientItem {
+  log_id: string;
+  user_name: string;
+  channel: string;
+  destination: string;
+  status: string;
+  created_at: string;
+}
+
+export const useBroadcastRecipientsQuery = (campaignId: string | null) => {
+  return useQuery({
+    queryKey: ["admin", "broadcasts", campaignId, "recipients"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminBroadcastRecipientItem[]>(
+        `/admin/crm/broadcasts/${campaignId}/recipients`,
+      );
+      return response.data;
+    },
+    enabled: !!campaignId,
   });
 };
