@@ -157,10 +157,17 @@ export const PaymentsTab: React.FC = () => {
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-muted">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </DropdownMenuTrigger>
+                      <DropdownMenuTrigger
+                        render={
+                          <button
+                            type="button"
+                            className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-muted"
+                          >
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </button>
+                        }
+                      />
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
                           onClick={() => handleRefund(payment.payment_id)}

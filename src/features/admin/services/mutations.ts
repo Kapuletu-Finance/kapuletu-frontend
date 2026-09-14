@@ -317,8 +317,14 @@ export const useSendBroadcastMutation = () => {
       title: string;
       message: string;
       channels: ("in_app" | "email" | "whatsapp")[];
-      target_type: "all_members" | "active_subscribers" | "treasurers" | "marketing_opt_in";
+      target_type:
+        | "all_members"
+        | "active_subscribers"
+        | "treasurers"
+        | "marketing_opt_in"
+        | "custom_selection";
       target_ids?: string[];
+      target_emails?: string[];
     }) => {
       const response = await apiClient.post<{
         status: string;
@@ -520,6 +526,29 @@ export const useUpdateSystemConfigMutation = () => {
       toast.error(
         error instanceof Error ? error.message : "Failed to update platform configurations.",
       );
+    },
+  });
+};
+
+export const useSendInviteMutation = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      email?: string;
+      phone_number?: string;
+      emails?: string[];
+      message?: string;
+    }) => {
+      const response = await apiClient.post<{ message: string; token?: string }>(
+        "/admin/invites",
+        data,
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Invite sent successfully.");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to send invite.");
     },
   });
 };

@@ -41,8 +41,8 @@ export const proxy = (request: NextRequest) => {
       return NextResponse.next();
     }
 
-    // Redirect away from root and auth pages to their dashboard
-    if (isRootRoute || isAuthRoute) {
+    // Redirect away from auth pages to their dashboard
+    if (isAuthRoute) {
       if (userRole === "treasurer")
         return NextResponse.redirect(new URL("/treasurer", request.url));
       if (userRole === "admin" || userRole === "super_admin")

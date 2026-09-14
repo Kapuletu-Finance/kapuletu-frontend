@@ -12,7 +12,6 @@ import { DataRetentionTab } from "./tabs/DataRetentionTab";
 import { GlobalNotificationsTab } from "./tabs/GlobalNotificationsTab";
 import { GlobalSecurityTab } from "./tabs/GlobalSecurityTab";
 import { IntegrationsTab } from "./tabs/IntegrationsTab";
-import { PlatformOpsTab } from "./tabs/PlatformOpsTab";
 
 export const AdminSettingsLayout: React.FC = () => {
   const { data: config, isLoading, isError } = useSystemConfigQuery();
@@ -57,12 +56,6 @@ export const AdminSettingsLayout: React.FC = () => {
               Personal Profile
             </TabsTrigger>
             <TabsTrigger
-              value="platform"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
-              Platform Operations
-            </TabsTrigger>
-            <TabsTrigger
               value="security"
               className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
             >
@@ -98,13 +91,6 @@ export const AdminSettingsLayout: React.FC = () => {
         <div className="w-full bg-card border border-border shadow-sm rounded-2xl p-5 md:p-8 min-h-[400px]">
           <TabsContent value="profile" className="mt-0 outline-none">
             <GeneralProfileTab />
-          </TabsContent>
-          <TabsContent value="platform" className="mt-0 outline-none">
-            <PlatformOpsTab
-              config={config}
-              onUpdate={handleUpdate}
-              isLoading={updateMutation.isPending}
-            />
           </TabsContent>
           <TabsContent value="security" className="mt-0 outline-none">
             <GlobalSecurityTab
