@@ -81,5 +81,4 @@ jobs:
           ssh-keyscan ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy to VPS
-        run:
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} "./KapuLetu/update-pods.sh"
+        run: ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} "cd KapuLetu && ./update-pods.sh"
