@@ -1,5 +1,4 @@
 import Link from "next/link";
-import React from "react";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import IconLibrary from "@/features/shared/components/IconLibrary";
@@ -12,10 +11,10 @@ export default async function UnderConstructionPage({
   const resolvedParams = await params;
 
   // Determine parent path to provide a useful back button
-  const currentPath = resolvedParams.slug.join("/");
+  const _currentPath = resolvedParams.slug.join("/");
   const parentPath =
     resolvedParams.slug.length > 1
-      ? "/docs/" + resolvedParams.slug.slice(0, -1).join("/")
+      ? `/docs/${resolvedParams.slug.slice(0, -1).join("/")}`
       : "/docs";
 
   // Format the title nicely

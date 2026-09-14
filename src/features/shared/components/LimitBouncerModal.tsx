@@ -45,13 +45,15 @@ export const LimitBouncerModal: React.FC<LimitBouncerModalProps> = ({
           <SiteLogo />
 
           <div className="bg-amber-500/10 dark:bg-amber-500/20 p-4 rounded-full mt-4">
-            <IconLibrary name="lock" className="w-12 h-12 text-amber-600 dark:text-amber-500" strokeWidth={1.5} />
+            <IconLibrary
+              name="lock"
+              className="w-12 h-12 text-amber-600 dark:text-amber-500"
+              strokeWidth={1.5}
+            />
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-bold text-foreground">
-              {titles[limitType]}
-            </h2>
+            <h2 className="text-xl font-bold text-foreground">{titles[limitType]}</h2>
             <p className="text-muted-foreground text-sm">{descriptions[limitType]}</p>
           </div>
 

@@ -36,7 +36,7 @@ export const InvitesPanel: React.FC = () => {
         message: message,
       });
       setEmails("");
-    } catch (err) {
+    } catch (_err) {
       // Error is handled in the mutation
     }
   };

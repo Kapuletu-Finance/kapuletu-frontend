@@ -1,9 +1,7 @@
 "use client";
 
-import { parseAsString, useQueryState } from "nuqs";
 import type * as React from "react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
