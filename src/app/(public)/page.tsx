@@ -1,22 +1,27 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { SiteLogo } from "@/features/shared/components/SiteLogo";
+import { AboutUsSection } from "@/features/landing-page/components/AboutUsSection";
+import { CtaSection } from "@/features/landing-page/components/CtaSection";
+import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
+import { FeaturesSection } from "@/features/landing-page/components/FeaturesSection";
+import { HeroSection } from "@/features/landing-page/components/HeroSection";
+import { HowItWorksSection } from "@/features/landing-page/components/HowItWorksSection";
+import { LandingFooter } from "@/features/landing-page/components/LandingFooter";
+import { LandingHeader } from "@/features/landing-page/components/LandingHeader";
+import { PricingSection } from "@/features/landing-page/components/PricingSection";
 
 const Home = () => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="text-center space-y-6">
-        <SiteLogo variant="full" className="text-4xl sm:text-6xl" logoClassName="h-[1em] w-[1em]" />
-        <p className="text-lg">Built for Group Finance</p>
-        <div className="flex flex-row items-center justify-center gap-4 pt-4">
-          <Link href="/sign-up">
-            <Button>Sign Up</Button>
-          </Link>
-          <Link href="/sign-in">
-            <Button variant="outline">Sign In</Button>
-          </Link>
-        </div>
-      </div>
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <LandingHeader />
+      <main className="flex-1 flex flex-col items-center">
+        <HeroSection />
+        <AboutUsSection />
+        <HowItWorksSection />
+        <FeaturesSection />
+        <PricingSection />
+        <FaqsSection />
+        <CtaSection />
+      </main>
+      <LandingFooter />
     </div>
   );
 };

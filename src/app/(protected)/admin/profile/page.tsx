@@ -1,9 +1,9 @@
-import { ProfileForm } from "@/features/auth/components/ProfileForm";
+import { AdminSettingsLayout } from "@/features/admin/components/settings/AdminSettingsLayout";
 
 const AdminProfilePage = () => {
   return (
     <div className="container mx-auto py-10">
-      <ProfileForm />
+      <AdminSettingsLayout />
     </div>
   );
 };
