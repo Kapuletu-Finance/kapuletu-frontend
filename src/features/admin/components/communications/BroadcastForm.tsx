@@ -66,7 +66,7 @@ const formSchema = z.object({
 const BrowseUsersDialog = ({ onAdd }: { onAdd: (emails: string[]) => void }) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
-  const { data, isLoading } = useAdminUsersQuery({ limit: 500 });
+  const { data, isLoading, isError } = useAdminUsersQuery({ limit: 100 });
 
   const handleAdd = () => {
     onAdd(selected);
@@ -89,7 +89,9 @@ const BrowseUsersDialog = ({ onAdd }: { onAdd: (emails: string[]) => void }) => 
         <ScrollArea className="h-[300px] border rounded-md p-4">
           {isLoading ? (
             <div className="text-center text-sm text-muted-foreground p-4">Loading users...</div>
-          ) : data?.users.length === 0 ? (
+          ) : isError ? (
+            <div className="text-center text-sm text-destructive p-4">Failed to load users.</div>
+          ) : !data?.users || data.users.length === 0 ? (
             <div className="text-center text-sm text-muted-foreground p-4">No users found.</div>
           ) : (
             <div className="space-y-4">
