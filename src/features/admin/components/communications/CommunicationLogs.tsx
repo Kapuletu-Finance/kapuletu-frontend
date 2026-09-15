@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -7,36 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useCommunicationLogsQuery } from "@/features/admin/services/queries";
 
 export const CommunicationLogs = () => {
-  // In a real implementation, we would fetch this from an API endpoint
-  // using React Query. For now, this is the UI scaffolding.
-  const logs = [
-    {
-      id: "1",
-      channel: "EMAIL",
-      destination: "user@example.com",
-      subject: "Welcome to Kapuletu",
-      status: "DELIVERED",
-      date: "2026-09-11 10:00 AM",
-    },
-    {
-      id: "2",
-      channel: "WHATSAPP",
-      destination: "+254712345678",
-      subject: "Maintenance Alert",
-      status: "SENT",
-      date: "2026-09-11 10:05 AM",
-    },
-    {
-      id: "3",
-      channel: "EMAIL",
-      destination: "invalid@domain",
-      subject: "Invite",
-      status: "FAILED",
-      date: "2026-09-11 10:10 AM",
-    },
-  ];
+  const { data, isLoading, isError } = useCommunicationLogsQuery(1, 50);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -52,6 +28,22 @@ export const CommunicationLogs = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-32 border border-border rounded-xl bg-card">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="flex justify-center items-center h-32 border border-border rounded-xl bg-card text-destructive">
+        Failed to load communication logs.
+      </div>
+    );
+  }
+
   return (
     <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm flex flex-col">
       <div className="p-0">
@@ -66,15 +58,35 @@ export const CommunicationLogs = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {logs.map((log) => (
-              <TableRow key={log.id}>
-                <TableCell className="font-medium">{log.channel}</TableCell>
-                <TableCell>{log.destination}</TableCell>
-                <TableCell>{log.subject}</TableCell>
-                <TableCell>{getStatusBadge(log.status)}</TableCell>
-                <TableCell className="text-muted-foreground">{log.date}</TableCell>
+            {data.logs.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+                  No communication logs found.
+                </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              data.logs.map((log) => (
+                <TableRow key={log.log_id}>
+                  <TableCell className="font-medium">{log.channel}</TableCell>
+                  <TableCell>{log.destination}</TableCell>
+                  <TableCell>{log.subject || "No Subject"}</TableCell>
+                  <TableCell>
+                    {getStatusBadge(log.status)}
+                    {log.error_message && (
+                      <div
+                        className="text-xs text-destructive mt-1 max-w-[200px] truncate"
+                        title={log.error_message}
+                      >
+                        {log.error_message}
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {format(new Date(log.created_at), "PPp")}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

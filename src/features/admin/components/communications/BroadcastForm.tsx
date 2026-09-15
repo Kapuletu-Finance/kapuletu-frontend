@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
 import type React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -48,6 +46,7 @@ import {
 } from "@/components/ui/select";
 import { useSendBroadcastMutation } from "@/features/admin/services/mutations";
 import { useAdminUsersQuery } from "@/features/admin/services/queries";
+import { RichTextEditor } from "@/features/shared/components/RichTextEditor";
 
 const formSchema = z.object({
   target_type: z.enum([
@@ -146,20 +145,6 @@ export const BroadcastForm: React.FC = () => {
     },
   });
 
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: form.getValues("message"),
-    onUpdate: ({ editor }) => {
-      form.setValue("message", editor.getHTML(), { shouldValidate: true });
-    },
-    editorProps: {
-      attributes: {
-        class:
-          "prose dark:prose-invert min-h-[150px] p-4 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent rounded-md border",
-      },
-    },
-  });
-
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     // Transform custom emails string into array if needed
     // biome-ignore lint/suspicious/noExplicitAny: Required for generic form submit
@@ -179,7 +164,6 @@ export const BroadcastForm: React.FC = () => {
     mutation.mutate(confirmData, {
       onSuccess: () => {
         form.reset();
-        editor?.commands.setContent("");
         setConfirmData(null);
       },
       onError: () => {
@@ -275,51 +259,11 @@ export const BroadcastForm: React.FC = () => {
             <FormField
               control={form.control}
               name="message"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Message Body</FormLabel>
                   <FormControl>
-                    <div className="border rounded-md">
-                      <div className="border-b p-2 flex gap-2 bg-muted/50 rounded-t-md">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => editor?.chain().focus().toggleBold().run()}
-                          className={editor?.isActive("bold") ? "bg-muted" : ""}
-                        >
-                          Bold
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => editor?.chain().focus().toggleItalic().run()}
-                          className={editor?.isActive("italic") ? "bg-muted" : ""}
-                        >
-                          Italic
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
-                          className={editor?.isActive("heading", { level: 2 }) ? "bg-muted" : ""}
-                        >
-                          H2
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => editor?.chain().focus().toggleBulletList().run()}
-                          className={editor?.isActive("bulletList") ? "bg-muted" : ""}
-                        >
-                          List
-                        </Button>
-                      </div>
-                      <EditorContent editor={editor} className="bg-background rounded-b-md" />
-                    </div>
+                    <RichTextEditor content={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormDescription>
                     Use {"{{first_name}}"} to personalize the message. Supports HTML formatting.
