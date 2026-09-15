@@ -49,7 +49,7 @@ export const DataRetentionTab: React.FC<Props> = ({ config, onUpdate, isLoading 
               type="number"
               className="bg-background border-border"
               value={logRetention}
-              onChange={(e) => setLogRetention(parseInt(e.target.value) || 365)}
+              onChange={(e) => setLogRetention(parseInt(e.target.value, 10) || 365)}
             />
           </Field>
         </div>

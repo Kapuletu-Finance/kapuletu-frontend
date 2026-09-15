@@ -90,87 +90,94 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading })
     <div className="rounded-md border border-border mt-4 overflow-hidden bg-background">
       <ScrollArea orientation="horizontal" className="w-full">
         <Table>
-        <TableHeader>
-          <TableRow className="bg-muted/40 hover:bg-muted/40">
-            <TableHead className="w-[40px]"></TableHead>
-            <TableHead className="font-semibold">Timestamp</TableHead>
-            <TableHead className="font-semibold">Actor</TableHead>
-            <TableHead className="font-semibold">Action</TableHead>
-            <TableHead className="font-semibold">Target</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {logs.map((log) => {
-            const isExpanded = expandedRows.has(log.log_id);
-            const style = getLogStyle(log.entity_type, log.action);
+          <TableHeader>
+            <TableRow className="bg-muted/40 hover:bg-muted/40">
+              <TableHead className="w-[40px]"></TableHead>
+              <TableHead className="font-semibold">Timestamp</TableHead>
+              <TableHead className="font-semibold">Actor</TableHead>
+              <TableHead className="font-semibold">Action</TableHead>
+              <TableHead className="font-semibold">Target</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {logs.map((log) => {
+              const isExpanded = expandedRows.has(log.log_id);
+              const style = getLogStyle(log.entity_type, log.action);
 
-            return (
-              <React.Fragment key={log.log_id}>
-                <TableRow
-                  className={cn(
-                    "cursor-pointer transition-colors hover:bg-muted/50",
-                    isExpanded && "bg-muted/30",
-                  )}
-                  onClick={() => toggleRow(log.log_id)}
-                >
-                  <TableCell className="p-2 text-center">
-                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent">
-                      <IconLibrary
-                        name={isExpanded ? "chevron-down" : "chevron-right"}
-                        className="h-4 w-4 text-muted-foreground"
-                      />
-                    </Button>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
-                    {formatDate(log.timestamp)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <IconLibrary name={style.icon} className={cn("h-4 w-4", style.iconColor)} />
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{log.actor_name}</p>
-                        {log.actor_email && (
-                          <p className="text-xs text-muted-foreground">{log.actor_email}</p>
-                        )}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={cn("text-xs font-mono uppercase", style.badge)}
-                    >
-                      {log.action}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <p className="text-sm font-medium text-foreground uppercase">
-                      {log.entity_type}
-                    </p>
-                    {log.entity_id && (
-                      <p className="text-xs text-muted-foreground font-mono">
-                        {log.entity_id.split("-")[0]}...
-                      </p>
+              return (
+                <React.Fragment key={log.log_id}>
+                  <TableRow
+                    className={cn(
+                      "cursor-pointer transition-colors hover:bg-muted/50",
+                      isExpanded && "bg-muted/30",
                     )}
-                  </TableCell>
-                </TableRow>
-                {isExpanded && (
-                  <TableRow className="bg-muted/10 hover:bg-muted/10">
-                    <TableCell colSpan={5} className="p-0 border-b">
-                      <div className="p-4 pl-12 border-l-2 border-l-primary/30 bg-muted/20">
-                        <ScrollArea orientation="horizontal" className="w-full rounded-md bg-background border border-border">
-                          <pre className="text-xs font-mono text-foreground whitespace-pre-wrap p-4">
-                            {JSON.stringify(log.details, null, 2)}
-                          </pre>
-                        </ScrollArea>
+                    onClick={() => toggleRow(log.log_id)}
+                  >
+                    <TableCell className="p-2 text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 hover:bg-transparent"
+                      >
+                        <IconLibrary
+                          name={isExpanded ? "chevron-down" : "chevron-right"}
+                          className="h-4 w-4 text-muted-foreground"
+                        />
+                      </Button>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                      {formatDate(log.timestamp)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <IconLibrary name={style.icon} className={cn("h-4 w-4", style.iconColor)} />
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{log.actor_name}</p>
+                          {log.actor_email && (
+                            <p className="text-xs text-muted-foreground">{log.actor_email}</p>
+                          )}
+                        </div>
                       </div>
                     </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={cn("text-xs font-mono uppercase", style.badge)}
+                      >
+                        {log.action}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <p className="text-sm font-medium text-foreground uppercase">
+                        {log.entity_type}
+                      </p>
+                      {log.entity_id && (
+                        <p className="text-xs text-muted-foreground font-mono">
+                          {log.entity_id.split("-")[0]}...
+                        </p>
+                      )}
+                    </TableCell>
                   </TableRow>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </TableBody>
+                  {isExpanded && (
+                    <TableRow className="bg-muted/10 hover:bg-muted/10">
+                      <TableCell colSpan={5} className="p-0 border-b">
+                        <div className="p-4 pl-12 border-l-2 border-l-primary/30 bg-muted/20">
+                          <ScrollArea
+                            orientation="horizontal"
+                            className="w-full rounded-md bg-background border border-border"
+                          >
+                            <pre className="text-xs font-mono text-foreground whitespace-pre-wrap p-4">
+                              {JSON.stringify(log.details, null, 2)}
+                            </pre>
+                          </ScrollArea>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </TableBody>
         </Table>
       </ScrollArea>
     </div>

@@ -86,7 +86,6 @@ export const DocsHeader: React.FC<{ onOpenMobileNav: () => void }> = ({ onOpenMo
             <div className="flex items-center px-4 py-3 border-b border-border">
               <IconLibrary name="search" className="w-5 h-5 text-primary mr-3" />
               <input
-                autoFocus
                 type="text"
                 placeholder="Search KapuLetu Help..."
                 className="w-full bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground text-lg"
@@ -99,35 +98,35 @@ export const DocsHeader: React.FC<{ onOpenMobileNav: () => void }> = ({ onOpenMo
               </button>
             </div>
             <ScrollArea className="max-h-[60vh] w-full" orientation="vertical">
-            <div className="p-4 flex flex-col gap-1">
-              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                Recent Searches
+              <div className="p-4 flex flex-col gap-1">
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                  Recent Searches
+                </div>
+                <Link
+                  href="/docs/contributions/inbox"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-between px-4 py-3 rounded-lg hover:bg-primary/10 hover:text-primary group transition-colors"
+                >
+                  <span className="font-medium text-foreground group-hover:text-primary">
+                    Understanding the Contribution Inbox
+                  </span>
+                  <span className="text-xs text-muted-foreground group-hover:text-primary/70">
+                    Contributions
+                  </span>
+                </Link>
+                <Link
+                  href="/docs/whatsapp"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-between px-4 py-3 rounded-lg hover:bg-primary/10 hover:text-primary group transition-colors"
+                >
+                  <span className="font-medium text-foreground group-hover:text-primary">
+                    Connecting WhatsApp
+                  </span>
+                  <span className="text-xs text-muted-foreground group-hover:text-primary/70">
+                    WhatsApp
+                  </span>
+                </Link>
               </div>
-              <Link
-                href="/docs/contributions/inbox"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-between px-4 py-3 rounded-lg hover:bg-primary/10 hover:text-primary group transition-colors"
-              >
-                <span className="font-medium text-foreground group-hover:text-primary">
-                  Understanding the Contribution Inbox
-                </span>
-                <span className="text-xs text-muted-foreground group-hover:text-primary/70">
-                  Contributions
-                </span>
-              </Link>
-              <Link
-                href="/docs/whatsapp"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-between px-4 py-3 rounded-lg hover:bg-primary/10 hover:text-primary group transition-colors"
-              >
-                <span className="font-medium text-foreground group-hover:text-primary">
-                  Connecting WhatsApp
-                </span>
-                <span className="text-xs text-muted-foreground group-hover:text-primary/70">
-                  WhatsApp
-                </span>
-              </Link>
-            </div>
             </ScrollArea>
             <div className="bg-muted px-4 py-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
               <span>

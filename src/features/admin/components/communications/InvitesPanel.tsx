@@ -8,10 +8,20 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useSendInviteMutation } from "@/features/admin/services/mutations";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { RichTextEditor } from "@/features/shared/components/RichTextEditor";
 
 export const InvitesPanel: React.FC = () => {
   const [emails, setEmails] = useState("");
-  const [message, setMessage] = useState("Welcome to the exclusive Kapuletu private beta!");
+  const defaultTemplate = `<p>We are thrilled to exclusively invite you to join the <strong>KapuLetu Private Beta</strong>.</p>
+<p>As a trusted partner, you'll get early access to our state-of-the-art platform designed to manage your group's treasury with unprecedented transparency and ease.</p>
+<p><strong>What you can expect:</strong></p>
+<ul>
+  <li>Real-time financial tracking</li>
+  <li>Transparent audit logs</li>
+  <li>Automated reporting</li>
+</ul>
+<p>Click the secure link below to set up your account and get started!</p>`;
+  const [message, setMessage] = useState(defaultTemplate);
   const inviteMutation = useSendInviteMutation();
 
   const handleSendInvites = async () => {
@@ -36,7 +46,7 @@ export const InvitesPanel: React.FC = () => {
         message: message,
       });
       setEmails("");
-    } catch (err) {
+    } catch (_err) {
       // Error is handled in the mutation
     }
   };
@@ -67,12 +77,7 @@ export const InvitesPanel: React.FC = () => {
 
             <div className="space-y-2">
               <Label>Custom Greeting Message</Label>
-              <Textarea
-                placeholder="Write a warm, professional message..."
-                className="min-h-[120px]"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
+              <RichTextEditor content={message} onChange={setMessage} className="min-h-[200px]" />
               <p className="text-xs text-muted-foreground mt-1">
                 This message will be injected directly into the branded HTML invite template, along
                 with their secure onboarding link.

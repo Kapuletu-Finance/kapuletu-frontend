@@ -1,4 +1,3 @@
-import React from "react";
 import { PlanEditor } from "@/features/admin/components/finance/PlanEditor";
 
 export default async function AdminEditPlanPage({

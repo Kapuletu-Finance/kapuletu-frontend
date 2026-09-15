@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import React from "react";
 import { LandingFooter } from "@/features/landing-page/components/LandingFooter";
 import { LandingHeader } from "@/features/landing-page/components/LandingHeader";
 import IconLibrary from "@/features/shared/components/IconLibrary";

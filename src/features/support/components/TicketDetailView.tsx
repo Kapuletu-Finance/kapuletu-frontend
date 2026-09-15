@@ -222,110 +222,112 @@ export const TicketDetailView: React.FC<Props> = ({ ticketId, onBack }) => {
 
         <ScrollArea className="flex-1 w-full" orientation="vertical">
           <CardContent className="p-6 space-y-4 relative">
-          {/* Waiting banner */}
-          {isWaiting && (
-            <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-2 flex items-start gap-4">
-              <Loader2 className="w-5 h-5 text-primary animate-spin mt-0.5 shrink-0" />
-              <div>
-                <h4 className="font-semibold text-primary">Waiting for Our Support Team</h4>
-                <p className="text-sm text-primary/80 mt-1">
-                  Your ticket is in the queue. Our support team will be with you shortly.
-                  {ticket.priority === "urgent" && " Your urgent request has been prioritised."}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Idle warning banner */}
-          {showIdleWarning && !idleDismissed && !isResolved && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-4">
-              <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-              <div className="flex-1">
-                <h4 className="font-semibold text-amber-700 dark:text-amber-400">Still with us?</h4>
-                <p className="text-sm text-amber-700/80 dark:text-amber-400/80 mt-1">
-                  Our support team hasn't heard from you in a while. If your issue has been fully
-                  resolved, you're all set! If you still need help, let us know.
-                </p>
-                <div className="flex gap-2 mt-3">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleStillHere}
-                    className="border-amber-500/40 text-amber-700 dark:text-amber-400 hover:bg-amber-500/10"
-                  >
-                    I Still Need Help
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setIdleDismissed(true)}
-                    className="text-muted-foreground"
-                  >
-                    Dismiss
-                  </Button>
+            {/* Waiting banner */}
+            {isWaiting && (
+              <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-2 flex items-start gap-4">
+                <Loader2 className="w-5 h-5 text-primary animate-spin mt-0.5 shrink-0" />
+                <div>
+                  <h4 className="font-semibold text-primary">Waiting for Our Support Team</h4>
+                  <p className="text-sm text-primary/80 mt-1">
+                    Your ticket is in the queue. Our support team will be with you shortly.
+                    {ticket.priority === "urgent" && " Your urgent request has been prioritised."}
+                  </p>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Messages */}
-          {ticket.messages.map((msg: TicketMessage) => {
-            const isUser = msg.sender_id === ticket.user_id;
-            const senderLabel = isUser ? "You" : `${msg.sender_name || "Support Team"} (Support)`;
-            const initials = isUser
-              ? "ME"
-              : (msg.sender_name || "ST")
-                  .split(" ")
-                  .slice(0, 2)
-                  .map((w) => w[0])
-                  .join("")
-                  .toUpperCase();
+            {/* Idle warning banner */}
+            {showIdleWarning && !idleDismissed && !isResolved && (
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-4">
+                <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-amber-700 dark:text-amber-400">
+                    Still with us?
+                  </h4>
+                  <p className="text-sm text-amber-700/80 dark:text-amber-400/80 mt-1">
+                    Our support team hasn't heard from you in a while. If your issue has been fully
+                    resolved, you're all set! If you still need help, let us know.
+                  </p>
+                  <div className="flex gap-2 mt-3">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleStillHere}
+                      className="border-amber-500/40 text-amber-700 dark:text-amber-400 hover:bg-amber-500/10"
+                    >
+                      I Still Need Help
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setIdleDismissed(true)}
+                      className="text-muted-foreground"
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
 
-            return (
-              <div
-                key={msg.message_id}
-                className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}
-              >
-                <Avatar className="w-8 h-8 shrink-0 mt-1">
-                  <AvatarFallback
-                    className={
-                      isUser
-                        ? "bg-primary text-primary-foreground text-xs"
-                        : "bg-muted-foreground/20 text-foreground text-xs"
-                    }
-                  >
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
+            {/* Messages */}
+            {ticket.messages.map((msg: TicketMessage) => {
+              const isUser = msg.sender_id === ticket.user_id;
+              const senderLabel = isUser ? "You" : `${msg.sender_name || "Support Team"} (Support)`;
+              const initials = isUser
+                ? "ME"
+                : (msg.sender_name || "ST")
+                    .split(" ")
+                    .slice(0, 2)
+                    .map((w) => w[0])
+                    .join("")
+                    .toUpperCase();
+
+              return (
                 <div
-                  className={`max-w-[72%] space-y-1 flex flex-col ${isUser ? "items-end" : "items-start"}`}
+                  key={msg.message_id}
+                  className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}
                 >
+                  <Avatar className="w-8 h-8 shrink-0 mt-1">
+                    <AvatarFallback
+                      className={
+                        isUser
+                          ? "bg-primary text-primary-foreground text-xs"
+                          : "bg-muted-foreground/20 text-foreground text-xs"
+                      }
+                    >
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
                   <div
-                    className={`text-xs font-medium text-muted-foreground ${isUser ? "text-right" : "text-left"}`}
+                    className={`max-w-[72%] space-y-1 flex flex-col ${isUser ? "items-end" : "items-start"}`}
                   >
-                    {senderLabel}
+                    <div
+                      className={`text-xs font-medium text-muted-foreground ${isUser ? "text-right" : "text-left"}`}
+                    >
+                      {senderLabel}
+                    </div>
+                    <div
+                      className={`rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${
+                        isUser
+                          ? "bg-primary text-primary-foreground rounded-tr-none"
+                          : "bg-muted text-foreground rounded-tl-none"
+                      }`}
+                    >
+                      {msg.message}
+                    </div>
+                    <span className="text-[10px] opacity-70 mt-1 block" suppressHydrationWarning>
+                      {parseSafeDate(msg.created_at).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
                   </div>
-                  <div
-                    className={`rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${
-                      isUser
-                        ? "bg-primary text-primary-foreground rounded-tr-none"
-                        : "bg-muted text-foreground rounded-tl-none"
-                    }`}
-                  >
-                    {msg.message}
-                  </div>
-                  <span className="text-[10px] opacity-70 mt-1 block" suppressHydrationWarning>
-                    {parseSafeDate(msg.created_at).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
                 </div>
-              </div>
-            );
-          })}
-          <div ref={messagesEndRef} />
-        </CardContent>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </CardContent>
         </ScrollArea>
 
         {/* Rating prompt — inline, above footer, when resolved */}

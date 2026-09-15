@@ -696,6 +696,35 @@ export const useBroadcastRecipientsQuery = (campaignId: string | null) => {
       );
       return response.data;
     },
-    enabled: !!campaignId,
+  });
+};
+
+export interface CommunicationLogItem {
+  log_id: string;
+  user_name: string;
+  channel: string;
+  destination: string;
+  subject: string;
+  status: string;
+  error_message: string | null;
+  created_at: string;
+}
+
+export interface CommunicationLogsResponse {
+  total: number;
+  page: number;
+  limit: number;
+  logs: CommunicationLogItem[];
+}
+
+export const useCommunicationLogsQuery = (page: number = 1, limit: number = 50) => {
+  return useQuery({
+    queryKey: ["admin", "communication-logs", page, limit],
+    queryFn: async () => {
+      const response = await apiClient.get<CommunicationLogsResponse>(
+        `/admin/crm/communication-logs?page=${page}&limit=${limit}`,
+      );
+      return response.data;
+    },
   });
 };

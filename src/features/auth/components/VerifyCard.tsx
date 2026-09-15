@@ -49,7 +49,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const otp = params.get("otp");
-      const token = params.get("token");
+      const _token = params.get("token");
       if (otp) {
         form.setValue("code", otp, { shouldValidate: true });
       }

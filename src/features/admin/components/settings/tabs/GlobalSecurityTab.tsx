@@ -56,7 +56,7 @@ export const GlobalSecurityTab: React.FC<Props> = ({ config, onUpdate, isLoading
             type="number"
             className="bg-background border-border"
             value={timeout}
-            onChange={(e) => setTimeoutVal(parseInt(e.target.value) || 60)}
+            onChange={(e) => setTimeoutVal(parseInt(e.target.value, 10) || 60)}
           />
         </Field>
       </div>

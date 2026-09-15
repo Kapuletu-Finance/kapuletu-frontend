@@ -31,7 +31,7 @@ export const BillingRulesTab: React.FC<Props> = ({ config, onUpdate, isLoading }
             type="number"
             className="bg-background border-border"
             value={trialDays}
-            onChange={(e) => setTrialDays(parseInt(e.target.value) || 0)}
+            onChange={(e) => setTrialDays(parseInt(e.target.value, 10) || 0)}
           />
         </Field>
 
@@ -41,7 +41,7 @@ export const BillingRulesTab: React.FC<Props> = ({ config, onUpdate, isLoading }
             type="number"
             className="bg-background border-border"
             value={gracePeriod}
-            onChange={(e) => setGracePeriod(parseInt(e.target.value) || 0)}
+            onChange={(e) => setGracePeriod(parseInt(e.target.value, 10) || 0)}
           />
         </Field>
       </div>

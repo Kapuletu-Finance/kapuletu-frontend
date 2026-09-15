@@ -1,4 +1,3 @@
-import React from "react";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsVideo } from "@/features/docs/components/DocsVideo";
 

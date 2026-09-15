@@ -24,7 +24,7 @@ export const DocsBreadcrumbs = () => {
       </Link>
 
       {paths.map((path, index) => {
-        const href = "/docs/" + paths.slice(0, index + 1).join("/");
+        const href = `/docs/${paths.slice(0, index + 1).join("/")}`;
         const isLast = index === paths.length - 1;
 
         // Basic formatting for the path name
