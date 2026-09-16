@@ -72,6 +72,8 @@ export const useSignInMutation = () => {
         window.location.href = from;
       } else if (data.role === "admin" || data.role === "super_admin") {
         window.location.href = "/admin";
+      } else if (data.is_waitlisted) {
+        window.location.href = "/waitlist";
       } else {
         window.location.href = "/treasurer";
       }
@@ -113,6 +115,8 @@ export const useVerify2FAMutation = () => {
         window.location.href = from;
       } else if (data.role === "admin" || data.role === "super_admin") {
         window.location.href = "/admin";
+      } else if (data.is_waitlisted) {
+        window.location.href = "/waitlist";
       } else {
         window.location.href = "/treasurer";
       }
@@ -164,8 +168,8 @@ export const useSignUpMutation = () => {
     onSuccess: () => {
       toast.success("Account created! Verification code sent to your email and WhatsApp.");
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
-      // Redirect to phone verification page
-      window.location.href = "/verify-phone";
+      // Redirect to phone verification page with new_signup flag to prevent double OTP
+      window.location.href = "/verify-phone?new_signup=true";
     },
   });
 };

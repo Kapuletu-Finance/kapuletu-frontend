@@ -103,7 +103,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
         { ...data, identifier: finalIdentifier },
         {
           onSuccess: () => {
-            setTimeout(() => router.push("/treasurer"), 2000);
+            setTimeout(() => router.push("/sign-in"), 2000);
           },
         },
       );
@@ -153,6 +153,9 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   useEffect(() => {
     if (is2FA) return; // For 2FA, the initial login request sent the code already
     if (isPhone && !user?.phone_number) return;
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("new_signup") === "true") return;
 
     if (!hasRequestedRef.current) {
       hasRequestedRef.current = true;
@@ -208,7 +211,9 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
             ? "The code you entered is wrong. Please try again"
             : is2FA
               ? "We've sent a 6-digit verification code to your phone and email"
-              : `We sent a 6-digit code to your ${isPhone ? "WhatsApp" : "email address"}`}
+              : isPhone
+                ? "Check your WhatsApp for the verification code"
+                : "We sent a 6-digit code to your email address"}
         </p>
       </div>
 

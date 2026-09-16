@@ -17,6 +17,7 @@ import { BackNavigation } from "@/features/shared/components/BackNavigation";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { AdminSecureWrapper } from "../shared/AdminSecureWrapper";
 import { ChangeRoleDialog } from "./ChangeRoleDialog";
+import { DeleteUserDialog } from "./DeleteUserDialog";
 import { EscalatedUpdateDialog } from "./EscalatedUpdateDialog";
 import { OverridePlanDialog } from "./OverridePlanDialog";
 import { SuspendUserDialog } from "./SuspendUserDialog";
@@ -34,6 +35,7 @@ export const UserDetailPage: React.FC = () => {
   const [roleOpen, setRoleOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const resetPassword = useTriggerPasswordResetMutation();
 
@@ -342,9 +344,14 @@ export const UserDetailPage: React.FC = () => {
                         Suspending an account instantly terminates the user's access to the KapuLetu
                         platform. All their data is preserved, but they will not be able to log in.
                       </p>
-                      <Button variant="destructive" onClick={() => setSuspendOpen(true)}>
-                        <IconLibrary name="alert" className="mr-2 size-4" /> Suspend Account
-                      </Button>
+                      <div className="flex items-center gap-3">
+                        <Button variant="destructive" onClick={() => setSuspendOpen(true)}>
+                          <IconLibrary name="alert" className="mr-2 size-4" /> Suspend Account
+                        </Button>
+                        <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
+                          <IconLibrary name="trash" className="mr-2 size-4" /> Delete Account
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -378,6 +385,12 @@ export const UserDetailPage: React.FC = () => {
           onOpenChange={setEditOpen}
         />
         <OverridePlanDialog userId={userId} isOpen={planOpen} onOpenChange={setPlanOpen} />
+        <DeleteUserDialog
+          userId={userId}
+          userEmail={userDetails.profile.email}
+          isOpen={deleteOpen}
+          onOpenChange={setDeleteOpen}
+        />
       </div>
     </AdminSecureWrapper>
   );

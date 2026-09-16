@@ -169,6 +169,26 @@ export const useUpgradeUserPlanMutation = () => {
   });
 };
 
+export const useDeleteUserMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await apiClient.delete<{ message: string }>(
+        `/admin/users/treasurers/${userId}`,
+      );
+      return response.data;
+    },
+    onSuccess: (data, userId) => {
+      toast.success(data.message || "User deleted successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      queryClient.removeQueries({ queryKey: ["admin", "users", userId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to delete user.");
+    },
+  });
+};
+
 export const useCreatePlanMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({

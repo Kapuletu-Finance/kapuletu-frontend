@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useApproveWaitlistMutation } from "@/features/admin/services/mutations";
 import { useAdminWaitlistQuery } from "@/features/admin/services/queries";
@@ -45,8 +46,12 @@ export const AdminWaitlistTab: React.FC = () => {
             >
               <div className="text-center font-medium text-muted-foreground">{index + 1}</div>
               <div className="col-span-2">
-                <div className="font-medium text-foreground">{user.full_name}</div>
-                <div className="text-sm text-muted-foreground">{user.email}</div>
+                <Link href={`/admin/users/${user.user_id}`} className="hover:underline">
+                  <div className="font-medium text-foreground text-refined-blue">
+                    {user.full_name}
+                  </div>
+                  <div className="text-sm text-muted-foreground">{user.email}</div>
+                </Link>
               </div>
               <div className="text-sm">{user.phone}</div>
               <div className="text-sm text-muted-foreground">
