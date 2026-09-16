@@ -25,7 +25,8 @@ export const AdminWaitlistTab: React.FC = () => {
   return (
     <div className="space-y-4">
       <div className="rounded-md border border-border">
-        <div className="grid grid-cols-5 gap-4 p-4 font-semibold text-muted-foreground border-b border-border">
+        <div className="grid grid-cols-[40px_repeat(5,minmax(0,1fr))] gap-4 p-4 font-semibold text-muted-foreground border-b border-border">
+          <div className="text-center">#</div>
           <div className="col-span-2">Name & Email</div>
           <div>Phone</div>
           <div>Joined</div>
@@ -37,11 +38,12 @@ export const AdminWaitlistTab: React.FC = () => {
         ) : !waitlist?.users || waitlist.users.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">No users on the waitlist.</div>
         ) : (
-          waitlist.users.map((user) => (
+          waitlist.users.map((user, index) => (
             <div
               key={user.user_id}
-              className="grid grid-cols-5 gap-4 p-4 items-center border-b border-border last:border-0 hover:bg-muted/30"
+              className="grid grid-cols-[40px_repeat(5,minmax(0,1fr))] gap-4 p-4 items-center border-b border-border last:border-0 hover:bg-muted/30"
             >
+              <div className="text-center font-medium text-muted-foreground">{index + 1}</div>
               <div className="col-span-2">
                 <div className="font-medium text-foreground">{user.full_name}</div>
                 <div className="text-sm text-muted-foreground">{user.email}</div>

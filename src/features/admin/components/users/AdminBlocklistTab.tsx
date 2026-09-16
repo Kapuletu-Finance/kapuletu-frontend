@@ -27,7 +27,8 @@ export const AdminBlocklistTab: React.FC = () => {
   return (
     <div className="space-y-4">
       <div className="rounded-md border border-border">
-        <div className="grid grid-cols-4 gap-4 p-4 font-semibold text-muted-foreground border-b border-border">
+        <div className="grid grid-cols-[40px_repeat(4,minmax(0,1fr))] gap-4 p-4 font-semibold text-muted-foreground border-b border-border">
+          <div className="text-center">#</div>
           <div>Phone Number</div>
           <div>Attempts / Status</div>
           <div>Last Attempt</div>
@@ -39,11 +40,14 @@ export const AdminBlocklistTab: React.FC = () => {
         ) : !data?.items || data.items.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">No numbers in the blocklist.</div>
         ) : (
-          data.items.map((item) => (
+          data.items.map((item, index) => (
             <div
               key={item.phone_number}
-              className="grid grid-cols-4 gap-4 p-4 items-center border-b border-border last:border-0 hover:bg-muted/30"
+              className="grid grid-cols-[40px_repeat(4,minmax(0,1fr))] gap-4 p-4 items-center border-b border-border last:border-0 hover:bg-muted/30"
             >
+              <div className="text-center font-medium text-muted-foreground">
+                {(page - 1) * 50 + index + 1}
+              </div>
               <div className="font-medium text-foreground">{item.phone_number}</div>
               <div>
                 <div className="text-sm">{item.attempt_count} attempts</div>

@@ -137,7 +137,8 @@ export const AdminWhitelistTab: React.FC = () => {
       </div>
 
       <div className="rounded-md border border-border">
-        <div className="grid grid-cols-6 gap-4 p-4 font-semibold text-muted-foreground border-b border-border bg-muted/20 text-sm">
+        <div className="grid grid-cols-[40px_repeat(6,minmax(0,1fr))] gap-4 p-4 font-semibold text-muted-foreground border-b border-border bg-muted/20 text-sm">
+          <div className="text-center">#</div>
           <div>Name</div>
           <div className="col-span-2">Contact Details</div>
           <div>Description</div>
@@ -150,11 +151,12 @@ export const AdminWhitelistTab: React.FC = () => {
         ) : whitelist?.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">No users on the whitelist.</div>
         ) : (
-          whitelist?.map((tester) => (
+          whitelist?.map((tester, index) => (
             <div
               key={tester.id}
-              className="grid grid-cols-6 gap-4 p-4 items-center border-b border-border last:border-0 hover:bg-muted/30 text-sm"
+              className="grid grid-cols-[40px_repeat(6,minmax(0,1fr))] gap-4 p-4 items-center border-b border-border last:border-0 hover:bg-muted/30 text-sm"
             >
+              <div className="text-center font-medium text-muted-foreground">{index + 1}</div>
               <div className="font-medium text-foreground">{tester.name || "Unnamed"}</div>
               <div className="col-span-2 flex flex-col justify-center">
                 <span className="text-foreground">{tester.phone_number}</span>

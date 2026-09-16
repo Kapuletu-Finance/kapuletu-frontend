@@ -1,14 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -64,6 +57,7 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/40 hover:bg-muted/40">
+            <TableHead className="w-12 text-center font-semibold">#</TableHead>
             <TableHead className="font-semibold">Name</TableHead>
             <TableHead className="font-semibold">Contact</TableHead>
             <TableHead className="font-semibold">Status</TableHead>
@@ -74,18 +68,25 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((user) => (
+          {users.map((user, index) => (
             <TableRow
               key={user.user_id}
-              className="cursor-pointer transition-colors hover:bg-muted/50"
+              className="group cursor-pointer transition-colors hover:bg-muted/50"
               onClick={() => onRowClick(user.slug)}
             >
+              <TableCell className="text-center font-medium text-muted-foreground">
+                {index + 1}
+              </TableCell>
               <TableCell>
                 <p className="font-medium text-foreground">{user.full_name}</p>
               </TableCell>
               <TableCell>
-                <p className="text-sm text-foreground">{user.email}</p>
-                <p className="text-xs text-muted-foreground">{user.phone || "N/A"}</p>
+                <div className="flex items-center gap-2">
+                  <div>
+                    <p className="text-sm text-foreground">{user.email}</p>
+                    <p className="text-xs text-muted-foreground">{user.phone || "N/A"}</p>
+                  </div>
+                </div>
               </TableCell>
               <TableCell>
                 <Badge
@@ -122,31 +123,31 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
                 {formatDate(user.created_at)}
               </TableCell>
               <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="inline-flex h-8 w-8 items-center justify-center rounded-md p-0 text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors">
-                    <span className="sr-only">Open menu</span>
-                    <IconLibrary name="more-horizontal" className="h-4 w-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => onRowClick(user.slug)}>
-                      <IconLibrary name="eye" className="mr-2 h-4 w-4" />
-                      View Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        if (user.email) {
-                          navigator.clipboard.writeText(user.email);
-                        }
-                      }}
-                      disabled={!user.email}
-                    >
-                      <IconLibrary name="copy" className="mr-2 h-4 w-4" />
-                      Copy Email
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 text-xs px-2"
+                    onClick={() => onRowClick(user.slug)}
+                  >
+                    <IconLibrary name="eye" className="mr-1.5 h-3.5 w-3.5" />
+                    View
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 text-xs px-2"
+                    onClick={() => {
+                      if (user.email) {
+                        navigator.clipboard.writeText(user.email);
+                      }
+                    }}
+                    disabled={!user.email}
+                    title="Copy Email"
+                  >
+                    <IconLibrary name="copy" className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
