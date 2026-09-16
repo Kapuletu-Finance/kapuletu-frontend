@@ -6,6 +6,7 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 import { AdminBlocklistTab } from "./AdminBlocklistTab";
 import { AdminUserSettingsTab } from "./AdminUserSettingsTab";
 import { AdminUsersTab } from "./AdminUsersTab";
+import { AdminWaitlistHistoryTab } from "./AdminWaitlistHistoryTab";
 import { AdminWaitlistTab } from "./AdminWaitlistTab";
 import { AdminWhitelistTab } from "./AdminWhitelistTab";
 
@@ -47,6 +48,13 @@ export const AdminUsersPage: React.FC = () => {
             Testers / Whitelist
           </TabsTrigger>
           <TabsTrigger
+            value="history"
+            className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 py-2"
+          >
+            <IconLibrary name="clock" className="h-4 w-4 mr-2" />
+            Activity History
+          </TabsTrigger>
+          <TabsTrigger
             value="blocklist"
             className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 py-2"
           >
@@ -70,6 +78,9 @@ export const AdminUsersPage: React.FC = () => {
         </TabsContent>
         <TabsContent value="whitelist" className="flex-1 mt-0 outline-none">
           <AdminWhitelistTab />
+        </TabsContent>
+        <TabsContent value="history" className="flex-1 mt-0 outline-none">
+          <AdminWaitlistHistoryTab />
         </TabsContent>
         <TabsContent value="blocklist" className="flex-1 mt-0 outline-none">
           <AdminBlocklistTab />

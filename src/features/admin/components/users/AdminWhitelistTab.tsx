@@ -175,14 +175,9 @@ export const AdminWhitelistTab: React.FC = () => {
                 )}
               </div>
               <div className="text-right flex items-center justify-end gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={tester.invite_sent}
-                  onClick={() => setSelectedTester(tester)}
-                >
+                <Button size="sm" variant="outline" onClick={() => setSelectedTester(tester)}>
                   <IconLibrary name="mail" className="mr-1.5 size-3.5" />
-                  {tester.invite_sent ? "Invited" : "Invite"}
+                  {tester.invite_sent ? "Resend" : "Invite"}
                 </Button>
                 <Button
                   size="sm"
@@ -240,7 +235,11 @@ export const AdminWhitelistTab: React.FC = () => {
               onClick={() => selectedTester && handleSendInvite(selectedTester.id)}
               disabled={isSendingInvite}
             >
-              {isSendingInvite ? "Sending..." : "Send Invite"}
+              {isSendingInvite
+                ? "Sending..."
+                : selectedTester?.invite_sent
+                  ? "Resend Invite"
+                  : "Send Invite"}
             </Button>
           </DialogFooter>
         </DialogContent>

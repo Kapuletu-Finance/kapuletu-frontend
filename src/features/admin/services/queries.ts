@@ -874,3 +874,24 @@ export const useAdminTemplatePreviewQuery = (name: string | null, message: strin
     enabled: !!name,
   });
 };
+
+export interface WaitlistHistoryItem {
+  id: string;
+  actor: string;
+  action: string;
+  entity_id: string;
+  details: Record<string, any>;
+  created_at: string;
+}
+
+export const useWaitlistHistoryQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "waitlist", "history"],
+    queryFn: async () => {
+      const response = await apiClient.get<{ history: WaitlistHistoryItem[] }>(
+        "/admin/users/waitlist/history",
+      );
+      return response.data.history;
+    },
+  });
+};
