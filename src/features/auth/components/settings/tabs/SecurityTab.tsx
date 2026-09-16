@@ -1,5 +1,5 @@
 import { Loader2, Lock } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import {
@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { StickySaveBar } from "@/components/ui/sticky-save-bar";
 import { ChangePasswordDialog } from "@/features/auth/components/ChangePasswordDialog";
 import { useUpdateAuthSettingsMutation } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
@@ -16,6 +17,33 @@ import { useGetMeQuery } from "@/features/auth/services/queries";
 export const SecurityTab: React.FC = () => {
   const { data: user, isLoading: isUserLoading } = useGetMeQuery();
   const updateAuthSettingsMutation = useUpdateAuthSettingsMutation();
+
+  const [twoFactorEnabled, setTwoFactorEnabled] = React.useState(false);
+  const [twoFactorChannel, setTwoFactorChannel] = React.useState("whatsapp");
+
+  React.useEffect(() => {
+    if (user) {
+      setTwoFactorEnabled(user.two_factor_enabled ?? false);
+      setTwoFactorChannel(user.two_factor_channel || "whatsapp");
+    }
+  }, [user]);
+
+  const isDirty =
+    twoFactorEnabled !== (user?.two_factor_enabled ?? false) ||
+    twoFactorChannel !== (user?.two_factor_channel || "whatsapp");
+
+  const handleSave = () => {
+    if (!window.confirm("Are you sure you want to apply these changes?")) return;
+    updateAuthSettingsMutation.mutate({
+      two_factor_enabled: twoFactorEnabled,
+      two_factor_channel: twoFactorChannel,
+    });
+  };
+
+  const handleDiscard = () => {
+    setTwoFactorEnabled(user?.two_factor_enabled ?? false);
+    setTwoFactorChannel(user?.two_factor_channel || "whatsapp");
+  };
 
   if (isUserLoading) {
     return (
@@ -43,12 +71,8 @@ export const SecurityTab: React.FC = () => {
             </p>
           </div>
           <LabeledSwitch
-            checked={user?.two_factor_enabled ?? false}
-            onCheckedChange={(checked) => {
-              updateAuthSettingsMutation.mutate({
-                two_factor_enabled: checked,
-              });
-            }}
+            checked={twoFactorEnabled}
+            onCheckedChange={setTwoFactorEnabled}
             disabled={updateAuthSettingsMutation.isPending}
           />
         </div>
@@ -62,12 +86,8 @@ export const SecurityTab: React.FC = () => {
               </p>
             </div>
             <Select
-              value={user?.two_factor_channel || "whatsapp"}
-              onValueChange={(value) => {
-                updateAuthSettingsMutation.mutate({
-                  two_factor_channel: value,
-                });
-              }}
+              value={twoFactorChannel}
+              onValueChange={(val) => setTwoFactorChannel(val || "whatsapp")}
               disabled={updateAuthSettingsMutation.isPending}
             >
               <SelectTrigger className="w-[180px] bg-background border-border">
@@ -95,6 +115,13 @@ export const SecurityTab: React.FC = () => {
           </ChangePasswordDialog>
         </div>
       </div>
+
+      <StickySaveBar
+        isDirty={isDirty}
+        isSaving={updateAuthSettingsMutation.isPending}
+        onSave={handleSave}
+        onDiscard={handleDiscard}
+      />
     </div>
   );
 };

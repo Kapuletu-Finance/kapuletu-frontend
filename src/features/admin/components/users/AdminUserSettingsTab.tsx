@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
+import { StickySaveBar } from "@/components/ui/sticky-save-bar";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateSystemConfigMutation } from "@/features/admin/services/mutations";
@@ -17,12 +18,15 @@ export const AdminUserSettingsTab: React.FC = () => {
 
   const [openSignups, setOpenSignups] = useState<boolean>(true);
   const [signupMsg, setSignupMsg] = useState("");
+  const [waitlistEnabled, setWaitlistEnabled] = useState<boolean>(false);
 
+  const isWaitlistDirty = waitlistEnabled !== (config?.WAITLIST_MODE_ENABLED === "true");
   const isDirty = config
     ? openSignups !== (config.open_signups !== undefined ? Boolean(config.open_signups) : true) ||
       signupMsg !==
         ((config.signup_restricted_message as string) ||
-          "Signups are currently restricted to invite-only.")
+          "Signups are currently restricted to invite-only.") ||
+      isWaitlistDirty
     : false;
 
   useEffect(() => {
@@ -32,19 +36,32 @@ export const AdminUserSettingsTab: React.FC = () => {
         (config.signup_restricted_message as string) ||
           "Signups are currently restricted to invite-only.",
       );
+      setWaitlistEnabled(config.WAITLIST_MODE_ENABLED === "true");
     }
   }, [config]);
 
-  const handleSaveSignups = async () => {
+  const handleSave = async () => {
+    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     try {
       await updateConfig([
         { key: "open_signups", value: openSignups },
         { key: "signup_restricted_message", value: signupMsg },
+        { key: "WAITLIST_MODE_ENABLED", value: waitlistEnabled ? "true" : "false" },
       ]);
       toast.success("Signup settings updated.");
     } catch (_err) {
       toast.error("Failed to update signup settings.");
     }
+  };
+
+  const handleDiscard = () => {
+    if (!config) return;
+    setOpenSignups(config.open_signups !== undefined ? Boolean(config.open_signups) : true);
+    setSignupMsg(
+      (config.signup_restricted_message as string) ||
+        "Signups are currently restricted to invite-only.",
+    );
+    setWaitlistEnabled(config.WAITLIST_MODE_ENABLED === "true");
   };
 
   if (isError) {
@@ -58,17 +75,6 @@ export const AdminUserSettingsTab: React.FC = () => {
       </div>
     );
   }
-
-  const isWaitlistEnabled = config?.WAITLIST_MODE_ENABLED === "true";
-
-  const toggleWaitlistMode = () => {
-    updateConfig([
-      {
-        key: "WAITLIST_MODE_ENABLED",
-        value: isWaitlistEnabled ? "false" : "true",
-      },
-    ]);
-  };
 
   return (
     <div className="space-y-6">
@@ -88,9 +94,9 @@ export const AdminUserSettingsTab: React.FC = () => {
             </div>
             <div className="ml-4 flex items-center shrink-0">
               <Switch
-                checked={isWaitlistEnabled}
-                onCheckedChange={toggleWaitlistMode}
-                disabled={isUpdating}
+                checked={waitlistEnabled}
+                onCheckedChange={setWaitlistEnabled}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -124,19 +130,15 @@ export const AdminUserSettingsTab: React.FC = () => {
               Message shown on the registration page when signups are closed.
             </p>
           </div>
-          <div className="flex justify-end pt-2">
-            <Button
-              onClick={handleSaveSignups}
-              disabled={!isDirty || isUpdating}
-              size="sm"
-              variant={isDirty ? "default" : "secondary"}
-              className="transition-all"
-            >
-              {isUpdating ? "Saving..." : isDirty ? "Save Settings" : "Saved"}
-            </Button>
-          </div>
         </div>
       </div>
+
+      <StickySaveBar
+        isDirty={isDirty}
+        isSaving={isUpdating}
+        onSave={handleSave}
+        onDiscard={handleDiscard}
+      />
     </div>
   );
 };

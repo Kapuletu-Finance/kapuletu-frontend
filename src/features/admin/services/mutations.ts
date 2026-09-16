@@ -578,7 +578,12 @@ export const useApproveWaitlistMutation = () => {
 export const useAddWhitelistMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { phone_number: string; description: string }) => {
+    mutationFn: async (data: {
+      phone_number: string;
+      description: string;
+      name?: string;
+      email?: string;
+    }) => {
       const response = await apiClient.post<{ message: string }>("/admin/users/whitelist", data);
       return response.data;
     },
@@ -595,10 +600,8 @@ export const useAddWhitelistMutation = () => {
 export const useRemoveWhitelistMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (phoneNumber: string) => {
-      const response = await apiClient.delete<{ message: string }>(
-        `/admin/users/whitelist/${phoneNumber}`,
-      );
+    mutationFn: async (id: string) => {
+      const response = await apiClient.delete<{ message: string }>(`/admin/users/whitelist/${id}`);
       return response.data;
     },
     onSuccess: () => {

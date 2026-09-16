@@ -12,6 +12,7 @@ import {
 import { FieldLabel } from "@/components/ui/field";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import { Separator } from "@/components/ui/separator";
+import { StickySaveBar } from "@/components/ui/sticky-save-bar";
 import { useUpdateAutomationSettingsMutation } from "@/features/auth/services/mutations";
 import { useGetSettingsQuery } from "@/features/auth/services/queries";
 import { CampaignSelect } from "@/features/contributions/components/CampaignSelect";
@@ -25,9 +26,53 @@ export const AutomationTab: React.FC = () => {
   const [pendingGroupId, setPendingGroupId] = React.useState<string | undefined>(undefined);
   const [pendingCampaignId, setPendingCampaignId] = React.useState<string | undefined>(undefined);
 
+  const [allowWhatsappApprovals, setAllowWhatsappApprovals] = React.useState(false);
+  const [allowWhatsappCreation, setAllowWhatsappCreation] = React.useState(false);
+  const [autoApproveEnabled, setAutoApproveEnabled] = React.useState(false);
+  const [autoApproveGroup, setAutoApproveGroup] = React.useState<string | null>(null);
+  const [autoApproveCampaign, setAutoApproveCampaign] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (settings) {
+      setAllowWhatsappApprovals(settings.automation?.allow_whatsapp_approvals ?? false);
+      setAllowWhatsappCreation(settings.automation?.allow_whatsapp_creation ?? false);
+      setAutoApproveEnabled(settings.automation?.auto_approve_enabled ?? false);
+      setAutoApproveGroup(settings.automation?.auto_approve_group_id || null);
+      setAutoApproveCampaign(settings.automation?.auto_approve_campaign_id || null);
+    }
+  }, [settings]);
+
+  const isDirty =
+    allowWhatsappApprovals !== (settings?.automation?.allow_whatsapp_approvals ?? false) ||
+    allowWhatsappCreation !== (settings?.automation?.allow_whatsapp_creation ?? false) ||
+    autoApproveEnabled !== (settings?.automation?.auto_approve_enabled ?? false) ||
+    autoApproveGroup !== (settings?.automation?.auto_approve_group_id || null) ||
+    autoApproveCampaign !== (settings?.automation?.auto_approve_campaign_id || null);
+
+  const handleSave = () => {
+    if (!settings) return;
+    if (!window.confirm("Are you sure you want to apply these changes?")) return;
+    updateAutomationMutation.mutate({
+      ...settings.automation,
+      allow_whatsapp_approvals: allowWhatsappApprovals,
+      allow_whatsapp_creation: allowWhatsappCreation,
+      auto_approve_enabled: autoApproveEnabled,
+      auto_approve_group_id: autoApproveGroup,
+      auto_approve_campaign_id: autoApproveCampaign,
+    });
+  };
+
+  const handleDiscard = () => {
+    setAllowWhatsappApprovals(settings?.automation?.allow_whatsapp_approvals ?? false);
+    setAllowWhatsappCreation(settings?.automation?.allow_whatsapp_creation ?? false);
+    setAutoApproveEnabled(settings?.automation?.auto_approve_enabled ?? false);
+    setAutoApproveGroup(settings?.automation?.auto_approve_group_id || null);
+    setAutoApproveCampaign(settings?.automation?.auto_approve_campaign_id || null);
+  };
+
   const handleOpenAutoApproveDialog = () => {
-    setPendingGroupId(settings?.automation?.auto_approve_group_id || undefined);
-    setPendingCampaignId(settings?.automation?.auto_approve_campaign_id || undefined);
+    setPendingGroupId(autoApproveGroup || undefined);
+    setPendingCampaignId(autoApproveCampaign || undefined);
     setShowAutoApproveWarning(true);
   };
 
@@ -58,15 +103,8 @@ export const AutomationTab: React.FC = () => {
           </div>
         </div>
         <LabeledSwitch
-          checked={settings?.automation?.allow_whatsapp_approvals ?? false}
-          onCheckedChange={(checked) => {
-            if (settings) {
-              updateAutomationMutation.mutate({
-                ...settings.automation,
-                allow_whatsapp_approvals: checked,
-              });
-            }
-          }}
+          checked={allowWhatsappApprovals}
+          onCheckedChange={setAllowWhatsappApprovals}
           disabled={updateAutomationMutation.isPending}
         />
       </div>
@@ -84,24 +122,21 @@ export const AutomationTab: React.FC = () => {
             </div>
           </div>
           <LabeledSwitch
-            checked={settings?.automation?.auto_approve_enabled ?? false}
+            checked={autoApproveEnabled}
             onCheckedChange={(checked) => {
               if (checked) {
                 handleOpenAutoApproveDialog();
-              } else if (settings) {
-                updateAutomationMutation.mutate({
-                  ...settings.automation,
-                  auto_approve_enabled: false,
-                  auto_approve_group_id: null,
-                  auto_approve_campaign_id: null,
-                });
+              } else {
+                setAutoApproveEnabled(false);
+                setAutoApproveGroup(null);
+                setAutoApproveCampaign(null);
               }
             }}
             disabled={updateAutomationMutation.isPending}
           />
         </div>
 
-        {settings?.automation?.auto_approve_enabled && (
+        {autoApproveEnabled && (
           <div className="bg-muted/30 p-4 rounded-xl border border-border flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
               Transactions are auto-approved to the selected target.
@@ -132,15 +167,8 @@ export const AutomationTab: React.FC = () => {
           </div>
         </div>
         <LabeledSwitch
-          checked={settings?.automation?.allow_whatsapp_creation ?? false}
-          onCheckedChange={(checked) => {
-            if (settings) {
-              updateAutomationMutation.mutate({
-                ...settings.automation,
-                allow_whatsapp_creation: checked,
-              });
-            }
-          }}
+          checked={allowWhatsappCreation}
+          onCheckedChange={setAllowWhatsappCreation}
           disabled={updateAutomationMutation.isPending}
         />
       </div>
@@ -194,14 +222,9 @@ export const AutomationTab: React.FC = () => {
               disabled={!pendingGroupId || !pendingCampaignId}
               onClick={() => {
                 setShowAutoApproveWarning(false);
-                if (settings) {
-                  updateAutomationMutation.mutate({
-                    ...settings.automation,
-                    auto_approve_enabled: true,
-                    auto_approve_group_id: pendingGroupId,
-                    auto_approve_campaign_id: pendingCampaignId,
-                  });
-                }
+                setAutoApproveEnabled(true);
+                setAutoApproveGroup(pendingGroupId || null);
+                setAutoApproveCampaign(pendingCampaignId || null);
               }}
             >
               Confirm
@@ -209,6 +232,13 @@ export const AutomationTab: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <StickySaveBar
+        isDirty={isDirty}
+        isSaving={updateAutomationMutation.isPending}
+        onSave={handleSave}
+        onDiscard={handleDiscard}
+      />
     </div>
   );
 };

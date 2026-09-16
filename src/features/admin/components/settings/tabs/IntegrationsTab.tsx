@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { StickySaveBar } from "@/components/ui/sticky-save-bar";
 
 interface Props {
   config: Record<string, any>;
@@ -20,6 +21,20 @@ interface Props {
 export const IntegrationsTab: React.FC<Props> = ({ config, onUpdate, isLoading }) => {
   const [mpesaMode, setMpesaMode] = useState(config.mpesa_mode || "sandbox");
   const [smsProvider, setSmsProvider] = useState(config.sms_provider || "at");
+
+  const isDirty =
+    mpesaMode !== (config.mpesa_mode || "sandbox") || smsProvider !== (config.sms_provider || "at");
+
+  const handleSave = async () => {
+    if (!window.confirm("Are you sure you want to apply these changes?")) return;
+    await onUpdate("mpesa_mode", mpesaMode);
+    await onUpdate("sms_provider", smsProvider);
+  };
+
+  const handleDiscard = () => {
+    setMpesaMode(config.mpesa_mode || "sandbox");
+    setSmsProvider(config.sms_provider || "at");
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -63,18 +78,12 @@ export const IntegrationsTab: React.FC<Props> = ({ config, onUpdate, isLoading }
 
       <Separator className="w-full" />
 
-      <div className="pt-2 flex justify-start">
-        <Button
-          className="w-40 font-semibold"
-          disabled={isLoading}
-          onClick={async () => {
-            await onUpdate("mpesa_mode", mpesaMode);
-            await onUpdate("sms_provider", smsProvider);
-          }}
-        >
-          Save Changes
-        </Button>
-      </div>
+      <StickySaveBar
+        isDirty={isDirty}
+        isSaving={isLoading}
+        onSave={handleSave}
+        onDiscard={handleDiscard}
+      />
     </div>
   );
 };

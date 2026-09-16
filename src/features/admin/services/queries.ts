@@ -748,8 +748,11 @@ export interface WaitlistResponse {
 }
 
 export interface WhitelistItem {
-  phone_number: string;
-  description: string;
+  id: string;
+  identifier: string;
+  identifier_type: string;
+  name?: string | null;
+  description?: string | null;
   created_at: string;
 }
 
