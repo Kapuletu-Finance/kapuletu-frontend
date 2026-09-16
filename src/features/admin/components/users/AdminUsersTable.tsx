@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -124,7 +123,7 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
               </TableCell>
               <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu>
-                  <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" />}>
+                  <DropdownMenuTrigger className="inline-flex h-8 w-8 items-center justify-center rounded-md p-0 text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors">
                     <span className="sr-only">Open menu</span>
                     <IconLibrary name="more-horizontal" className="h-4 w-4" />
                   </DropdownMenuTrigger>
