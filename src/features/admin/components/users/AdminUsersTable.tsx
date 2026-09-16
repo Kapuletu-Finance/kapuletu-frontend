@@ -123,17 +123,16 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
               </TableCell>
               <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={
-                      <button
-                        type="button"
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-8 w-8 p-0"
-                      >
-                        <span className="sr-only">Open menu</span>
-                        <IconLibrary name="more-horizontal" className="h-4 w-4" />
-                      </button>
-                    }
-                  />
+                  <DropdownMenuTrigger>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-8 w-8 p-0 cursor-pointer"
+                    >
+                      <span className="sr-only">Open menu</span>
+                      <IconLibrary name="more-horizontal" className="h-4 w-4" />
+                    </div>
+                  </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
@@ -143,8 +142,11 @@ export const AdminUsersTable: React.FC<AdminUsersTableProps> = ({
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => {
-                        navigator.clipboard.writeText(user.email);
+                        if (user.email) {
+                          navigator.clipboard.writeText(user.email);
+                        }
                       }}
+                      disabled={!user.email}
                     >
                       <IconLibrary name="copy" className="mr-2 h-4 w-4" />
                       Copy Email

@@ -52,6 +52,11 @@ export const useSignInMutation = () => {
 
       toast.success("Welcome back!");
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
+      if (data.is_waitlisted) {
+        setCookie("is_waitlisted", "true", { maxAge: 604800, path: "/" });
+      } else {
+        deleteCookie("is_waitlisted", { path: "/" });
+      }
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
       // If phone number is not yet verified, redirect to the verify-phone page
@@ -89,6 +94,11 @@ export const useVerify2FAMutation = () => {
     onSuccess: (data) => {
       toast.success("Welcome back!");
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
+      if (data.is_waitlisted) {
+        setCookie("is_waitlisted", "true", { maxAge: 604800, path: "/" });
+      } else {
+        deleteCookie("is_waitlisted", { path: "/" });
+      }
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
       if (!data.phone_number_verified) {
@@ -342,6 +352,7 @@ export const useLogoutMutation = () => {
     onSuccess: () => {
       toast.success("Signed out successfully.");
       deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
+      deleteCookie("is_waitlisted", { path: "/" });
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
       window.location.href = "/sign-in";
     },

@@ -1,72 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useAdminUsersQuery } from "@/features/admin/services/queries";
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { AdminUsersTable } from "./AdminUsersTable";
-import { InviteUserModal } from "./InviteUserModal";
-import { SetPinDialog } from "./SetPinDialog";
+import { AdminBlocklistTab } from "./AdminBlocklistTab";
+import { AdminUserSettingsTab } from "./AdminUserSettingsTab";
+import { AdminUsersTab } from "./AdminUsersTab";
+import { AdminWaitlistTab } from "./AdminWaitlistTab";
+import { AdminWhitelistTab } from "./AdminWhitelistTab";
 
 export const AdminUsersPage: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<string>("all");
-  const [role, setRole] = useState<string>("all");
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [pinDialogOpen, setPinDialogOpen] = useState(false);
-  const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const router = useRouter();
-
-  // Debounce search input
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search);
-      setPage(1); // Reset page on new search
-    }, 500);
-    return () => clearTimeout(handler);
-  });
-
-  const { data, isLoading, isError, refetch } = useAdminUsersQuery({
-    page,
-    limit: 10,
-    status: status !== "all" ? status : undefined,
-    role: role !== "all" ? role : undefined,
-    q: debouncedSearch || undefined,
-  });
-
-  if (isError) {
-    return (
-      <div className="flex h-[400px] flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-border p-8 text-center">
-        <IconLibrary name="alert" className="size-8 text-destructive/80" />
-        <div className="space-y-1">
-          <h3 className="text-lg font-medium text-foreground">Failed to load users</h3>
-          <p className="text-sm text-muted-foreground">
-            There was an error connecting to the user management service.
-          </p>
-        </div>
-        <Button onClick={() => refetch()} variant="outline">
-          <IconLibrary name="refresh" className="mr-2 size-4" />
-          Try Again
-        </Button>
-      </div>
-    );
-  }
-
-  const handleRowClick = (userId: string) => {
-    router.push(`/admin/users/${userId}`);
-  };
-
-  const totalPages = data ? Math.ceil(data.total / data.limit) : 1;
+  const [activeTab, setActiveTab] = useState("users");
 
   return (
     <div className="space-y-6 flex flex-col h-[calc(100vh-8rem)]">
@@ -74,144 +18,66 @@ export const AdminUsersPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">User Management</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            View and manage all platform users, their status, and roles.
+            Manage users, waitlist, testers, security, and settings.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setInviteModalOpen(true)}>
-            <IconLibrary name="mail" className="mr-2 size-4 text-primary" /> Invite User
-          </Button>
-          <Button variant="outline" onClick={() => setPinDialogOpen(true)}>
-            <IconLibrary name="shield" className="mr-2 size-4 text-primary" /> Security Settings
-          </Button>
-        </div>
       </div>
 
-      {data?.kpis && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-muted-foreground mb-1">
-              <IconLibrary name="users" className="h-4 w-4" />
-              <span className="text-sm font-medium">Total Users</span>
-            </div>
-            <span className="text-2xl font-bold text-foreground">{data.kpis.total}</span>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-muted-foreground mb-1">
-              <IconLibrary name="check-circle" className="h-4 w-4 text-emerald-500" />
-              <span className="text-sm font-medium">Active Users</span>
-            </div>
-            <span className="text-2xl font-bold text-foreground">{data.kpis.active}</span>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-muted-foreground mb-1">
-              <IconLibrary name="alert" className="h-4 w-4 text-destructive" />
-              <span className="text-sm font-medium">Suspended</span>
-            </div>
-            <span className="text-2xl font-bold text-foreground">{data.kpis.suspended}</span>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-muted-foreground mb-1">
-              <IconLibrary name="analytics" className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">New This Month</span>
-            </div>
-            <span className="text-2xl font-bold text-foreground">{data.kpis.new_this_month}</span>
-          </div>
-        </div>
-      )}
-
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <div className="relative w-full sm:w-64">
-            <IconLibrary
-              name="search"
-              className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
-            />
-            <Input
-              type="search"
-              placeholder="Search by name or email..."
-              className="pl-8"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <Select
-            value={status}
-            onValueChange={(val) => {
-              setStatus(val || "all");
-              setPage(1);
-            }}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+        <TabsList className="w-full justify-start border-b rounded-none px-0 h-auto bg-transparent mb-6">
+          <TabsTrigger
+            value="users"
+            className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 py-2"
           >
-            <SelectTrigger className="w-full sm:w-40">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="suspended">Suspended</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select
-            value={role}
-            onValueChange={(val) => {
-              setRole(val || "all");
-              setPage(1);
-            }}
+            <IconLibrary name="users" className="h-4 w-4 mr-2" />
+            Users
+          </TabsTrigger>
+          <TabsTrigger
+            value="waitlist"
+            className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 py-2"
           >
-            <SelectTrigger className="w-full sm:w-40">
-              <SelectValue placeholder="Role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="treasurer">Treasurer</SelectItem>
-              <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="super_admin">Super Admin</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="text-sm text-muted-foreground whitespace-nowrap">
-          {data ? `${data.total} users found` : "Loading..."}
-        </div>
-      </div>
+            <IconLibrary name="list" className="h-4 w-4 mr-2" />
+            Waitlist
+          </TabsTrigger>
+          <TabsTrigger
+            value="whitelist"
+            className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 py-2"
+          >
+            <IconLibrary name="shield" className="h-4 w-4 mr-2" />
+            Testers / Whitelist
+          </TabsTrigger>
+          <TabsTrigger
+            value="blocklist"
+            className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 py-2"
+          >
+            <IconLibrary name="lock" className="h-4 w-4 mr-2" />
+            Blocked List
+          </TabsTrigger>
+          <TabsTrigger
+            value="settings"
+            className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 py-2"
+          >
+            <IconLibrary name="settings" className="h-4 w-4 mr-2" />
+            Settings
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="flex-1 overflow-auto">
-        <AdminUsersTable
-          users={data?.users || []}
-          isLoading={isLoading}
-          onRowClick={handleRowClick}
-        />
-      </div>
-
-      {/* Pagination Controls */}
-      {data && data.total > 0 && (
-        <div className="flex items-center justify-between border-t border-border pt-4">
-          <p className="text-sm text-muted-foreground">
-            Showing {(page - 1) * data.limit + 1} to {Math.min(page * data.limit, data.total)} of{" "}
-            {data.total}
-          </p>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page >= totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      )}
-
-      <SetPinDialog isOpen={pinDialogOpen} onOpenChange={setPinDialogOpen} />
-      <InviteUserModal isOpen={inviteModalOpen} onOpenChange={setInviteModalOpen} />
+        <TabsContent value="users" className="flex-1 mt-0 outline-none">
+          <AdminUsersTab />
+        </TabsContent>
+        <TabsContent value="waitlist" className="flex-1 mt-0 outline-none">
+          <AdminWaitlistTab />
+        </TabsContent>
+        <TabsContent value="whitelist" className="flex-1 mt-0 outline-none">
+          <AdminWhitelistTab />
+        </TabsContent>
+        <TabsContent value="blocklist" className="flex-1 mt-0 outline-none">
+          <AdminBlocklistTab />
+        </TabsContent>
+        <TabsContent value="settings" className="flex-1 mt-0 outline-none">
+          <AdminUserSettingsTab />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

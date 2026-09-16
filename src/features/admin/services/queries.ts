@@ -728,3 +728,77 @@ export const useCommunicationLogsQuery = (page: number = 1, limit: number = 50) 
     },
   });
 };
+
+// --- Waitlist and Whitelist ---
+
+export interface WaitlistUserItem {
+  user_id: string;
+  email: string;
+  phone_number: string;
+  first_name: string;
+  last_name: string;
+  created_at: string;
+}
+
+export interface WhitelistItem {
+  phone_number: string;
+  description: string;
+  created_at: string;
+}
+
+export const useAdminWaitlistQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "waitlist"],
+    queryFn: async () => {
+      const response = await apiClient.get<WaitlistUserItem[]>("/admin/users/waitlist");
+      return response.data;
+    },
+  });
+};
+
+export const useAdminWhitelistQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "whitelist"],
+    queryFn: async () => {
+      const response = await apiClient.get<WhitelistItem[]>("/admin/users/whitelist");
+      return response.data;
+    },
+  });
+};
+
+export interface WhatsAppBlocklistItem {
+  phone_number: string;
+  attempt_count: number;
+  is_blocked: boolean;
+  last_attempt_at: string | null;
+  created_at: string | null;
+}
+
+export interface WhatsAppBlocklistResponse {
+  items: WhatsAppBlocklistItem[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
+export const useAdminWhatsAppBlocklistQuery = (params: {
+  page: number;
+  limit: number;
+  search?: string;
+}) => {
+  return useQuery({
+    queryKey: ["admin", "whatsapp-blocklist", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      searchParams.set("page", String(params.page));
+      searchParams.set("limit", String(params.limit));
+      if (params.search) searchParams.set("search", params.search);
+
+      const response = await apiClient.get<WhatsAppBlocklistResponse>(
+        `/admin/users/whatsapp-blocklist?${searchParams.toString()}`,
+      );
+      return response.data;
+    },
+  });
+};

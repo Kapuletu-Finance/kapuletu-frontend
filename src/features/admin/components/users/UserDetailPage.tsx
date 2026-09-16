@@ -13,6 +13,7 @@ import {
   useAdminUserDetailsQuery,
   useAdminUserGroupsQuery,
 } from "@/features/admin/services/queries";
+import { BackNavigation } from "@/features/shared/components/BackNavigation";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { AdminSecureWrapper } from "../shared/AdminSecureWrapper";
 import { ChangeRoleDialog } from "./ChangeRoleDialog";
@@ -79,15 +80,12 @@ export const UserDetailPage: React.FC = () => {
     <AdminSecureWrapper>
       <div className="space-y-6">
         {/* Header */}
+        <div className="flex flex-col gap-1 mb-2">
+          <BackNavigation href="/admin/users" label="Back to Users" />
+        </div>
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <Button
-              variant="link"
-              className="p-0 h-auto w-fit text-muted-foreground justify-start mb-2"
-              onClick={() => router.push("/admin/users")}
-            >
-              <IconLibrary name="arrow-left" className="mr-1 size-3" /> Back to Users
-            </Button>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground tracking-tight">
                 {userDetails.profile.first_name} {userDetails.profile.last_name}

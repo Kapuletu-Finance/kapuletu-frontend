@@ -43,6 +43,7 @@ export type SignInResponse = {
   phone_number_verified?: boolean;
   requires_2fa?: boolean;
   two_fa_token?: string;
+  is_waitlisted?: boolean;
 };
 
 export type SignInRequest = {
