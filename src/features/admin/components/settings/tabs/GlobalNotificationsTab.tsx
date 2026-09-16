@@ -18,7 +18,6 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
   const isDirty = alertEmail !== (config.critical_alert_email || "");
 
   const handleSave = async () => {
-    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     await onUpdate("critical_alert_email", alertEmail);
   };
 

@@ -20,7 +20,6 @@ export const BillingRulesTab: React.FC<Props> = ({ config, onUpdate, isLoading }
     trialDays !== (config.trial_days || 14) || gracePeriod !== (config.grace_period_days || 7);
 
   const handleSave = async () => {
-    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     await onUpdate("trial_days", trialDays);
     await onUpdate("grace_period_days", gracePeriod);
   };

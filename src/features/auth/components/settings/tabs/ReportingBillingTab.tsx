@@ -22,7 +22,6 @@ export const ReportingBillingTab: React.FC = () => {
 
   const handleSave = () => {
     if (!settings) return;
-    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     updateReportingMutation.mutate({
       ...settings.reporting,
       allow_whatsapp_reports: allowWhatsappReports,

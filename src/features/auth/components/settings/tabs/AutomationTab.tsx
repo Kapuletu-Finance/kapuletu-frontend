@@ -51,7 +51,6 @@ export const AutomationTab: React.FC = () => {
 
   const handleSave = () => {
     if (!settings) return;
-    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     updateAutomationMutation.mutate({
       ...settings.automation,
       allow_whatsapp_approvals: allowWhatsappApprovals,

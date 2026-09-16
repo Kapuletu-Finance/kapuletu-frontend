@@ -22,7 +22,6 @@ export const DataRetentionTab: React.FC<Props> = ({ config, onUpdate, isLoading 
     logRetention !== (config.audit_log_retention_days || 365);
 
   const handleSave = async () => {
-    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     await onUpdate("ai_training_default", aiTraining);
     await onUpdate("audit_log_retention_days", logRetention);
   };

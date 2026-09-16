@@ -43,7 +43,6 @@ export const AdminUserSettingsTab: React.FC = () => {
   }, [config]);
 
   const handleSave = async () => {
-    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     try {
       await updateConfig([
         { key: "open_signups", value: openSignups },

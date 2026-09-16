@@ -27,7 +27,6 @@ export const GlobalSecurityTab: React.FC<Props> = ({ config, onUpdate, isLoading
     force2fa !== (config.force_2fa || "none") || timeout !== (config.session_timeout_minutes || 60);
 
   const handleSave = async () => {
-    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     await onUpdate("force_2fa", force2fa);
     await onUpdate("session_timeout_minutes", timeout);
   };

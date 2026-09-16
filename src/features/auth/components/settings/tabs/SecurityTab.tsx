@@ -33,7 +33,6 @@ export const SecurityTab: React.FC = () => {
     twoFactorChannel !== (user?.two_factor_channel || "whatsapp");
 
   const handleSave = () => {
-    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     updateAuthSettingsMutation.mutate({
       two_factor_enabled: twoFactorEnabled,
       two_factor_channel: twoFactorChannel,

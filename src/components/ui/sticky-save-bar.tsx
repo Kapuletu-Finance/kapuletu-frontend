@@ -1,6 +1,17 @@
 import { Loader2 } from "lucide-react";
 import type React from "react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface StickySaveBarProps {
   isDirty: boolean;
@@ -37,15 +48,30 @@ export const StickySaveBar: React.FC<StickySaveBarProps> = ({
               Discard
             </Button>
           )}
-          <Button
-            size="sm"
-            onClick={onSave}
-            disabled={isSaving}
-            className="rounded-full px-6 font-semibold shadow-md"
-          >
-            {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            {isSaving ? "Saving..." : saveText}
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger >
+              <Button
+                size="sm"
+                disabled={isSaving}
+                className="rounded-full px-6 font-semibold shadow-md"
+              >
+                {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {isSaving ? "Saving..." : saveText}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apply Changes?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to apply these changes? This action will overwrite your current settings.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={onSave}>Yes, apply changes</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>

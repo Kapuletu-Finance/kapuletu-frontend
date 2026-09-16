@@ -26,7 +26,6 @@ export const IntegrationsTab: React.FC<Props> = ({ config, onUpdate, isLoading }
     mpesaMode !== (config.mpesa_mode || "sandbox") || smsProvider !== (config.sms_provider || "at");
 
   const handleSave = async () => {
-    if (!window.confirm("Are you sure you want to apply these changes?")) return;
     await onUpdate("mpesa_mode", mpesaMode);
     await onUpdate("sms_provider", smsProvider);
   };
