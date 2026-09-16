@@ -2,14 +2,15 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { env } from "@/env";
 import { useSaveRawTemplateMutation } from "@/features/admin/services/mutations";
 import {
   type AdminTemplateItem,
   useAdminRawTemplateQuery,
+  useAdminTemplatePreviewQuery,
   useAdminTemplatesQuery,
 } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
@@ -25,11 +26,17 @@ export const EmailTemplatesTab: React.FC = () => {
     }
   }, [templates, selectedTemplate]);
 
-  const [mode, setMode] = useState<"preview" | "edit">("preview");
+  const [mode, setMode] = useState<"preview" | "advanced_edit">("preview");
 
   // Preview State
   const [dummyMessage, setDummyMessage] = useState(
     "We are thrilled to exclusively invite you to join the KapuLetu Private Beta.\n\nAs a trusted partner, you'll get early access to our state-of-the-art platform designed to manage your group's treasury with unprecedented transparency and ease.",
+  );
+
+  // Use the new authenticated query for preview HTML
+  const { data: previewHtml, isLoading: isPreviewLoading } = useAdminTemplatePreviewQuery(
+    selectedTemplate?.id || null,
+    dummyMessage,
   );
 
   // Edit State
@@ -38,16 +45,13 @@ export const EmailTemplatesTab: React.FC = () => {
   );
   const saveMutation = useSaveRawTemplateMutation();
   const [rawContent, setRawContent] = useState("");
+  const [showAdvancedWarning, setShowAdvancedWarning] = useState(true);
 
   useEffect(() => {
     if (rawTemplate) {
       setRawContent(rawTemplate.content);
     }
   }, [rawTemplate]);
-
-  const previewUrl = selectedTemplate
-    ? `${env.NEXT_PUBLIC_BACKEND_URL}/admin/templates/preview/${selectedTemplate.id}?message=${encodeURIComponent(dummyMessage)}`
-    : "";
 
   const handleSaveRaw = async () => {
     if (!selectedTemplate) return;
@@ -71,10 +75,10 @@ export const EmailTemplatesTab: React.FC = () => {
             Live Preview
           </button>
           <button
-            onClick={() => setMode("edit")}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${mode === "edit" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            onClick={() => setMode("advanced_edit")}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${mode === "advanced_edit" ? "bg-background shadow-sm text-destructive" : "text-muted-foreground hover:text-destructive"}`}
           >
-            Edit Source Code
+            Advanced Code Editor
           </button>
         </div>
       </div>
@@ -96,7 +100,10 @@ export const EmailTemplatesTab: React.FC = () => {
               {templates?.map((tmpl) => (
                 <button
                   key={tmpl.id}
-                  onClick={() => setSelectedTemplate(tmpl)}
+                  onClick={() => {
+                    setSelectedTemplate(tmpl);
+                    setShowAdvancedWarning(true);
+                  }}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors text-left ${
                     selectedTemplate?.id === tmpl.id
                       ? "bg-primary/10 text-primary font-medium"
@@ -125,30 +132,36 @@ export const EmailTemplatesTab: React.FC = () => {
                   <IconLibrary name="eye" className="size-4 text-muted-foreground" />
                   Live Render: <span className="text-foreground">{selectedTemplate?.name}</span>
                 </div>
+                {isPreviewLoading && (
+                  <span className="text-xs text-muted-foreground animate-pulse">
+                    Loading render...
+                  </span>
+                )}
               </div>
 
-              <div className="p-4 border-b border-border bg-card">
-                <Label className="mb-2 block">Test Injection Message</Label>
+              <div className="p-4 border-b border-border bg-card flex flex-col gap-2">
+                <Label className="block text-sm font-medium">Test Injection Message</Label>
                 <Textarea
                   value={dummyMessage}
                   onChange={(e) => setDummyMessage(e.target.value)}
-                  className="min-h-[80px] text-sm"
+                  className="min-h-[80px] text-sm font-mono bg-muted/30"
+                  placeholder="Enter sample message body..."
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  See how dynamic message bodies wrap within the layout.
+                <p className="text-xs text-muted-foreground">
+                  Update the message above to see how dynamic text wraps within the template layout.
                 </p>
               </div>
 
-              <div className="flex-1 bg-muted/20 relative">
-                {previewUrl ? (
+              <div className="flex-1 bg-white relative">
+                {previewHtml ? (
                   <iframe
-                    key={previewUrl}
-                    src={previewUrl}
+                    key={selectedTemplate?.id}
+                    srcDoc={previewHtml}
                     className="w-full h-full border-0"
                     title="Template Preview"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm bg-muted/20">
                     Select a template to preview.
                   </div>
                 )}
@@ -156,22 +169,37 @@ export const EmailTemplatesTab: React.FC = () => {
             </>
           ) : (
             <>
-              <div className="px-4 py-3 bg-muted/50 border-b border-border flex items-center justify-between">
+              <div className="px-4 py-3 bg-destructive/10 border-b border-destructive/20 flex items-center justify-between">
                 <div className="font-medium text-sm flex items-center gap-2 text-destructive">
                   <IconLibrary name="alert" className="size-4" />
-                  Raw Source Editor: <span className="text-foreground">{selectedTemplate?.id}</span>
+                  Advanced Code Editor:{" "}
+                  <span className="text-foreground">{selectedTemplate?.id}</span>
                 </div>
                 <Button
                   size="sm"
                   onClick={handleSaveRaw}
-                  disabled={saveMutation.isPending || !selectedTemplate}
+                  disabled={saveMutation.isPending || !selectedTemplate || showAdvancedWarning}
+                  variant="destructive"
                 >
                   {saveMutation.isPending ? "Saving..." : "Save Template"}
                 </Button>
               </div>
 
-              <div className="flex-1 relative bg-[#1e1e1e]">
-                {isLoadingRaw ? (
+              <div className="flex-1 relative bg-[#1e1e1e] overflow-hidden flex flex-col">
+                {showAdvancedWarning ? (
+                  <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-card">
+                    <IconLibrary name="alert" className="size-16 text-destructive mb-4" />
+                    <h4 className="text-lg font-bold text-foreground mb-2">Proceed with Caution</h4>
+                    <p className="text-sm text-muted-foreground max-w-md mb-6">
+                      Editing raw HTML can permanently break the platform's email functionality. You
+                      must ensure that system variables like <code>{"{{ message }}"}</code> remain
+                      perfectly intact. This area is intended for developers only.
+                    </p>
+                    <Button variant="destructive" onClick={() => setShowAdvancedWarning(false)}>
+                      I Understand, Proceed to Editor
+                    </Button>
+                  </div>
+                ) : isLoadingRaw ? (
                   <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
                     Loading source...
                   </div>
@@ -183,11 +211,6 @@ export const EmailTemplatesTab: React.FC = () => {
                     spellCheck={false}
                   />
                 )}
-              </div>
-              <div className="px-4 py-2 bg-destructive/10 border-t border-destructive/20 text-xs text-destructive flex items-center gap-2">
-                <IconLibrary name="info" className="size-3.5" />
-                Warning: Editing raw Jinja HTML can break the platform's email functionality. Ensure
-                tags like {"{{ message }}"} are intact.
               </div>
             </>
           )}

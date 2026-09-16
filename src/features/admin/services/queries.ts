@@ -861,3 +861,16 @@ export const useAdminRawTemplateQuery = (name: string | null) => {
     enabled: !!name,
   });
 };
+
+export const useAdminTemplatePreviewQuery = (name: string | null, message: string) => {
+  return useQuery({
+    queryKey: ["admin", "templates", "preview", name, message],
+    queryFn: async () => {
+      const response = await apiClient.get<string>(
+        `/admin/templates/preview/${name}?message=${encodeURIComponent(message)}`,
+      );
+      return response.data;
+    },
+    enabled: !!name,
+  });
+};
