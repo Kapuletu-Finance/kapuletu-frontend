@@ -632,3 +632,22 @@ export const useUnblockWhatsAppNumberMutation = () => {
     },
   });
 };
+
+export const useSaveRawTemplateMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ name, content }: { name: string; content: string }) => {
+      const response = await apiClient.put<{ message: string }>(`/admin/templates/raw/${name}`, {
+        content,
+      });
+      return response.data;
+    },
+    onSuccess: (_, { name }) => {
+      toast.success("Template saved successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "templates", "raw", name] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to save template.");
+    },
+  });
+};

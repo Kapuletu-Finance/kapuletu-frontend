@@ -44,3 +44,18 @@ export const useGetSettingsQuery = () => {
     queryKey: ["settings", "me"],
   });
 };
+
+export interface PublicSystemConfig {
+  open_signups: boolean;
+  signup_restricted_message: string;
+}
+
+export const usePublicSystemConfigQuery = () => {
+  return useQuery({
+    queryFn: async () => {
+      const response = await apiClient.get<PublicSystemConfig>("/auth/public-config");
+      return response.data;
+    },
+    queryKey: ["auth", "public-config"],
+  });
+};

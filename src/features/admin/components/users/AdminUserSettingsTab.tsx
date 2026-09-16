@@ -118,21 +118,23 @@ export const AdminUserSettingsTab: React.FC = () => {
           </div>
           <LabeledSwitch checked={openSignups} onCheckedChange={setOpenSignups} />
         </div>
-        <div className="p-6 bg-card flex flex-col gap-4 transition-all duration-300">
-          <div className="space-y-2">
-            <Label>Signup Restriction Message</Label>
-            <Textarea
-              placeholder="e.g. Signups are currently restricted to invite-only."
-              className="min-h-[100px] resize-none"
-              value={signupMsg}
-              onChange={(e) => setSignupMsg(e.target.value)}
-              disabled={openSignups}
-            />
-            <p className="text-xs text-muted-foreground">
-              Message shown on the registration page when signups are closed.
-            </p>
+        {/* Seamlessly hide the message box if signups are open */}
+        {!openSignups && (
+          <div className="p-6 bg-card flex flex-col gap-4 transition-all duration-300 animate-in fade-in slide-in-from-top-2 border-t border-border">
+            <div className="space-y-2">
+              <Label>Signup Restriction Message</Label>
+              <Textarea
+                placeholder="e.g. Signups are currently restricted to invite-only."
+                className="min-h-[100px] resize-none"
+                value={signupMsg}
+                onChange={(e) => setSignupMsg(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Message shown on the registration page when signups are closed.
+              </p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="bg-card border border-border rounded-xl p-6">

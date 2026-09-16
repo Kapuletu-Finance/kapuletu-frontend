@@ -53,12 +53,13 @@ export type SignInRequest = {
 };
 
 export type SignUpRequest = {
+  email: string;
   first_name: string;
   last_name: string;
-  email: string;
-  phone_number: string;
   password: string;
-  marketing_consent?: boolean;
+  phone_number: string;
+  marketing_consent: boolean;
+  invite_token?: string;
 };
 
 export type ForgotPasswordRequest = {

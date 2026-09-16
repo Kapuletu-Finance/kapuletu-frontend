@@ -148,6 +148,7 @@ export const useSignUpMutation = () => {
         password: data.password,
         phone_number: data.phoneNumber,
         marketing_consent: data.marketingConsent,
+        invite_token: data.invite_token,
       };
 
       const response = await apiClient.post<RegisterOut>(AUTH_URLS.SIGN_UP, requestPayload);

@@ -812,3 +812,31 @@ export const useAdminWhatsAppBlocklistQuery = (params: {
     },
   });
 };
+
+export interface AdminTemplateItem {
+  id: string;
+  name: string;
+}
+
+export const useAdminTemplatesQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "templates"],
+    queryFn: async () => {
+      const response = await apiClient.get<{ templates: AdminTemplateItem[] }>("/admin/templates");
+      return response.data.templates;
+    },
+  });
+};
+
+export const useAdminRawTemplateQuery = (name: string | null) => {
+  return useQuery({
+    queryKey: ["admin", "templates", "raw", name],
+    queryFn: async () => {
+      const response = await apiClient.get<{ name: string; content: string }>(
+        `/admin/templates/raw/${name}`,
+      );
+      return response.data;
+    },
+    enabled: !!name,
+  });
+};
