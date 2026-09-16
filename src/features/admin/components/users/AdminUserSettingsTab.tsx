@@ -1,14 +1,44 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useUpdateSystemConfigMutation } from "@/features/admin/services/mutations";
 import { useSystemConfigQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const AdminUserSettingsTab: React.FC = () => {
   const { data: config, isLoading, isError, refetch } = useSystemConfigQuery();
-  const { mutate: updateConfig, isPending: isUpdating } = useUpdateSystemConfigMutation();
+  const { mutateAsync: updateConfig, isPending: isUpdating } = useUpdateSystemConfigMutation();
+
+  const [openSignups, setOpenSignups] = useState<boolean>(true);
+  const [signupMsg, setSignupMsg] = useState("");
+
+  useEffect(() => {
+    if (config) {
+      setOpenSignups(config.open_signups !== undefined ? Boolean(config.open_signups) : true);
+      setSignupMsg(
+        (config.signup_restricted_message as string) ||
+          "Signups are currently restricted to invite-only.",
+      );
+    }
+  }, [config]);
+
+  const handleSaveSignups = async () => {
+    try {
+      await updateConfig([
+        { key: "open_signups", value: openSignups },
+        { key: "signup_restricted_message", value: signupMsg },
+      ]);
+      toast.success("Signup settings updated.");
+    } catch (_err) {
+      toast.error("Failed to update signup settings.");
+    }
+  };
 
   if (isError) {
     return (
@@ -58,6 +88,41 @@ export const AdminUserSettingsTab: React.FC = () => {
             </div>
           </div>
         )}
+      </div>
+
+      <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm flex flex-col">
+        <div className="p-5 border-b border-border bg-muted/30 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 text-primary rounded-lg">
+              <IconLibrary name="shield-check" className="size-5" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-sm">Open Signups</h4>
+              <p className="text-xs text-muted-foreground">Allow independent user registration.</p>
+            </div>
+          </div>
+          <LabeledSwitch checked={openSignups} onCheckedChange={setOpenSignups} />
+        </div>
+        <div className="p-6 bg-card flex flex-col gap-4 transition-all duration-300">
+          <div className="space-y-2">
+            <Label>Signup Restriction Message</Label>
+            <Textarea
+              placeholder="e.g. Signups are currently restricted to invite-only."
+              className="min-h-[100px] resize-none"
+              value={signupMsg}
+              onChange={(e) => setSignupMsg(e.target.value)}
+              disabled={openSignups}
+            />
+            <p className="text-xs text-muted-foreground">
+              Message shown on the registration page when signups are closed.
+            </p>
+          </div>
+          <div className="flex justify-end pt-2">
+            <Button onClick={handleSaveSignups} disabled={isUpdating} size="sm">
+              {isUpdating ? "Saving..." : "Save Settings"}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

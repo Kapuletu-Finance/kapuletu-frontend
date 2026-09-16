@@ -733,11 +733,18 @@ export const useCommunicationLogsQuery = (page: number = 1, limit: number = 50) 
 
 export interface WaitlistUserItem {
   user_id: string;
-  email: string;
   phone_number: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
+  email: string;
+  phone: string;
   created_at: string;
+}
+
+export interface WaitlistResponse {
+  total: number;
+  page: number;
+  limit: number;
+  users: WaitlistUserItem[];
 }
 
 export interface WhitelistItem {
@@ -750,7 +757,7 @@ export const useAdminWaitlistQuery = () => {
   return useQuery({
     queryKey: ["admin", "waitlist"],
     queryFn: async () => {
-      const response = await apiClient.get<WaitlistUserItem[]>("/admin/users/waitlist");
+      const response = await apiClient.get<WaitlistResponse>("/admin/users/waitlist");
       return response.data;
     },
   });

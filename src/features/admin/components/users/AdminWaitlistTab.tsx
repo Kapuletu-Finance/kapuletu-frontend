@@ -34,21 +34,19 @@ export const AdminWaitlistTab: React.FC = () => {
 
         {isLoading ? (
           <div className="p-8 text-center text-muted-foreground">Loading waitlist...</div>
-        ) : waitlist?.length === 0 ? (
+        ) : !waitlist?.users || waitlist.users.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">No users on the waitlist.</div>
         ) : (
-          waitlist?.map((user) => (
+          waitlist.users.map((user) => (
             <div
               key={user.user_id}
               className="grid grid-cols-5 gap-4 p-4 items-center border-b border-border last:border-0 hover:bg-muted/30"
             >
               <div className="col-span-2">
-                <div className="font-medium text-foreground">
-                  {user.first_name} {user.last_name}
-                </div>
+                <div className="font-medium text-foreground">{user.full_name}</div>
                 <div className="text-sm text-muted-foreground">{user.email}</div>
               </div>
-              <div className="text-sm">{user.phone_number}</div>
+              <div className="text-sm">{user.phone}</div>
               <div className="text-sm text-muted-foreground">
                 {format(new Date(user.created_at), "MMM d, yyyy")}
               </div>
