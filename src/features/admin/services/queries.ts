@@ -749,10 +749,11 @@ export interface WaitlistResponse {
 
 export interface WhitelistItem {
   id: string;
-  identifier: string;
-  identifier_type: string;
-  name?: string | null;
-  description?: string | null;
+  phone_number: string;
+  email: string;
+  name?: string;
+  description?: string;
+  invite_sent: boolean;
   created_at: string;
 }
 
@@ -771,6 +772,26 @@ export const useAdminWhitelistQuery = () => {
     queryKey: ["admin", "whitelist"],
     queryFn: async () => {
       const response = await apiClient.get<WhitelistItem[]>("/admin/users/whitelist");
+      return response.data;
+    },
+  });
+};
+
+export interface AdminInviteItem {
+  id: string;
+  email: string;
+  phone_number: string | null;
+  token: string;
+  status: "PENDING" | "ACCEPTED" | "EXPIRED";
+  created_at: string;
+  expires_at: string;
+}
+
+export const useAdminInvitesQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "invites"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminInviteItem[]>("/admin/invites");
       return response.data;
     },
   });

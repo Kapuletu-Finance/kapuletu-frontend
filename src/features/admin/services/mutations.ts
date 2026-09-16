@@ -580,9 +580,9 @@ export const useAddWhitelistMutation = () => {
   return useMutation({
     mutationFn: async (data: {
       phone_number: string;
-      description: string;
+      email: string;
+      description?: string;
       name?: string;
-      email?: string;
     }) => {
       const response = await apiClient.post<{ message: string }>("/admin/users/whitelist", data);
       return response.data;
@@ -610,6 +610,25 @@ export const useRemoveWhitelistMutation = () => {
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to remove tester.");
+    },
+  });
+};
+
+export const useSendWhitelistInviteMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await apiClient.post<{ message: string }>(
+        `/admin/users/whitelist/${id}/invite`,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Invite sent successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "whitelist"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to send invite.");
     },
   });
 };
