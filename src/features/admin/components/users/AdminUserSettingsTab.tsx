@@ -18,6 +18,13 @@ export const AdminUserSettingsTab: React.FC = () => {
   const [openSignups, setOpenSignups] = useState<boolean>(true);
   const [signupMsg, setSignupMsg] = useState("");
 
+  const isDirty = config
+    ? openSignups !== (config.open_signups !== undefined ? Boolean(config.open_signups) : true) ||
+      signupMsg !==
+        ((config.signup_restricted_message as string) ||
+          "Signups are currently restricted to invite-only.")
+    : false;
+
   useEffect(() => {
     if (config) {
       setOpenSignups(config.open_signups !== undefined ? Boolean(config.open_signups) : true);
@@ -118,8 +125,14 @@ export const AdminUserSettingsTab: React.FC = () => {
             </p>
           </div>
           <div className="flex justify-end pt-2">
-            <Button onClick={handleSaveSignups} disabled={isUpdating} size="sm">
-              {isUpdating ? "Saving..." : "Save Settings"}
+            <Button
+              onClick={handleSaveSignups}
+              disabled={!isDirty || isUpdating}
+              size="sm"
+              variant={isDirty ? "default" : "secondary"}
+              className="transition-all"
+            >
+              {isUpdating ? "Saving..." : isDirty ? "Save Settings" : "Saved"}
             </Button>
           </div>
         </div>

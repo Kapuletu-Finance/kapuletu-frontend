@@ -24,6 +24,14 @@ export const AccessControlsPanel: React.FC = () => {
     public_api: true,
   });
 
+  const isDirty = config
+    ? maintenance !== Boolean(config.maintenance_mode) ||
+      maintenanceMsg !==
+        ((config.maintenance_message as string) ||
+          "The platform is currently undergoing scheduled maintenance.") ||
+      JSON.stringify(maintenanceModules) !== JSON.stringify(config.maintenance_modules)
+    : false;
+
   // Sync state when config loads
   useEffect(() => {
     if (config) {
@@ -65,12 +73,17 @@ export const AccessControlsPanel: React.FC = () => {
             Govern platform availability and draft dynamic constraint messaging.
           </p>
         </div>
-        <Button onClick={handleSave} disabled={updateMutation.isPending} className="font-semibold">
-          {updateMutation.isPending ? "Saving changes..." : "Save Changes"}
+        <Button
+          onClick={handleSave}
+          disabled={!isDirty || updateMutation.isPending}
+          className="font-semibold transition-all"
+          variant={isDirty ? "default" : "secondary"}
+        >
+          {updateMutation.isPending ? "Saving changes..." : isDirty ? "Save Changes" : "Saved"}
         </Button>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="max-w-3xl">
         {/* Maintenance Mode Card */}
         <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm flex flex-col">
           <div className="p-5 border-b border-border bg-muted/30 flex items-center justify-between">
