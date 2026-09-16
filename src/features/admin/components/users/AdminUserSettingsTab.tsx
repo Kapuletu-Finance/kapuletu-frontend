@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useUpdateSystemConfigMutation } from "@/features/admin/services/mutations";
 import { useSystemConfigQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { SetPinDialog } from "./SetPinDialog";
 
 export const AdminUserSettingsTab: React.FC = () => {
   const { data: config, isLoading, isError, refetch } = useSystemConfigQuery();
@@ -19,6 +20,7 @@ export const AdminUserSettingsTab: React.FC = () => {
   const [openSignups, setOpenSignups] = useState<boolean>(true);
   const [signupMsg, setSignupMsg] = useState("");
   const [waitlistEnabled, setWaitlistEnabled] = useState<boolean>(false);
+  const [pinDialogOpen, setPinDialogOpen] = useState(false);
 
   const isWaitlistDirty = waitlistEnabled !== (config?.WAITLIST_MODE_ENABLED === "true");
   const isDirty = config
@@ -133,12 +135,30 @@ export const AdminUserSettingsTab: React.FC = () => {
         </div>
       </div>
 
+      <div className="bg-card border border-border rounded-xl p-6">
+        <h3 className="text-lg font-medium text-foreground mb-4">Security Settings</h3>
+        <div className="flex items-center justify-between py-4 border-t border-border">
+          <div className="pr-8">
+            <h4 className="font-medium text-foreground">Global Security PIN</h4>
+            <p className="text-sm text-muted-foreground mt-1">
+              Configure the master PIN required for sensitive administrative actions.
+            </p>
+          </div>
+          <div className="ml-4 flex items-center shrink-0">
+            <Button variant="outline" onClick={() => setPinDialogOpen(true)}>
+              <IconLibrary name="shield" className="mr-2 size-4 text-primary" /> Update PIN
+            </Button>
+          </div>
+        </div>
+      </div>
+
       <StickySaveBar
         isDirty={isDirty}
         isSaving={isUpdating}
         onSave={handleSave}
         onDiscard={handleDiscard}
       />
+      <SetPinDialog isOpen={pinDialogOpen} onOpenChange={setPinDialogOpen} />
     </div>
   );
 };

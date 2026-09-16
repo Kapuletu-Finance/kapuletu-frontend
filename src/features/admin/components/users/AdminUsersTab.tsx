@@ -14,8 +14,6 @@ import {
 import { useAdminUsersQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { AdminUsersTable } from "./AdminUsersTable";
-import { InviteUserModal } from "./InviteUserModal";
-import { SetPinDialog } from "./SetPinDialog";
 
 export const AdminUsersTab: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -23,8 +21,6 @@ export const AdminUsersTab: React.FC = () => {
   const [role, setRole] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [pinDialogOpen, setPinDialogOpen] = useState(false);
-  const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const router = useRouter();
 
   // Debounce search input
@@ -70,15 +66,6 @@ export const AdminUsersTab: React.FC = () => {
 
   return (
     <div className="space-y-6 flex flex-col h-[calc(100vh-8rem)]">
-      <div className="flex justify-end gap-2">
-        <Button variant="outline" onClick={() => setInviteModalOpen(true)}>
-          <IconLibrary name="mail" className="mr-2 size-4 text-primary" /> Invite User
-        </Button>
-        <Button variant="outline" onClick={() => setPinDialogOpen(true)}>
-          <IconLibrary name="shield" className="mr-2 size-4 text-primary" /> Security Settings
-        </Button>
-      </div>
-
       {data?.kpis && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-1">
@@ -201,9 +188,6 @@ export const AdminUsersTab: React.FC = () => {
           </div>
         </div>
       )}
-
-      <SetPinDialog isOpen={pinDialogOpen} onOpenChange={setPinDialogOpen} />
-      <InviteUserModal isOpen={inviteModalOpen} onOpenChange={setInviteModalOpen} />
     </div>
   );
 };

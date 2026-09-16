@@ -13,23 +13,29 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   useAddWhitelistMutation,
   useRemoveWhitelistMutation,
+  useSendInviteMutation,
 } from "@/features/admin/services/mutations";
 import { useAdminWhitelistQuery } from "@/features/admin/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { InviteUserModal } from "./InviteUserModal";
 
 export const AdminWhitelistTab: React.FC = () => {
   const { data: whitelist, isLoading, isError, refetch } = useAdminWhitelistQuery();
   const { mutate: addTester, isPending: isAdding } = useAddWhitelistMutation();
   const { mutate: removeTester, isPending: isRemoving } = useRemoveWhitelistMutation();
+  const { mutate: sendInvite } = useSendInviteMutation();
 
   const [phone, setPhone] = useState("");
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [sendInviteEmail, setSendInviteEmail] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
   const handleAdd = () => {
     if (phone && description) {
@@ -37,10 +43,14 @@ export const AdminWhitelistTab: React.FC = () => {
         { phone_number: phone, description, name, email },
         {
           onSuccess: () => {
+            if (sendInviteEmail && email) {
+              sendInvite({ email });
+            }
             setPhone("");
             setDescription("");
             setName("");
             setEmail("");
+            setSendInviteEmail(false);
             setIsDialogOpen(false);
           },
         },
@@ -113,6 +123,17 @@ export const AdminWhitelistTab: React.FC = () => {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
+              <div className="flex items-center gap-2 pt-2">
+                <Switch
+                  id="send-invite"
+                  checked={sendInviteEmail}
+                  onCheckedChange={setSendInviteEmail}
+                  disabled={!email}
+                />
+                <Label htmlFor="send-invite" className={!email ? "text-muted-foreground" : ""}>
+                  Send invitation email automatically (requires email)
+                </Label>
+              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
@@ -157,7 +178,10 @@ export const AdminWhitelistTab: React.FC = () => {
                   {tester.description || "No description provided"}
                 </span>
               </div>
-              <div className="text-right">
+              <div className="text-right flex items-center justify-end gap-2">
+                <Button size="sm" variant="outline" onClick={() => setInviteModalOpen(true)}>
+                  <IconLibrary name="mail" className="mr-1.5 size-3.5" /> Invite
+                </Button>
                 <Button
                   size="sm"
                   variant="destructive"
@@ -171,6 +195,7 @@ export const AdminWhitelistTab: React.FC = () => {
           ))
         )}
       </div>
+      <InviteUserModal isOpen={inviteModalOpen} onOpenChange={setInviteModalOpen} />
     </div>
   );
 };
