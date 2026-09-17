@@ -7,11 +7,16 @@ export const proxy = (request: NextRequest) => {
 
   const isTreasurerRoute = pathname.startsWith("/treasurer");
   const isAdminRoute = pathname.startsWith("/admin");
-  const isAuthRoute = ["/sign-in", "/sign-up", "/forgot-password"].some((route) =>
-    pathname.startsWith(route),
-  );
+  const isAuthRoute = [
+    "/sign-in",
+    "/sign-up",
+    "/forgot-password",
+    "/verify-email",
+    "/verify-phone",
+    "/verify-2fa",
+  ].some((route) => pathname.startsWith(route));
   // Routes that require authentication but are not role-scoped dashboard routes
-  const isAuthenticatedOnlyRoute = ["/verify-email", "/verify-phone"].includes(pathname);
+  const isAuthenticatedOnlyRoute = false;
   const isRootRoute = pathname === "/";
 
   if (
@@ -43,7 +48,7 @@ export const proxy = (request: NextRequest) => {
 
     // If phone is not verified, restrict access to only the verify-phone page
     if (phoneVerified === "false") {
-      if (!isAuthenticatedOnlyRoute && !isAuthRoute) {
+      if (!isAuthRoute) {
         return NextResponse.redirect(new URL("/verify-phone", request.url));
       }
       return NextResponse.next();
@@ -72,7 +77,7 @@ export const proxy = (request: NextRequest) => {
   }
 
   // Unauthenticated user attempting to access secure routes
-  if (isTreasurerRoute || isAdminRoute || isAuthenticatedOnlyRoute || pathname === "/waitlist") {
+  if (isTreasurerRoute || isAdminRoute || pathname === "/waitlist") {
     const signInUrl = new URL("/sign-in", request.url);
     // Optionally preserve the attempted URL for post-sign in redirect
     signInUrl.searchParams.set("from", pathname);
