@@ -34,7 +34,12 @@ interface VerifyCardProps {
 
 export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const router = useRouter();
-  const { data: user } = useGetMeQuery({ enabled: type !== "2fa" });
+  const { data: user } = useGetMeQuery({
+    enabled:
+      type !== "2fa" &&
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("new_signup") !== "true",
+  });
   const isPhone = type === "phone";
   const is2FA = type === "2fa";
 
@@ -100,14 +105,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
         return;
       }
 
-      phoneConfirmMutation.mutate(
-        { ...data, identifier: finalIdentifier },
-        {
-          onSuccess: () => {
-            setTimeout(() => router.push("/sign-in"), 2000);
-          },
-        },
-      );
+      phoneConfirmMutation.mutate({ ...data, identifier: finalIdentifier });
     } else {
       emailConfirmMutation.mutate(data, {
         onSuccess: () => {

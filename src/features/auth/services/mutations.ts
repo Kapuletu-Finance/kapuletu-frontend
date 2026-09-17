@@ -310,15 +310,38 @@ export const useVerifyEmailRequestMutation = () => {
 export const useVerifyPhoneConfirmMutation = () => {
   return useMutation({
     mutationFn: async (data: VerifyPhoneRequest) => {
-      const response = await apiClient.post<{ message: string }>(AUTH_URLS.VERIFY_PHONE, data);
+      const response = await apiClient.post<SignInResponse>(AUTH_URLS.VERIFY_PHONE, data);
       return response.data;
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to verify phone code.");
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Phone number verified successfully!");
+      toast.success("Phone verified and logged in successfully!");
       setCookie("phone_verified", "true", { path: "/" });
+
+      setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
+      if (data.is_waitlisted) {
+        setCookie("is_waitlisted", "true", { maxAge: 604800, path: "/" });
+      } else {
+        deleteCookie("is_waitlisted", { path: "/" });
+      }
+      localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
+
+      const params = new URLSearchParams(window.location.search);
+      const from = params.get("from");
+
+      setTimeout(() => {
+        if (from) {
+          window.location.href = from;
+        } else if (data.role === "admin" || data.role === "super_admin") {
+          window.location.href = "/admin";
+        } else if (data.is_waitlisted) {
+          window.location.href = "/waitlist";
+        } else {
+          window.location.href = "/treasurer";
+        }
+      }, 2000);
     },
   });
 };
