@@ -3,6 +3,7 @@
 import type * as React from "react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -10,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const filterOptions = [

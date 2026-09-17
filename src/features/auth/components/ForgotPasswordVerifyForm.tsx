@@ -2,8 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useQueryState } from "nuqs";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -43,7 +42,8 @@ export const ForgotPasswordVerifyForm = () => {
 
   const forgotPasswordMutation = useForgotPasswordMutation();
 
-  const [identifier] = useQueryState("identifier");
+  const searchParams = useSearchParams();
+  const identifier = searchParams.get("identifier");
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {

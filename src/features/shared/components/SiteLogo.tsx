@@ -25,7 +25,7 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
   const iconContent = (
     <Image
       src="/shared/logo.webp"
-      alt="Kapuletu Logo"
+      alt="KapuLetu Logo"
       width={width}
       height={height}
       className={cn("object-contain", logoClassName)}
@@ -37,7 +37,7 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
   const fullContent = (
     <Image
       src="/shared/kapuletu-logo.png"
-      alt="Kapuletu Logo"
+      alt="KapuLetu Logo"
       width={140}
       height={40}
       className={cn("object-contain", logoClassName)}

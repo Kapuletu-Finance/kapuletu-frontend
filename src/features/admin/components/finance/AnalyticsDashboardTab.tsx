@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, FileSpreadsheet, Loader2, TrendingUp, Users } from "lucide-react";
+import { Activity, FileSpreadsheet, TrendingUp, Users } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";

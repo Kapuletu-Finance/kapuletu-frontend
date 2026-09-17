@@ -34,7 +34,12 @@ interface VerifyCardProps {
 
 export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
   const router = useRouter();
-  const { data: user } = useGetMeQuery({ enabled: type !== "2fa" });
+  const { data: user } = useGetMeQuery({
+    enabled:
+      type !== "2fa" &&
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("new_signup") !== "true",
+  });
   const isPhone = type === "phone";
   const is2FA = type === "2fa";
 
@@ -49,7 +54,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const otp = params.get("otp");
-      const token = params.get("token");
+      const _token = params.get("token");
       if (otp) {
         form.setValue("code", otp, { shouldValidate: true });
       }
@@ -90,7 +95,8 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
       return;
     }
 
-    const finalIdentifier = user?.phone_number || "";
+    const finalIdentifier =
+      user?.phone_number || new URLSearchParams(window.location.search).get("identifier") || "";
 
     // If phone verification, we need the identifier
     if (isPhone) {
@@ -99,14 +105,7 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
         return;
       }
 
-      phoneConfirmMutation.mutate(
-        { ...data, identifier: finalIdentifier },
-        {
-          onSuccess: () => {
-            setTimeout(() => router.push("/treasurer"), 2000);
-          },
-        },
-      );
+      phoneConfirmMutation.mutate({ ...data, identifier: finalIdentifier });
     } else {
       emailConfirmMutation.mutate(data, {
         onSuccess: () => {
@@ -128,7 +127,8 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
       return;
     }
 
-    const finalIdentifier = user?.phone_number || "";
+    const finalIdentifier =
+      user?.phone_number || new URLSearchParams(window.location.search).get("identifier") || "";
 
     if (isPhone) {
       if (!finalIdentifier) {
@@ -152,7 +152,15 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
 
   useEffect(() => {
     if (is2FA) return; // For 2FA, the initial login request sent the code already
-    if (isPhone && !user?.phone_number) return;
+    if (
+      isPhone &&
+      !user?.phone_number &&
+      !new URLSearchParams(window.location.search).get("identifier")
+    )
+      return;
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("new_signup") === "true") return;
 
     if (!hasRequestedRef.current) {
       hasRequestedRef.current = true;
@@ -208,7 +216,9 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
             ? "The code you entered is wrong. Please try again"
             : is2FA
               ? "We've sent a 6-digit verification code to your phone and email"
-              : `We sent a 6-digit code to your ${isPhone ? "WhatsApp" : "email address"}`}
+              : isPhone
+                ? "Check your WhatsApp for the verification code"
+                : "We sent a 6-digit code to your email address"}
         </p>
       </div>
 

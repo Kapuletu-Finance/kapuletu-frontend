@@ -1,21 +1,19 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { deleteCookie } from "cookies-next";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
 import { PasswordInput } from "@/components/ui/password-input";
+import { env } from "@/env";
+import { AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
 import { type SignInFormData, signInSchema } from "@/features/auth/schemas";
 import { useSignInMutation } from "@/features/auth/services/mutations";
 
@@ -23,6 +21,15 @@ export const SignInForm = () => {
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Clear stale state for multi-account sign-ins
+    deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
+    deleteCookie("is_waitlisted", { path: "/" });
+    localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
+    queryClient.removeQueries({ queryKey: ["auth"] });
+  }, [queryClient]);
 
   const form = useForm<SignInFormData>({
     defaultValues: {
@@ -81,6 +88,33 @@ export const SignInForm = () => {
             <br />
             Your session has expired due to inactivity or a security update. Please log in again to
             continue.
+          </p>
+        </div>
+      )}
+
+      {reason === "waitlist_approved" && (
+        <div className="mb-6 rounded-md bg-green-500/15 border border-green-500/20 p-4 text-sm text-green-600 flex items-start gap-3">
+          <svg
+            aria-label="Success"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-check-circle mt-0.5 shrink-0"
+          >
+            <title>Success</title>
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <path d="m9 11 3 3L22 4" />
+          </svg>
+          <p>
+            <strong>Your account is ready!</strong>
+            <br />
+            You have been approved from the waitlist. Please sign in to access your dashboard.
           </p>
         </div>
       )}

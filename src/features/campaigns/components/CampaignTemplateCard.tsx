@@ -1,6 +1,8 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -42,11 +44,34 @@ const CampaignTemplateCard = () => {
     updateCampaign.mutate({ settings: newSettings });
   };
 
+  const [showSaved, setShowSaved] = useState(false);
+  useEffect(() => {
+    if (updateCampaign.isSuccess && !updateCampaign.isPending) {
+      setShowSaved(true);
+      const timer = setTimeout(() => setShowSaved(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [updateCampaign.isSuccess, updateCampaign.isPending]);
+
   return (
     <Card className="border-none bg-card space-y-8">
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-1">
-          <h2 className="font-bold text-foreground text-xl">Campaign Template</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="font-bold text-foreground text-xl">Campaign Template</h2>
+            <div className="h-5 flex items-center">
+              {updateCampaign.isPending && (
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground animate-pulse bg-muted/50 px-2 py-0.5 rounded-full">
+                  <Loader2 className="w-3 h-3 animate-spin" /> Saving...
+                </span>
+              )}
+              {showSaved && !updateCampaign.isPending && (
+                <span className="flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full animate-in fade-in duration-300">
+                  <IconLibrary name="check-circle" className="w-3 h-3" /> Saved
+                </span>
+              )}
+            </div>
+          </div>
           <p className="text-xs text-muted-foreground">
             Customize how your campaign updates and reports appear.
           </p>

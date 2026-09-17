@@ -33,6 +33,7 @@ export const signUpSchema = z
       .string({ message: "Phone number is required." })
       .regex(/^(?:\+2547|\+2541|07|01)\d{8}$/, "Please enter a valid phone number.")
       .min(1, "Phone number is required."),
+    invite_token: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",

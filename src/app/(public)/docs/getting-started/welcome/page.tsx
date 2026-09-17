@@ -1,5 +1,4 @@
 import Link from "next/link";
-import React from "react";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsFeedback } from "@/features/docs/components/DocsFeedback";
 import { DocsVideo } from "@/features/docs/components/DocsVideo";

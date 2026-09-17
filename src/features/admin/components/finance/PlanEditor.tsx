@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCreatePlanMutation, useUpdatePlanMutation } from "@/features/admin/services/mutations";
 import { useAdminPlanQuery } from "@/features/admin/services/queries";
+import { BackNavigation } from "@/features/shared/components/BackNavigation";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -125,15 +126,16 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
-      <div className="flex items-center gap-4">
-        <Link href="/admin/finance">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="size-4" />
-          </Button>
-        </Link>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {isCreateMode ? "Create Subscription Plan" : `Edit Plan: ${plan?.name}`}
-        </h1>
+      <div className="flex flex-col gap-1 mb-2">
+        <BackNavigation href="/admin/finance/plans" label="Back to Plans" />
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold tracking-tight">
+            {isCreateMode ? "Create Subscription Plan" : `Edit Plan: ${plan?.name}`}
+          </h1>
+        </div>
       </div>
 
       <Form {...form}>

@@ -169,6 +169,26 @@ export const useUpgradeUserPlanMutation = () => {
   });
 };
 
+export const useDeleteUserMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await apiClient.delete<{ message: string }>(
+        `/admin/users/treasurers/${userId}`,
+      );
+      return response.data;
+    },
+    onSuccess: (data, userId) => {
+      toast.success(data.message || "User deleted successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      queryClient.removeQueries({ queryKey: ["admin", "users", userId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to delete user.");
+    },
+  });
+};
+
 export const useCreatePlanMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -549,6 +569,124 @@ export const useSendInviteMutation = () => {
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to send invite.");
+    },
+  });
+};
+
+// --- Waitlist and Whitelist ---
+
+export const useApproveWaitlistMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await apiClient.post<{ message: string }>(
+        `/admin/users/waitlist/${userId}/approve`,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("User approved from waitlist.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "waitlist"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to approve user.");
+    },
+  });
+};
+
+export const useAddWhitelistMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      phone_number: string;
+      email: string;
+      description?: string;
+      name?: string;
+    }) => {
+      const response = await apiClient.post<{ message: string }>("/admin/users/whitelist", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Tester added to whitelist.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "whitelist"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to add tester.");
+    },
+  });
+};
+
+export const useRemoveWhitelistMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await apiClient.delete<{ message: string }>(`/admin/users/whitelist/${id}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Tester removed from whitelist.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "whitelist"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to remove tester.");
+    },
+  });
+};
+
+export const useSendWhitelistInviteMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await apiClient.post<{ message: string }>(
+        `/admin/users/whitelist/${id}/invite`,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Invite sent successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "whitelist"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to send invite.");
+    },
+  });
+};
+
+export const useUnblockWhatsAppNumberMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (phoneNumber: string) => {
+      const response = await apiClient.post<{ message: string }>(
+        `/admin/users/whatsapp-blocklist/${phoneNumber}/unblock`,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Phone number unblocked successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "whatsapp-blocklist"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to unblock phone number.");
+    },
+  });
+};
+
+export const useSaveRawTemplateMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ name, content }: { name: string; content: string }) => {
+      const response = await apiClient.put<{ message: string }>(`/admin/templates/raw/${name}`, {
+        content,
+      });
+      return response.data;
+    },
+    onSuccess: (_, { name }) => {
+      toast.success("Template saved successfully.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "templates", "raw", name] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to save template.");
     },
   });
 };

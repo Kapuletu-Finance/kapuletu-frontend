@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import type { CampaignOverview, GroupOverview } from "@/features/shared/types";
 import { useWorkspaceOverviewQuery } from "@/features/treasurer/services/queries";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 // ─── Campaign Sub-Panel ────────────────────────────────────────────────────
@@ -236,20 +236,22 @@ export const GroupsFlyoutPanel = ({ open, onClose, anchorRef }: GroupsFlyoutProp
 
         {/* Group list */}
         <ScrollArea className="flex-1 sm:max-h-[60vh] max-h-full" orientation="vertical">
-        <ul className="flex flex-col">
-          {groups.length === 0 ? (
-            <li className="text-sm text-muted-foreground px-4 py-3 list-none">No groups found.</li>
-          ) : (
-            groups.map((group) => (
-              <GroupRow
-                key={group.group_id}
-                group={group}
-                campaigns={campaignsByGroup[group.group_id] ?? []}
-                onNavigate={onClose}
-              />
-            ))
-          )}
-        </ul>
+          <ul className="flex flex-col">
+            {groups.length === 0 ? (
+              <li className="text-sm text-muted-foreground px-4 py-3 list-none">
+                No groups found.
+              </li>
+            ) : (
+              groups.map((group) => (
+                <GroupRow
+                  key={group.group_id}
+                  group={group}
+                  campaigns={campaignsByGroup[group.group_id] ?? []}
+                  onNavigate={onClose}
+                />
+              ))
+            )}
+          </ul>
         </ScrollArea>
 
         {/* Footer: View all link */}
