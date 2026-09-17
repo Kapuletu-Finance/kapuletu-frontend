@@ -1,7 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { deleteCookie } from "cookies-next";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,12 +14,29 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { env } from "@/env";
 import { PasswordRequirements } from "@/features/auth/components/PasswordRequirements";
+import { AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
 import { type SignUpFormData, signUpSchema } from "@/features/auth/schemas";
 import { useSignUpMutation } from "@/features/auth/services/mutations";
+import { usePublicSystemConfigQuery } from "@/features/auth/services/queries";
+import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const SignUpForm = () => {
+  const searchParams = useSearchParams();
+  const inviteToken = searchParams.get("invite_token") || searchParams.get("invite");
+
+  const { data: config, isLoading: isConfigLoading } = usePublicSystemConfigQuery();
   const signUpMutation = useSignUpMutation();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Clear stale state for multi-account signups
+    deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
+    deleteCookie("is_waitlisted", { path: "/" });
+    localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
+    queryClient.removeQueries({ queryKey: ["auth"] });
+  }, [queryClient]);
 
   const form = useForm<SignUpFormData & { showPassword?: boolean }>({
     defaultValues: {
@@ -26,6 +48,7 @@ export const SignUpForm = () => {
       lastName: "",
       password: "",
       phoneNumber: "",
+      invite_token: inviteToken || undefined,
     },
     resolver: zodResolver(signUpSchema),
   });
@@ -33,6 +56,38 @@ export const SignUpForm = () => {
   const onSubmit = (data: SignUpFormData) => {
     signUpMutation.mutate(data);
   };
+
+  if (isConfigLoading) {
+    return (
+      <div className="flex h-[300px] items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const signupsClosed = config && config.open_signups === false && !inviteToken;
+
+  if (signupsClosed) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center space-y-6 animate-in fade-in zoom-in-95 duration-500">
+        <div className="rounded-full bg-destructive/10 p-6">
+          <IconLibrary name="alert" className="size-12 text-destructive" />
+        </div>
+        <div className="max-w-md space-y-2">
+          <h2 className="text-2xl font-bold tracking-tight">Signups Closed</h2>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            {config.signup_restricted_message ||
+              "Public registrations are currently closed. An invite token is required."}
+          </p>
+        </div>
+        <Button
+          render={<Link href="/sign-in">Return to Sign In</Link>}
+          variant="outline"
+          className="mt-4"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full pb-4">

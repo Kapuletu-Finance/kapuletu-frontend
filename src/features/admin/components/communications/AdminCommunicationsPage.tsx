@@ -8,6 +8,7 @@ import { AccessControlsPanel } from "./AccessControlsPanel";
 import { BroadcastForm } from "./BroadcastForm";
 import { BroadcastHistory } from "./BroadcastHistory";
 import { CommunicationLogs } from "./CommunicationLogs";
+import { EmailTemplatesTab } from "./EmailTemplatesTab";
 import { InvitesPanel } from "./InvitesPanel";
 
 export const AdminCommunicationsPage: React.FC = () => {
@@ -42,6 +43,12 @@ export const AdminCommunicationsPage: React.FC = () => {
               className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
             >
               Delivery Logs
+            </TabsTrigger>
+            <TabsTrigger
+              value="templates"
+              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
+            >
+              Email Templates
             </TabsTrigger>
           </TabsList>
         </div>
@@ -122,6 +129,13 @@ export const AdminCommunicationsPage: React.FC = () => {
               </p>
             </div>
             <CommunicationLogs />
+          </TabsContent>
+
+          <TabsContent
+            value="templates"
+            className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 h-full"
+          >
+            <EmailTemplatesTab />
           </TabsContent>
         </div>
       </Tabs>

@@ -13,9 +13,11 @@ import {
   useAdminUserDetailsQuery,
   useAdminUserGroupsQuery,
 } from "@/features/admin/services/queries";
+import { BackNavigation } from "@/features/shared/components/BackNavigation";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { AdminSecureWrapper } from "../shared/AdminSecureWrapper";
 import { ChangeRoleDialog } from "./ChangeRoleDialog";
+import { DeleteUserDialog } from "./DeleteUserDialog";
 import { EscalatedUpdateDialog } from "./EscalatedUpdateDialog";
 import { OverridePlanDialog } from "./OverridePlanDialog";
 import { SuspendUserDialog } from "./SuspendUserDialog";
@@ -33,6 +35,7 @@ export const UserDetailPage: React.FC = () => {
   const [roleOpen, setRoleOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const resetPassword = useTriggerPasswordResetMutation();
 
@@ -79,15 +82,12 @@ export const UserDetailPage: React.FC = () => {
     <AdminSecureWrapper>
       <div className="space-y-6">
         {/* Header */}
+        <div className="flex flex-col gap-1 mb-2">
+          <BackNavigation href="/admin/users" label="Back to Users" />
+        </div>
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <Button
-              variant="link"
-              className="p-0 h-auto w-fit text-muted-foreground justify-start mb-2"
-              onClick={() => router.push("/admin/users")}
-            >
-              <IconLibrary name="arrow-left" className="mr-1 size-3" /> Back to Users
-            </Button>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground tracking-tight">
                 {userDetails.profile.first_name} {userDetails.profile.last_name}
@@ -344,9 +344,14 @@ export const UserDetailPage: React.FC = () => {
                         Suspending an account instantly terminates the user's access to the KapuLetu
                         platform. All their data is preserved, but they will not be able to log in.
                       </p>
-                      <Button variant="destructive" onClick={() => setSuspendOpen(true)}>
-                        <IconLibrary name="alert" className="mr-2 size-4" /> Suspend Account
-                      </Button>
+                      <div className="flex items-center gap-3">
+                        <Button variant="destructive" onClick={() => setSuspendOpen(true)}>
+                          <IconLibrary name="alert" className="mr-2 size-4" /> Suspend Account
+                        </Button>
+                        <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
+                          <IconLibrary name="trash" className="mr-2 size-4" /> Delete Account
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -380,6 +385,12 @@ export const UserDetailPage: React.FC = () => {
           onOpenChange={setEditOpen}
         />
         <OverridePlanDialog userId={userId} isOpen={planOpen} onOpenChange={setPlanOpen} />
+        <DeleteUserDialog
+          userId={userId}
+          userEmail={userDetails.profile.email}
+          isOpen={deleteOpen}
+          onOpenChange={setDeleteOpen}
+        />
       </div>
     </AdminSecureWrapper>
   );

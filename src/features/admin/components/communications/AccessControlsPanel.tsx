@@ -24,8 +24,13 @@ export const AccessControlsPanel: React.FC = () => {
     public_api: true,
   });
 
-  const [openSignups, setOpenSignups] = useState<boolean>(true);
-  const [signupMsg, setSignupMsg] = useState("");
+  const isDirty = config
+    ? maintenance !== Boolean(config.maintenance_mode) ||
+      maintenanceMsg !==
+        ((config.maintenance_message as string) ||
+          "The platform is currently undergoing scheduled maintenance.") ||
+      JSON.stringify(maintenanceModules) !== JSON.stringify(config.maintenance_modules)
+    : false;
 
   // Sync state when config loads
   useEffect(() => {
@@ -38,12 +43,6 @@ export const AccessControlsPanel: React.FC = () => {
       if (config.maintenance_modules) {
         setMaintenanceModules(config.maintenance_modules as typeof maintenanceModules);
       }
-
-      setOpenSignups(config.open_signups !== undefined ? Boolean(config.open_signups) : true);
-      setSignupMsg(
-        (config.signup_restricted_message as string) ||
-          "Signups are currently restricted to invite-only.",
-      );
     }
   }, [config]);
 
@@ -54,8 +53,6 @@ export const AccessControlsPanel: React.FC = () => {
         { key: "maintenance_mode", value: maintenance },
         { key: "maintenance_modules", value: maintenanceModules },
         { key: "maintenance_message", value: maintenanceMsg },
-        { key: "open_signups", value: openSignups },
-        { key: "signup_restricted_message", value: signupMsg },
       ]);
       toast.success("Platform access controls updated.");
     } catch (_err) {
@@ -76,12 +73,17 @@ export const AccessControlsPanel: React.FC = () => {
             Govern platform availability and draft dynamic constraint messaging.
           </p>
         </div>
-        <Button onClick={handleSave} disabled={updateMutation.isPending} className="font-semibold">
-          {updateMutation.isPending ? "Saving changes..." : "Save Changes"}
+        <Button
+          onClick={handleSave}
+          disabled={!isDirty || updateMutation.isPending}
+          className="font-semibold transition-all"
+          variant={isDirty ? "default" : "secondary"}
+        >
+          {updateMutation.isPending ? "Saving changes..." : isDirty ? "Save Changes" : "Saved"}
         </Button>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="max-w-3xl">
         {/* Maintenance Mode Card */}
         <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm flex flex-col">
           <div className="p-5 border-b border-border bg-muted/30 flex items-center justify-between">
@@ -157,39 +159,6 @@ export const AccessControlsPanel: React.FC = () => {
               />
               <p className="text-xs text-muted-foreground">
                 Users will see this exact message when they visit blocked modules.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Open Signups Card */}
-        <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm flex flex-col">
-          <div className="p-5 border-b border-border bg-muted/30 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 text-primary rounded-lg">
-                <IconLibrary name="shield-check" className="size-5" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-sm">Open Signups</h4>
-                <p className="text-xs text-muted-foreground">
-                  Allow independent user registration.
-                </p>
-              </div>
-            </div>
-            <LabeledSwitch checked={openSignups} onCheckedChange={setOpenSignups} />
-          </div>
-          <div className="p-6 bg-card flex flex-col gap-4 transition-all duration-300">
-            <div className="space-y-2">
-              <Label>Signup Restriction Message</Label>
-              <Textarea
-                placeholder="e.g. Signups are currently restricted to invite-only."
-                className="min-h-[100px] resize-none"
-                value={signupMsg}
-                onChange={(e) => setSignupMsg(e.target.value)}
-                disabled={openSignups} // Disabled if signups are actually open
-              />
-              <p className="text-xs text-muted-foreground">
-                Message shown on the registration page when signups are closed.
               </p>
             </div>
           </div>

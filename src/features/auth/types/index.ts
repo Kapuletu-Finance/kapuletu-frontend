@@ -17,6 +17,7 @@ export type User = {
   role: UserRole;
   two_factor_enabled: boolean;
   two_factor_channel: string | null;
+  is_waitlisted: boolean;
 };
 
 /**
@@ -43,6 +44,7 @@ export type SignInResponse = {
   phone_number_verified?: boolean;
   requires_2fa?: boolean;
   two_fa_token?: string;
+  is_waitlisted?: boolean;
 };
 
 export type SignInRequest = {
@@ -52,12 +54,13 @@ export type SignInRequest = {
 };
 
 export type SignUpRequest = {
+  email: string;
   first_name: string;
   last_name: string;
-  email: string;
-  phone_number: string;
   password: string;
-  marketing_consent?: boolean;
+  phone_number: string;
+  marketing_consent: boolean;
+  invite_token?: string;
 };
 
 export type ForgotPasswordRequest = {

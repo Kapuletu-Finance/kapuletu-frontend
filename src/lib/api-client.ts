@@ -97,8 +97,16 @@ apiClient.interceptors.response.use(
     // after the proxy's resilience loop has already tried (and failed) to refresh, we must log out.
     if (error.response?.status === 401 || error.response?.status === 403) {
       if (typeof window !== "undefined") {
-        // We ensure we only redirect if we aren't already on the sign in page
-        if (!window.location.pathname.startsWith("/sign-in") && !isRedirecting) {
+        const path = window.location.pathname;
+        const isPublicAuthRoute =
+          path.startsWith("/verify-phone") ||
+          path.startsWith("/verify-email") ||
+          path.startsWith("/verify-2fa") ||
+          path.startsWith("/sign-up") ||
+          path.startsWith("/forgot-password");
+
+        // We ensure we only redirect if we aren't already on the sign in page or another auth page
+        if (!path.startsWith("/sign-in") && !isRedirecting && !isPublicAuthRoute) {
           isRedirecting = true;
           console.warn("Session explicitly terminated or CSRF blocked. Redirecting to sign in.");
 
@@ -106,10 +114,14 @@ apiClient.interceptors.response.use(
           getQueryClient().clear();
 
           // Clear any non-HTTP-only client cookies explicitly if needed
-          deleteCookie("user_role", { path: "/" });
+          deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
 
-          // Force redirect to sign in with reason
-          window.location.href = "/sign-in?reason=session_expired";
+          // Force redirect to sign in with context-aware reason
+          if (path === "/waitlist") {
+            window.location.href = "/sign-in?reason=waitlist_approved";
+          } else {
+            window.location.href = "/sign-in?reason=session_expired";
+          }
         }
       }
     }

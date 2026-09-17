@@ -728,3 +728,170 @@ export const useCommunicationLogsQuery = (page: number = 1, limit: number = 50) 
     },
   });
 };
+
+// --- Waitlist and Whitelist ---
+
+export interface WaitlistUserItem {
+  user_id: string;
+  phone_number: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  created_at: string;
+}
+
+export interface WaitlistResponse {
+  total: number;
+  page: number;
+  limit: number;
+  users: WaitlistUserItem[];
+}
+
+export interface WhitelistItem {
+  id: string;
+  phone_number: string;
+  email: string;
+  name?: string;
+  description?: string;
+  invite_sent: boolean;
+  created_at: string;
+}
+
+export const useAdminWaitlistQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "waitlist"],
+    queryFn: async () => {
+      const response = await apiClient.get<WaitlistResponse>("/admin/users/waitlist");
+      return response.data;
+    },
+  });
+};
+
+export const useAdminWhitelistQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "whitelist"],
+    queryFn: async () => {
+      const response = await apiClient.get<WhitelistItem[]>("/admin/users/whitelist");
+      return response.data;
+    },
+  });
+};
+
+export interface AdminInviteItem {
+  id: string;
+  email: string;
+  phone_number: string | null;
+  token: string;
+  status: "PENDING" | "ACCEPTED" | "EXPIRED";
+  created_at: string;
+  expires_at: string;
+}
+
+export const useAdminInvitesQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "invites"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminInviteItem[]>("/admin/invites");
+      return response.data;
+    },
+  });
+};
+
+export interface WhatsAppBlocklistItem {
+  phone_number: string;
+  attempt_count: number;
+  is_blocked: boolean;
+  last_attempt_at: string | null;
+  created_at: string | null;
+}
+
+export interface WhatsAppBlocklistResponse {
+  items: WhatsAppBlocklistItem[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
+export const useAdminWhatsAppBlocklistQuery = (params: {
+  page: number;
+  limit: number;
+  search?: string;
+}) => {
+  return useQuery({
+    queryKey: ["admin", "whatsapp-blocklist", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      searchParams.set("page", String(params.page));
+      searchParams.set("limit", String(params.limit));
+      if (params.search) searchParams.set("search", params.search);
+
+      const response = await apiClient.get<WhatsAppBlocklistResponse>(
+        `/admin/users/whatsapp-blocklist?${searchParams.toString()}`,
+      );
+      return response.data;
+    },
+  });
+};
+
+export interface AdminTemplateItem {
+  id: string;
+  name: string;
+}
+
+export const useAdminTemplatesQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "templates"],
+    queryFn: async () => {
+      const response = await apiClient.get<{ templates: AdminTemplateItem[] }>("/admin/templates");
+      return response.data.templates;
+    },
+  });
+};
+
+export const useAdminRawTemplateQuery = (name: string | null) => {
+  return useQuery({
+    queryKey: ["admin", "templates", "raw", name],
+    queryFn: async () => {
+      const response = await apiClient.get<{ name: string; content: string }>(
+        `/admin/templates/raw/${name}`,
+      );
+      return response.data;
+    },
+    enabled: !!name,
+  });
+};
+
+export const useAdminTemplatePreviewQuery = (name: string | null, message: string) => {
+  return useQuery({
+    queryKey: ["admin", "templates", "preview", name, message],
+    queryFn: async () => {
+      const response = await apiClient.get<string>(
+        `/admin/templates/preview/${name}?message=${encodeURIComponent(message)}`,
+      );
+      return response.data;
+    },
+    enabled: !!name,
+  });
+};
+
+export interface WaitlistHistoryItem {
+  id: string;
+  actor: string;
+  action: string;
+  entity_id: string;
+  details: Record<string, any>;
+  created_at: string;
+}
+
+export const useWaitlistHistoryQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "waitlist", "history"],
+    queryFn: async () => {
+      const response = await apiClient.get<{ history: WaitlistHistoryItem[] }>(
+        "/admin/users/waitlist/history",
+      );
+      return response.data.history;
+    },
+  });
+};

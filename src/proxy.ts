@@ -7,11 +7,16 @@ export const proxy = (request: NextRequest) => {
 
   const isTreasurerRoute = pathname.startsWith("/treasurer");
   const isAdminRoute = pathname.startsWith("/admin");
-  const isAuthRoute = ["/sign-in", "/sign-up", "/forgot-password"].some((route) =>
-    pathname.startsWith(route),
-  );
+  const isAuthRoute = [
+    "/sign-in",
+    "/sign-up",
+    "/forgot-password",
+    "/verify-email",
+    "/verify-phone",
+    "/verify-2fa",
+  ].some((route) => pathname.startsWith(route));
   // Routes that require authentication but are not role-scoped dashboard routes
-  const isAuthenticatedOnlyRoute = ["/verify-email", "/verify-phone"].includes(pathname);
+  const isAuthenticatedOnlyRoute = false;
   const isRootRoute = pathname === "/";
 
   if (
@@ -30,12 +35,20 @@ export const proxy = (request: NextRequest) => {
   const accessToken = request.cookies.get(accessTokenCookieName)?.value;
   const userRole = request.cookies.get(roleCookieName)?.value;
   const phoneVerified = request.cookies.get("phone_verified")?.value;
+  const isWaitlisted = request.cookies.get("is_waitlisted")?.value === "true";
 
   // Signed-in user logic
   if (accessToken && userRole) {
+    if (isWaitlisted) {
+      if (pathname !== "/waitlist") {
+        return NextResponse.redirect(new URL("/waitlist", request.url));
+      }
+      return NextResponse.next();
+    }
+
     // If phone is not verified, restrict access to only the verify-phone page
     if (phoneVerified === "false") {
-      if (!isAuthenticatedOnlyRoute && !isAuthRoute) {
+      if (!isAuthRoute) {
         return NextResponse.redirect(new URL("/verify-phone", request.url));
       }
       return NextResponse.next();
@@ -64,7 +77,7 @@ export const proxy = (request: NextRequest) => {
   }
 
   // Unauthenticated user attempting to access secure routes
-  if (isTreasurerRoute || isAdminRoute || isAuthenticatedOnlyRoute) {
+  if (isTreasurerRoute || isAdminRoute || pathname === "/waitlist") {
     const signInUrl = new URL("/sign-in", request.url);
     // Optionally preserve the attempted URL for post-sign in redirect
     signInUrl.searchParams.set("from", pathname);
