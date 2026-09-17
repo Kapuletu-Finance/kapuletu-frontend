@@ -116,8 +116,12 @@ apiClient.interceptors.response.use(
           // Clear any non-HTTP-only client cookies explicitly if needed
           deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
 
-          // Force redirect to sign in with reason
-          window.location.href = "/sign-in?reason=session_expired";
+          // Force redirect to sign in with context-aware reason
+          if (path === "/waitlist") {
+            window.location.href = "/sign-in?reason=waitlist_approved";
+          } else {
+            window.location.href = "/sign-in?reason=session_expired";
+          }
         }
       }
     }

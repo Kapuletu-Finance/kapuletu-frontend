@@ -20,7 +20,11 @@ const WaitlistPage: React.FC = () => {
   useEffect(() => {
     if (user && user.is_waitlisted === false) {
       deleteCookie("is_waitlisted", { path: "/" });
-      router.push("/sign-in");
+      if (user.role === "admin" || user.role === "super_admin") {
+        router.push("/admin");
+      } else {
+        router.push("/treasurer");
+      }
     }
   }, [user, router]);
 

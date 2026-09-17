@@ -92,6 +92,33 @@ export const SignInForm = () => {
         </div>
       )}
 
+      {reason === "waitlist_approved" && (
+        <div className="mb-6 rounded-md bg-green-500/15 border border-green-500/20 p-4 text-sm text-green-600 flex items-start gap-3">
+          <svg
+            aria-label="Success"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-check-circle mt-0.5 shrink-0"
+          >
+            <title>Success</title>
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <path d="m9 11 3 3L22 4" />
+          </svg>
+          <p>
+            <strong>Your account is ready!</strong>
+            <br />
+            You have been approved from the waitlist. Please sign in to access your dashboard.
+          </p>
+        </div>
+      )}
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <fieldset disabled={signInMutation.isPending} className="space-y-5">
