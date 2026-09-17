@@ -106,7 +106,7 @@ apiClient.interceptors.response.use(
           getQueryClient().clear();
 
           // Clear any non-HTTP-only client cookies explicitly if needed
-          deleteCookie("user_role", { path: "/" });
+          deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
 
           // Force redirect to sign in with reason
           window.location.href = "/sign-in?reason=session_expired";

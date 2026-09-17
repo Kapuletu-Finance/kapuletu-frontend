@@ -90,7 +90,8 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
       return;
     }
 
-    const finalIdentifier = user?.phone_number || "";
+    const finalIdentifier =
+      user?.phone_number || new URLSearchParams(window.location.search).get("identifier") || "";
 
     // If phone verification, we need the identifier
     if (isPhone) {
@@ -128,7 +129,8 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
       return;
     }
 
-    const finalIdentifier = user?.phone_number || "";
+    const finalIdentifier =
+      user?.phone_number || new URLSearchParams(window.location.search).get("identifier") || "";
 
     if (isPhone) {
       if (!finalIdentifier) {
@@ -152,7 +154,12 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
 
   useEffect(() => {
     if (is2FA) return; // For 2FA, the initial login request sent the code already
-    if (isPhone && !user?.phone_number) return;
+    if (
+      isPhone &&
+      !user?.phone_number &&
+      !new URLSearchParams(window.location.search).get("identifier")
+    )
+      return;
 
     const params = new URLSearchParams(window.location.search);
     if (params.get("new_signup") === "true") return;

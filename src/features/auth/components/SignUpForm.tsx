@@ -1,9 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { deleteCookie } from "cookies-next";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -11,7 +14,9 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { env } from "@/env";
 import { PasswordRequirements } from "@/features/auth/components/PasswordRequirements";
+import { AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
 import { type SignUpFormData, signUpSchema } from "@/features/auth/schemas";
 import { useSignUpMutation } from "@/features/auth/services/mutations";
 import { usePublicSystemConfigQuery } from "@/features/auth/services/queries";
@@ -23,6 +28,15 @@ export const SignUpForm = () => {
 
   const { data: config, isLoading: isConfigLoading } = usePublicSystemConfigQuery();
   const signUpMutation = useSignUpMutation();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Clear stale state for multi-account signups
+    deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
+    deleteCookie("is_waitlisted", { path: "/" });
+    localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
+    queryClient.removeQueries({ queryKey: ["auth"] });
+  }, [queryClient]);
 
   const form = useForm<SignUpFormData & { showPassword?: boolean }>({
     defaultValues: {

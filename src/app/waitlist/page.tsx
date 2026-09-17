@@ -1,14 +1,28 @@
 "use client";
 
+import { deleteCookie } from "cookies-next";
 import { CheckCircle2, LogOut } from "lucide-react";
-import type React from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { SocialIcon } from "react-social-icons";
 import { Button } from "@/components/ui/button";
 import { useLogoutMutation } from "@/features/auth/services/mutations";
+import { useGetMeQuery } from "@/features/auth/services/queries";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const WaitlistPage: React.FC = () => {
   const { mutate: logout, isPending: isLoggingOut } = useLogoutMutation();
+  const router = useRouter();
+
+  // Poll every 10 seconds to check if they've been approved
+  const { data: user } = useGetMeQuery({ refetchInterval: 10000 });
+
+  useEffect(() => {
+    if (user && user.is_waitlisted === false) {
+      deleteCookie("is_waitlisted", { path: "/" });
+      router.push("/sign-in");
+    }
+  }, [user, router]);
 
   const handleLogout = () => {
     logout();

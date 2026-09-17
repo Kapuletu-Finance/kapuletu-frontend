@@ -165,11 +165,11 @@ export const useSignUpMutation = () => {
           : "Registration failed. Please verify your details and try again.",
       );
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       toast.success("Account created! Verification code sent to your email and WhatsApp.");
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
-      // Redirect to phone verification page with new_signup flag to prevent double OTP
-      window.location.href = "/verify-phone?new_signup=true";
+      // Redirect to phone verification page with new_signup flag and identifier to prevent double OTP and ensure verify card works
+      window.location.href = `/verify-phone?new_signup=true&identifier=${encodeURIComponent(variables.phoneNumber)}`;
     },
   });
 };

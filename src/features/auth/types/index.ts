@@ -17,6 +17,7 @@ export type User = {
   role: UserRole;
   two_factor_enabled: boolean;
   two_factor_channel: string | null;
+  is_waitlisted: boolean;
 };
 
 /**

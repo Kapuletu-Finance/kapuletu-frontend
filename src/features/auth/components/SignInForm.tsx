@@ -1,14 +1,19 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { deleteCookie } from "cookies-next";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { env } from "@/env";
+import { AUTH_LOCAL_STORAGE_KEYS } from "@/features/auth/keys";
 import { type SignInFormData, signInSchema } from "@/features/auth/schemas";
 import { useSignInMutation } from "@/features/auth/services/mutations";
 
@@ -16,6 +21,15 @@ export const SignInForm = () => {
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Clear stale state for multi-account sign-ins
+    deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
+    deleteCookie("is_waitlisted", { path: "/" });
+    localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
+    queryClient.removeQueries({ queryKey: ["auth"] });
+  }, [queryClient]);
 
   const form = useForm<SignInFormData>({
     defaultValues: {
