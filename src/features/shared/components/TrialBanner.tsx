@@ -2,7 +2,6 @@
 
 import { AlertTriangle, Clock, Zap } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
 

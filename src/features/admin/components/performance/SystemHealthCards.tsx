@@ -58,13 +58,13 @@ export const SystemHealthCards: React.FC<Props> = ({ data, isLoading }) => {
         <CardContent className="p-6 flex flex-col justify-between">
           <div className="flex items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium text-muted-foreground tracking-tight">
-              Server Load (Simulated)
+              Server Load
             </h3>
             <IconLibrary name="server" className="h-4 w-4 text-primary" />
           </div>
           <div>
             <div className="text-2xl font-bold">{data.cpu_load_percent}%</div>
-            <p className="text-xs text-muted-foreground mt-1">CPU/Memory proxy</p>
+            <p className="text-xs text-muted-foreground mt-1">Real-time CPU usage</p>
           </div>
         </CardContent>
       </Card>

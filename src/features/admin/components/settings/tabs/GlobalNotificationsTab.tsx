@@ -1,9 +1,9 @@
 import type React from "react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { StickySaveBar } from "@/components/ui/sticky-save-bar";
 
 interface Props {
   config: Record<string, any>;
@@ -13,6 +13,16 @@ interface Props {
 
 export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLoading }) => {
   const [alertEmail, setAlertEmail] = useState(config.critical_alert_email || "");
+
+  const isDirty = alertEmail !== (config.critical_alert_email || "");
+
+  const handleSave = async () => {
+    await onUpdate("critical_alert_email", alertEmail);
+  };
+
+  const handleDiscard = () => {
+    setAlertEmail(config.critical_alert_email || "");
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -43,17 +53,12 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
 
       <Separator className="w-full" />
 
-      <div className="pt-2 flex justify-start">
-        <Button
-          className="w-40 font-semibold"
-          disabled={isLoading}
-          onClick={async () => {
-            await onUpdate("critical_alert_email", alertEmail);
-          }}
-        >
-          Save Changes
-        </Button>
-      </div>
+      <StickySaveBar
+        isDirty={isDirty}
+        isSaving={isLoading}
+        onSave={handleSave}
+        onDiscard={handleDiscard}
+      />
     </div>
   );
 };

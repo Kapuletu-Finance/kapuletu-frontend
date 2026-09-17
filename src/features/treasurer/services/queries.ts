@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import type { DashboardOverviewOut, WorkspaceOverviewOut, GlobalSearchOut } from "@/features/shared/types";
+import type {
+  DashboardOverviewOut,
+  GlobalSearchOut,
+  WorkspaceOverviewOut,
+} from "@/features/shared/types";
 import { TREASURER_URLS } from "@/features/treasurer/urls";
 import { apiClient } from "@/lib/api-client";
 
@@ -31,7 +35,7 @@ export const useGlobalSearchQuery = (query: string) => {
     queryKey: ["workspace", "search", query],
     queryFn: async () => {
       const response = await apiClient.get<GlobalSearchOut>(
-        `${TREASURER_URLS.WORKSPACE_SEARCH}?q=${encodeURIComponent(query)}`
+        `${TREASURER_URLS.WORKSPACE_SEARCH}?q=${encodeURIComponent(query)}`,
       );
       return response.data;
     },

@@ -494,7 +494,7 @@ export const KapuletuAssistant: React.FC = () => {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [_isMobile, setIsMobile] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -750,63 +750,63 @@ export const KapuletuAssistant: React.FC = () => {
             </div>
 
             {/* Chat Area */}
-            <ScrollArea
-              className="flex-1 bg-muted/30"
-              ref={scrollRef}
-              orientation="vertical"
-            >
+            <ScrollArea className="flex-1 bg-muted/30" ref={scrollRef} orientation="vertical">
               <div className="p-4 flex flex-col gap-4">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={cn(
-                    "flex flex-col max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300",
-                    msg.role === "user" ? "self-end items-end" : "self-start items-start",
-                  )}
-                >
+                {messages.map((msg) => (
                   <div
+                    key={msg.id}
                     className={cn(
-                      "px-3.5 py-2.5 text-[13px] shadow-sm font-medium",
-                      msg.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm"
-                        : "bg-background border border-border rounded-2xl rounded-tl-sm text-foreground",
+                      "flex flex-col max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300",
+                      msg.role === "user" ? "self-end items-end" : "self-start items-start",
                     )}
                   >
-                    {msg.text}
-                  </div>
-                  {msg.action === "feedback" && (
-                    <Button
-                      size="sm"
-                      className="mt-2.5 text-xs h-9 w-full shadow-sm rounded-xl"
-                      onClick={handleOpenFeedback}
+                    <div
+                      className={cn(
+                        "px-3.5 py-2.5 text-[13px] shadow-sm font-medium",
+                        msg.role === "user"
+                          ? "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm"
+                          : "bg-background border border-border rounded-2xl rounded-tl-sm text-foreground",
+                      )}
                     >
-                      <IconLibrary name="feedback" className="mr-2 size-3.5" />
-                      Open Feedback Form
-                    </Button>
-                  )}
-                  {msg.action === "support" && (
-                    <Link href="/support" className="w-full" onClick={() => setPopoverOpen(false)}>
+                      {msg.text}
+                    </div>
+                    {msg.action === "feedback" && (
                       <Button
                         size="sm"
-                        variant="outline"
                         className="mt-2.5 text-xs h-9 w-full shadow-sm rounded-xl"
+                        onClick={handleOpenFeedback}
                       >
-                        <IconLibrary name="ticket" className="mr-2 size-3.5" />
-                        Go to Help Center
+                        <IconLibrary name="feedback" className="mr-2 size-3.5" />
+                        Open Feedback Form
                       </Button>
-                    </Link>
-                  )}
-                </div>
-              ))}
+                    )}
+                    {msg.action === "support" && (
+                      <Link
+                        href="/support"
+                        className="w-full"
+                        onClick={() => setPopoverOpen(false)}
+                      >
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="mt-2.5 text-xs h-9 w-full shadow-sm rounded-xl"
+                        >
+                          <IconLibrary name="ticket" className="mr-2 size-3.5" />
+                          Go to Help Center
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                ))}
 
-              {isTyping && (
-                <div className="self-start bg-background border border-border shadow-sm rounded-2xl rounded-tl-sm px-3.5 py-3 flex items-center gap-1.5 w-fit">
-                  <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce" />
-                  <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:150ms]" />
-                  <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]" />
-                </div>
-              )}
-            </div>
+                {isTyping && (
+                  <div className="self-start bg-background border border-border shadow-sm rounded-2xl rounded-tl-sm px-3.5 py-3 flex items-center gap-1.5 w-fit">
+                    <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce" />
+                    <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:150ms]" />
+                    <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]" />
+                  </div>
+                )}
+              </div>
             </ScrollArea>
 
             {/* Input Area */}
@@ -874,15 +874,15 @@ export const KapuletuAssistant: React.FC = () => {
           {/* Content — scrollable */}
           <ScrollArea className="flex-1 w-full" orientation="vertical">
             <div className="px-6 py-5">
-            {submitted ? (
-              <SuccessState onReset={handleReset} onClose={handleClose} />
-            ) : (
-              <>
-                {step === 1 && <Step1 form={form} onChange={patch} />}
-                {step === 2 && <Step2 form={form} onChange={patch} />}
-                {step === 3 && <Step3 form={form} onChange={patch} />}
-              </>
-            )}
+              {submitted ? (
+                <SuccessState onReset={handleReset} onClose={handleClose} />
+              ) : (
+                <>
+                  {step === 1 && <Step1 form={form} onChange={patch} />}
+                  {step === 2 && <Step2 form={form} onChange={patch} />}
+                  {step === 3 && <Step3 form={form} onChange={patch} />}
+                </>
+              )}
             </div>
           </ScrollArea>
 

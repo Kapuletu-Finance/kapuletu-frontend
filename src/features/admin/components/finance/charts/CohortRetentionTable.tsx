@@ -42,7 +42,7 @@ export const CohortRetentionTable: React.FC = () => {
                 </th>
                 {[...Array(12)].map((_, i) => (
                   <th
-                    key={"month-" + i}
+                    key={`month-${i}`}
                     className="p-3 font-medium text-muted-foreground border-b text-center min-w-[60px]"
                   >
                     Month {i}
@@ -62,13 +62,13 @@ export const CohortRetentionTable: React.FC = () => {
                     const percentage = row.retention[i];
                     if (percentage === undefined || percentage === null) {
                       return (
-                        <td key={"month-" + i} className="p-3 text-center text-muted-foreground/30">
+                        <td key={`month-${i}`} className="p-3 text-center text-muted-foreground/30">
                           -
                         </td>
                       );
                     }
                     return (
-                      <td key={"month-" + i} className="p-1">
+                      <td key={`month-${i}`} className="p-1">
                         <div
                           className={`w-full h-full p-2 text-center rounded-md transition-all duration-300 hover:scale-105 ${getHeatmapColor(percentage)}`}
                         >

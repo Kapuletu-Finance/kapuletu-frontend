@@ -31,7 +31,7 @@ export const SecurityNudgeModal = () => {
     }
 
     const snoozeUntil = localStorage.getItem(SNOOZE_KEY);
-    if (snoozeUntil && new Date().getTime() < parseInt(snoozeUntil, 10)) {
+    if (snoozeUntil && Date.now() < parseInt(snoozeUntil, 10)) {
       return;
     }
 
