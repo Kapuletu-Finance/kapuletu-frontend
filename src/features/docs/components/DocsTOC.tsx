@@ -13,7 +13,7 @@ interface Heading {
 export const DocsTOC = () => {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeId, setActiveId] = useState<string>("");
-  const pathname = usePathname();
+  const _pathname = usePathname();
 
   useEffect(() => {
     // Small delay to ensure the new page's DOM has fully rendered
@@ -55,7 +55,7 @@ export const DocsTOC = () => {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [pathname]);
+  }, []);
 
   if (headings.length === 0) return null;
 

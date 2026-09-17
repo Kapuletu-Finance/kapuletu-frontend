@@ -1,3 +1,4 @@
+import * as React from "react"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -45,24 +46,24 @@ export interface ButtonProps extends ButtonPrimitive.Props, VariantProps<typeof 
   isLoading?: boolean;
 }
 
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  isLoading,
-  children,
-  ...props
-}: ButtonProps) {
-  return (
-    <ButtonPrimitive
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      disabled={isLoading || props.disabled}
-      {...props}
-    >
-      {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : children}
-    </ButtonPrimitive>
-  )
-}
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    { className, variant = "default", size = "default", isLoading, children, ...props },
+    ref
+  ) => {
+    return (
+      <ButtonPrimitive
+        ref={ref}
+        data-slot="button"
+        className={cn(buttonVariants({ variant, size, className }))}
+        disabled={isLoading || props.disabled}
+        {...props}
+      >
+        {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : children}
+      </ButtonPrimitive>
+    )
+  }
+)
+Button.displayName = "Button"
 
 export { Button, buttonVariants }

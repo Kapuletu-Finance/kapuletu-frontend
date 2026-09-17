@@ -1,9 +1,8 @@
 import { parseAsString, useQueryState } from "nuqs";
-import * as React from "react";
 import { Button } from "@/components/ui/button";
 import IconLibrary from "@/features/shared/components/IconLibrary";
-import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 export type ViewMode = "table" | "grid" | "stack";
 
@@ -11,7 +10,7 @@ export const ViewToggleGroup = () => {
   const isMobile = useIsMobile();
   const [view, setView] = useQueryState(
     "view",
-    parseAsString.withDefault(isMobile ? "stack" : "table")
+    parseAsString.withDefault(isMobile ? "stack" : "table"),
   );
 
   return (

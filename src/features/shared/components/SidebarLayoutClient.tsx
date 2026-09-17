@@ -295,9 +295,12 @@ const MobileSidebarTrigger = () => {
   );
 };
 
+import { useHeartbeat } from "@/hooks/useHeartbeat";
+
 export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
   const isAdminOrSuperAdmin = role === "admin" || role === "super_admin";
   const links = isAdminOrSuperAdmin ? ADMIN_LINKS : TREASURER_LINKS;
+  useHeartbeat();
   const { data: user, isLoading } = useGetMeQuery();
   const { data: pendingCount } = usePendingInboxCountQuery();
   const { data: feedbackCount } = useNewFeedbackCountQuery();

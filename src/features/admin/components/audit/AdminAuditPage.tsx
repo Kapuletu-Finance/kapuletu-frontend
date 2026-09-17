@@ -35,7 +35,7 @@ export const AdminAuditPage: React.FC = () => {
     // Let's just pass undefined for now.
   }
 
-  const { data, isLoading, isError, error } = useAuditLogsQuery({
+  const { data, isLoading, isError, error, refetch } = useAuditLogsQuery({
     q: q || undefined,
     entity_type,
     action,
@@ -89,6 +89,16 @@ export const AdminAuditPage: React.FC = () => {
               <SelectItem value="errors">Critical Errors</SelectItem>
             </SelectContent>
           </Select>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => refetch()}
+            disabled={isLoading}
+            className="shrink-0"
+            title="Refresh logs"
+          >
+            <IconLibrary name="refresh" className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+          </Button>
         </div>
       </div>
 

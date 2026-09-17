@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 import { useState } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +37,7 @@ import { usePendingInboxQuery } from "@/features/inbox/services/queries";
 import EmptyState from "@/features/shared/components/EmptyState";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 export const TreasurerInboxPageClient = () => {
@@ -314,15 +314,24 @@ export const TreasurerInboxPageClient = () => {
         ) : undefined
       }
     >
-      <ScrollArea orientation={view === "table" ? "horizontal" : undefined} className={cn("w-full pb-4 mt-6", view !== "table" && "h-auto")}>
+      <ScrollArea
+        orientation={view === "table" ? "horizontal" : undefined}
+        className={cn("w-full pb-4 mt-6", view !== "table" && "h-auto")}
+      >
         <div
           className={cn(
-            view === "table" && "flex flex-col min-w-[1150px] bg-card rounded-xl border border-border shadow-sm",
-            (view === "grid" || view === "stack") && "flex flex-col gap-4"
+            view === "table" &&
+              "flex flex-col min-w-[1150px] bg-card rounded-xl border border-border shadow-sm",
+            (view === "grid" || view === "stack") && "flex flex-col gap-4",
           )}
         >
           {status === "pending" ? (
-            <div className={cn((view === "grid" || view === "stack") && "bg-card rounded-xl border border-border shadow-sm overflow-hidden")}>
+            <div
+              className={cn(
+                (view === "grid" || view === "stack") &&
+                  "bg-card rounded-xl border border-border shadow-sm overflow-hidden",
+              )}
+            >
               <InboxBulkActions
                 selectedCount={selectedIds.size}
                 onClearSelection={() => setSelectedIds(new Set())}
@@ -334,7 +343,9 @@ export const TreasurerInboxPageClient = () => {
             <div
               className={cn(
                 "flex items-center justify-between p-4 bg-card sticky top-0 z-10",
-                view === "table" ? "border-b border-border" : "rounded-xl border border-border shadow-sm"
+                view === "table"
+                  ? "border-b border-border"
+                  : "rounded-xl border border-border shadow-sm",
               )}
             >
               <span className="text-sm font-medium text-muted-foreground">
@@ -356,11 +367,21 @@ export const TreasurerInboxPageClient = () => {
             <div
               className={cn(
                 "w-full",
-                view === "table" ? "flex flex-col" : (view === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-4")
+                view === "table"
+                  ? "flex flex-col"
+                  : view === "grid"
+                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                    : "flex flex-col gap-4",
               )}
             >
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className={cn("flex items-center gap-4 py-4 px-4 border-border", view === "table" ? "border-b" : "border rounded-xl bg-card")}>
+                <div
+                  key={i}
+                  className={cn(
+                    "flex items-center gap-4 py-4 px-4 border-border",
+                    view === "table" ? "border-b" : "border rounded-xl bg-card",
+                  )}
+                >
                   <Skeleton className="w-4 h-4 rounded" />
                   <Skeleton className="w-10 h-10 rounded-full shrink-0" />
                   <div className="flex flex-col gap-2 w-32">
@@ -374,7 +395,11 @@ export const TreasurerInboxPageClient = () => {
             <div
               className={cn(
                 "w-full animate-in fade-in duration-500",
-                view === "table" ? "flex flex-col" : (view === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-4")
+                view === "table"
+                  ? "flex flex-col"
+                  : view === "grid"
+                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                    : "flex flex-col gap-4",
               )}
             >
               {inboxItems.map((item) => (
@@ -390,7 +415,13 @@ export const TreasurerInboxPageClient = () => {
               ))}
             </div>
           ) : (
-            <div className={cn("py-16 animate-in fade-in duration-500", (view === "grid" || view === "stack") && "bg-card border border-border shadow-sm rounded-xl")}>
+            <div
+              className={cn(
+                "py-16 animate-in fade-in duration-500",
+                (view === "grid" || view === "stack") &&
+                  "bg-card border border-border shadow-sm rounded-xl",
+              )}
+            >
               <EmptyState message="No new inbox items found." />
             </div>
           )}

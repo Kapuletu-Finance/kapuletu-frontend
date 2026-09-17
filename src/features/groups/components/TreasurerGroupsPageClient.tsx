@@ -2,7 +2,6 @@
 
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,6 +17,7 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import StatCard from "@/features/shared/components/StatCard";
 import type { GroupOut } from "@/features/shared/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { getAvatarColor } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 

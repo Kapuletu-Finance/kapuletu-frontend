@@ -2,6 +2,7 @@ import { Diamond, Loader2, MessageCircle } from "lucide-react";
 import * as React from "react";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import { Separator } from "@/components/ui/separator";
+import { StickySaveBar } from "@/components/ui/sticky-save-bar";
 import { useUpdateReportingSettingsMutation } from "@/features/auth/services/mutations";
 import { useGetSettingsQuery } from "@/features/auth/services/queries";
 
@@ -9,6 +10,27 @@ export const ReportingBillingTab: React.FC = () => {
   const { data: settings, isLoading: isSettingsLoading } = useGetSettingsQuery();
   const updateReportingMutation = useUpdateReportingSettingsMutation();
   const [subscriptionsEnabled, setSubscriptionsEnabled] = React.useState(false);
+  const [allowWhatsappReports, setAllowWhatsappReports] = React.useState(false);
+
+  React.useEffect(() => {
+    if (settings) {
+      setAllowWhatsappReports(settings.reporting?.allow_whatsapp_reports ?? false);
+    }
+  }, [settings]);
+
+  const isDirty = allowWhatsappReports !== (settings?.reporting?.allow_whatsapp_reports ?? false);
+
+  const handleSave = () => {
+    if (!settings) return;
+    updateReportingMutation.mutate({
+      ...settings.reporting,
+      allow_whatsapp_reports: allowWhatsappReports,
+    });
+  };
+
+  const handleDiscard = () => {
+    setAllowWhatsappReports(settings?.reporting?.allow_whatsapp_reports ?? false);
+  };
 
   if (isSettingsLoading) {
     return (
@@ -56,18 +78,18 @@ export const ReportingBillingTab: React.FC = () => {
           </div>
         </div>
         <LabeledSwitch
-          checked={settings?.reporting?.allow_whatsapp_reports ?? false}
-          onCheckedChange={(checked) => {
-            if (settings) {
-              updateReportingMutation.mutate({
-                ...settings.reporting,
-                allow_whatsapp_reports: checked,
-              });
-            }
-          }}
+          checked={allowWhatsappReports}
+          onCheckedChange={setAllowWhatsappReports}
           disabled={updateReportingMutation.isPending}
         />
       </div>
+
+      <StickySaveBar
+        isDirty={isDirty}
+        isSaving={updateReportingMutation.isPending}
+        onSave={handleSave}
+        onDiscard={handleDiscard}
+      />
     </div>
   );
 };

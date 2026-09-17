@@ -6,6 +6,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type * as React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SessionTimeoutListener } from "@/features/shared/components/SessionTimeoutListener";
 import { UpgradeModalProvider } from "@/features/shared/providers/UpgradeModalProvider";
 import { queryClient } from "@/lib/query-client";
 
@@ -25,6 +26,7 @@ export const Providers: React.FC<ProvidersProps> = ({ children }) => {
             disableTransitionOnChange
           >
             <UpgradeModalProvider>{children}</UpgradeModalProvider>
+            <SessionTimeoutListener />
           </NextThemesProvider>
           <Toaster richColors position="bottom-right" />
         </TooltipProvider>

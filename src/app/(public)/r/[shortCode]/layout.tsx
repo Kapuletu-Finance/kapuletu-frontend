@@ -19,9 +19,6 @@ const CampaignReportLayout: React.FC<CampaignReportLayoutProps> = ({ children })
         <div className="w-full flex items-center justify-between p-5 sm:px-10 max-w-7xl mx-auto">
           <div className="flex flex-col items-center sm:items-end">
             <SiteLogo variant="full" width={36} height={36} textClassName="text-2xl sm:text-3xl" />
-            <span className="text-[10px] sm:text-xs font-bold text-primary tracking-wide -mt-1 sm:-mt-1.5 opacity-90 pr-1">
-              Built for Group Finance
-            </span>
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
             <Badge

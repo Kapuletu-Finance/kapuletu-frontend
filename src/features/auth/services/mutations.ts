@@ -52,6 +52,11 @@ export const useSignInMutation = () => {
 
       toast.success("Welcome back!");
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
+      if (data.is_waitlisted) {
+        setCookie("is_waitlisted", "true", { maxAge: 604800, path: "/" });
+      } else {
+        deleteCookie("is_waitlisted", { path: "/" });
+      }
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
       // If phone number is not yet verified, redirect to the verify-phone page
@@ -67,6 +72,8 @@ export const useSignInMutation = () => {
         window.location.href = from;
       } else if (data.role === "admin" || data.role === "super_admin") {
         window.location.href = "/admin";
+      } else if (data.is_waitlisted) {
+        window.location.href = "/waitlist";
       } else {
         window.location.href = "/treasurer";
       }
@@ -89,6 +96,11 @@ export const useVerify2FAMutation = () => {
     onSuccess: (data) => {
       toast.success("Welcome back!");
       setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
+      if (data.is_waitlisted) {
+        setCookie("is_waitlisted", "true", { maxAge: 604800, path: "/" });
+      } else {
+        deleteCookie("is_waitlisted", { path: "/" });
+      }
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
       if (!data.phone_number_verified) {
@@ -103,6 +115,8 @@ export const useVerify2FAMutation = () => {
         window.location.href = from;
       } else if (data.role === "admin" || data.role === "super_admin") {
         window.location.href = "/admin";
+      } else if (data.is_waitlisted) {
+        window.location.href = "/waitlist";
       } else {
         window.location.href = "/treasurer";
       }
@@ -138,6 +152,7 @@ export const useSignUpMutation = () => {
         password: data.password,
         phone_number: data.phoneNumber,
         marketing_consent: data.marketingConsent,
+        invite_token: data.invite_token,
       };
 
       const response = await apiClient.post<RegisterOut>(AUTH_URLS.SIGN_UP, requestPayload);
@@ -150,11 +165,11 @@ export const useSignUpMutation = () => {
           : "Registration failed. Please verify your details and try again.",
       );
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       toast.success("Account created! Verification code sent to your email and WhatsApp.");
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
-      // Redirect to phone verification page
-      window.location.href = "/verify-phone";
+      // Redirect to phone verification page with new_signup flag and identifier to prevent double OTP and ensure verify card works
+      window.location.href = `/verify-phone?new_signup=true&identifier=${encodeURIComponent(variables.phoneNumber)}`;
     },
   });
 };
@@ -295,15 +310,38 @@ export const useVerifyEmailRequestMutation = () => {
 export const useVerifyPhoneConfirmMutation = () => {
   return useMutation({
     mutationFn: async (data: VerifyPhoneRequest) => {
-      const response = await apiClient.post<{ message: string }>(AUTH_URLS.VERIFY_PHONE, data);
+      const response = await apiClient.post<SignInResponse>(AUTH_URLS.VERIFY_PHONE, data);
       return response.data;
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to verify phone code.");
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Phone number verified successfully!");
+      toast.success("Phone verified and logged in successfully!");
       setCookie("phone_verified", "true", { path: "/" });
+
+      setCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, data.role, { maxAge: 604800, path: "/" });
+      if (data.is_waitlisted) {
+        setCookie("is_waitlisted", "true", { maxAge: 604800, path: "/" });
+      } else {
+        deleteCookie("is_waitlisted", { path: "/" });
+      }
+      localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
+
+      const params = new URLSearchParams(window.location.search);
+      const from = params.get("from");
+
+      setTimeout(() => {
+        if (from) {
+          window.location.href = from;
+        } else if (data.role === "admin" || data.role === "super_admin") {
+          window.location.href = "/admin";
+        } else if (data.is_waitlisted) {
+          window.location.href = "/waitlist";
+        } else {
+          window.location.href = "/treasurer";
+        }
+      }, 2000);
     },
   });
 };
@@ -342,6 +380,7 @@ export const useLogoutMutation = () => {
     onSuccess: () => {
       toast.success("Signed out successfully.");
       deleteCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME, { path: "/" });
+      deleteCookie("is_waitlisted", { path: "/" });
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
       window.location.href = "/sign-in";
     },

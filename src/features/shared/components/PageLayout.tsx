@@ -49,7 +49,11 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
       {(controls || showViewToggle) && (
         <div className="w-full flex items-end justify-between gap-4">
           <div className="flex-1 min-w-0">{controls}</div>
-          {showViewToggle && <div className="shrink-0"><ViewToggleGroup /></div>}
+          {showViewToggle && (
+            <div className="shrink-0">
+              <ViewToggleGroup />
+            </div>
+          )}
         </div>
       )}
 
