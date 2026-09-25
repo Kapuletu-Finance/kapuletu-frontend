@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "Troubleshooting Hub | KapuLetu Docs",
+  description: "Something isn't working? Find solutions to common problems here.",
+};
 
 export default function TroubleshootingIndexPage() {
   const issues = [

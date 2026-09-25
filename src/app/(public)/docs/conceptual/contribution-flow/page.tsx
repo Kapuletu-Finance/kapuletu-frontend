@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsFeedback } from "@/features/docs/components/DocsFeedback";
+
+export const metadata: Metadata = {
+  title: "How Contributions Flow | KapuLetu Docs",
+  description:
+    "Understand the lifecycle of a KapuLetu contribution from receipt to the final ledger.",
+};
 
 export default function ContributionFlowPage() {
   return (

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "Error Message Library | KapuLetu Docs",
+  description: "Look up specific error codes and system messages to find immediate solutions.",
+};
 
 export default function ErrorLibraryIndexPage() {
   const errors = [

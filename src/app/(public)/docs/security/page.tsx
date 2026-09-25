@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "Account & Security | KapuLetu Docs",
+  description: "Manage your KapuLetu profile and secure your organization's data.",
+};
 
 export default function SecurityIndexPage() {
   const accountGuides = [

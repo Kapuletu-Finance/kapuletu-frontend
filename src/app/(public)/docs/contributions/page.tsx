@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "Contributions & Inbox | KapuLetu Docs",
+  description: "Record, review, and approve incoming money into your treasury.",
+};
 
 export default function ContributionsIndexPage() {
   const recordingGuides = [
