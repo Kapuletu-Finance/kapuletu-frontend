@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "Groups Management | KapuLetu Docs",
+  description: "Learn how to create, manage, and configure groups to host your campaigns.",
+};
 
 export default function GroupsIndexPage() {
   const guides = [

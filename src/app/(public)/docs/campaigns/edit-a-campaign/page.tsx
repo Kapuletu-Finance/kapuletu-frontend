@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Edit Campaign Details | KapuLetu Docs",
+  description: "Learn how to update and manage your campaign's configurations.",
+};
 
 export default function CampaignSettingsPage() {
   const steps = [

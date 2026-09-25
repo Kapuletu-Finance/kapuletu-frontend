@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "What is a Group? | KapuLetu Docs",
+  description: "Understand the core organizational structure in KapuLetu.",
+};
 
 export default function WhatIsAGroupPage() {
   return (

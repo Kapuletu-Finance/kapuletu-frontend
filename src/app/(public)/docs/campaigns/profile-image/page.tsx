@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Adding a Profile Image | KapuLetu Docs",
+  description: "Personalize your campaign with a cover photo.",
+};
 
 export default function ProfileImagePage() {
   const steps = [

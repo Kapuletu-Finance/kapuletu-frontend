@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Deleting or Archiving a Group | KapuLetu Docs",
+  description: "Manage the lifecycle of your groups when they are no longer needed.",
+};
 
 export default function DeletingAGroupPage() {
   const steps = [

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Creating a Group | KapuLetu Docs",
+  description: "Step-by-step instructions for establishing a new group in KapuLetu.",
+};
 
 export default function CreatingAGroupPage() {
   const steps = [

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Targets & Member Expectations | KapuLetu Docs",
+  description: "Manage overall goals and individual contribution requirements.",
+};
 
 export default function TargetsAndExpectationsPage() {
   const steps = [

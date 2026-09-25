@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Viewing Group History | KapuLetu Docs",
+  description: "Track the comprehensive audit log of actions across all campaigns in your group.",
+};
 
 export default function ViewingHistoryPage() {
   const steps = [

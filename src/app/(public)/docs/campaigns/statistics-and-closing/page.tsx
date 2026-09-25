@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Statistics & Closing a Campaign | KapuLetu Docs",
+  description: "Analyze your campaign's performance and finalize the activity.",
+};
 
 export default function StatisticsAndClosingPage() {
   const steps = [

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Creating a Campaign | KapuLetu Docs",
+  description: "Learn how to set up a new campaign or fundraising pool.",
+};
 
 export default function CreatingACampaignPage() {
   const steps = [

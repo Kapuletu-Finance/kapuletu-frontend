@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Navigating a Campaign | KapuLetu Docs",
+  description: "Learn about the different sections within a campaign dashboard.",
+};
 
 export default function NavigatingACampaignPage() {
   const steps = [

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Group Branding & Settings | KapuLetu Docs",
+  description: "Personalize your group with a name, description, and official logo.",
+};
 
 export default function GroupSettingsPage() {
   const steps = [
