@@ -108,7 +108,7 @@ export const TreasurerGroupDetailPageClient = () => {
   const fullCoverPhotoUrl = coverPhotoUrl
     ? coverPhotoUrl.startsWith("http")
       ? coverPhotoUrl
-      : `${env.NEXT_PUBLIC_BACKEND_URL}${coverPhotoUrl}`
+      : `/api${coverPhotoUrl}`
     : null;
   const primaryColor = currentSettings.primary_color as string | undefined;
   const tagline = currentSettings.tagline as string | undefined;

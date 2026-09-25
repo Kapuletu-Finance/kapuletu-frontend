@@ -130,7 +130,7 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
   const fullCoverPhotoUrl = coverPhotoUrl
     ? coverPhotoUrl.startsWith("http")
       ? coverPhotoUrl
-      : `${env.NEXT_PUBLIC_BACKEND_URL}${coverPhotoUrl}`
+      : `/api${coverPhotoUrl}`
     : null;
 
   return (
