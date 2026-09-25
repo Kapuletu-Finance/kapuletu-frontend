@@ -59,6 +59,13 @@ const GroupCard: React.FC<GroupCardProps> = ({
   const dotStyle = primaryColor ? { backgroundColor: primaryColor } : undefined;
   const cardStyle = cardColor ? { backgroundColor: cardColor } : undefined;
 
+  const coverPhotoRaw = group.settings_override?.cover_photo as string | undefined;
+  const fullCoverPhotoUrl = coverPhotoRaw
+    ? coverPhotoRaw.startsWith("http")
+      ? coverPhotoRaw
+      : `/api${coverPhotoRaw}`
+    : null;
+
   if (variant === "table") {
     return (
       <Card
@@ -69,15 +76,23 @@ const GroupCard: React.FC<GroupCardProps> = ({
         style={cardStyle}
       >
         <div className="flex items-center gap-4 w-full sm:w-auto">
-          <div
-            className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
-              !primaryColor && (group.iconClassName ?? "bg-primary/15 text-primary"),
-            )}
-            style={avatarStyle}
-          >
-            {getInitials(group.name)}
-          </div>
+          {fullCoverPhotoUrl ? (
+            <img
+              src={fullCoverPhotoUrl}
+              alt={group.name}
+              className="w-12 h-12 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div
+              className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
+                !primaryColor && (group.iconClassName ?? "bg-primary/15 text-primary"),
+              )}
+              style={avatarStyle}
+            >
+              {getInitials(group.name)}
+            </div>
+          )}
           <div className="flex flex-col">
             <h3 className="text-base font-bold tracking-tight text-foreground leading-tight">
               {group.name}
@@ -149,15 +164,23 @@ const GroupCard: React.FC<GroupCardProps> = ({
       <div className="flex flex-col gap-6 flex-1">
         {/* Header */}
         <div className="flex flex-row items-start gap-4">
-          <div
-            className={cn(
-              "w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold shrink-0 mt-0.5",
-              !primaryColor && (group.iconClassName ?? "bg-primary/15 text-primary"),
-            )}
-            style={avatarStyle}
-          >
-            {getInitials(group.name)}
-          </div>
+          {fullCoverPhotoUrl ? (
+            <img
+              src={fullCoverPhotoUrl}
+              alt={group.name}
+              className="w-14 h-14 rounded-full object-cover shrink-0 mt-0.5"
+            />
+          ) : (
+            <div
+              className={cn(
+                "w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold shrink-0 mt-0.5",
+                !primaryColor && (group.iconClassName ?? "bg-primary/15 text-primary"),
+              )}
+              style={avatarStyle}
+            >
+              {getInitials(group.name)}
+            </div>
+          )}
           <div className="flex flex-col gap-0.5 flex-1 min-w-0">
             <div className="flex items-center gap-3">
               <h3 className="text-xl font-bold tracking-tight text-foreground leading-tight truncate">
