@@ -6,6 +6,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { env } from "@/env";
 import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
 import CampaignCard, { type CampaignInfo } from "@/features/campaigns/components/CampaignCard";
 import { CampaignFormModal } from "@/features/campaigns/components/CampaignFormModal";
@@ -22,7 +23,7 @@ import StatCard from "@/features/shared/components/StatCard";
 import { usePlanLimits } from "@/features/shared/hooks/usePlanLimits";
 import type { CampaignOut } from "@/features/shared/types";
 import { getAvatarColor } from "@/lib/colors";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 const mapCampaignToInfo = (campaign: CampaignOut): CampaignInfo => ({
   id: campaign.id,
@@ -102,8 +103,57 @@ export const TreasurerGroupDetailPageClient = () => {
     }
   };
 
+  const currentSettings = (currentGroup?.settings_override || {}) as Record<string, unknown>;
+  const coverPhotoUrl = currentSettings.cover_photo as string | undefined;
+  const fullCoverPhotoUrl = coverPhotoUrl
+    ? coverPhotoUrl.startsWith("http")
+      ? coverPhotoUrl
+      : `${env.NEXT_PUBLIC_BACKEND_URL}${coverPhotoUrl}`
+    : null;
+  const primaryColor = currentSettings.primary_color as string | undefined;
+  const tagline = currentSettings.tagline as string | undefined;
+
   return (
     <>
+      {/* Group Banner & Title Section */}
+      <div className="w-full max-w-7xl mx-auto mb-8">
+        {fullCoverPhotoUrl && (
+          <div className="w-full h-48 sm:h-64 rounded-xl overflow-hidden mb-6 relative shadow-sm border border-border">
+            <img
+              src={fullCoverPhotoUrl}
+              alt={`${currentGroup?.name} cover`}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+          </div>
+        )}
+
+        <div className="flex items-center gap-5 px-1 sm:px-2">
+          {!fullCoverPhotoUrl && (
+            <div
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl font-bold shrink-0"
+              style={
+                primaryColor ? { backgroundColor: `${primaryColor}15`, color: primaryColor } : {}
+              }
+            >
+              {currentGroup ? getInitials(currentGroup.name) : ""}
+            </div>
+          )}
+          <div className="flex flex-col gap-1">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+              {currentGroup?.name || <Skeleton className="h-10 w-48" />}
+            </h1>
+            {tagline ? (
+              <p className="text-base font-medium text-foreground/80">{tagline}</p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                {currentGroup?.description || <Skeleton className="h-5 w-64" />}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       <PageLayout
         actionButton={
           <Button

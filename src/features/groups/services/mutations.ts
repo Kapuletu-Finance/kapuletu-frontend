@@ -107,7 +107,7 @@ export const useUploadGroupCoverPhotoMutation = (groupId: string) => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": undefined,
           },
         },
       );
