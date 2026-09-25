@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import * as React from "react";
@@ -29,16 +30,21 @@ import {
   useUpdateGroupMutation,
   useUploadGroupCoverPhotoMutation,
 } from "@/features/groups/services/mutations";
-import { useGroupsQuery } from "@/features/groups/services/queries";
+import { useGroupHistoryQuery, useGroupsQuery } from "@/features/groups/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
-import type { Currency, GroupOut } from "@/features/shared/types";
+import type { AuditLogOut, Currency, GroupOut } from "@/features/shared/types";
 
 const editGroupSchema = z.object({
   name: z.string().min(1, "Group name is required"),
   description: z.string().max(300, "Description cannot exceed 300 characters").optional(),
   currency: z.string().optional(),
   primary_color: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Must be a valid hex color code")
+    .optional()
+    .or(z.literal("")),
+  card_color: z
     .string()
     .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Must be a valid hex color code")
     .optional()
@@ -65,6 +71,7 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
       description: group.description || "",
       currency: group.currency || "KES",
       primary_color: (currentSettings.primary_color as string) || "",
+      card_color: (currentSettings.card_color as string) || "",
       tagline: (currentSettings.tagline as string) || "",
     },
     resolver: zodResolver(editGroupSchema),
@@ -77,6 +84,7 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
       const newSettings = {
         ...currentSettings,
         primary_color: data.primary_color || undefined,
+        card_color: data.card_color || undefined,
         tagline: data.tagline || undefined,
       };
 
@@ -131,6 +139,7 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
         <TabsList variant="line" className="w-full justify-start border-b">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="branding">Branding</TabsTrigger>
+          <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="danger" className="text-destructive">
             Danger Zone
           </TabsTrigger>
@@ -302,6 +311,34 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
 
                 <FormField
                   control={form.control}
+                  name="card_color"
+                  render={({ field }) => (
+                    <Field data-invalid={!!form.formState.errors.card_color}>
+                      <FieldLabel className="text-sm font-semibold">
+                        Card Background Color
+                      </FieldLabel>
+                      <div className="flex gap-2 items-center">
+                        <Input
+                          type="color"
+                          className="w-12 h-10 p-1 cursor-pointer shrink-0"
+                          value={field.value || "#ffffff"}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
+                        <Input
+                          placeholder="#F8FAFC"
+                          {...field}
+                          aria-invalid={!!form.formState.errors.card_color}
+                        />
+                      </div>
+                      {form.formState.errors.card_color && (
+                        <FieldError>{form.formState.errors.card_color.message}</FieldError>
+                      )}
+                    </Field>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="tagline"
                   render={({ field }) => (
                     <Field data-invalid={!!form.formState.errors.tagline}>
@@ -328,6 +365,10 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
               </Button>
             </form>
           </Form>
+        </TabsContent>
+
+        <TabsContent value="history" className="mt-8 space-y-6">
+          <GroupHistoryTab groupId={group.id} />
         </TabsContent>
 
         <TabsContent value="danger" className="mt-8 space-y-6 max-w-2xl">
@@ -383,6 +424,53 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
         </TabsContent>
       </Tabs>
     </Card>
+  );
+};
+
+const GroupHistoryTab = ({ groupId }: { groupId: string }) => {
+  const { data: historyLogs, isLoading } = useGroupHistoryQuery(groupId);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-16 w-full" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!historyLogs || historyLogs.length === 0) {
+    return (
+      <div className="text-center py-12 border border-dashed border-border rounded-lg bg-muted/10">
+        <IconLibrary name="clock" className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+        <h4 className="text-sm font-semibold">No history found</h4>
+        <p className="text-xs text-muted-foreground mt-1">
+          Activity and settings changes will appear here.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {historyLogs.map((log: AuditLogOut) => (
+        <div key={log.log_id} className="flex gap-4 p-4 border border-border rounded-lg bg-card">
+          <div className="mt-1">
+            <IconLibrary name="activity" className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-medium">{log.action}</p>
+            {log.details && (
+              <p className="text-xs text-muted-foreground mt-1">{JSON.stringify(log.details)}</p>
+            )}
+            <p className="text-xs text-muted-foreground mt-2">
+              {format(new Date(log.created_at), "MMM d, yyyy h:mm a")}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 
