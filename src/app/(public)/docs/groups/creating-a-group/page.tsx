@@ -7,21 +7,25 @@ export default function CreatingAGroupPage() {
     {
       title: "Open the Groups Tab",
       description: "Navigate to the Groups section on the left-hand sidebar of your dashboard.",
+      image: "/docs/groups/creating-step-1.png",
     },
     {
       title: "Click 'Create Group'",
       description:
         "Locate and click the primary button labeled 'Create Group' in the top right corner.",
+      image: "/docs/groups/creating-step-2.png",
     },
     {
       title: "Enter Group Details",
       description:
         "Fill in the basic information including the Group Name, Description, and Base Currency.",
+      image: "/docs/groups/creating-step-3.png",
     },
     {
       title: "Save and Finalize",
       description:
-        "Click 'Save' to create the group. You will automatically be set as the Lead Treasurer.",
+        "Click 'Save' to create the group. You will automatically be taken to the group's management window, where you will be managing your campaigns.",
+      image: "/docs/groups/creating-step-4.png",
     },
   ];
 
@@ -32,8 +36,8 @@ export default function CreatingAGroupPage() {
       difficulty="Beginner"
     >
       <p>
-        Groups are the foundational organizational unit in KapuLetu. Every member, contribution, and
-        fundraising activity must belong to a specific group.
+        Groups are the foundational organizational unit in KapuLetu. Every campaign and fundraising
+        activity must belong to a specific group.
       </p>
 
       <DocsScreenshotSequence steps={steps} alt="Guided steps for creating a group" />

@@ -100,12 +100,12 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ isOpen, onClose }) => 
                 <ul className="space-y-1">
                   <li>
                     <Link href="/docs/groups" className={getLinkClass("/docs/groups")}>
-                      <IconLibrary name="users" className="w-4 h-4" /> Groups & Members
+                      <IconLibrary name="users" className="w-4 h-4" /> Groups
                     </Link>
                   </li>
                   <li>
-                    <Link href="/docs/fundraising" className={getLinkClass("/docs/fundraising")}>
-                      <IconLibrary name="activity" className="w-4 h-4" /> Fundraising
+                    <Link href="/docs/campaigns" className={getLinkClass("/docs/campaigns")}>
+                      <IconLibrary name="campaign" className="w-4 h-4" /> Campaigns
                     </Link>
                   </li>
                   <li>
