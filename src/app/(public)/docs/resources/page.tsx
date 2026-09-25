@@ -6,6 +6,14 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 export const metadata: Metadata = {
   title: "Resources & Downloads | KapuLetu Docs",
   description: "Helpful templates, checklists, and guides to support your treasury.",
+  openGraph: {
+    title: "Resources & Downloads | KapuLetu Docs",
+    description: "Helpful templates, checklists, and guides to support your treasury.",
+  },
+  twitter: {
+    title: "Resources & Downloads | KapuLetu Docs",
+    description: "Helpful templates, checklists, and guides to support your treasury.",
+  },
 };
 
 export default function ResourcesIndexPage() {

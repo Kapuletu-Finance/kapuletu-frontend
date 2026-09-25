@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Deleting or Archiving a Group | KapuLetu Docs",
   description: "Manage the lifecycle of your groups when they are no longer needed.",
+  openGraph: {
+    title: "Deleting or Archiving a Group | KapuLetu Docs",
+    description: "Manage the lifecycle of your groups when they are no longer needed.",
+  },
+  twitter: {
+    title: "Deleting or Archiving a Group | KapuLetu Docs",
+    description: "Manage the lifecycle of your groups when they are no longer needed.",
+  },
 };
 
 export default function DeletingAGroupPage() {

@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Targets & Member Expectations | KapuLetu Docs",
   description: "Manage overall goals and individual contribution requirements.",
+  openGraph: {
+    title: "Targets & Member Expectations | KapuLetu Docs",
+    description: "Manage overall goals and individual contribution requirements.",
+  },
+  twitter: {
+    title: "Targets & Member Expectations | KapuLetu Docs",
+    description: "Manage overall goals and individual contribution requirements.",
+  },
 };
 
 export default function TargetsAndExpectationsPage() {

@@ -6,6 +6,14 @@ import { DocsCallout } from "@/features/docs/components/DocsCallout";
 export const metadata: Metadata = {
   title: "Dashboard Guides | KapuLetu Docs",
   description: "Learn how to read and interpret your treasury's financial overview.",
+  openGraph: {
+    title: "Dashboard Guides | KapuLetu Docs",
+    description: "Learn how to read and interpret your treasury's financial overview.",
+  },
+  twitter: {
+    title: "Dashboard Guides | KapuLetu Docs",
+    description: "Learn how to read and interpret your treasury's financial overview.",
+  },
 };
 
 export default function DashboardIndexPage() {

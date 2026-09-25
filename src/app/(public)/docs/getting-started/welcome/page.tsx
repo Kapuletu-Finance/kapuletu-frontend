@@ -7,6 +7,14 @@ import { DocsVideo } from "@/features/docs/components/DocsVideo";
 export const metadata: Metadata = {
   title: "Welcome to KapuLetu",
   description: "Everything you need to know to get started with your new treasury workspace.",
+  openGraph: {
+    title: "Welcome to KapuLetu",
+    description: "Everything you need to know to get started with your new treasury workspace.",
+  },
+  twitter: {
+    title: "Welcome to KapuLetu",
+    description: "Everything you need to know to get started with your new treasury workspace.",
+  },
 };
 
 export default function WelcomePage() {

@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Understanding the Contribution Inbox | KapuLetu Docs",
   description: "How to review, correct, and verify incoming money before it hits the ledger.",
+  openGraph: {
+    title: "Understanding the Contribution Inbox | KapuLetu Docs",
+    description: "How to review, correct, and verify incoming money before it hits the ledger.",
+  },
+  twitter: {
+    title: "Understanding the Contribution Inbox | KapuLetu Docs",
+    description: "How to review, correct, and verify incoming money before it hits the ledger.",
+  },
 };
 
 export default function InboxGuidePage() {

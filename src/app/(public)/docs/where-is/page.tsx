@@ -8,6 +8,16 @@ export const metadata: Metadata = {
   title: "Where do I find...? | KapuLetu Docs",
   description:
     "A quick reference guide to finding exactly what you need in the KapuLetu workspace.",
+  openGraph: {
+    title: "Where do I find...? | KapuLetu Docs",
+    description:
+      "A quick reference guide to finding exactly what you need in the KapuLetu workspace.",
+  },
+  twitter: {
+    title: "Where do I find...? | KapuLetu Docs",
+    description:
+      "A quick reference guide to finding exactly what you need in the KapuLetu workspace.",
+  },
 };
 
 export default function WhereIsPage() {

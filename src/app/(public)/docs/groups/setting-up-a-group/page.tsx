@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Setting up a Group | KapuLetu Docs",
   description: "Configure the initial operational settings for your new group.",
+  openGraph: {
+    title: "Setting up a Group | KapuLetu Docs",
+    description: "Configure the initial operational settings for your new group.",
+  },
+  twitter: {
+    title: "Setting up a Group | KapuLetu Docs",
+    description: "Configure the initial operational settings for your new group.",
+  },
 };
 
 export default function SettingUpAGroupPage() {

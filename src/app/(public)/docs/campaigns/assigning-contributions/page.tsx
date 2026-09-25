@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Assigning & Splitting Contributions | KapuLetu Docs",
   description: "Learn how to properly allocate funds to your campaigns.",
+  openGraph: {
+    title: "Assigning & Splitting Contributions | KapuLetu Docs",
+    description: "Learn how to properly allocate funds to your campaigns.",
+  },
+  twitter: {
+    title: "Assigning & Splitting Contributions | KapuLetu Docs",
+    description: "Learn how to properly allocate funds to your campaigns.",
+  },
 };
 
 export default function AssigningContributionsPage() {
