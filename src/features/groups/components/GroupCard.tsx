@@ -105,7 +105,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
               variant="outline"
               className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-9"
             >
-              Edit Group
+              Group Settings
             </Button>
           </EditGroupDialogForm>
           <Button variant="outline" size="icon" onClick={onToggleFavorite}>
@@ -203,7 +203,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
               variant="outline"
               className="border-primary text-primary hover:text-primary hover:bg-primary/5"
             >
-              Edit Group
+              Group Settings
             </Button>
           </EditGroupDialogForm>
           <Button variant="outline" size="icon" onClick={onToggleFavorite}>
