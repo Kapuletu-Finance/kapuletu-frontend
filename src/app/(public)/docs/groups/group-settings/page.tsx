@@ -50,16 +50,10 @@ export default function GroupSettingsPage() {
       description="Personalize your group with a name, description, and official logo."
       difficulty="Beginner"
     >
-      <p className="mb-4">
-        Customizing your group's branding gives it a professional appearance. This is especially
-        useful because the group name and logo are automatically placed on the headers of your
-        generated financial reports.
-      </p>
-
-      <DocsScreenshotSequence steps={steps} alt="Guided steps for editing group branding" />
-
-      <DocsCallout type="tip" title="Logo Format">
-        For the best results on PDF reports, use a PNG image with a transparent background.
+      <DocsCallout type="info" title="Coming Soon">
+        The Group Branding & Settings feature is currently under development. Soon, you will be able
+        to customize your group's branding, including names, descriptions, and official logos for
+        your generated financial reports.
       </DocsCallout>
       <DocsPagination
         prev={{ title: "Setting up a Group", link: "/docs/groups/setting-up-a-group" }}

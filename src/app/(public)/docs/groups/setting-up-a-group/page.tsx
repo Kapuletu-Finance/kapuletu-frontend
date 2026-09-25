@@ -20,28 +20,22 @@ export const metadata: Metadata = {
 export default function SettingUpAGroupPage() {
   const steps = [
     {
-      title: "Navigate to Group Setup",
+      title: "Navigate to Edit Group",
       description:
-        "After creating your group, click on 'Group Settings' in the bottom left of your sidebar.",
+        "After creating your group, click on 'Edit Group' in the groups list to open the setup modal.",
       image: "/docs/groups/setup-step-1.png",
     },
     {
-      title: "Configure Base Currency",
+      title: "Adjust the Group's information",
       description:
-        "Select the primary currency (e.g., KES, USD) that will be used for all reporting across the campaigns in this group.",
+        "Update the details of the group including the name, of the group, the description, status of the group.",
       image: "/docs/groups/setup-step-2.png",
-    },
-    {
-      title: "Set Timezone",
-      description:
-        "Ensure the group's timezone matches your local time so that contribution timestamps and deadlines are perfectly aligned.",
-      image: "/docs/groups/setup-step-3.png",
     },
     {
       title: "Save Configuration",
       description:
         "Click 'Save Changes'. Your group is now fully configured and ready to host your campaigns.",
-      image: "/docs/groups/setup-step-4.png",
+      image: "/docs/groups/setup-step-3.png",
     },
   ];
 

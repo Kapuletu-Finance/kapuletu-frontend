@@ -59,6 +59,24 @@ export const useArchiveGroupMutation = (groupId: string) => {
   });
 };
 
+export const useDeleteGroupMutation = (groupId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.delete<void>(GROUPS_URLS.groupPermanentDelete(groupId));
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to permanently delete group.");
+    },
+    onSuccess: () => {
+      toast.success("Group permanently deleted!");
+      queryClient.invalidateQueries({ queryKey: groupsQueryKey });
+    },
+  });
+};
+
 export const useToggleGroupFavoriteMutation = () => {
   const queryClient = useQueryClient();
 
@@ -71,6 +89,35 @@ export const useToggleGroupFavoriteMutation = () => {
       toast.error(error instanceof Error ? error.message : "Failed to update favorite.");
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: groupsQueryKey });
+    },
+  });
+};
+
+export const useUploadGroupCoverPhotoMutation = (groupId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await apiClient.post<GroupOut>(
+        GROUPS_URLS.groupCoverPhoto(groupId),
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to upload cover photo.");
+    },
+    onSuccess: () => {
+      toast.success("Cover photo updated successfully!");
       queryClient.invalidateQueries({ queryKey: groupsQueryKey });
     },
   });
