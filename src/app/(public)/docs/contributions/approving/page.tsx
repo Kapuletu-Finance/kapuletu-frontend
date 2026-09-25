@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Approving a Contribution | KapuLetu Docs",
+  description: "How to finalize a contribution and commit it to the ledger.",
+};
 
 export default function ApprovingContributionPage() {
   const steps = [

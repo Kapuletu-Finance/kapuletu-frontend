@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Generating Time-Based Reports | KapuLetu Docs",
+  description: "How to generate daily, weekly, or monthly financial summaries.",
+};
 
 export default function TimeBasedReportsPage() {
   const steps = [

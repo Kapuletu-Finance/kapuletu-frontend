@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "KapuLetu Glossary",
+  description: "Definitions for the core terminology used throughout KapuLetu.",
+};
 
 export default function GlossaryIndexPage() {
   const terms = [

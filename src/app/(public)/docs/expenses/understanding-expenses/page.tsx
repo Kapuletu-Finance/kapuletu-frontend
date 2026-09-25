@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Understanding & Recording Expenses | KapuLetu Docs",
+  description: "How to track money leaving your treasury.",
+};
 
 export default function RecordingExpensePage() {
   const steps = [

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "Expenses | KapuLetu Docs",
+  description: "Track outflows, attach evidence, and monitor your group's net balance.",
+};
 
 export default function ExpensesIndexPage() {
   const guides = [

@@ -32,7 +32,10 @@ export const metadataConfig: Metadata = {
       "Eliminate manual bookkeeping mistakes in your community finance circles. Empower group treasurers with automated text parsing, cryptographic audit records, and one-click WhatsApp summary exports.",
     locale: "en_KE",
     siteName: "KapuLetu Treasury",
-    title: "KapuLetu Treasury | Automated Community Financial Ledger",
+    title: {
+      default: "KapuLetu Treasury | Automated Community Financial Ledger",
+      template: "%s | KapuLetu Treasury",
+    },
     type: "website",
     url: env.NEXT_PUBLIC_APP_URL,
   },
@@ -60,7 +63,10 @@ export const metadataConfig: Metadata = {
     card: "summary_large_image",
     description:
       "Empower group treasurers with automated SMS parsing pipelines, explicit role-based safeguards, and multi-member contribution accounting updates.",
-    title: "KapuLetu Treasury | Real-Time Automated Treasury Bookkeeping",
+    title: {
+      default: "KapuLetu Treasury | Real-Time Automated Treasury Bookkeeping",
+      template: "%s | KapuLetu Treasury",
+    },
   },
 };
 
