@@ -99,13 +99,21 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ isOpen, onClose }) => 
                 </h3>
                 <ul className="space-y-1">
                   <li>
-                    <Link href="/docs/groups" className={getLinkClass("/docs/groups")}>
-                      <IconLibrary name="users" className="w-4 h-4" /> Groups & Members
+                    <Link
+                      onClick={onClose}
+                      href="/docs/groups"
+                      className={getLinkClass("/docs/groups")}
+                    >
+                      <IconLibrary name="users" className="w-4 h-4" /> Groups
                     </Link>
                   </li>
                   <li>
-                    <Link href="/docs/fundraising" className={getLinkClass("/docs/fundraising")}>
-                      <IconLibrary name="activity" className="w-4 h-4" /> Fundraising
+                    <Link
+                      onClick={onClose}
+                      href="/docs/campaigns"
+                      className={getLinkClass("/docs/campaigns")}
+                    >
+                      <IconLibrary name="campaign" className="w-4 h-4" /> Campaigns
                     </Link>
                   </li>
                   <li>
@@ -117,12 +125,20 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ isOpen, onClose }) => 
                     </Link>
                   </li>
                   <li>
-                    <Link href="/docs/expenses" className={getLinkClass("/docs/expenses")}>
+                    <Link
+                      onClick={onClose}
+                      href="/docs/expenses"
+                      className={getLinkClass("/docs/expenses")}
+                    >
                       <IconLibrary name="credit-card" className="w-4 h-4" /> Expenses
                     </Link>
                   </li>
                   <li>
-                    <Link href="/docs/reports" className={getLinkClass("/docs/reports")}>
+                    <Link
+                      onClick={onClose}
+                      href="/docs/reports"
+                      className={getLinkClass("/docs/reports")}
+                    >
                       <IconLibrary name="report" className="w-4 h-4" /> Reports & Analytics
                     </Link>
                   </li>
@@ -135,12 +151,20 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ isOpen, onClose }) => 
                 </h3>
                 <ul className="space-y-1">
                   <li>
-                    <Link href="/docs/whatsapp" className={getLinkClass("/docs/whatsapp")}>
+                    <Link
+                      onClick={onClose}
+                      href="/docs/whatsapp"
+                      className={getLinkClass("/docs/whatsapp")}
+                    >
                       <IconLibrary name="message-circle" className="w-4 h-4" /> WhatsApp Processing
                     </Link>
                   </li>
                   <li>
-                    <Link href="/docs/security" className={getLinkClass("/docs/security")}>
+                    <Link
+                      onClick={onClose}
+                      href="/docs/security"
+                      className={getLinkClass("/docs/security")}
+                    >
                       <IconLibrary name="shield" className="w-4 h-4" /> Account & Security
                     </Link>
                   </li>

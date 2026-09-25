@@ -20,7 +20,8 @@ const navLinks = [
   { href: "/#pricing", label: "Pricing" },
   { href: "/blogs", label: "Blog" },
   { href: "/#faqs", label: "FAQs" },
-  { href: "/docs", label: "Help & Learning" },
+  { href: "/docs", label: "Documentation" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export const LandingHeader = () => {

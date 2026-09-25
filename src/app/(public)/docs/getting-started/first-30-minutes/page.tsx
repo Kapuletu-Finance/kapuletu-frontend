@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsFeedback } from "@/features/docs/components/DocsFeedback";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+
+export const metadata: Metadata = {
+  title: "Your First 30 Minutes With KapuLetu",
+  description:
+    "A guided step-by-step checklist to complete your first end-to-end treasury workflow.",
+};
 
 export default function First30MinutesPage() {
   const setupSteps = [

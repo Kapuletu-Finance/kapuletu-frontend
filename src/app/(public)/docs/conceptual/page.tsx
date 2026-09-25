@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "How KapuLetu Works",
+  description:
+    "Conceptual guides to help you understand the philosophy and mechanics behind the KapuLetu platform.",
+};
 
 export default function ConceptualGuidesPage() {
   const concepts = [

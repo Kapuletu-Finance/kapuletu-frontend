@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsFeedback } from "@/features/docs/components/DocsFeedback";
+
+export const metadata: Metadata = {
+  title: "Where do I find...? | KapuLetu Docs",
+  description:
+    "A quick reference guide to finding exactly what you need in the KapuLetu workspace.",
+};
 
 export default function WhereIsPage() {
   const references = [

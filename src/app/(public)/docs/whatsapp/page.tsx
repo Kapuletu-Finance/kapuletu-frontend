@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsVideo } from "@/features/docs/components/DocsVideo";
+
+export const metadata: Metadata = {
+  title: "WhatsApp Processing | KapuLetu Docs",
+  description: "Automate your treasury by forwarding M-Pesa messages directly to KapuLetu.",
+};
 
 export default function WhatsAppIndexPage() {
   const setupGuides = [
