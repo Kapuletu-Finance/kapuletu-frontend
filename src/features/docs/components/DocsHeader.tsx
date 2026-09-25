@@ -1,15 +1,23 @@
 "use client";
 
+import { getCookie } from "cookies-next";
 import Link from "next/link";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { env } from "@/env";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const DocsHeader: React.FC<{ onOpenMobileNav: () => void }> = ({ onOpenMobileNav }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
+    setIsMounted(true);
+    const role = getCookie(env.NEXT_PUBLIC_ROLE_COOKIE_NAME);
+    if (role) setUserRole(String(role));
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "/" || (e.key === "k" && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
@@ -64,12 +72,22 @@ export const DocsHeader: React.FC<{ onOpenMobileNav: () => void }> = ({ onOpenMo
           >
             Support
           </Link>
-          <Link
-            href="/dashboard"
-            className="text-sm font-medium bg-primary text-primary-foreground px-4 sm:px-5 py-2 sm:py-2.5 rounded-full hover:bg-primary/90 transition-all shadow-sm hover:shadow active:scale-95 whitespace-nowrap"
-          >
-            Go to App &rarr;
-          </Link>
+
+          {isMounted && userRole ? (
+            <Link
+              href={userRole === "admin" ? "/admin" : "/treasurer"}
+              className="text-sm font-medium bg-primary text-primary-foreground px-4 sm:px-5 py-2 sm:py-2.5 rounded-full hover:bg-primary/90 transition-all shadow-sm hover:shadow active:scale-95 whitespace-nowrap"
+            >
+              Go to Dashboard &rarr;
+            </Link>
+          ) : (
+            <Link
+              href="/sign-in"
+              className="text-sm font-medium bg-primary text-primary-foreground px-4 sm:px-5 py-2 sm:py-2.5 rounded-full hover:bg-primary/90 transition-all shadow-sm hover:shadow active:scale-95 whitespace-nowrap"
+            >
+              Go to App &rarr;
+            </Link>
+          )}
         </div>
       </header>
 
