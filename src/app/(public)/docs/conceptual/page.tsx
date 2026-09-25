@@ -7,6 +7,16 @@ export const metadata: Metadata = {
   title: "How KapuLetu Works",
   description:
     "Conceptual guides to help you understand the philosophy and mechanics behind the KapuLetu platform.",
+  openGraph: {
+    title: "How KapuLetu Works",
+    description:
+      "Conceptual guides to help you understand the philosophy and mechanics behind the KapuLetu platform.",
+  },
+  twitter: {
+    title: "How KapuLetu Works",
+    description:
+      "Conceptual guides to help you understand the philosophy and mechanics behind the KapuLetu platform.",
+  },
 };
 
 export default function ConceptualGuidesPage() {

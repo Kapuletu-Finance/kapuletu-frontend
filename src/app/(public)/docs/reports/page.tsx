@@ -7,6 +7,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Reports & Analytics | KapuLetu Docs",
   description: "Learn how to generate, understand, and share professional treasury reports.",
+  openGraph: {
+    title: "Reports & Analytics | KapuLetu Docs",
+    description: "Learn how to generate, understand, and share professional treasury reports.",
+  },
+  twitter: {
+    title: "Reports & Analytics | KapuLetu Docs",
+    description: "Learn how to generate, understand, and share professional treasury reports.",
+  },
 };
 
 export default function ReportsIndexPage() {

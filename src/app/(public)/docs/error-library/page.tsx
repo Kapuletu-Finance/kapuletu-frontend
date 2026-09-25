@@ -6,6 +6,14 @@ import { DocsCallout } from "@/features/docs/components/DocsCallout";
 export const metadata: Metadata = {
   title: "Error Message Library | KapuLetu Docs",
   description: "Look up specific error codes and system messages to find immediate solutions.",
+  openGraph: {
+    title: "Error Message Library | KapuLetu Docs",
+    description: "Look up specific error codes and system messages to find immediate solutions.",
+  },
+  twitter: {
+    title: "Error Message Library | KapuLetu Docs",
+    description: "Look up specific error codes and system messages to find immediate solutions.",
+  },
 };
 
 export default function ErrorLibraryIndexPage() {

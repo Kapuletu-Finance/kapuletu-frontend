@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Adding a Contribution Manually | KapuLetu Docs",
   description: "How to record cash, bank transfers, or un-forwarded M-Pesa payments.",
+  openGraph: {
+    title: "Adding a Contribution Manually | KapuLetu Docs",
+    description: "How to record cash, bank transfers, or un-forwarded M-Pesa payments.",
+  },
+  twitter: {
+    title: "Adding a Contribution Manually | KapuLetu Docs",
+    description: "How to record cash, bank transfers, or un-forwarded M-Pesa payments.",
+  },
 };
 
 export default function AddingContributionManuallyPage() {

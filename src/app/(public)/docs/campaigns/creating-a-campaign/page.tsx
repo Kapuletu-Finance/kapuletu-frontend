@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Creating a Campaign | KapuLetu Docs",
   description: "Learn how to set up a new campaign or fundraising pool.",
+  openGraph: {
+    title: "Creating a Campaign | KapuLetu Docs",
+    description: "Learn how to set up a new campaign or fundraising pool.",
+  },
+  twitter: {
+    title: "Creating a Campaign | KapuLetu Docs",
+    description: "Learn how to set up a new campaign or fundraising pool.",
+  },
 };
 
 export default function CreatingACampaignPage() {

@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Edit Campaign Details | KapuLetu Docs",
   description: "Learn how to update and manage your campaign's configurations.",
+  openGraph: {
+    title: "Edit Campaign Details | KapuLetu Docs",
+    description: "Learn how to update and manage your campaign's configurations.",
+  },
+  twitter: {
+    title: "Edit Campaign Details | KapuLetu Docs",
+    description: "Learn how to update and manage your campaign's configurations.",
+  },
 };
 
 export default function CampaignSettingsPage() {

@@ -9,6 +9,16 @@ export const metadata: Metadata = {
   title: "Your First 30 Minutes With KapuLetu",
   description:
     "A guided step-by-step checklist to complete your first end-to-end treasury workflow.",
+  openGraph: {
+    title: "Your First 30 Minutes With KapuLetu",
+    description:
+      "A guided step-by-step checklist to complete your first end-to-end treasury workflow.",
+  },
+  twitter: {
+    title: "Your First 30 Minutes With KapuLetu",
+    description:
+      "A guided step-by-step checklist to complete your first end-to-end treasury workflow.",
+  },
 };
 
 export default function First30MinutesPage() {
