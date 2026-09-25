@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 
 export const metadata: Metadata = {
   title: "What is a Campaign? | KapuLetu Docs",
@@ -50,6 +51,10 @@ export default function WhatIsACampaignPage() {
           </DocsCallout>
         </section>
       </div>
+
+      <DocsPagination
+        next={{ title: "Creating a Campaign", link: "/docs/campaigns/creating-a-campaign" }}
+      />
     </DocsArticle>
   );
 }

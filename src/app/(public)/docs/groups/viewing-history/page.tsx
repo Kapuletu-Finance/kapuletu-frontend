@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -61,6 +62,9 @@ export default function ViewingHistoryPage() {
         Certain actions, such as automated WhatsApp contribution processing, will show 'System' as
         the actor instead of a specific user.
       </DocsCallout>
+      <DocsPagination
+        prev={{ title: "Deleting/archiving a group", link: "/docs/groups/deleting-a-group" }}
+      />
     </DocsArticle>
   );
 }

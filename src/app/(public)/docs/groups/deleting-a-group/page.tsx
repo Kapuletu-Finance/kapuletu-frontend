@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -62,6 +63,10 @@ export default function DeletingAGroupPage() {
         contributions, and historical records associated with that group. Proceed with extreme
         caution!
       </DocsCallout>
+      <DocsPagination
+        prev={{ title: "Group branding & Group settings", link: "/docs/groups/group-settings" }}
+        next={{ title: "Viewing group history", link: "/docs/groups/viewing-history" }}
+      />
     </DocsArticle>
   );
 }

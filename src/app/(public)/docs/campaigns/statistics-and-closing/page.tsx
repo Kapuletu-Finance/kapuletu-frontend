@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -64,6 +65,9 @@ export default function StatisticsAndClosingPage() {
         If you closed a campaign by mistake, you can always reopen it from the Settings tab by
         changing its status back to 'Active'.
       </DocsCallout>
+      <DocsPagination
+        prev={{ title: "Adding a Profile Image", link: "/docs/campaigns/profile-image" }}
+      />
     </DocsArticle>
   );
 }

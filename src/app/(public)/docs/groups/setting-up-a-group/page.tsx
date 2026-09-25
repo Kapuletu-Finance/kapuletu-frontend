@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -61,6 +62,10 @@ export default function SettingUpAGroupPage() {
         Once you have launched a campaign and received contributions, the base currency of the group
         will be locked to ensure reporting consistency. Make sure it is correct during setup!
       </DocsCallout>
+      <DocsPagination
+        prev={{ title: "Creating a Group", link: "/docs/groups/creating-a-group" }}
+        next={{ title: "Group branding & Group settings", link: "/docs/groups/group-settings" }}
+      />
     </DocsArticle>
   );
 }

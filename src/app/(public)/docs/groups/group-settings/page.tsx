@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -60,6 +61,10 @@ export default function GroupSettingsPage() {
       <DocsCallout type="tip" title="Logo Format">
         For the best results on PDF reports, use a PNG image with a transparent background.
       </DocsCallout>
+      <DocsPagination
+        prev={{ title: "Setting up a Group", link: "/docs/groups/setting-up-a-group" }}
+        next={{ title: "Deleting/archiving a group", link: "/docs/groups/deleting-a-group" }}
+      />
     </DocsArticle>
   );
 }
