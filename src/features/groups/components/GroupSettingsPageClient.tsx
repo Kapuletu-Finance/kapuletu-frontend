@@ -22,6 +22,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { env } from "@/env";
 import {
   useArchiveGroupMutation,
   useDeleteGroupMutation,
@@ -37,6 +38,12 @@ const editGroupSchema = z.object({
   name: z.string().min(1, "Group name is required"),
   description: z.string().max(300, "Description cannot exceed 300 characters").optional(),
   currency: z.string().optional(),
+  primary_color: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Must be a valid hex color code")
+    .optional()
+    .or(z.literal("")),
+  tagline: z.string().max(100, "Tagline cannot exceed 100 characters").optional(),
 });
 
 type EditGroupFormData = z.infer<typeof editGroupSchema>;
@@ -50,11 +57,15 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
 
   const [deleteConfirmation, setDeleteConfirmation] = React.useState("");
 
+  const currentSettings = (group.settings_override || {}) as Record<string, unknown>;
+
   const form = useForm<EditGroupFormData>({
     defaultValues: {
       name: group.name,
       description: group.description || "",
       currency: group.currency || "KES",
+      primary_color: (currentSettings.primary_color as string) || "",
+      tagline: (currentSettings.tagline as string) || "",
     },
     resolver: zodResolver(editGroupSchema),
   });
@@ -63,10 +74,17 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
 
   const onSubmit = async (data: EditGroupFormData) => {
     try {
+      const newSettings = {
+        ...currentSettings,
+        primary_color: data.primary_color || undefined,
+        tagline: data.tagline || undefined,
+      };
+
       await updateGroupMutation.mutateAsync({
         name: data.name,
         description: data.description || null,
         currency: data.currency as Currency,
+        settings_override: newSettings,
       });
     } catch (_error) {}
   };
@@ -101,6 +119,11 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
     group.settings_override && typeof group.settings_override === "object"
       ? ((group.settings_override as Record<string, unknown>).cover_photo as string)
       : null;
+  const fullCoverPhotoUrl = coverPhotoUrl
+    ? coverPhotoUrl.startsWith("http")
+      ? coverPhotoUrl
+      : `${env.NEXT_PUBLIC_BACKEND_URL}${coverPhotoUrl}`
+    : null;
 
   return (
     <Card className="w-full max-w-4xl mx-auto p-6 md:p-8 bg-card border-border shadow-sm">
@@ -215,36 +238,96 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
           </Form>
         </TabsContent>
 
-        <TabsContent value="branding" className="mt-8 space-y-6">
-          <div className="space-y-4 max-w-2xl">
-            <div>
-              <h4 className="text-sm font-semibold mb-1">Cover Photo</h4>
-              <p className="text-sm text-muted-foreground mb-4">
-                Upload a high quality image to represent this group on public pages.
-              </p>
-              <div className="border-2 border-dashed border-border rounded-lg overflow-hidden flex flex-col items-center justify-center bg-muted/10 hover:bg-muted/30 transition-colors relative min-h-[300px] group/upload">
-                {coverPhotoUrl ? (
-                  <img
-                    src={coverPhotoUrl}
-                    alt="Cover"
-                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover/upload:opacity-40 transition-opacity"
-                  />
-                ) : null}
-                <div className="relative z-10 flex flex-col items-center p-8 bg-background/80 backdrop-blur-sm rounded-lg m-4 border shadow-sm">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    disabled={uploadCoverMutation.isPending}
-                    className="max-w-[250px] cursor-pointer"
-                  />
-                  {uploadCoverMutation.isPending && (
-                    <p className="text-sm text-muted-foreground mt-3 font-medium">Uploading...</p>
-                  )}
+        <TabsContent value="branding" className="mt-8 space-y-8">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-2xl">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-semibold mb-1">Cover Photo</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Upload a high quality image to represent this group on public pages.
+                  </p>
+                  <div className="border-2 border-dashed border-border rounded-lg overflow-hidden flex flex-col items-center justify-center bg-muted/10 hover:bg-muted/30 transition-colors relative min-h-[300px] group/upload">
+                    {fullCoverPhotoUrl ? (
+                      <img
+                        src={fullCoverPhotoUrl}
+                        alt="Cover"
+                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover/upload:opacity-40 transition-opacity"
+                      />
+                    ) : null}
+                    <div className="relative z-10 flex flex-col items-center p-8 bg-background/80 backdrop-blur-sm rounded-lg m-4 border shadow-sm">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        disabled={uploadCoverMutation.isPending}
+                        className="max-w-[250px] cursor-pointer"
+                      />
+                      {uploadCoverMutation.isPending && (
+                        <p className="text-sm text-muted-foreground mt-3 font-medium">
+                          Uploading...
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
+                <FormField
+                  control={form.control}
+                  name="primary_color"
+                  render={({ field }) => (
+                    <Field data-invalid={!!form.formState.errors.primary_color}>
+                      <FieldLabel className="text-sm font-semibold">Brand Color (Hex)</FieldLabel>
+                      <div className="flex gap-2 items-center">
+                        <Input
+                          type="color"
+                          className="w-12 h-10 p-1 cursor-pointer shrink-0"
+                          value={field.value || "#000000"}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
+                        <Input
+                          placeholder="#CFA94B"
+                          {...field}
+                          aria-invalid={!!form.formState.errors.primary_color}
+                        />
+                      </div>
+                      {form.formState.errors.primary_color && (
+                        <FieldError>{form.formState.errors.primary_color.message}</FieldError>
+                      )}
+                    </Field>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="tagline"
+                  render={({ field }) => (
+                    <Field data-invalid={!!form.formState.errors.tagline}>
+                      <FieldLabel className="text-sm font-semibold">Group Tagline</FieldLabel>
+                      <Input
+                        placeholder="e.g. Empowering our community"
+                        {...field}
+                        aria-invalid={!!form.formState.errors.tagline}
+                      />
+                      {form.formState.errors.tagline && (
+                        <FieldError>{form.formState.errors.tagline.message}</FieldError>
+                      )}
+                    </Field>
+                  )}
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full sm:w-auto bg-primary px-8 py-6 text-base font-semibold"
+                isLoading={updateGroupMutation.isPending}
+              >
+                Save Branding Settings
+              </Button>
+            </form>
+          </Form>
         </TabsContent>
 
         <TabsContent value="danger" className="mt-8 space-y-6 max-w-2xl">
