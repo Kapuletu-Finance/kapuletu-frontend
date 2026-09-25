@@ -411,7 +411,8 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
             <div>
               <h4 className="text-base font-semibold text-destructive">Delete Group</h4>
               <p className="text-sm text-muted-foreground mt-1 mb-4">
-                Permanently delete this group and all its data. This action is irreversible.
+                Permanently delete this group and all its data. This action is irreversible. Please
+                type <strong>{group.name}</strong> below to confirm.
               </p>
               {hasTransactions ? (
                 <p className="text-sm font-medium text-destructive mb-3">
