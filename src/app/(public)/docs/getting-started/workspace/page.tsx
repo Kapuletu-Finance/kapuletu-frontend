@@ -7,6 +7,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Understanding the Workspace | KapuLetu Docs",
   description: "A quick tour of the KapuLetu interface and where to find key treasury tools.",
+  openGraph: {
+    title: "Understanding the Workspace | KapuLetu Docs",
+    description: "A quick tour of the KapuLetu interface and where to find key treasury tools.",
+  },
+  twitter: {
+    title: "Understanding the Workspace | KapuLetu Docs",
+    description: "A quick tour of the KapuLetu interface and where to find key treasury tools.",
+  },
 };
 
 export default function WorkspacePage() {

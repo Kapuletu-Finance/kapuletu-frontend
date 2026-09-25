@@ -6,6 +6,14 @@ import { DocsCallout } from "@/features/docs/components/DocsCallout";
 export const metadata: Metadata = {
   title: "Groups Management | KapuLetu Docs",
   description: "Learn how to create, manage, and configure groups to host your campaigns.",
+  openGraph: {
+    title: "Groups Management | KapuLetu Docs",
+    description: "Learn how to create, manage, and configure groups to host your campaigns.",
+  },
+  twitter: {
+    title: "Groups Management | KapuLetu Docs",
+    description: "Learn how to create, manage, and configure groups to host your campaigns.",
+  },
 };
 
 export default function GroupsIndexPage() {

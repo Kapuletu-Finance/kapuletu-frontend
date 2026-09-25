@@ -7,6 +7,14 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 export const metadata: Metadata = {
   title: "Need help now? | KapuLetu Docs",
   description: "This guide is currently being written by the KapuLetu team.",
+  openGraph: {
+    title: "Need help now? | KapuLetu Docs",
+    description: "This guide is currently being written by the KapuLetu team.",
+  },
+  twitter: {
+    title: "Need help now? | KapuLetu Docs",
+    description: "This guide is currently being written by the KapuLetu team.",
+  },
 };
 
 export default async function UnderConstructionPage({

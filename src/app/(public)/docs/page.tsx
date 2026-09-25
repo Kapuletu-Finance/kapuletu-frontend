@@ -9,6 +9,16 @@ export const metadata: Metadata = {
   title: "KapuLetu Help & Learning Centre",
   description:
     "Welcome to the KapuLetu Learning Centre. Search for a topic or browse our popular guides below to learn how to manage your fundraising campaigns.",
+  openGraph: {
+    title: "KapuLetu Help & Learning Centre",
+    description:
+      "Welcome to the KapuLetu Learning Centre. Search for a topic or browse our popular guides below to learn how to manage your fundraising campaigns.",
+  },
+  twitter: {
+    title: "KapuLetu Help & Learning Centre",
+    description:
+      "Welcome to the KapuLetu Learning Centre. Search for a topic or browse our popular guides below to learn how to manage your fundraising campaigns.",
+  },
 };
 
 export default function DocsPage() {

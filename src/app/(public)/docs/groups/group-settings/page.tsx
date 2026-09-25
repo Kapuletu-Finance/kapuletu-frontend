@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Group Branding & Settings | KapuLetu Docs",
   description: "Personalize your group with a name, description, and official logo.",
+  openGraph: {
+    title: "Group Branding & Settings | KapuLetu Docs",
+    description: "Personalize your group with a name, description, and official logo.",
+  },
+  twitter: {
+    title: "Group Branding & Settings | KapuLetu Docs",
+    description: "Personalize your group with a name, description, and official logo.",
+  },
 };
 
 export default function GroupSettingsPage() {

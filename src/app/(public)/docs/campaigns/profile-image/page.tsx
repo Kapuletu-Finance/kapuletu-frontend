@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Adding a Profile Image | KapuLetu Docs",
   description: "Personalize your campaign with a cover photo.",
+  openGraph: {
+    title: "Adding a Profile Image | KapuLetu Docs",
+    description: "Personalize your campaign with a cover photo.",
+  },
+  twitter: {
+    title: "Adding a Profile Image | KapuLetu Docs",
+    description: "Personalize your campaign with a cover photo.",
+  },
 };
 
 export default function ProfileImagePage() {

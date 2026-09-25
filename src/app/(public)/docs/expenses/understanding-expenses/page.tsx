@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Understanding & Recording Expenses | KapuLetu Docs",
   description: "How to track money leaving your treasury.",
+  openGraph: {
+    title: "Understanding & Recording Expenses | KapuLetu Docs",
+    description: "How to track money leaving your treasury.",
+  },
+  twitter: {
+    title: "Understanding & Recording Expenses | KapuLetu Docs",
+    description: "How to track money leaving your treasury.",
+  },
 };
 
 export default function RecordingExpensePage() {

@@ -6,6 +6,14 @@ import { DocsCallout } from "@/features/docs/components/DocsCallout";
 export const metadata: Metadata = {
   title: "Campaigns Management | KapuLetu Docs",
   description: "Learn how to create, manage, and configure individual fundraising campaigns.",
+  openGraph: {
+    title: "Campaigns Management | KapuLetu Docs",
+    description: "Learn how to create, manage, and configure individual fundraising campaigns.",
+  },
+  twitter: {
+    title: "Campaigns Management | KapuLetu Docs",
+    description: "Learn how to create, manage, and configure individual fundraising campaigns.",
+  },
 };
 
 export default function CampaignsIndexPage() {

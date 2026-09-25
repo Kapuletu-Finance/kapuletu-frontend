@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Statistics & Closing a Campaign | KapuLetu Docs",
   description: "Analyze your campaign's performance and finalize the activity.",
+  openGraph: {
+    title: "Statistics & Closing a Campaign | KapuLetu Docs",
+    description: "Analyze your campaign's performance and finalize the activity.",
+  },
+  twitter: {
+    title: "Statistics & Closing a Campaign | KapuLetu Docs",
+    description: "Analyze your campaign's performance and finalize the activity.",
+  },
 };
 
 export default function StatisticsAndClosingPage() {
