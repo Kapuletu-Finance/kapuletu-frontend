@@ -6,6 +6,14 @@ import { DocsCallout } from "@/features/docs/components/DocsCallout";
 export const metadata: Metadata = {
   title: "Troubleshooting Hub | KapuLetu Docs",
   description: "Something isn't working? Find solutions to common problems here.",
+  openGraph: {
+    title: "Troubleshooting Hub | KapuLetu Docs",
+    description: "Something isn't working? Find solutions to common problems here.",
+  },
+  twitter: {
+    title: "Troubleshooting Hub | KapuLetu Docs",
+    description: "Something isn't working? Find solutions to common problems here.",
+  },
 };
 
 export default function TroubleshootingIndexPage() {

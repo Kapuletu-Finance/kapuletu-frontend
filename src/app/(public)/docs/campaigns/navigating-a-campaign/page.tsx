@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Navigating a Campaign | KapuLetu Docs",
   description: "Learn about the different sections within a campaign dashboard.",
+  openGraph: {
+    title: "Navigating a Campaign | KapuLetu Docs",
+    description: "Learn about the different sections within a campaign dashboard.",
+  },
+  twitter: {
+    title: "Navigating a Campaign | KapuLetu Docs",
+    description: "Learn about the different sections within a campaign dashboard.",
+  },
 };
 
 export default function NavigatingACampaignPage() {

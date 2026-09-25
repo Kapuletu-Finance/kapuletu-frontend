@@ -5,6 +5,14 @@ import { DocsCallout } from "@/features/docs/components/DocsCallout";
 export const metadata: Metadata = {
   title: "What is a Group? | KapuLetu Docs",
   description: "Understand the core organizational structure in KapuLetu.",
+  openGraph: {
+    title: "What is a Group? | KapuLetu Docs",
+    description: "Understand the core organizational structure in KapuLetu.",
+  },
+  twitter: {
+    title: "What is a Group? | KapuLetu Docs",
+    description: "Understand the core organizational structure in KapuLetu.",
+  },
 };
 
 export default function WhatIsAGroupPage() {

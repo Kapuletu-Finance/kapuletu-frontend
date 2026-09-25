@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Approving a Contribution | KapuLetu Docs",
   description: "How to finalize a contribution and commit it to the ledger.",
+  openGraph: {
+    title: "Approving a Contribution | KapuLetu Docs",
+    description: "How to finalize a contribution and commit it to the ledger.",
+  },
+  twitter: {
+    title: "Approving a Contribution | KapuLetu Docs",
+    description: "How to finalize a contribution and commit it to the ledger.",
+  },
 };
 
 export default function ApprovingContributionPage() {

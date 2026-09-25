@@ -7,6 +7,16 @@ export const metadata: Metadata = {
   title: "Reconciling Accounts | KapuLetu Docs",
   description:
     "How to ensure your KapuLetu ledger perfectly matches your real-world bank and M-Pesa statements.",
+  openGraph: {
+    title: "Reconciling Accounts | KapuLetu Docs",
+    description:
+      "How to ensure your KapuLetu ledger perfectly matches your real-world bank and M-Pesa statements.",
+  },
+  twitter: {
+    title: "Reconciling Accounts | KapuLetu Docs",
+    description:
+      "How to ensure your KapuLetu ledger perfectly matches your real-world bank and M-Pesa statements.",
+  },
 };
 
 export default function ReconcilingAccountsPage() {
