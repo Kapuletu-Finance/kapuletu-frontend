@@ -114,14 +114,6 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
     } catch (_error) {}
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      await uploadCoverMutation.mutateAsync(file);
-    } catch (_error) {}
-  };
-
   const hasTransactions = (group.total_funds_raised || 0) > 0;
   const coverPhotoUrl =
     group.settings_override && typeof group.settings_override === "object"
@@ -132,6 +124,31 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
       ? coverPhotoUrl
       : `/api${coverPhotoUrl}`
     : null;
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (fullCoverPhotoUrl) {
+      if (
+        !window.confirm(
+          "Are you sure you want to replace the existing cover photo? The old photo will be permanently deleted.",
+        )
+      ) {
+        e.target.value = "";
+        return;
+      }
+    } else {
+      if (!window.confirm("Are you sure you want to upload this cover photo?")) {
+        e.target.value = "";
+        return;
+      }
+    }
+
+    try {
+      await uploadCoverMutation.mutateAsync(file);
+    } catch (_error) {}
+  };
 
   return (
     <Card className="w-full max-w-4xl mx-auto p-6 md:p-8 bg-card border-border shadow-sm">
