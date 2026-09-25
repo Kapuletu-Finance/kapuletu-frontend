@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+
+export const metadata: Metadata = {
+  title: "Need help now? | KapuLetu Docs",
+  description: "This guide is currently being written by the KapuLetu team.",
+};
 
 export default async function UnderConstructionPage({
   params,

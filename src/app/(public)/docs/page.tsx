@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsFeedback } from "@/features/docs/components/DocsFeedback";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+
+export const metadata: Metadata = {
+  title: "KapuLetu Help & Learning Centre",
+  description:
+    "Welcome to the KapuLetu Learning Centre. Search for a topic or browse our popular guides below to learn how to manage your fundraising campaigns.",
+};
 
 export default function DocsPage() {
   return (

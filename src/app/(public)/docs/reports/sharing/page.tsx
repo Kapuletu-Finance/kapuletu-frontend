@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Sharing & Downloading Reports | KapuLetu Docs",
+  description: "How to export your financial data to share with your group.",
+};
 
 export default function SharingReportsPage() {
   const steps = [
