@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Generating Time-Based Reports | KapuLetu Docs",
   description: "How to generate daily, weekly, or monthly financial summaries.",
+  openGraph: {
+    title: "Generating Time-Based Reports | KapuLetu Docs",
+    description: "How to generate daily, weekly, or monthly financial summaries.",
+  },
+  twitter: {
+    title: "Generating Time-Based Reports | KapuLetu Docs",
+    description: "How to generate daily, weekly, or monthly financial summaries.",
+  },
 };
 
 export default function TimeBasedReportsPage() {

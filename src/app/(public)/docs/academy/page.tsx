@@ -5,6 +5,14 @@ import { DocsVideo } from "@/features/docs/components/DocsVideo";
 export const metadata: Metadata = {
   title: "Video Academy | KapuLetu Docs",
   description: "Watch and learn. Master KapuLetu through our comprehensive video library.",
+  openGraph: {
+    title: "Video Academy | KapuLetu Docs",
+    description: "Watch and learn. Master KapuLetu through our comprehensive video library.",
+  },
+  twitter: {
+    title: "Video Academy | KapuLetu Docs",
+    description: "Watch and learn. Master KapuLetu through our comprehensive video library.",
+  },
 };
 
 export default function AcademyIndexPage() {

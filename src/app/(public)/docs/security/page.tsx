@@ -6,6 +6,14 @@ import { DocsCallout } from "@/features/docs/components/DocsCallout";
 export const metadata: Metadata = {
   title: "Account & Security | KapuLetu Docs",
   description: "Manage your KapuLetu profile and secure your organization's data.",
+  openGraph: {
+    title: "Account & Security | KapuLetu Docs",
+    description: "Manage your KapuLetu profile and secure your organization's data.",
+  },
+  twitter: {
+    title: "Account & Security | KapuLetu Docs",
+    description: "Manage your KapuLetu profile and secure your organization's data.",
+  },
 };
 
 export default function SecurityIndexPage() {

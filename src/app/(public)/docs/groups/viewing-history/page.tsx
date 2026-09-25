@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Viewing Group History | KapuLetu Docs",
   description: "Track the comprehensive audit log of actions across all campaigns in your group.",
+  openGraph: {
+    title: "Viewing Group History | KapuLetu Docs",
+    description: "Track the comprehensive audit log of actions across all campaigns in your group.",
+  },
+  twitter: {
+    title: "Viewing Group History | KapuLetu Docs",
+    description: "Track the comprehensive audit log of actions across all campaigns in your group.",
+  },
 };
 
 export default function ViewingHistoryPage() {

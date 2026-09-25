@@ -6,6 +6,14 @@ import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreensho
 export const metadata: Metadata = {
   title: "Reviewing Contribution Details | KapuLetu Docs",
   description: "How to inspect pending contributions in your Inbox.",
+  openGraph: {
+    title: "Reviewing Contribution Details | KapuLetu Docs",
+    description: "How to inspect pending contributions in your Inbox.",
+  },
+  twitter: {
+    title: "Reviewing Contribution Details | KapuLetu Docs",
+    description: "How to inspect pending contributions in your Inbox.",
+  },
 };
 
 export default function ReviewingDetailsPage() {

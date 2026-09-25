@@ -7,6 +7,14 @@ import { DocsVideo } from "@/features/docs/components/DocsVideo";
 export const metadata: Metadata = {
   title: "WhatsApp Processing | KapuLetu Docs",
   description: "Automate your treasury by forwarding M-Pesa messages directly to KapuLetu.",
+  openGraph: {
+    title: "WhatsApp Processing | KapuLetu Docs",
+    description: "Automate your treasury by forwarding M-Pesa messages directly to KapuLetu.",
+  },
+  twitter: {
+    title: "WhatsApp Processing | KapuLetu Docs",
+    description: "Automate your treasury by forwarding M-Pesa messages directly to KapuLetu.",
+  },
 };
 
 export default function WhatsAppIndexPage() {

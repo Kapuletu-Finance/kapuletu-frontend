@@ -6,6 +6,14 @@ import { DocsCallout } from "@/features/docs/components/DocsCallout";
 export const metadata: Metadata = {
   title: "Frequently Asked Questions | KapuLetu Docs",
   description: "Quick answers to common questions about KapuLetu.",
+  openGraph: {
+    title: "Frequently Asked Questions | KapuLetu Docs",
+    description: "Quick answers to common questions about KapuLetu.",
+  },
+  twitter: {
+    title: "Frequently Asked Questions | KapuLetu Docs",
+    description: "Quick answers to common questions about KapuLetu.",
+  },
 };
 
 export default function FAQIndexPage() {

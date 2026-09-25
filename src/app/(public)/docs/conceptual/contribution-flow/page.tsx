@@ -8,6 +8,16 @@ export const metadata: Metadata = {
   title: "How Contributions Flow | KapuLetu Docs",
   description:
     "Understand the lifecycle of a KapuLetu contribution from receipt to the final ledger.",
+  openGraph: {
+    title: "How Contributions Flow | KapuLetu Docs",
+    description:
+      "Understand the lifecycle of a KapuLetu contribution from receipt to the final ledger.",
+  },
+  twitter: {
+    title: "How Contributions Flow | KapuLetu Docs",
+    description:
+      "Understand the lifecycle of a KapuLetu contribution from receipt to the final ledger.",
+  },
 };
 
 export default function ContributionFlowPage() {

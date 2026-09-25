@@ -5,6 +5,14 @@ import { DocsCallout } from "@/features/docs/components/DocsCallout";
 export const metadata: Metadata = {
   title: "What is a Campaign? | KapuLetu Docs",
   description: "Understand the relationship between groups and campaigns.",
+  openGraph: {
+    title: "What is a Campaign? | KapuLetu Docs",
+    description: "Understand the relationship between groups and campaigns.",
+  },
+  twitter: {
+    title: "What is a Campaign? | KapuLetu Docs",
+    description: "Understand the relationship between groups and campaigns.",
+  },
 };
 
 export default function WhatIsACampaignPage() {
