@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsFeedback } from "@/features/docs/components/DocsFeedback";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Understanding the Contribution Inbox | KapuLetu Docs",
+  description: "How to review, correct, and verify incoming money before it hits the ledger.",
+};
 
 export default function InboxGuidePage() {
   const inboxSteps = [

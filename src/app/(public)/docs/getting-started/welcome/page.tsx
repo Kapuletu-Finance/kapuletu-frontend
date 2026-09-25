@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsFeedback } from "@/features/docs/components/DocsFeedback";
 import { DocsVideo } from "@/features/docs/components/DocsVideo";
+
+export const metadata: Metadata = {
+  title: "Welcome to KapuLetu",
+  description: "Everything you need to know to get started with your new treasury workspace.",
+};
 
 export default function WelcomePage() {
   return (

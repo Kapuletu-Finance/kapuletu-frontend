@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Reports & Analytics | KapuLetu Docs",
+  description: "Learn how to generate, understand, and share professional treasury reports.",
+};
 
 export default function ReportsIndexPage() {
   const reportTypes = [

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
+import { env } from "@/env";
 import { LandingFooter } from "@/features/landing-page/components/LandingFooter";
 import { LandingHeader } from "@/features/landing-page/components/LandingHeader";
 import IconLibrary from "@/features/shared/components/IconLibrary";
@@ -9,7 +11,11 @@ export const metadata: Metadata = {
   description: "Get help with your KapuLetu account, ask questions, or report issues.",
 };
 
-export default function SupportPage() {
+export default async function SupportPage() {
+  const cookieStore = await cookies();
+  const role = cookieStore.get(env.NEXT_PUBLIC_ROLE_COOKIE_NAME)?.value;
+  const targetHref = role === "admin" ? "/admin" : role === "treasurer" ? "/treasurer" : "/sign-in";
+  const buttonLabel = role ? "Go to Workspace" : "Log In to Workspace";
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <LandingHeader />
@@ -45,10 +51,10 @@ export default function SupportPage() {
                 </p>
               </div>
               <Link
-                href="/dashboard"
+                href={targetHref}
                 className="shrink-0 bg-primary text-primary-foreground px-6 py-2.5 rounded-md font-medium hover:bg-primary/90 transition-colors shadow-sm"
               >
-                Go to Workspace
+                {buttonLabel}
               </Link>
             </div>
 

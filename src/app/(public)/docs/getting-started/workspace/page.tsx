@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsFeedback } from "@/features/docs/components/DocsFeedback";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Understanding the Workspace | KapuLetu Docs",
+  description: "A quick tour of the KapuLetu interface and where to find key treasury tools.",
+};
 
 export default function WorkspacePage() {
   const workspaceSteps = [

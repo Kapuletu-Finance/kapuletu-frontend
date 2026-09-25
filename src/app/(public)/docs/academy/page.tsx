@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsVideo } from "@/features/docs/components/DocsVideo";
+
+export const metadata: Metadata = {
+  title: "Video Academy | KapuLetu Docs",
+  description: "Watch and learn. Master KapuLetu through our comprehensive video library.",
+};
 
 export default function AcademyIndexPage() {
   return (

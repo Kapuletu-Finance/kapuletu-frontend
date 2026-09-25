@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "Dashboard Guides | KapuLetu Docs",
+  description: "Learn how to read and interpret your treasury's financial overview.",
+};
 
 export default function DashboardIndexPage() {
   const guides = [

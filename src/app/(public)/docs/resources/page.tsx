@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+
+export const metadata: Metadata = {
+  title: "Resources & Downloads | KapuLetu Docs",
+  description: "Helpful templates, checklists, and guides to support your treasury.",
+};
 
 export default function ResourcesIndexPage() {
   const resources = [

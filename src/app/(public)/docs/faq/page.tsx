@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+
+export const metadata: Metadata = {
+  title: "Frequently Asked Questions | KapuLetu Docs",
+  description: "Quick answers to common questions about KapuLetu.",
+};
 
 export default function FAQIndexPage() {
   const faqs = [

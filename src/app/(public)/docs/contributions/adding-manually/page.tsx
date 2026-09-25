@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
+
+export const metadata: Metadata = {
+  title: "Adding a Contribution Manually | KapuLetu Docs",
+  description: "How to record cash, bank transfers, or un-forwarded M-Pesa payments.",
+};
 
 export default function AddingContributionManuallyPage() {
   const steps = [
