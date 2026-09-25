@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import EditGroupDialogForm from "@/features/groups/components/EditGroupDialogForm";
+
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { cn, getInitials } from "@/lib/utils";
 
@@ -25,6 +25,8 @@ export interface GroupInfo {
   total_campaigns_count?: number;
   active_campaigns_count?: number;
   total_funds_raised?: number;
+  currency?: import("@/features/shared/types").Currency;
+  settings_override?: Record<string, unknown> | null;
 }
 
 export interface GroupCardProps {
@@ -99,7 +101,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
               View Details
             </Button>
           </Link>
-          <EditGroupDialogForm group={group}>
+          <Link href={`/treasurer/groups/${group.slug || group.id}/settings`}>
             <Button
               size="sm"
               variant="outline"
@@ -107,7 +109,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
             >
               Group Settings
             </Button>
-          </EditGroupDialogForm>
+          </Link>
           <Button variant="outline" size="icon" onClick={onToggleFavorite}>
             <IconLibrary
               name="favorite"
@@ -198,14 +200,14 @@ const GroupCard: React.FC<GroupCardProps> = ({
           </Button>
         </Link>
         <div className="flex items-center gap-2">
-          <EditGroupDialogForm group={group}>
+          <Link href={`/treasurer/groups/${group.slug || group.id}/settings`}>
             <Button
               variant="outline"
               className="border-primary text-primary hover:text-primary hover:bg-primary/5"
             >
               Group Settings
             </Button>
-          </EditGroupDialogForm>
+          </Link>
           <Button variant="outline" size="icon" onClick={onToggleFavorite}>
             <IconLibrary
               name="favorite"

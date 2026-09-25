@@ -33,6 +33,8 @@ const mapGroupToInfo = (group: GroupOut): GroupInfo => ({
   total_campaigns_count: group.total_campaigns_count,
   active_campaigns_count: group.active_campaigns_count,
   total_funds_raised: group.total_funds_raised,
+  currency: group.currency,
+  settings_override: group.settings_override,
 });
 
 export const TreasurerGroupsPageClient = () => {
