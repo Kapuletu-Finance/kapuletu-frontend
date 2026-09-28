@@ -19,7 +19,9 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ isOpen, onClose }) => 
   const isActive = (href: string) => {
     if (
       href === "/docs/getting-started/welcome" ||
-      href === "/docs/getting-started/first-30-minutes"
+      href === "/docs/getting-started/account-setup" ||
+      href === "/docs/getting-started/workspace" ||
+      href === "/docs/getting-started/first-5-minutes"
     ) {
       return pathname === href;
     }
@@ -84,10 +86,26 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ isOpen, onClose }) => 
                   </li>
                   <li>
                     <Link
-                      href="/docs/getting-started/first-30-minutes"
-                      className={getLinkClass("/docs/getting-started/first-30-minutes")}
+                      href="/docs/getting-started/account-setup"
+                      className={getLinkClass("/docs/getting-started/account-setup")}
                     >
-                      <IconLibrary name="target" className="w-4 h-4" /> First 30 Minutes
+                      <IconLibrary name="user" className="w-4 h-4" /> Account Setup
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/docs/getting-started/workspace"
+                      className={getLinkClass("/docs/getting-started/workspace")}
+                    >
+                      <IconLibrary name="layout" className="w-4 h-4" /> Your Workspace
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/docs/getting-started/first-5-minutes"
+                      className={getLinkClass("/docs/getting-started/first-5-minutes")}
+                    >
+                      <IconLibrary name="target" className="w-4 h-4" /> First 5 Minutes
                     </Link>
                   </li>
                 </ul>
