@@ -142,15 +142,7 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ isOpen, onClose }) => 
                       <IconLibrary name="inbox" className="w-4 h-4" /> Contributions & Inbox
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      onClick={onClose}
-                      href="/docs/expenses"
-                      className={getLinkClass("/docs/expenses")}
-                    >
-                      <IconLibrary name="credit-card" className="w-4 h-4" /> Expenses
-                    </Link>
-                  </li>
+
                   <li>
                     <Link
                       onClick={onClose}
