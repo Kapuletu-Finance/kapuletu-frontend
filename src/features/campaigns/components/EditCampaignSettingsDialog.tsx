@@ -131,8 +131,7 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-4">
             {/* Header Section */}
             <div className="space-y-4 rounded-xl border border-border bg-card p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <IconLibrary name="message-circle" className="w-4 h-4 text-primary" />
+              <div className="mb-2">
                 <h3 className="font-semibold text-foreground text-sm">Top Header</h3>
               </div>
               <FormField
@@ -186,8 +185,7 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
 
             {/* Footer Section */}
             <div className="space-y-4 rounded-xl border border-border bg-card p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <IconLibrary name="align-justify" className="w-4 h-4 text-primary" />
+              <div className="mb-2">
                 <h3 className="font-semibold text-foreground text-sm">Bottom Footer</h3>
               </div>
               <FormField
@@ -243,10 +241,7 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
             <Accordion className="w-full rounded-xl border border-border overflow-hidden">
               <AccordionItem value="advanced" className="border-none">
                 <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center gap-2 text-sm font-semibold">
-                    <IconLibrary name="settings" className="w-4 h-4 text-muted-foreground" />
-                    Advanced Layout Settings
-                  </div>
+                  <div className="text-sm font-semibold">Advanced Layout Settings</div>
                 </AccordionTrigger>
                 <AccordionContent className="p-5 border-t border-border bg-card">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
