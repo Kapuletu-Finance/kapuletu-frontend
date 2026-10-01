@@ -30,9 +30,19 @@ const CampaignTemplateCard = () => {
     settings?.report_title === "Campaign Update" || !settings?.report_title
       ? `*${campaignData?.title ?? ""}*\n\n${campaignData?.description ?? ""}`
       : settings.report_title;
+  let defaultFooter = "Thank you for your continued support!\\n\\nTotal Raised: Ksh [Total Raised]";
+  if ((campaignData?.target_amount ?? 0) > 0) {
+    defaultFooter += "\\nTarget: Ksh [Target Amount]\\nAmount Remaining: Ksh [Amount Remaining]";
+  }
+  if (campaignData?.payment_instructions) {
+    defaultFooter += "\\n\\nTo send your contribution:\\n[Payment Instructions]";
+  }
+
   const reportFooter =
-    settings?.report_footer === "Thank you for your support." || !settings?.report_footer
-      ? "Thank you for your continued support!\n\nTotal Raised: Ksh [Total Raised]\nTarget: Ksh [Target Amount]\nAmount Remaining: Ksh [Amount Remaining]\n\nTo send your contribution:\n[Payment Instructions]"
+    settings?.report_footer === "Thank you for your support." ||
+    !settings?.report_footer ||
+    settings?.report_footer?.includes("Total Raised: Ksh [Total Raised]")
+      ? defaultFooter.replace(/\\n/g, "\n")
       : settings.report_footer;
   const blankSlots = settings?.blank_slots ?? 3;
   const removeWatermark = settings?.remove_watermark ?? false;
