@@ -28,7 +28,7 @@ const CampaignTemplateCard = () => {
   const settings = campaignData?.settings_override;
   const reportTitle =
     settings?.report_title === "Campaign Update" || !settings?.report_title
-      ? "*[Campaign Name]*\n\n[Campaign Description]"
+      ? `*${campaignData?.title ?? ""}*\n\n${campaignData?.description ?? ""}`
       : settings.report_title;
   const reportFooter =
     settings?.report_footer === "Thank you for your support." || !settings?.report_footer
