@@ -121,10 +121,6 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Report Template</DialogTitle>
-          <DialogDescription>
-            Customize the exact layout of your WhatsApp, PDF, and Excel reports. Click the variables
-            to insert them into your text.
-          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -132,7 +128,7 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
             {/* Header Section */}
             <div className="space-y-4 rounded-xl border border-border bg-card p-5">
               <div className="mb-2">
-                <h3 className="font-semibold text-foreground text-sm">Top Header</h3>
+                <h3 className="font-semibold text-foreground text-sm">Report Title</h3>
               </div>
               <FormField
                 control={form.control}
@@ -186,7 +182,7 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
             {/* Footer Section */}
             <div className="space-y-4 rounded-xl border border-border bg-card p-5">
               <div className="mb-2">
-                <h3 className="font-semibold text-foreground text-sm">Bottom Footer</h3>
+                <h3 className="font-semibold text-foreground text-sm">Report Footer</h3>
               </div>
               <FormField
                 control={form.control}
