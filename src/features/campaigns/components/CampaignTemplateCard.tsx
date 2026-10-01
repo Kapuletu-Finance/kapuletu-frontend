@@ -98,22 +98,26 @@ const CampaignTemplateCard = () => {
       <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-7 space-y-6">
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-foreground">Report Title</Label>
+            <Label className="text-sm font-semibold text-foreground">Report Header</Label>
             <p className="text-xs text-muted-foreground">
-              This title will appear at the top of your WhatsApp updates and reports
+              This header will appear at the top of your WhatsApp updates, PDF, and Excel reports
             </p>
-            <Input readOnly value={reportTitle} className="border-border bg-background py-5" />
+            <Textarea
+              readOnly
+              value={reportTitle}
+              className="border-border bg-background min-h-[100px] resize-none"
+            />
           </div>
 
           <div className="space-y-2">
             <Label className="text-sm font-semibold text-foreground">Report Footer</Label>
             <p className="text-xs text-muted-foreground">
-              This title will appear at the bottom of your WhatsApp updates
+              This footer will appear at the bottom of your WhatsApp updates, PDF, and Excel reports
             </p>
             <Textarea
               readOnly
               value={reportFooter}
-              className="border-border bg-background min-h-22.5 resize-none"
+              className="border-border bg-background min-h-[100px] resize-none"
             />
           </div>
 
