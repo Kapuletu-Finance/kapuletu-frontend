@@ -54,6 +54,7 @@ export interface GroupOut {
   total_campaigns_count: number;
   active_campaigns_count: number;
   total_funds_raised: number;
+  settings_override?: Record<string, unknown> | null;
 }
 
 export interface CampaignOut {
@@ -222,6 +223,17 @@ export interface GroupCreate {
 export interface GroupUpdate {
   name?: string | null;
   description?: string | null;
+  currency?: Currency;
+  settings_override?: Record<string, unknown> | null;
+}
+
+export interface AuditLogOut {
+  log_id: string;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  created_at: string;
+  details?: Record<string, unknown> | null;
 }
 
 export interface CampaignCreate {

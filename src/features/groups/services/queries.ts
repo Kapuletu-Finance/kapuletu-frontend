@@ -23,3 +23,18 @@ export const useGroupsQuery = (params: GroupsQueryParams = {}) => {
     queryKey: [...groupsQueryKey, params],
   });
 };
+
+export const groupHistoryQueryKey = (groupId: string) => ["groups", groupId, "history"] as const;
+
+export const useGroupHistoryQuery = (groupId: string) => {
+  return useQuery({
+    queryFn: async () => {
+      const response = await apiClient.get<import("@/features/shared/types").AuditLogOut[]>(
+        GROUPS_URLS.groupHistory(groupId),
+      );
+      return response.data;
+    },
+    queryKey: groupHistoryQueryKey(groupId),
+    enabled: !!groupId,
+  });
+};

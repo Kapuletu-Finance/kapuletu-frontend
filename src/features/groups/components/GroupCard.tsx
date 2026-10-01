@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import EditGroupDialogForm from "@/features/groups/components/EditGroupDialogForm";
+
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { cn, getInitials } from "@/lib/utils";
 
@@ -25,6 +25,8 @@ export interface GroupInfo {
   total_campaigns_count?: number;
   active_campaigns_count?: number;
   total_funds_raised?: number;
+  currency?: import("@/features/shared/types").Currency;
+  settings_override?: Record<string, unknown> | null;
 }
 
 export interface GroupCardProps {
@@ -45,6 +47,25 @@ const GroupCard: React.FC<GroupCardProps> = ({
   const campaigns = group.campaigns ?? [];
   const isArchived = group.status === "Archived";
 
+  const primaryColor = group.settings_override?.primary_color as string | undefined;
+  const cardColor = group.settings_override?.card_color as string | undefined;
+  const tagline = group.settings_override?.tagline as string | undefined;
+  const avatarStyle = primaryColor
+    ? { backgroundColor: `${primaryColor}15`, color: primaryColor }
+    : undefined;
+  const badgeStyle = primaryColor
+    ? { backgroundColor: `${primaryColor}15`, color: primaryColor }
+    : undefined;
+  const dotStyle = primaryColor ? { backgroundColor: primaryColor } : undefined;
+  const cardStyle = cardColor ? { backgroundColor: cardColor } : undefined;
+
+  const coverPhotoRaw = group.settings_override?.cover_photo as string | undefined;
+  const fullCoverPhotoUrl = coverPhotoRaw
+    ? coverPhotoRaw.startsWith("http")
+      ? coverPhotoRaw
+      : `/api${coverPhotoRaw}`
+    : null;
+
   if (variant === "table") {
     return (
       <Card
@@ -52,21 +73,32 @@ const GroupCard: React.FC<GroupCardProps> = ({
           "bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4",
           className,
         )}
+        style={cardStyle}
       >
         <div className="flex items-center gap-4 w-full sm:w-auto">
-          <div
-            className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
-              group.iconClassName ?? "bg-primary/15 text-primary",
-            )}
-          >
-            {getInitials(group.name)}
-          </div>
+          {fullCoverPhotoUrl ? (
+            <img
+              src={fullCoverPhotoUrl}
+              alt={group.name}
+              className="w-12 h-12 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div
+              className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
+                !primaryColor && (group.iconClassName ?? "bg-primary/15 text-primary"),
+              )}
+              style={avatarStyle}
+            >
+              {getInitials(group.name)}
+            </div>
+          )}
           <div className="flex flex-col">
             <h3 className="text-base font-bold tracking-tight text-foreground leading-tight">
               {group.name}
             </h3>
-            <p className="text-xs text-muted-foreground">{group.description}</p>
+            {tagline && <p className="text-xs font-medium text-foreground/80 mt-0.5">{tagline}</p>}
+            <p className="text-xs text-muted-foreground line-clamp-1">{group.description}</p>
           </div>
           {group.status && (
             <Badge
@@ -75,14 +107,19 @@ const GroupCard: React.FC<GroupCardProps> = ({
                 "ml-4 font-semibold px-2.5 py-0.5 text-[10px] gap-1.5 border-none shadow-none hidden sm:inline-flex",
                 isArchived
                   ? "bg-muted text-muted-foreground"
-                  : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
+                  : !primaryColor &&
+                      "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
               )}
+              style={!isArchived ? badgeStyle : undefined}
             >
               <span
                 className={cn(
                   "w-1 h-1 rounded-full shrink-0",
-                  isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
+                  isArchived
+                    ? "bg-muted-foreground"
+                    : !primaryColor && "bg-primary dark:bg-primary",
                 )}
+                style={!isArchived ? dotStyle : undefined}
               />
               {group.status}
             </Badge>
@@ -99,15 +136,15 @@ const GroupCard: React.FC<GroupCardProps> = ({
               View Details
             </Button>
           </Link>
-          <EditGroupDialogForm group={group}>
+          <Link href={`/treasurer/groups/${group.slug || group.id}/settings`}>
             <Button
               size="sm"
               variant="outline"
               className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-9"
             >
-              Edit Group
+              Group Settings
             </Button>
-          </EditGroupDialogForm>
+          </Link>
           <Button variant="outline" size="icon" onClick={onToggleFavorite}>
             <IconLibrary
               name="favorite"
@@ -123,18 +160,27 @@ const GroupCard: React.FC<GroupCardProps> = ({
   }
 
   return (
-    <Card className={cn("bg-card flex flex-col h-full", className)}>
+    <Card className={cn("bg-card flex flex-col h-full", className)} style={cardStyle}>
       <div className="flex flex-col gap-6 flex-1">
         {/* Header */}
         <div className="flex flex-row items-start gap-4">
-          <div
-            className={cn(
-              "w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold shrink-0 mt-0.5",
-              group.iconClassName ?? "bg-primary/15 text-primary",
-            )}
-          >
-            {getInitials(group.name)}
-          </div>
+          {fullCoverPhotoUrl ? (
+            <img
+              src={fullCoverPhotoUrl}
+              alt={group.name}
+              className="w-14 h-14 rounded-full object-cover shrink-0 mt-0.5"
+            />
+          ) : (
+            <div
+              className={cn(
+                "w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold shrink-0 mt-0.5",
+                !primaryColor && (group.iconClassName ?? "bg-primary/15 text-primary"),
+              )}
+              style={avatarStyle}
+            >
+              {getInitials(group.name)}
+            </div>
+          )}
           <div className="flex flex-col gap-0.5 flex-1 min-w-0">
             <div className="flex items-center gap-3">
               <h3 className="text-xl font-bold tracking-tight text-foreground leading-tight truncate">
@@ -147,20 +193,26 @@ const GroupCard: React.FC<GroupCardProps> = ({
                     "font-semibold px-3 py-1 text-xs gap-1.5 border-none shadow-none shrink-0",
                     isArchived
                       ? "bg-muted text-muted-foreground"
-                      : "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
+                      : !primaryColor &&
+                          "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
                   )}
+                  style={!isArchived ? badgeStyle : undefined}
                 >
                   <span
                     className={cn(
                       "w-1.5 h-1.5 rounded-full shrink-0",
-                      isArchived ? "bg-muted-foreground" : "bg-primary dark:bg-primary",
+                      isArchived
+                        ? "bg-muted-foreground"
+                        : !primaryColor && "bg-primary dark:bg-primary",
                     )}
+                    style={!isArchived ? dotStyle : undefined}
                   />
                   {group.status}
                 </Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">{group.description}</p>
+            {tagline && <p className="text-sm font-medium text-foreground/80 mt-0.5">{tagline}</p>}
+            <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
           </div>
         </div>
 
@@ -198,14 +250,14 @@ const GroupCard: React.FC<GroupCardProps> = ({
           </Button>
         </Link>
         <div className="flex items-center gap-2">
-          <EditGroupDialogForm group={group}>
+          <Link href={`/treasurer/groups/${group.slug || group.id}/settings`}>
             <Button
               variant="outline"
               className="border-primary text-primary hover:text-primary hover:bg-primary/5"
             >
-              Edit Group
+              Group Settings
             </Button>
-          </EditGroupDialogForm>
+          </Link>
           <Button variant="outline" size="icon" onClick={onToggleFavorite}>
             <IconLibrary
               name="favorite"

@@ -84,25 +84,54 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={children} />
-      <DialogContent className="sm:max-w-125">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Edit Report Template</DialogTitle>
           <DialogDescription>
-            Update the title and footer that appear on your campaign updates and reports.
+            Update the header and footer that appear on your campaign updates, PDF, and Excel
+            reports. Click the variables to insert them.
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-4">
             <FormField
               control={form.control}
               name="report_title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Report Title</FormLabel>
+                  <FormLabel>Report Header</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter report title" {...field} />
+                    <Textarea
+                      placeholder="Enter report header"
+                      className="resize-none min-h-[100px]"
+                      {...field}
+                    />
                   </FormControl>
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {[
+                      "[Campaign Name]",
+                      "[Campaign Description]",
+                      "[Total Raised]",
+                      "[Target Amount]",
+                      "[Amount Remaining]",
+                      "[Payment Instructions]",
+                    ].map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() =>
+                          form.setValue(
+                            "report_title",
+                            field.value + (field.value.endsWith(" ") ? "" : " ") + v,
+                          )
+                        }
+                        className="text-xs bg-muted hover:bg-primary/20 text-muted-foreground hover:text-primary px-2 py-1 rounded-full transition-colors"
+                      >
+                        + {v.replace(/[[\]]/g, "")}
+                      </button>
+                    ))}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -117,10 +146,34 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
                   <FormControl>
                     <Textarea
                       placeholder="Enter report footer"
-                      className="resize-none min-h-25"
+                      className="resize-none min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {[
+                      "[Campaign Name]",
+                      "[Campaign Description]",
+                      "[Total Raised]",
+                      "[Target Amount]",
+                      "[Amount Remaining]",
+                      "[Payment Instructions]",
+                    ].map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() =>
+                          form.setValue(
+                            "report_footer",
+                            field.value + (field.value.endsWith(" ") ? "" : " ") + v,
+                          )
+                        }
+                        className="text-xs bg-muted hover:bg-primary/20 text-muted-foreground hover:text-primary px-2 py-1 rounded-full transition-colors"
+                      >
+                        + {v.replace(/[[\]]/g, "")}
+                      </button>
+                    ))}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}

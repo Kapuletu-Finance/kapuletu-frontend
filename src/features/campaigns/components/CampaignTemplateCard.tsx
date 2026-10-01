@@ -26,8 +26,24 @@ const CampaignTemplateCard = () => {
   const regeneratePin = useRegenerateCampaignPinMutation(campaignSlug);
 
   const settings = campaignData?.settings_override;
-  const reportTitle = settings?.report_title ?? "Campaign Update";
-  const reportFooter = settings?.report_footer ?? "Thank you for your support.";
+  const reportTitle =
+    settings?.report_title === "Campaign Update" || !settings?.report_title
+      ? `*${campaignData?.title ?? ""}*\n\n${campaignData?.description ?? ""}`
+      : settings.report_title;
+  let defaultFooter = "Thank you for your continued support!\\n\\nTotal Raised: Ksh [Total Raised]";
+  if ((campaignData?.target_amount ?? 0) > 0) {
+    defaultFooter += "\\nTarget: Ksh [Target Amount]\\nAmount Remaining: Ksh [Amount Remaining]";
+  }
+  if (campaignData?.payment_instructions) {
+    defaultFooter += "\\n\\nTo send your contribution:\\n[Payment Instructions]";
+  }
+
+  const reportFooter =
+    settings?.report_footer === "Thank you for your support." ||
+    !settings?.report_footer ||
+    settings?.report_footer?.includes("Total Raised: Ksh [Total Raised]")
+      ? defaultFooter.replace(/\\n/g, "\n")
+      : settings.report_footer;
   const blankSlots = settings?.blank_slots ?? 3;
   const removeWatermark = settings?.remove_watermark ?? false;
   const paidIndicator = settings?.paid_indicator ?? "\u2713";
@@ -98,22 +114,26 @@ const CampaignTemplateCard = () => {
       <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-7 space-y-6">
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-foreground">Report Title</Label>
+            <Label className="text-sm font-semibold text-foreground">Report Header</Label>
             <p className="text-xs text-muted-foreground">
-              This title will appear at the top of your WhatsApp updates and reports
+              This header will appear at the top of your WhatsApp updates, PDF, and Excel reports
             </p>
-            <Input readOnly value={reportTitle} className="border-border bg-background py-5" />
+            <Textarea
+              readOnly
+              value={reportTitle}
+              className="border-border bg-background min-h-[100px] resize-none"
+            />
           </div>
 
           <div className="space-y-2">
             <Label className="text-sm font-semibold text-foreground">Report Footer</Label>
             <p className="text-xs text-muted-foreground">
-              This title will appear at the bottom of your WhatsApp updates
+              This footer will appear at the bottom of your WhatsApp updates, PDF, and Excel reports
             </p>
             <Textarea
               readOnly
               value={reportFooter}
-              className="border-border bg-background min-h-22.5 resize-none"
+              className="border-border bg-background min-h-[100px] resize-none"
             />
           </div>
 

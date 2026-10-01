@@ -895,3 +895,13 @@ export const useWaitlistHistoryQuery = () => {
     },
   });
 };
+
+export const useAdminNotificationEmailsQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "config", "notifications"],
+    queryFn: async () => {
+      const response = await apiClient.get<{ emails: string[] }>("/admin/config/notifications");
+      return response.data;
+    },
+  });
+};

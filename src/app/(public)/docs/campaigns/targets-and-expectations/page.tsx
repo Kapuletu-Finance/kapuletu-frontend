@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -59,6 +60,10 @@ export default function TargetsAndExpectationsPage() {
         expectations are stricter and are used to generate 'Arrears' reports for members who haven't
         met their quota.
       </DocsCallout>
+      <DocsPagination
+        prev={{ title: "Edit Campaign Details", link: "/docs/campaigns/edit-a-campaign" }}
+        next={{ title: "Adding a Profile Image", link: "/docs/campaigns/profile-image" }}
+      />
     </DocsArticle>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -61,6 +62,10 @@ export default function NavigatingACampaignPage() {
         You can always jump back to your Group to view other campaigns or to see the combined
         overview of all fundraising activities.
       </DocsCallout>
+      <DocsPagination
+        prev={{ title: "Creating a Campaign", link: "/docs/campaigns/creating-a-campaign" }}
+        next={{ title: "Edit Campaign Details", link: "/docs/campaigns/edit-a-campaign" }}
+      />
     </DocsArticle>
   );
 }
