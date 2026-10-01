@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -60,6 +61,11 @@ export default function CreatingAGroupPage() {
         If you manage multiple organizations, you can create multiple groups using the same KapuLetu
         account and easily switch between them using the Group Switcher.
       </DocsCallout>
+
+      <DocsPagination
+        prev={{ title: "What is a Group?", link: "/docs/groups/what-is-a-group" }}
+        next={{ title: "Setting up a Group", link: "/docs/groups/setting-up-a-group" }}
+      />
     </DocsArticle>
   );
 }

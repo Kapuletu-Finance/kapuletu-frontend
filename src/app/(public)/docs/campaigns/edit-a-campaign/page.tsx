@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -60,6 +61,13 @@ export default function CampaignSettingsPage() {
         While you can lower your target amount, doing so below the currently raised amount may cause
         discrepancies in your reports. Always communicate major changes to your members.
       </DocsCallout>
+      <DocsPagination
+        prev={{ title: "Navigating a Campaign", link: "/docs/campaigns/navigating-a-campaign" }}
+        next={{
+          title: "Targets & Member Expectations",
+          link: "/docs/campaigns/targets-and-expectations",
+        }}
+      />
     </DocsArticle>
   );
 }
