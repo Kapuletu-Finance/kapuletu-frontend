@@ -26,8 +26,14 @@ const CampaignTemplateCard = () => {
   const regeneratePin = useRegenerateCampaignPinMutation(campaignSlug);
 
   const settings = campaignData?.settings_override;
-  const reportTitle = settings?.report_title ?? "Campaign Update";
-  const reportFooter = settings?.report_footer ?? "Thank you for your support.";
+  const reportTitle =
+    settings?.report_title === "Campaign Update" || !settings?.report_title
+      ? "*[Campaign Name]*\n\n[Campaign Description]"
+      : settings.report_title;
+  const reportFooter =
+    settings?.report_footer === "Thank you for your support." || !settings?.report_footer
+      ? "Thank you for your continued support!\n\nTotal Raised: Ksh [Total Raised]\nTarget: Ksh [Target Amount]\nAmount Remaining: Ksh [Amount Remaining]\n\nTo send your contribution:\n[Payment Instructions]"
+      : settings.report_footer;
   const blankSlots = settings?.blank_slots ?? 3;
   const removeWatermark = settings?.remove_watermark ?? false;
   const paidIndicator = settings?.paid_indicator ?? "\u2713";
