@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -64,6 +65,11 @@ export default function CreatingACampaignPage() {
         Be clear with your payment instructions (e.g., M-Pesa Paybill, Till Number, or Bank
         Account). Members will see this when they want to contribute.
       </DocsCallout>
+
+      <DocsPagination
+        prev={{ title: "What is a Campaign?", link: "/docs/campaigns/what-is-a-campaign" }}
+        next={{ title: "Navigating a Campaign", link: "/docs/campaigns/navigating-a-campaign" }}
+      />
     </DocsArticle>
   );
 }

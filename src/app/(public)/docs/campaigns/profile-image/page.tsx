@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsCallout } from "@/features/docs/components/DocsCallout";
+import { DocsPagination } from "@/features/docs/components/DocsPagination";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
 
 export const metadata: Metadata = {
@@ -59,6 +60,16 @@ export default function ProfileImagePage() {
         For best results, use a high-quality square or landscape image. The file size should not
         exceed 5MB.
       </DocsCallout>
+      <DocsPagination
+        prev={{
+          title: "Targets & Member Expectations",
+          link: "/docs/campaigns/targets-and-expectations",
+        }}
+        next={{
+          title: "Statistics & Closing a Campaign",
+          link: "/docs/campaigns/statistics-and-closing",
+        }}
+      />
     </DocsArticle>
   );
 }

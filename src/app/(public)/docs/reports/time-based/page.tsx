@@ -30,7 +30,7 @@ export default function TimeBasedReportsPage() {
     {
       title: "Generate Report",
       description:
-        "Click 'Generate'. KapuLetu will compile all approved contributions and expenses for that period.",
+        "Click 'Generate'. KapuLetu will compile all approved contributions for that period.",
     },
   ];
 
