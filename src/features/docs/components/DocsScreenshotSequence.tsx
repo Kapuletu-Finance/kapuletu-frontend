@@ -3,9 +3,10 @@ import Image from "next/image";
 import type React from "react";
 
 interface Step {
-  title: string;
-  description: string;
-  image?: string; // Add optional image property for specific screenshots
+  title: string | React.ReactNode;
+  description: string | React.ReactNode;
+  image?: string;
+  secondaryImage?: string;
 }
 
 interface DocsScreenshotSequenceProps {
@@ -32,15 +33,38 @@ export const DocsScreenshotSequence: React.FC<DocsScreenshotSequenceProps> = ({
           </div>
 
           <div className="ml-11 border border-border rounded-lg overflow-hidden bg-card">
-            <div className="relative aspect-[16/9] bg-muted flex items-center justify-center">
-              <Image
-                src={step.image || "/shared/screenshot.png"}
-                alt={`${alt} - Step ${index + 1}`}
-                fill
-                sizes="(max-width: 768px) 100vw, 800px"
-                className="object-contain"
-              />
-            </div>
+            {step.secondaryImage ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
+                <div className="relative aspect-[16/9] bg-muted flex items-center justify-center p-2">
+                  <Image
+                    src={step.image || "/shared/screenshot.png"}
+                    alt={`${alt} - Step ${index + 1} - Action`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    className="object-contain"
+                  />
+                </div>
+                <div className="relative aspect-[16/9] bg-muted flex items-center justify-center p-2">
+                  <Image
+                    src={step.secondaryImage}
+                    alt={`${alt} - Step ${index + 1} - Result`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="relative aspect-[16/9] bg-muted flex items-center justify-center">
+                <Image
+                  src={step.image || "/shared/screenshot.png"}
+                  alt={`${alt} - Step ${index + 1}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  className="object-contain"
+                />
+              </div>
+            )}
           </div>
         </div>
       ))}

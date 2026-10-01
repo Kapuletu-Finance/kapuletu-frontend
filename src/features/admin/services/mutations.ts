@@ -690,3 +690,20 @@ export const useSaveRawTemplateMutation = () => {
     },
   });
 };
+
+export const useUpdateAdminNotificationEmailsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (emails: string[]) => {
+      const response = await apiClient.post("/admin/config/notifications", { emails });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "config", "notifications"] });
+      toast.success("Admin notification emails updated");
+    },
+    onError: () => {
+      toast.error("Failed to update admin notification emails");
+    },
+  });
+};

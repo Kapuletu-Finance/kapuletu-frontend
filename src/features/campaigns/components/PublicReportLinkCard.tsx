@@ -153,7 +153,10 @@ const PublicReportLinkCard = () => {
                           variant="ghost"
                           className="flex flex-col items-center gap-2 h-auto p-2 bg-transparent hover:bg-transparent group"
                           onClick={() => {
-                            const text = `Check out the "${campaignData?.title}" campaign report: ${publicUrl}`;
+                            const requirePin = settings?.require_pin ?? true;
+                            const pinText =
+                              requirePin && accessPin ? `\nAccess PIN: ${accessPin}` : "";
+                            const text = `Check out the "${campaignData?.title}" campaign report:\n${publicUrl}${pinText}`;
                             window.open(
                               `https://wa.me/?text=${encodeURIComponent(text)}`,
                               "_blank",
@@ -170,8 +173,11 @@ const PublicReportLinkCard = () => {
                           variant="ghost"
                           className="flex flex-col items-center gap-2 h-auto p-2 bg-transparent hover:bg-transparent group"
                           onClick={() => {
+                            const requirePin = settings?.require_pin ?? true;
+                            const pinText =
+                              requirePin && accessPin ? `\nAccess PIN: ${accessPin}` : "";
                             const subject = `${campaignData?.title} – Campaign Report`;
-                            const body = `Check out the "${campaignData?.title}" campaign report:\n\n${publicUrl}`;
+                            const body = `Check out the "${campaignData?.title}" campaign report:\n\n${publicUrl}${pinText}`;
                             window.open(
                               `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
                             );

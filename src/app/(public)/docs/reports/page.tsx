@@ -22,7 +22,7 @@ export default function ReportsIndexPage() {
     { title: "Daily, Weekly, and Monthly Reports", link: "/docs/reports/time-based" },
     { title: "Fundraising Activity Report", link: "/docs/reports/activity-report" },
     { title: "Group & Contribution Reports", link: "/docs/reports/group-reports" },
-    { title: "Expense & Treasury Statements", link: "/docs/reports/statements" },
+    { title: "Treasury Statements", link: "/docs/reports/statements" },
     { title: "Reconciliation Report & Financial Summary", link: "/docs/reports/financial-summary" },
   ];
 
