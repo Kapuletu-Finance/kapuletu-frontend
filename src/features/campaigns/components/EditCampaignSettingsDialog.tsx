@@ -182,6 +182,8 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
                             type="button"
                             variant="secondary"
                             size="sm"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onTouchStart={(e) => e.preventDefault()}
                             onClick={() => insertVariable("report_title", v)}
                             className="text-xs h-7 px-3"
                           >
@@ -232,6 +234,8 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
                             type="button"
                             variant="secondary"
                             size="sm"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onTouchStart={(e) => e.preventDefault()}
                             onClick={() => insertVariable("report_footer", v)}
                             className="text-xs h-7 px-3"
                           >
