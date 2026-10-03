@@ -1,19 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { apiClient } from "@/lib/api-client";
 import type { BlogPost } from "./types";
 
 const getPublicBlogs = async (): Promise<BlogPost[]> => {
-  const { data } = await axios.get("/blogs/public");
+  const { data } = await apiClient.get("/blogs/public");
   return data;
 };
 
 const getPublicBlogBySlug = async (slug: string): Promise<BlogPost> => {
-  const { data } = await axios.get(`/blogs/public/${slug}`);
+  const { data } = await apiClient.get(`/blogs/public/${slug}`);
   return data;
 };
 
 const getAdminBlogs = async (): Promise<BlogPost[]> => {
-  const { data } = await axios.get("/blogs/admin");
+  const { data } = await apiClient.get("/blogs/admin");
   return data;
 };
 

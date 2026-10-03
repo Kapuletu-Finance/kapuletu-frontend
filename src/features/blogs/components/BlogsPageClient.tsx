@@ -28,8 +28,10 @@ export const BlogsPageClient: React.FC = () => {
   const { data: blogs, isLoading } = useGetPublicBlogsQuery();
   const [activeCategory, setActiveCategory] = useState("All");
 
+  const validBlogs = Array.isArray(blogs) ? blogs : [];
+
   const filteredBlogs =
-    activeCategory === "All" ? blogs : blogs?.filter((p) => p.category === activeCategory);
+    activeCategory === "All" ? validBlogs : validBlogs.filter((p) => p.category === activeCategory);
 
   if (isLoading) {
     return (

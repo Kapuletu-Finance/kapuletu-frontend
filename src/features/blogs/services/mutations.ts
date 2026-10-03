@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { apiClient } from "@/lib/api-client";
 import type { BlogPost, BlogPostCreate, BlogPostUpdate } from "./types";
 
 const createAdminBlog = async (data: BlogPostCreate): Promise<BlogPost> => {
-  const response = await axios.post("/blogs/admin", data);
+  const response = await apiClient.post("/blogs/admin", data);
   return response.data;
 };
 
@@ -14,12 +14,12 @@ const updateAdminBlog = async ({
   id: string;
   data: BlogPostUpdate;
 }): Promise<BlogPost> => {
-  const response = await axios.put(`/blogs/admin/${id}`, data);
+  const response = await apiClient.put(`/blogs/admin/${id}`, data);
   return response.data;
 };
 
 const deleteAdminBlog = async (id: string): Promise<void> => {
-  await axios.delete(`/blogs/admin/${id}`);
+  await apiClient.delete(`/blogs/admin/${id}`);
 };
 
 // Hooks

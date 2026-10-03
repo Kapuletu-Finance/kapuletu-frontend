@@ -24,11 +24,12 @@ const BlogCardSkeleton = () => (
 export const BlogPreviewSection: React.FC = () => {
   const { data: blogs, isLoading } = useGetPublicBlogsQuery();
 
-  // Only show up to 3 posts
-  const previewPosts = blogs?.slice(0, 3);
+  // Only show up to 3 posts. Guard against non-array responses (e.g. HTML error strings)
+  const validBlogs = Array.isArray(blogs) ? blogs : [];
+  const previewPosts = validBlogs.slice(0, 3);
 
   // Don't render section at all if no posts and not loading
-  if (!isLoading && (!previewPosts || previewPosts.length === 0)) {
+  if (!isLoading && previewPosts.length === 0) {
     return null;
   }
 

@@ -84,57 +84,65 @@ export const AdminBlogsPageClient: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {blogs.map((blog) => (
-                    <TableRow key={blog.id}>
-                      <TableCell className="font-medium">
-                        {blog.title}
-                        <div className="text-xs text-muted-foreground mt-1">/{blog.slug}</div>
-                      </TableCell>
-                      <TableCell>{blog.category || "Uncategorized"}</TableCell>
-                      <TableCell>
-                        {blog.is_published ? (
-                          <Badge variant="default" className="bg-green-600 hover:bg-green-700">
-                            Published
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary">Draft</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {format(new Date(blog.created_at), "MMM d, yyyy")}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => router.push(`/blogs/${blog.slug}`)}
-                            title="View public"
-                            disabled={!blog.is_published}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => router.push(`/admin/blogs/${blog.id}/edit`)}
-                            title="Edit post"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(blog.id)}
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                            title="Delete post"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                  {Array.isArray(blogs) ? (
+                    blogs.map((blog) => (
+                      <TableRow key={blog.id}>
+                        <TableCell className="font-medium">
+                          {blog.title}
+                          <div className="text-xs text-muted-foreground mt-1">/{blog.slug}</div>
+                        </TableCell>
+                        <TableCell>{blog.category || "Uncategorized"}</TableCell>
+                        <TableCell>
+                          {blog.is_published ? (
+                            <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                              Published
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary">Draft</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {format(new Date(blog.created_at), "MMM d, yyyy")}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => router.push(`/blogs/${blog.slug}`)}
+                              title="View public"
+                              disabled={!blog.is_published}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => router.push(`/admin/blogs/${blog.id}/edit`)}
+                              title="Edit post"
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(blog.id)}
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                              title="Delete post"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                        Could not load blogs or API is currently unavailable.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>
