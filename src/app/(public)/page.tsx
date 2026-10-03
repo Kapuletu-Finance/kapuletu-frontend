@@ -1,4 +1,5 @@
 import { AboutUsSection } from "@/features/landing-page/components/AboutUsSection";
+import { BlogPreviewSection } from "@/features/landing-page/components/BlogPreviewSection";
 import { CtaSection } from "@/features/landing-page/components/CtaSection";
 import { FaqsSection } from "@/features/landing-page/components/FaqsSection";
 import { FeaturesSection } from "@/features/landing-page/components/FeaturesSection";
@@ -19,6 +20,7 @@ const Home = () => {
         <FeaturesSection />
         <PricingSection />
         <FaqsSection />
+        <BlogPreviewSection />
         <CtaSection />
       </main>
       <LandingFooter />

@@ -55,6 +55,7 @@ const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   },
   { href: "/admin/finance", icon: "credit-card", label: "Finance" },
   { href: "/admin/communications", icon: "mail", label: "Communications" },
+  { href: "/admin/blogs", icon: "report", label: "Blogs" },
   { href: "/admin/feedback", icon: "feedback", label: "Feedback" },
   { href: "/admin/support", icon: "ticket", label: "Support" },
   { href: "/admin/ai-governance", icon: "brain", label: "AI Governance" },
