@@ -20,6 +20,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateAdminBlogMutation, useUpdateAdminBlogMutation } from "../services/mutations";
@@ -39,7 +46,21 @@ const formSchema = z.object({
   excerpt: z.string().max(500).optional().nullable(),
   content: z.string().min(10, "Content must be at least 10 characters"),
   cover_image_url: z.string().url("Must be a valid URL").optional().nullable().or(z.literal("")),
-  category: z.string().max(100).optional().nullable(),
+  category: z
+    .enum([
+      "News",
+      "Events",
+      "Educational",
+      "Updates",
+      "Product",
+      "Guide",
+      "Team",
+      "Community",
+      "Press Release",
+      "Announcement",
+    ])
+    .optional()
+    .nullable(),
   author_name: z.string().max(255).optional().nullable(),
   author_role: z.string().max(255).optional().nullable(),
   is_published: z.boolean().default(false),
@@ -68,7 +89,7 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
       excerpt: "",
       content: "",
       cover_image_url: "",
-      category: "",
+      category: null,
       author_name: "KapuLetu Team",
       author_role: "Editorial",
       is_published: false,
@@ -83,7 +104,7 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
         excerpt: currentBlog.excerpt || "",
         content: currentBlog.content,
         cover_image_url: currentBlog.cover_image_url || "",
-        category: currentBlog.category || "",
+        category: (currentBlog.category as z.infer<typeof formSchema>["category"]) || null,
         author_name: currentBlog.author_name || "",
         author_role: currentBlog.author_role || "",
         is_published: currentBlog.is_published,
@@ -282,13 +303,25 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Category</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="e.g. Product, Engineering, Guide"
-                            {...field}
-                            value={field.value || ""}
-                          />
-                        </FormControl>
+                        <Select onValueChange={field.onChange} value={field.value || ""}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a category..." />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="News">📰 News</SelectItem>
+                            <SelectItem value="Events">📅 Events</SelectItem>
+                            <SelectItem value="Educational">🎓 Educational</SelectItem>
+                            <SelectItem value="Updates">🔔 Updates</SelectItem>
+                            <SelectItem value="Product">🚀 Product</SelectItem>
+                            <SelectItem value="Guide">📖 Guide</SelectItem>
+                            <SelectItem value="Team">👥 Team</SelectItem>
+                            <SelectItem value="Community">🌍 Community</SelectItem>
+                            <SelectItem value="Press Release">📢 Press Release</SelectItem>
+                            <SelectItem value="Announcement">📣 Announcement</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}

@@ -39,19 +39,19 @@ export const BlogPreviewSection: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
           <div>
             <span className="text-sm font-bold uppercase tracking-wider text-primary">
-              KapuLetu Journal
+              News &amp; Updates
             </span>
             <div className="h-1 w-12 bg-primary mt-2 mb-4" />
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-              Insights &amp; Updates
+              From the KapuLetu Team
             </h2>
             <p className="text-muted-foreground mt-2 text-lg max-w-xl">
-              Tips, guides, and news from our team to help you manage group finances better.
+              News, events, guides, product updates, and community stories — all in one place.
             </p>
           </div>
           <Link href="/blogs">
             <Button variant="outline" className="gap-2 shrink-0">
-              View all articles
+              View all news &amp; updates
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
