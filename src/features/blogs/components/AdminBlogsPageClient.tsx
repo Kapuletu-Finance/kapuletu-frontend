@@ -1,7 +1,16 @@
 "use client";
 
 import { format } from "date-fns";
-import { Edit2, Eye, MessageSquare, PlusCircle, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react";
+import {
+  Edit2,
+  Eye,
+  MessageSquare,
+  PlusCircle,
+  Settings2,
+  ThumbsDown,
+  ThumbsUp,
+  Trash2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
@@ -161,20 +170,13 @@ export const AdminBlogsPageClient: React.FC = () => {
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
                               <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => router.push(`/admin/blogs/${blog.id}/preview`)}
-                                title="View post preview"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => router.push(`/admin/blogs/${blog.id}`)}
+                                title="Manage blog post"
                               >
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => router.push(`/admin/blogs/${blog.id}/edit`)}
-                                title="Edit post"
-                              >
-                                <Edit2 className="h-4 w-4" />
+                                <Settings2 className="h-4 w-4 mr-2" />
+                                Manage
                               </Button>
                               <Button
                                 variant="ghost"

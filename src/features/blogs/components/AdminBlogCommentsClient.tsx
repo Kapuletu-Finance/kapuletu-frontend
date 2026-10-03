@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 import { ArrowLeft, CheckCircle2, XCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -22,11 +22,18 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUpdateCommentStatusAdminMutation } from "../services/mutations";
 import { useGetAdminCommentsQuery } from "../services/queries";
 
-export const AdminBlogCommentsClient: React.FC = () => {
+export const AdminBlogCommentsClient: React.FC<{ embeddedPostId?: string }> = ({
+  embeddedPostId,
+}) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const postId = embeddedPostId || searchParams.get("postId");
+  const isEmbedded = !!embeddedPostId;
   const [statusFilter, setStatusFilter] = useState<"pending" | "approved" | "rejected">("pending");
   const { data: comments, isLoading } = useGetAdminCommentsQuery(statusFilter);
   const updateStatusMutation = useUpdateCommentStatusAdminMutation();
+
+  const filteredComments = comments?.filter((c) => !postId || c.post_id === postId);
 
   const handleUpdateStatus = async (commentId: string, newStatus: "approved" | "rejected") => {
     try {
@@ -38,26 +45,33 @@ export const AdminBlogCommentsClient: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Comment Moderation</h1>
-            <p className="text-muted-foreground mt-1">
-              Review, approve, and manage user comments on blog posts.
-            </p>
+    <div className={isEmbedded ? "" : "flex flex-col gap-6 p-6"}>
+      {!isEmbedded && (
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => router.back()}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Comment Moderation</h1>
+              <p className="text-muted-foreground mt-1">
+                Review, approve, and manage user comments{" "}
+                {postId ? "for this specific post" : "across all articles"}.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <Card>
+      <Card className={isEmbedded ? "border-0 shadow-none" : ""}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="space-y-1">
-            <CardTitle>Comments Queue</CardTitle>
-            <CardDescription>Manage the conversation across all articles.</CardDescription>
+            <CardTitle>{isEmbedded ? "Comments" : "Comments Queue"}</CardTitle>
+            <CardDescription>
+              {isEmbedded
+                ? "Manage comments for this article."
+                : "Manage the conversation across all articles."}
+            </CardDescription>
           </div>
           <Tabs
             value={statusFilter}
@@ -78,7 +92,7 @@ export const AdminBlogCommentsClient: React.FC = () => {
               <Skeleton className="h-10 w-full" />
               <Skeleton className="h-10 w-full" />
             </div>
-          ) : !comments || comments.length === 0 ? (
+          ) : !filteredComments || filteredComments.length === 0 ? (
             <div className="text-center py-12 border rounded-lg border-dashed">
               <p className="text-muted-foreground mb-4">No {statusFilter} comments found.</p>
             </div>
@@ -94,7 +108,7 @@ export const AdminBlogCommentsClient: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {comments.map((comment) => (
+                  {filteredComments.map((comment) => (
                     <TableRow key={comment.id}>
                       <TableCell className="font-medium align-top">
                         {comment.guest_name || "Registered User"}

@@ -140,58 +140,72 @@ export const BlogReaderClient: React.FC<Props> = ({ slug }) => {
       )}
 
       {/* Main Content Area */}
-      <div className="container mx-auto px-4 max-w-3xl py-12 -mt-32 relative z-10">
+      <div className="container mx-auto px-4 max-w-6xl py-12 -mt-32 relative z-10">
         <Link
           href="/blogs"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-primary/80 hover:text-primary transition-colors mb-8 bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full border shadow-sm"
+          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-8 bg-background/60 backdrop-blur-md px-4 py-2 rounded-full border shadow-sm"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Journal
         </Link>
 
-        <div className="bg-background rounded-3xl p-6 sm:p-10 shadow-xl border mb-12 relative">
-          <div className="flex flex-wrap items-center gap-3 mb-6">
+        <div className="bg-background rounded-2xl p-6 md:p-12 shadow-sm border border-border/50 mb-12">
+          {/* Header Metadata */}
+          <div className="flex flex-col gap-6 mb-10">
             {post.category && (
-              <Badge variant="secondary" className="px-3 py-1 text-xs">
-                {post.category}
-              </Badge>
-            )}
-            <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" />
-              {format(new Date(post.created_at), "MMM d, yyyy")}
-            </span>
-            <span className="text-border">·</span>
-            <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
-              <Clock className="h-4 w-4" />
-              {readTime} min read
-            </span>
-          </div>
-
-          <h1 className="text-4xl md:text-5xl font-bold mb-8 text-foreground leading-[1.15] tracking-tight">
-            {post.title}
-          </h1>
-
-          <div className="flex items-center justify-between pb-8 border-b flex-wrap gap-4">
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2 font-medium">
-                <User className="h-4 w-4" />
-                {post.author_name || "KapuLetu Team"}
+              <div>
+                <Badge
+                  variant="secondary"
+                  className="px-3 py-1 font-medium bg-secondary/50 hover:bg-secondary/80 transition-colors"
+                >
+                  {post.category}
+                </Badge>
               </div>
-              {post.author_role && (
-                <>
-                  <span className="text-border">·</span>
-                  <span>{post.author_role}</span>
-                </>
-              )}
-            </div>
+            )}
 
-            {/* Social Share */}
-            <Button variant="outline" size="sm" onClick={handleShare} className="rounded-full">
-              <Share2 className="h-4 w-4 mr-2" /> Share
-            </Button>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight">
+              {post.title}
+            </h1>
+
+            <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-sm text-muted-foreground border-b pb-8">
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+                  {(post.author_name || "K").charAt(0).toUpperCase()}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-semibold text-foreground">
+                    {post.author_name || "KapuLetu Team"}
+                  </span>
+                  {post.author_role && <span className="text-xs">{post.author_role}</span>}
+                </div>
+              </div>
+
+              <div className="h-8 w-px bg-border hidden sm:block" />
+
+              <div className="flex items-center gap-4 flex-1">
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 opacity-70" />
+                  {format(new Date(post.created_at), "MMMM d, yyyy")}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-4 w-4 opacity-70" />
+                  {readTime} min read
+                </span>
+              </div>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleShare}
+                className="rounded-full shrink-0 hover:bg-muted"
+              >
+                <Share2 className="h-4 w-4 mr-2" /> Share
+              </Button>
+            </div>
           </div>
 
-          <div className="mt-8 prose prose-lg dark:prose-invert prose-headings:font-bold prose-a:text-primary max-w-none prose-img:rounded-xl">
+          {/* Article Content */}
+          <div className="prose prose-lg md:prose-xl dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary max-w-none prose-img:rounded-2xl prose-img:border prose-img:shadow-sm">
             <ReactMarkdown
               components={{
                 img: ({ node, ...props }) => {
@@ -202,7 +216,7 @@ export const BlogReaderClient: React.FC<Props> = ({ slug }) => {
                       {...props}
                       src={src}
                       alt={props.alt || "Blog image"}
-                      className="rounded-xl mx-auto w-full max-h-[500px] object-cover"
+                      className="rounded-2xl mx-auto w-full max-h-[600px] object-cover my-12"
                     />
                   );
                 },
@@ -212,55 +226,62 @@ export const BlogReaderClient: React.FC<Props> = ({ slug }) => {
             </ReactMarkdown>
           </div>
 
-          {/* Tags Section */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 pt-6 border-t flex flex-wrap gap-2 items-center">
-              <span className="text-sm font-semibold mr-2">Tags:</span>
-              {post.tags.map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs bg-muted/50">
-                  #{tag}
-                </Badge>
-              ))}
+          {/* Footer Metadata & Engagement */}
+          <div className="mt-16 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex flex-wrap gap-2 items-center">
+              {post.tags &&
+                post.tags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="outline"
+                    className="text-sm px-3 py-1 bg-muted/30 text-muted-foreground font-medium"
+                  >
+                    #{tag}
+                  </Badge>
+                ))}
             </div>
-          )}
 
-          {/* Sticky Engagement Bar (Bottom on Mobile, Inflow on Desktop) */}
-          <div className="mt-12 bg-muted/20 border rounded-full p-2 flex items-center justify-center gap-4 w-max mx-auto shadow-sm">
-            <Button
-              variant="ghost"
-              className={`rounded-full transition-colors ${
-                localInteractions.like || optimisticLike
-                  ? "bg-green-100 text-green-700"
-                  : "hover:bg-green-100 hover:text-green-700"
-              }`}
-              onClick={() => handleInteraction("like")}
-              disabled={localInteractions.like || optimisticLike}
-            >
-              <ThumbsUp className="h-5 w-5 mr-2" />
-              <span className="font-semibold">
-                {post.likes_count + (optimisticLike && !localInteractions.like ? 1 : 0)}
-              </span>
-            </Button>
-            <div className="w-px h-6 bg-border" />
-            <Button
-              variant="ghost"
-              className={`rounded-full transition-colors ${
-                localInteractions.dislike || optimisticDislike
-                  ? "bg-red-100 text-red-700"
-                  : "hover:bg-red-100 hover:text-red-700"
-              }`}
-              onClick={() => handleInteraction("dislike")}
-              disabled={localInteractions.dislike || optimisticDislike}
-            >
-              <ThumbsDown className="h-5 w-5 mr-2" />
-              <span className="font-semibold">
-                {post.dislikes_count + (optimisticDislike && !localInteractions.dislike ? 1 : 0)}
-              </span>
-            </Button>
+            <div className="flex items-center bg-muted/30 border rounded-full p-1 shadow-sm shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`rounded-full px-4 transition-colors ${
+                  localInteractions.like || optimisticLike
+                    ? "bg-green-100 text-green-700 hover:bg-green-200"
+                    : "hover:bg-muted"
+                }`}
+                onClick={() => handleInteraction("like")}
+                disabled={localInteractions.like || optimisticLike}
+              >
+                <ThumbsUp className="h-4 w-4 mr-2" />
+                <span className="font-semibold">
+                  {post.likes_count + (optimisticLike && !localInteractions.like ? 1 : 0)}
+                </span>
+              </Button>
+              <div className="w-px h-4 bg-border mx-1" />
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`rounded-full px-4 transition-colors ${
+                  localInteractions.dislike || optimisticDislike
+                    ? "bg-red-100 text-red-700 hover:bg-red-200"
+                    : "hover:bg-muted"
+                }`}
+                onClick={() => handleInteraction("dislike")}
+                disabled={localInteractions.dislike || optimisticDislike}
+              >
+                <ThumbsDown className="h-4 w-4 mr-2" />
+                <span className="font-semibold">
+                  {post.dislikes_count + (optimisticDislike && !localInteractions.dislike ? 1 : 0)}
+                </span>
+              </Button>
+            </div>
           </div>
 
           {/* Comments Section */}
-          <BlogComments postId={post.id} />
+          <div className="mt-12 pt-12 border-t">
+            <BlogComments postId={post.id} />
+          </div>
         </div>
       </div>
     </article>

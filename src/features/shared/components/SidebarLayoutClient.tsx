@@ -23,6 +23,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useNewFeedbackCountQuery } from "@/features/admin/services/queries";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 import type { UserRole } from "@/features/auth/utils";
+import { useGetAdminCommentsQuery } from "@/features/blogs/services/queries";
 import { usePendingInboxCountQuery } from "@/features/inbox/services/queries";
 import AppBreadcrumb from "@/features/shared/components/AppBreadcrumb";
 import CurrentPlanCard from "@/features/shared/components/CurrentPlanCard";
@@ -80,6 +81,7 @@ interface AppSidebarProps {
   pendingInboxCount?: number;
   newFeedbackCount?: number;
   pendingTicketsCount?: number;
+  pendingCommentsCount?: number;
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = ({
@@ -88,6 +90,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   pendingInboxCount = 0,
   newFeedbackCount = 0,
   pendingTicketsCount = 0,
+  pendingCommentsCount = 0,
 }) => {
   const pathname = usePathname();
   const { state, isMobile, setOpenMobile, toggleSidebar } = useSidebar();
@@ -253,6 +256,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
                               {pendingTicketsCount > 99 ? "99+" : pendingTicketsCount}
                             </span>
                           )}
+                          {link.label === "Blogs" && pendingCommentsCount > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none shadow-md bg-destructive text-destructive-foreground">
+                              {pendingCommentsCount > 99 ? "99+" : pendingCommentsCount}
+                            </span>
+                          )}
                         </div>
                         <span className="text-base tracking-tight truncate group-data-[collapsible=icon]:hidden">
                           {link.label}
@@ -306,6 +314,10 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   const { data: pendingCount } = usePendingInboxCountQuery();
   const { data: feedbackCount } = useNewFeedbackCountQuery();
   const { data: ticketsCount } = usePendingTicketsCountQuery();
+  const { data: pendingComments } = useGetAdminCommentsQuery("pending", {
+    enabled: isAdminOrSuperAdmin,
+  });
+  const pendingCommentsCount = pendingComments?.length || 0;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const hour = new Date().getHours();
@@ -320,6 +332,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
           pendingInboxCount={pendingCount ?? 0}
           newFeedbackCount={isAdminOrSuperAdmin ? (feedbackCount ?? 0) : 0}
           pendingTicketsCount={!isAdminOrSuperAdmin ? (ticketsCount ?? 0) : 0}
+          pendingCommentsCount={pendingCommentsCount}
         />
 
         <SidebarInset className="bg-background flex flex-col h-screen overflow-hidden">

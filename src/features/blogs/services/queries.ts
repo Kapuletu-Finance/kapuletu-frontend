@@ -61,9 +61,13 @@ export const useGetAdminBlogsQuery = () => {
   });
 };
 
-export const useGetAdminCommentsQuery = (statusFilter?: string) => {
+export const useGetAdminCommentsQuery = (
+  statusFilter?: string,
+  options?: { enabled?: boolean },
+) => {
   return useQuery({
     queryKey: ["admin_blog_comments", statusFilter],
     queryFn: () => getAdminComments(statusFilter),
+    enabled: options?.enabled,
   });
 };

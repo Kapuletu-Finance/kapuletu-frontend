@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, LayoutTemplate, Save } from "lucide-react";
+import { ArrowLeft, LayoutTemplate, MessageSquare, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -230,25 +230,27 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2 border bg-muted/50 p-1 rounded-md">
-          <Button
-            type="button"
-            variant={!showPreview ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setShowPreview(false)}
-            className="h-8"
-          >
-            Edit
-          </Button>
-          <Button
-            type="button"
-            variant={showPreview ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setShowPreview(true)}
-            className="h-8"
-          >
-            Preview
-          </Button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 border bg-muted/50 p-1 rounded-md">
+            <Button
+              type="button"
+              variant={!showPreview ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setShowPreview(false)}
+              className="h-8"
+            >
+              Edit
+            </Button>
+            <Button
+              type="button"
+              variant={showPreview ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setShowPreview(true)}
+              className="h-8"
+            >
+              Preview
+            </Button>
+          </div>
         </div>
       </div>
 
