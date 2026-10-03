@@ -4,10 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, LayoutTemplate, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 import * as z from "zod";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -50,7 +52,7 @@ const formSchema = z.object({
     ),
   excerpt: z.string().max(500).optional().nullable(),
   content: z.string().min(10, "Content must be at least 10 characters"),
-  cover_image_url: z.string().url("Must be a valid URL").optional().nullable().or(z.literal("")),
+  cover_image_url: z.string().optional().nullable().or(z.literal("")),
   category: z
     .enum([
       "News",
@@ -101,6 +103,10 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
     },
   });
 
+  const [showPreview, setShowPreview] = useState(false);
+  const [autosaveStatus, setAutosaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+
   useEffect(() => {
     if (currentBlog) {
       form.reset({
@@ -126,6 +132,49 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
         .replace(/(^-|-$)+/g, "");
       form.setValue("slug", slug, { shouldValidate: true });
     }
+  };
+
+  // Autosave watch logic
+  useEffect(() => {
+    if (!isEditMode || !blogId) return;
+    const subscription = form.watch((value, { name, type }) => {
+      // Trigger autosave when field values change
+      if (type === "change") {
+        setAutosaveStatus("saving");
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, isEditMode, blogId]);
+
+  // Autosave execution logic
+  useEffect(() => {
+    if (autosaveStatus !== "saving" || !isEditMode || !blogId) return;
+
+    const handler = setTimeout(async () => {
+      try {
+        const currentValues = form.getValues();
+        await updateMutation.mutateAsync({
+          id: blogId,
+          data: currentValues as BlogPostUpdate,
+        });
+        setAutosaveStatus("saved");
+        setLastSavedTime(new Date());
+      } catch (error) {
+        setAutosaveStatus("idle");
+      }
+    }, 3000);
+
+    return () => clearTimeout(handler);
+  }, [autosaveStatus, form, blogId, isEditMode, updateMutation]);
+
+  const handleSaveDraft = async () => {
+    form.setValue("is_published", false);
+    await form.handleSubmit(onSubmit)();
+  };
+
+  const handlePublish = async () => {
+    form.setValue("is_published", true);
+    await form.handleSubmit(onSubmit)();
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -159,6 +208,42 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
           <p className="text-muted-foreground mt-1">
             Write and publish content for the KapuLetu community.
           </p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-3">
+          {currentBlog && (
+            <Badge variant={currentBlog.is_published ? "default" : "secondary"}>
+              {currentBlog.is_published ? "Published" : "Draft"}
+            </Badge>
+          )}
+          {autosaveStatus === "saving" && (
+            <span className="text-xs text-muted-foreground">Autosaving...</span>
+          )}
+          {autosaveStatus === "saved" && lastSavedTime && (
+            <span className="text-xs text-muted-foreground">
+              Saved {lastSavedTime.toLocaleTimeString()}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 border bg-muted/50 p-1 rounded-md">
+          <Button
+            variant={!showPreview ? "secondary" : "ghost"}
+            size="sm"
+            onClick={() => setShowPreview(false)}
+            className="h-8"
+          >
+            Edit
+          </Button>
+          <Button
+            variant={showPreview ? "secondary" : "ghost"}
+            size="sm"
+            onClick={() => setShowPreview(true)}
+            className="h-8"
+          >
+            Preview
+          </Button>
         </div>
       </div>
 
@@ -262,14 +347,22 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
                             />
                           </div>
                         </div>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Write your article here. You can use markdown for formatting..."
-                            className="min-h-[400px] font-mono text-sm"
-                            {...field}
-                            value={field.value || ""}
-                          />
-                        </FormControl>
+                        {showPreview ? (
+                          <div className="min-h-[400px] prose prose-sm sm:prose lg:prose-lg max-w-none border rounded-md p-4 bg-muted/20">
+                            <ReactMarkdown>
+                              {field.value || "Nothing to preview yet..."}
+                            </ReactMarkdown>
+                          </div>
+                        ) : (
+                          <FormControl>
+                            <Textarea
+                              placeholder="Write your article here. You can use markdown for formatting..."
+                              className="min-h-[400px] font-mono text-sm"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -393,20 +486,26 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
                 </CardContent>
               </Card>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={createMutation.isPending || updateMutation.isPending}
-              >
-                {createMutation.isPending || updateMutation.isPending ? (
-                  "Saving..."
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    {isEditMode ? "Save Changes" : "Create Post"}
-                  </>
-                )}
-              </Button>
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleSaveDraft}
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                >
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Draft
+                </Button>
+                <Button
+                  type="button"
+                  className="w-full"
+                  onClick={handlePublish}
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                >
+                  {createMutation.isPending || updateMutation.isPending ? "Saving..." : "Publish"}
+                </Button>
+              </div>
             </div>
           </div>
         </form>
