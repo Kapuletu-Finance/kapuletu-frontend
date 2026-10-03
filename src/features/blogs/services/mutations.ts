@@ -1,6 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
-import type { BlogPost, BlogPostCreate, BlogPostUpdate } from "./types";
+import type {
+  BlogComment,
+  BlogCommentCreate,
+  BlogPost,
+  BlogPostCreate,
+  BlogPostUpdate,
+} from "./types";
 
 const createAdminBlog = async (data: BlogPostCreate): Promise<BlogPost> => {
   const response = await apiClient.post("/blogs/admin", data);
@@ -20,6 +26,41 @@ const updateAdminBlog = async ({
 
 const deleteAdminBlog = async (id: string): Promise<void> => {
   await apiClient.delete(`/blogs/admin/${id}`);
+};
+
+const interactWithBlog = async ({
+  postId,
+  action,
+}: {
+  postId: string;
+  action: string;
+}): Promise<BlogPost> => {
+  const response = await apiClient.post(`/blogs/public/${postId}/interact?action=${action}`);
+  return response.data;
+};
+
+const createBlogComment = async ({
+  postId,
+  data,
+}: {
+  postId: string;
+  data: BlogCommentCreate;
+}): Promise<BlogComment> => {
+  const response = await apiClient.post(`/blogs/public/${postId}/comments`, data);
+  return response.data;
+};
+
+const updateCommentStatusAdmin = async ({
+  commentId,
+  status,
+}: {
+  commentId: string;
+  status: string;
+}): Promise<BlogComment> => {
+  const response = await apiClient.patch(
+    `/blogs/admin/comments/${commentId}/status?status=${status}`,
+  );
+  return response.data;
 };
 
 // Hooks
@@ -53,6 +94,37 @@ export const useDeleteAdminBlogMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin_blogs"] });
       queryClient.invalidateQueries({ queryKey: ["public_blogs"] });
+    },
+  });
+};
+
+export const useInteractWithBlogMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: interactWithBlog,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["public_blog", variables.postId] });
+    },
+  });
+};
+
+export const useCreateBlogCommentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createBlogComment,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["public_blog_comments", variables.postId] });
+    },
+  });
+};
+
+export const useUpdateCommentStatusAdminMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateCommentStatusAdmin,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin_blog_comments"] });
+      queryClient.invalidateQueries({ queryKey: ["public_blog_comments"] });
     },
   });
 };

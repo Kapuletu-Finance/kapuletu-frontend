@@ -70,6 +70,7 @@ const formSchema = z.object({
     .nullable(),
   author_name: z.string().max(255).optional().nullable(),
   author_role: z.string().max(255).optional().nullable(),
+  tags: z.array(z.string()).optional(),
   is_published: z.boolean().default(false),
 });
 
@@ -99,6 +100,7 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
       category: null,
       author_name: "KapuLetu Team",
       author_role: "Editorial",
+      tags: [],
       is_published: false,
     },
   });
@@ -118,6 +120,7 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
         category: (currentBlog.category as z.infer<typeof formSchema>["category"]) || null,
         author_name: currentBlog.author_name || "",
         author_role: currentBlog.author_role || "",
+        tags: currentBlog.tags || [],
         is_published: currentBlog.is_published,
       });
     }
@@ -229,6 +232,7 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
         </div>
         <div className="flex items-center gap-2 border bg-muted/50 p-1 rounded-md">
           <Button
+            type="button"
             variant={!showPreview ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setShowPreview(false)}
@@ -237,6 +241,7 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
             Edit
           </Button>
           <Button
+            type="button"
             variant={showPreview ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setShowPreview(true)}
@@ -349,7 +354,22 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
                         </div>
                         {showPreview ? (
                           <div className="min-h-[400px] prose prose-sm sm:prose lg:prose-lg max-w-none border rounded-md p-4 bg-muted/20">
-                            <ReactMarkdown>
+                            <ReactMarkdown
+                              components={{
+                                img: ({ node, ...props }) => {
+                                  const rawSrc = typeof props.src === "string" ? props.src : "";
+                                  const src = rawSrc.startsWith("http") ? rawSrc : `/api${rawSrc}`;
+                                  return (
+                                    <img
+                                      {...props}
+                                      src={src}
+                                      alt={props.alt || "Preview image"}
+                                      className="rounded-xl mx-auto w-full max-h-[500px] object-cover"
+                                    />
+                                  );
+                                },
+                              }}
+                            >
                               {field.value || "Nothing to preview yet..."}
                             </ReactMarkdown>
                           </div>
@@ -446,6 +466,31 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
                             <SelectItem value="Announcement">📣 Announcement</SelectItem>
                           </SelectContent>
                         </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tags (comma separated)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="finance, chama, savings"
+                            value={field.value?.join(", ") || ""}
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.value
+                                  .split(",")
+                                  .map((t) => t.trim())
+                                  .filter(Boolean),
+                              )
+                            }
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

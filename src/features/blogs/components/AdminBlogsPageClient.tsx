@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Edit2, Eye, PlusCircle, Trash2 } from "lucide-react";
+import { Edit2, Eye, MessageSquare, PlusCircle, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
@@ -55,10 +55,23 @@ export const AdminBlogsPageClient: React.FC = () => {
             Create, edit, and publish content for the KapuLetu public blog.
           </p>
         </div>
-        <Button onClick={() => router.push("/admin/blogs/new")} className="flex items-center gap-2">
-          <PlusCircle className="h-4 w-4" />
-          Create New Post
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => router.push("/admin/blogs/comments")}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <MessageSquare className="h-4 w-4" />
+            Moderate Comments
+          </Button>
+          <Button
+            onClick={() => router.push("/admin/blogs/new")}
+            className="flex items-center gap-2"
+          >
+            <PlusCircle className="h-4 w-4" />
+            Create New Post
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -101,6 +114,7 @@ export const AdminBlogsPageClient: React.FC = () => {
                   <TableRow>
                     <TableHead>Title</TableHead>
                     <TableHead>Category</TableHead>
+                    <TableHead>Metrics</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -116,6 +130,22 @@ export const AdminBlogsPageClient: React.FC = () => {
                             <div className="text-xs text-muted-foreground mt-1">/{blog.slug}</div>
                           </TableCell>
                           <TableCell>{blog.category || "Uncategorized"}</TableCell>
+                          <TableCell>
+                            <div className="flex gap-3 text-xs text-muted-foreground items-center">
+                              <div className="flex items-center gap-1" title="Views">
+                                <Eye className="h-3 w-3" /> {blog.views_count || 0}
+                              </div>
+                              <div className="flex items-center gap-1 text-green-600" title="Likes">
+                                <ThumbsUp className="h-3 w-3" /> {blog.likes_count || 0}
+                              </div>
+                              <div
+                                className="flex items-center gap-1 text-red-500"
+                                title="Dislikes"
+                              >
+                                <ThumbsDown className="h-3 w-3" /> {blog.dislikes_count || 0}
+                              </div>
+                            </div>
+                          </TableCell>
                           <TableCell>
                             {blog.is_published ? (
                               <Badge variant="default" className="bg-green-600 hover:bg-green-700">
