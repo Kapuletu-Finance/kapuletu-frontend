@@ -29,7 +29,12 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useCreateAdminBlogMutation, useUpdateAdminBlogMutation } from "../services/mutations";
+import { ImageUploader } from "@/features/shared/components/ImageUploader";
+import {
+  useCreateAdminBlogMutation,
+  useUpdateAdminBlogMutation,
+  useUploadImageMutation,
+} from "../services/mutations";
 import { useGetAdminBlogsQuery } from "../services/queries";
 import type { BlogPostUpdate } from "../services/types";
 
@@ -77,11 +82,11 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
   const { data: blogs } = useGetAdminBlogsQuery();
   const createMutation = useCreateAdminBlogMutation();
   const updateMutation = useUpdateAdminBlogMutation();
+  const uploadImageMutation = useUploadImageMutation();
 
   const currentBlog = isEditMode ? blogs?.find((b) => b.id === blogId) : null;
 
   const form = useForm<z.infer<typeof formSchema>>({
-    // biome-ignore lint/suspicious/noExplicitAny: Zod v4 resolver typing workaround (same as PlanEditor, BroadcastForm)
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       title: "",
@@ -234,12 +239,35 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
                     name="content"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Main Content (Markdown Supported)</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>Main Content (Markdown Supported)</FormLabel>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">Insert Image:</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="text-xs w-48"
+                              disabled={uploadImageMutation.isPending}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                uploadImageMutation.mutate(file, {
+                                  onSuccess: (data) => {
+                                    const markdownImage = `\n![Image](${data.url})\n`;
+                                    field.onChange((field.value || "") + markdownImage);
+                                    e.target.value = "";
+                                  },
+                                });
+                              }}
+                            />
+                          </div>
+                        </div>
                         <FormControl>
                           <Textarea
                             placeholder="Write your article here. You can use markdown for formatting..."
                             className="min-h-[400px] font-mono text-sm"
                             {...field}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -278,21 +306,24 @@ export const AdminBlogEditorClient: React.FC<Props> = ({ blogId }) => {
                     name="cover_image_url"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Cover Image URL</FormLabel>
+                        <FormLabel>Cover Image</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="https://example.com/image.jpg"
-                            {...field}
-                            value={field.value || ""}
+                          <ImageUploader
+                            currentImageUrl={field.value}
+                            onFileSelect={(file) => {
+                              uploadImageMutation.mutate(file, {
+                                onSuccess: (data) => {
+                                  field.onChange(data.url);
+                                },
+                              });
+                            }}
+                            onClear={() => field.onChange("")}
+                            isLoading={uploadImageMutation.isPending}
+                            shape="square"
+                            className="aspect-video w-full"
                           />
                         </FormControl>
                         <FormMessage />
-                        {field.value && (
-                          <div className="mt-4 rounded-md overflow-hidden border aspect-video">
-                            {/* biome-ignore lint/a11y/useAltText: this is a preview */}
-                            <img src={field.value} className="w-full h-full object-cover" />
-                          </div>
-                        )}
                       </FormItem>
                     )}
                   />

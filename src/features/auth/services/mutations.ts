@@ -482,3 +482,28 @@ export const useUpdateAuthSettingsMutation = () => {
     },
   });
 };
+
+export const useUploadProfilePhotoMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await apiClient.post<any>("/auth/profile-photo", formData, {
+        headers: {
+          "Content-Type": undefined,
+        },
+      });
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to upload profile photo.");
+    },
+    onSuccess: () => {
+      toast.success("Profile photo updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+    },
+  });
+};

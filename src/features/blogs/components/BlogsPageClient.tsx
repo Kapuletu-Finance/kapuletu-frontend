@@ -107,7 +107,11 @@ export const BlogsPageClient: React.FC = () => {
                 {featuredPost.cover_image_url ? (
                   // biome-ignore lint/a11y/useAltText: decorative cover
                   <img
-                    src={featuredPost.cover_image_url}
+                    src={
+                      featuredPost.cover_image_url.startsWith("http")
+                        ? featuredPost.cover_image_url
+                        : `/api${featuredPost.cover_image_url}`
+                    }
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
@@ -171,7 +175,11 @@ export const BlogsPageClient: React.FC = () => {
                   {post.cover_image_url ? (
                     // biome-ignore lint/a11y/useAltText: decorative cover
                     <img
-                      src={post.cover_image_url}
+                      src={
+                        post.cover_image_url.startsWith("http")
+                          ? post.cover_image_url
+                          : `/api${post.cover_image_url}`
+                      }
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (

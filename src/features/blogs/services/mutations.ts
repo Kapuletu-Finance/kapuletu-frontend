@@ -56,3 +56,16 @@ export const useDeleteAdminBlogMutation = () => {
     },
   });
 };
+
+export const useUploadImageMutation = () => {
+  return useMutation({
+    mutationFn: async (file: File): Promise<{ url: string; filename: string }> => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await apiClient.post("/upload/image", formData, {
+        headers: { "Content-Type": undefined },
+      });
+      return response.data;
+    },
+  });
+};

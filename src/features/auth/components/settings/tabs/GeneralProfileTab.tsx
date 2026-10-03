@@ -16,12 +16,17 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { type UpdateProfileFormData, updateProfileSchema } from "@/features/auth/schemas";
-import { useUpdateProfileMutation } from "@/features/auth/services/mutations";
+import {
+  useUpdateProfileMutation,
+  useUploadProfilePhotoMutation,
+} from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
+import { ImageUploader } from "@/features/shared/components/ImageUploader";
 
 export const GeneralProfileTab: React.FC = () => {
   const { data: user, isLoading: isUserLoading } = useGetMeQuery();
   const updateProfileMutation = useUpdateProfileMutation();
+  const uploadPhotoMutation = useUploadProfilePhotoMutation();
   const [language, setLanguage] = React.useState("english");
 
   const form = useForm<UpdateProfileFormData>({
@@ -49,6 +54,23 @@ export const GeneralProfileTab: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6 bg-muted/20 p-6 rounded-xl border border-border/50">
+        <div className="w-24 h-24 shrink-0">
+          <ImageUploader
+            currentImageUrl={(user as any)?.profile_picture_url}
+            onFileSelect={(file) => uploadPhotoMutation.mutate(file)}
+            isLoading={uploadPhotoMutation.isPending}
+            shape="circle"
+          />
+        </div>
+        <div className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-2 pt-2">
+          <h3 className="font-semibold text-lg text-foreground tracking-tight">Profile Picture</h3>
+          <p className="text-sm text-muted-foreground">
+            Upload a professional headshot to help other treasurers and members identify you.
+          </p>
+        </div>
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <fieldset disabled={updateProfileMutation.isPending} className="space-y-6">

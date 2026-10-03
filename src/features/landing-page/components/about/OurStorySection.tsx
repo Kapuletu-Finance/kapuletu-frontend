@@ -23,14 +23,14 @@ export const OurStorySection: React.FC = () => {
               <div className="absolute -left-10 md:left-1/2 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2 mt-1.5 md:mt-0 ring-4 ring-background z-10"></div>
 
               <div className="md:w-5/12 mb-4 md:mb-0 md:text-right md:pr-10">
-                <span className="text-primary font-bold text-xl block mb-2">The Catalyst</span>
+                <span className="text-primary font-bold text-xl block mb-2">The Beginning</span>
                 <h4 className="text-xl font-bold text-foreground mb-2">
-                  Frustration Sparks Innovation
+                  Frustration with Spreadsheets
                 </h4>
                 <p className="text-muted-foreground">
-                  Our founders, acting as treasurers for their local investment clubs, experienced
-                  first-hand the nightmare of reconciling WhatsApp screenshots with bank statements.
-                  They knew there had to be a better way.
+                  Our founders were treasurers for their own investment clubs. After spending too
+                  many weekends trying to match WhatsApp screenshots with bank statements, they
+                  decided there had to be an easier way.
                 </p>
               </div>
               <div className="md:w-5/12 md:pl-10"></div>
@@ -41,11 +41,11 @@ export const OurStorySection: React.FC = () => {
               <div className="absolute -left-10 md:left-1/2 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2 mt-1.5 md:mt-0 ring-4 ring-background z-10"></div>
 
               <div className="md:w-5/12 mb-4 md:mb-0 md:pl-10">
-                <span className="text-primary font-bold text-xl block mb-2">The MVP</span>
-                <h4 className="text-xl font-bold text-foreground mb-2">Building the Ledger</h4>
+                <span className="text-primary font-bold text-xl block mb-2">The Solution</span>
+                <h4 className="text-xl font-bold text-foreground mb-2">Building KapuLetu</h4>
                 <p className="text-muted-foreground">
-                  We built the first version of KapuLetu focusing purely on an immutable ledger.
-                  Once we saw how much time it saved, we began rolling it out to early beta testers.
+                  We built the first version of KapuLetu to track our own group's money. When we saw
+                  how much time it saved, we shared it with other groups to help them too.
                 </p>
               </div>
               <div className="md:w-5/12 md:pr-10 text-left md:text-right"></div>
@@ -56,12 +56,11 @@ export const OurStorySection: React.FC = () => {
               <div className="absolute -left-10 md:left-1/2 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2 mt-1.5 md:mt-0 ring-4 ring-background z-10"></div>
 
               <div className="md:w-5/12 mb-4 md:mb-0 md:text-right md:pr-10">
-                <span className="text-primary font-bold text-xl block mb-2">The Launch</span>
-                <h4 className="text-xl font-bold text-foreground mb-2">Scaling Trust</h4>
+                <span className="text-primary font-bold text-xl block mb-2">Today</span>
+                <h4 className="text-xl font-bold text-foreground mb-2">Growing Together</h4>
                 <p className="text-muted-foreground">
-                  Today, KapuLetu serves hundreds of organizations, from small family welfare groups
-                  to massive alumni associations, helping them secure their community's financial
-                  future.
+                  Today, KapuLetu helps hundreds of groups—from small family chamas to large
+                  associations—manage their money easily and openly.
                 </p>
               </div>
               <div className="md:w-5/12 md:pl-10"></div>

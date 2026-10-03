@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
+import ReactMarkdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetPublicBlogBySlugQuery } from "../services/queries";
@@ -52,7 +53,14 @@ export const BlogReaderClient: React.FC<Props> = ({ slug }) => {
       {post.cover_image_url && (
         <div className="w-full h-[40vh] md:h-[60vh] relative overflow-hidden bg-muted">
           {/* biome-ignore lint/a11y/useAltText: this is decorative */}
-          <img src={post.cover_image_url} className="w-full h-full object-cover" />
+          <img
+            src={
+              post.cover_image_url.startsWith("http")
+                ? post.cover_image_url
+                : `/api${post.cover_image_url}`
+            }
+            className="w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         </div>
       )}
@@ -98,19 +106,24 @@ export const BlogReaderClient: React.FC<Props> = ({ slug }) => {
           </div>
 
           <div className="mt-8 prose prose-lg dark:prose-invert prose-headings:font-bold prose-a:text-primary max-w-none prose-img:rounded-xl">
-            {/* If the content is markdown, we could render it here. */}
-            {/* Since the user didn't install react-markdown, we will just parse basic line breaks for now, or use a basic parser. */}
-            {post.content.split("\n").map((paragraph, idx) =>
-              paragraph.trim() ? (
-                <p
-                  // biome-ignore lint/suspicious/noArrayIndexKey: paragraph index is stable
-                  key={idx}
-                  className="mb-6 leading-relaxed text-[17px] text-foreground/90"
-                >
-                  {paragraph.trim()}
-                </p>
-              ) : null,
-            )}
+            <ReactMarkdown
+              components={{
+                img: ({ node, ...props }) => {
+                  const rawSrc = typeof props.src === "string" ? props.src : "";
+                  const src = rawSrc.startsWith("http") ? rawSrc : `/api${rawSrc}`;
+                  return (
+                    <img
+                      {...props}
+                      src={src}
+                      alt={props.alt || "Blog image"}
+                      className="rounded-xl mx-auto w-full max-h-[500px] object-cover"
+                    />
+                  );
+                },
+              }}
+            >
+              {post.content}
+            </ReactMarkdown>
           </div>
         </div>
       </div>

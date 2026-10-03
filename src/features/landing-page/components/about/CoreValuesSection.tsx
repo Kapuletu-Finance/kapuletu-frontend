@@ -8,25 +8,25 @@ export const CoreValuesSection: React.FC = () => {
       icon: "shield-check" as IconName,
       title: "Security First",
       description:
-        "We protect your data and funds with bank-level encryption and unalterable ledger technology.",
+        "We keep your money and data safe using the same level of protection as major banks.",
     },
     {
       icon: "search" as IconName,
-      title: "Absolute Transparency",
+      title: "Complete Openness",
       description:
-        "Every member sees exactly where their contributions go. No hidden fees, no opaque reporting.",
+        "Everyone sees exactly where the money goes. No hidden fees or confusing reports.",
     },
     {
       icon: "users" as IconName,
-      title: "Community Driven",
+      title: "Built for You",
       description:
-        "Built closely with the communities we serve. Your feedback directly shapes our roadmap.",
+        "We listen to the groups we serve and build features based on what you actually need.",
     },
     {
       icon: "zap" as IconName,
-      title: "Radical Simplicity",
+      title: "Very Simple to Use",
       description:
-        "Powerful tools should not require a finance degree. We design for the everyday treasurer.",
+        "You don't need a finance degree to use our app. We designed it for everyday people.",
     },
   ];
 

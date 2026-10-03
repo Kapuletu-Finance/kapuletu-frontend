@@ -73,7 +73,11 @@ export const BlogPreviewSection: React.FC = () => {
                     {post.cover_image_url ? (
                       // biome-ignore lint/a11y/useAltText: decorative blog thumbnail
                       <img
-                        src={post.cover_image_url}
+                        src={
+                          post.cover_image_url.startsWith("http")
+                            ? post.cover_image_url
+                            : `/api${post.cover_image_url}`
+                        }
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
