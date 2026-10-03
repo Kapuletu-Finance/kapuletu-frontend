@@ -2,6 +2,7 @@
 
 import type * as React from "react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -12,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import ViewToggleGroup from "@/features/shared/components/ViewToggleGroup";
 
 const filterOptions = [
   { label: "All time", value: "all" },
@@ -49,6 +51,8 @@ export interface InboxHeaderControlsProps {
   filterValue?: TimeFilterValue;
   statusValue?: string;
   sortValue?: string;
+  onRefresh?: () => void;
+  isRefetching?: boolean;
 }
 
 const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
@@ -60,6 +64,8 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
   filterValue,
   statusValue,
   sortValue,
+  onRefresh,
+  isRefetching,
 }) => {
   const [selectedFilter, setSelectedFilter] = useState<TimeFilterValue>(filterValue ?? "this_year");
   const [selectedStatus, setSelectedStatus] = useState<string>(statusValue ?? "pending");
@@ -167,6 +173,21 @@ const InboxHeaderControls: React.FC<InboxHeaderControlsProps> = ({
           </Select>
         </div>
       </ScrollArea>
+
+      {/* Utilities Row: Refresh & View Toggle */}
+      <div className="flex items-center justify-between w-full sm:w-auto self-end gap-3 mt-2 sm:mt-0">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-10 text-muted-foreground gap-2 font-medium"
+          onClick={() => onRefresh?.()}
+          disabled={isRefetching}
+        >
+          <IconLibrary name="refresh" className={`w-4 h-4 ${isRefetching ? "animate-spin" : ""}`} />
+          Refresh
+        </Button>
+        <ViewToggleGroup />
+      </div>
     </div>
   );
 };

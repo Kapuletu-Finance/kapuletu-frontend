@@ -80,7 +80,7 @@ const KpiCard: React.FC<{
         </span>
         <Icon className={`w-4 h-4 ${cfg.colour}`} />
       </div>
-      <div className={`text-4xl font-bold ${cfg.colour}`}>{count}</div>
+      <div className={`text-3xl font-bold ${cfg.colour}`}>{count}</div>
       <div className="text-xs text-muted-foreground mt-1 group-hover:underline">View tickets →</div>
     </button>
   );
@@ -132,7 +132,7 @@ export const SupportDashboard: React.FC<Props> = ({
             <Skeleton key={i} className="h-28 rounded-2xl" />
           ))}
         </div>
-      ) : (
+      ) : hasTickets ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {(Object.keys(counts) as (keyof typeof counts)[]).map((status) => (
             <KpiCard
@@ -143,7 +143,7 @@ export const SupportDashboard: React.FC<Props> = ({
             />
           ))}
         </div>
-      )}
+      ) : null}
 
       {/* Recent Tickets */}
       {isLoading ? (
@@ -216,15 +216,15 @@ export const SupportDashboard: React.FC<Props> = ({
             <Headphones className="w-10 h-10 text-primary" />
           </div>
           <div>
-            <h3 className="text-xl font-semibold">You're all clear!</h3>
-            <p className="text-muted-foreground mt-2 max-w-sm">
-              No support tickets yet. If you need assistance, our team is ready to help — open a
-              ticket and we'll get back to you promptly.
+            <h3 className="text-xl font-semibold">How can we help you today?</h3>
+            <p className="text-muted-foreground mt-2 max-w-sm mx-auto">
+              We're here to assist you with anything you need. Check out our FAQs below, or send us
+              a message directly and we'll get back to you promptly.
             </p>
           </div>
           <Button onClick={onNewTicket} size="lg" className="gap-2">
             <MessageSquare className="w-4 h-4" />
-            Open a Support Ticket
+            Contact Support
           </Button>
         </div>
       )}

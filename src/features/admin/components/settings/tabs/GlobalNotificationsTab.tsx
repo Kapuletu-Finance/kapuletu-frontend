@@ -21,7 +21,7 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
   const [lifecycleEmails, setLifecycleEmails] = useState<string>("");
 
   useEffect(() => {
-    if (adminConfig && adminConfig.emails) {
+    if (adminConfig?.emails) {
       setLifecycleEmails(adminConfig.emails.join(", "));
     }
   }, [adminConfig]);

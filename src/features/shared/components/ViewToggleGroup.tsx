@@ -2,7 +2,6 @@ import { parseAsString, useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
 
 export type ViewMode = "table" | "grid" | "stack";
 
@@ -13,36 +12,22 @@ export const ViewToggleGroup = () => {
     parseAsString.withDefault(isMobile ? "stack" : "table"),
   );
 
+  const toggleView = () => {
+    setView((prev) => (prev === "grid" ? "table" : "grid"));
+  };
+
+  const isGrid = view === "grid";
+
   return (
-    <div className="flex items-center p-1 bg-muted/50 rounded-lg border border-border">
-      <Button
-        variant={view === "table" ? "secondary" : "ghost"}
-        size="icon"
-        className={cn("w-8 h-8 rounded-md", view === "table" && "shadow-sm bg-background")}
-        onClick={() => setView("table")}
-        title="Table View"
-      >
-        <IconLibrary name="list" className="w-4 h-4" />
-      </Button>
-      <Button
-        variant={view === "grid" ? "secondary" : "ghost"}
-        size="icon"
-        className={cn("w-8 h-8 rounded-md", view === "grid" && "shadow-sm bg-background")}
-        onClick={() => setView("grid")}
-        title="Grid View"
-      >
-        <IconLibrary name="grid" className="w-4 h-4" />
-      </Button>
-      <Button
-        variant={view === "stack" ? "secondary" : "ghost"}
-        size="icon"
-        className={cn("w-8 h-8 rounded-md", view === "stack" && "shadow-sm bg-background")}
-        onClick={() => setView("stack")}
-        title="Stack View"
-      >
-        <IconLibrary name="align-justify" className="w-4 h-4" />
-      </Button>
-    </div>
+    <Button
+      variant="outline"
+      size="icon"
+      className="w-10 h-10 rounded-md bg-background shadow-sm hover:bg-muted transition-colors border-border"
+      onClick={toggleView}
+      title={isGrid ? "Switch to List View" : "Switch to Grid View"}
+    >
+      <IconLibrary name={isGrid ? "list" : "grid"} className="w-4 h-4 text-muted-foreground" />
+    </Button>
   );
 };
 

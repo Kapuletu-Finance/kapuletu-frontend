@@ -1,3 +1,6 @@
+import Link from "next/link";
+import IconLibrary from "@/features/shared/components/IconLibrary";
+
 export const AboutUsSection = () => {
   return (
     <section id="about" className="w-full py-24 bg-background">
@@ -24,6 +27,18 @@ export const AboutUsSection = () => {
             Whether you are the treasurer of an association, charity, investment club, or community
             project, KapuLetu helps you stay organized, accountable, and connected.
           </p>
+          <div className="pt-4">
+            <Link
+              href="/about"
+              className="inline-flex items-center space-x-2 text-primary font-bold hover:text-primary/80 transition-colors group"
+            >
+              <span>Read Our Full Story</span>
+              <IconLibrary
+                name="arrow-right"
+                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+              />
+            </Link>
+          </div>
         </div>
       </div>
     </section>

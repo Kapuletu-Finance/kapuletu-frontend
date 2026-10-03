@@ -10,7 +10,7 @@ const TotalGroupsCard = ({ value = 0 }: TotalGroupsCardProps) => {
     <CardWithIcon
       label="Total number of groups"
       value={value}
-      icon={<IconLibrary name="group" className="w-5 h-5 text-primary-foreground" />}
+      icon={<IconLibrary name="group" className="w-5 h-5 text-primary" />}
     />
   );
 };

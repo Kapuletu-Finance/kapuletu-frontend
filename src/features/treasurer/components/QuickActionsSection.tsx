@@ -1,7 +1,6 @@
 import AddContributionButton from "@/features/contributions/components/AddContributionButton";
 import CreateGroupButtonWithIcon from "@/features/groups/components/CreateGroupButtonWithIcon";
 import ReviewInboxButton from "@/features/inbox/components/ReviewInboxButton";
-import GetReportButton from "@/features/reports/components/GetReportButton";
 
 const QuickActionsSection = () => {
   return (
@@ -14,7 +13,6 @@ const QuickActionsSection = () => {
         <CreateGroupButtonWithIcon />
         <AddContributionButton />
         <ReviewInboxButton />
-        <GetReportButton />
       </div>
     </section>
   );

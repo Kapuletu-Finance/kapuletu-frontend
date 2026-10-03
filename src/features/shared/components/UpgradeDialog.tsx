@@ -20,7 +20,7 @@ const UpgradeDialog: React.FC<UpgradeDialogProps> = ({
 
   const handleUpgradeClick = () => {
     onClose();
-    router.push("/settings?tab=billing");
+    router.push("/subscriptions");
   };
 
   return (

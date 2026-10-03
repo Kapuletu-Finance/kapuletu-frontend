@@ -7,7 +7,7 @@ export interface GroupsQueryParams {
   skip?: number;
   limit?: number;
   search?: string;
-  group_status?: "active" | "archived" | "all";
+  group_status?: "active" | "archived" | "favorites" | "all";
 }
 
 export const groupsQueryKey = ["groups"] as const;

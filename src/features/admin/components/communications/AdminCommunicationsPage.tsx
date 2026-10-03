@@ -8,6 +8,7 @@ import { AccessControlsPanel } from "./AccessControlsPanel";
 import { BroadcastForm } from "./BroadcastForm";
 import { BroadcastHistory } from "./BroadcastHistory";
 import { CommunicationLogs } from "./CommunicationLogs";
+import { ContactMessagesTab } from "./ContactMessagesTab";
 import { EmailTemplatesTab } from "./EmailTemplatesTab";
 import { InvitesPanel } from "./InvitesPanel";
 
@@ -37,6 +38,12 @@ export const AdminCommunicationsPage: React.FC = () => {
               className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
             >
               Access Controls
+            </TabsTrigger>
+            <TabsTrigger
+              value="inquiries"
+              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
+            >
+              Inquiries
             </TabsTrigger>
             <TabsTrigger
               value="logs"
@@ -136,6 +143,19 @@ export const AdminCommunicationsPage: React.FC = () => {
             className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 h-full"
           >
             <EmailTemplatesTab />
+          </TabsContent>
+
+          <TabsContent
+            value="inquiries"
+            className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300"
+          >
+            <div className="mb-6">
+              <h3 className="text-xl font-bold tracking-tight">Public Inquiries</h3>
+              <p className="text-sm text-muted-foreground">
+                Manage contact messages submitted from the public website.
+              </p>
+            </div>
+            <ContactMessagesTab />
           </TabsContent>
         </div>
       </Tabs>

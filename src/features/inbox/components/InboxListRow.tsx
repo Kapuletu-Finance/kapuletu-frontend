@@ -90,12 +90,23 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
           size="sm"
           onClick={(e) => {
             e.stopPropagation();
-            setIsDialogOpen(true);
+            if (item.assigned_group_id) {
+              onApprove(
+                item.pending_id,
+                item.assigned_group_id,
+                item.assigned_campaign_id || undefined,
+                undefined,
+                item.assigned_group_slug || undefined,
+                item.assigned_campaign_slug || undefined,
+              );
+            } else {
+              setIsDialogOpen(true);
+            }
           }}
           className="bg-primary hover:bg-primary/90 gap-1.5 flex-1 md:flex-none"
         >
-          <IconLibrary name="check" className="w-4 h-4" />
-          Approve
+          <IconLibrary name={item.assigned_group_id ? "check" : "search"} className="w-4 h-4" />
+          {item.assigned_group_id ? "Approve" : "Review"}
         </Button>
         <Button
           variant="outline"
@@ -141,6 +152,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
                   <div
                     className="mt-2 shrink-0"
                     onClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
                     onKeyDown={(e) => e.stopPropagation()}
                     role="presentation"
                   >
@@ -252,6 +264,7 @@ export const InboxListRow: React.FC<InboxListRowProps> = ({
                 // biome-ignore lint/a11y/noStaticElementInteractions: Need to stop propagation for checkbox inside clickable row
                 <div
                   onClick={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
                   role="presentation"
                 >

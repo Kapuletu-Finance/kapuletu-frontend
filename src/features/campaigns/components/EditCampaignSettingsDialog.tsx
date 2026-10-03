@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -32,7 +31,6 @@ import { Input } from "@/components/ui/input";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateCampaignMutation } from "@/features/campaigns/services/mutations";
-import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const formSchema = z.object({
   report_title: z.string().min(1, "Report title is required"),

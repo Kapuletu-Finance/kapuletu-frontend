@@ -59,6 +59,24 @@ export const useArchiveGroupMutation = (groupId: string) => {
   });
 };
 
+export const useUnarchiveGroupMutation = (groupId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.post<GroupOut>(GROUPS_URLS.groupUnarchive(groupId));
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to unarchive group.");
+    },
+    onSuccess: () => {
+      toast.success("Group unarchived successfully!");
+      queryClient.invalidateQueries({ queryKey: groupsQueryKey });
+    },
+  });
+};
+
 export const useDeleteGroupMutation = (groupId: string) => {
   const queryClient = useQueryClient();
 

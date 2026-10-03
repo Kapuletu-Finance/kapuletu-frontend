@@ -158,9 +158,25 @@ export interface WorkspaceOverviewOut {
   recent_activities: WorkspaceActivity[];
 }
 
+export interface ContributorOverview {
+  name: string;
+  phone: string;
+  total_contributed: number;
+  last_contribution_at: string;
+  group_id: string;
+}
+
+export interface SettingOverview {
+  title: string;
+  description: string;
+  href: string;
+}
+
 export interface GlobalSearchOut {
   groups: GroupOverview[];
   campaigns: CampaignOverview[];
+  contributors: ContributorOverview[];
+  settings: SettingOverview[];
 }
 
 export interface PendingInboxOut {

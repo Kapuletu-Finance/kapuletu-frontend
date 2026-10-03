@@ -52,7 +52,12 @@ export const TreasurerGroupsPageClient = () => {
     group_status: filter === "all" ? undefined : (filter as FilterValue),
   });
 
-  const groups = (data?.items ?? []).map(mapGroupToInfo);
+  const groups = (data?.items ?? []).map(mapGroupToInfo).sort((a, b) => {
+    // Sort favorites to top
+    if (a.isFavorite && !b.isFavorite) return -1;
+    if (!a.isFavorite && b.isFavorite) return 1;
+    return 0;
+  });
   const totalPages = data?.total_pages ?? 1;
   const totalItems = data?.total_items ?? 0;
 
@@ -155,7 +160,7 @@ export const TreasurerGroupsPageClient = () => {
           className={cn(
             view === "grid"
               ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-              : "flex flex-col gap-4",
+              : "flex flex-col border border-border rounded-xl bg-card overflow-hidden shadow-sm",
           )}
         >
           {["sk-1", "sk-2", "sk-3", "sk-4", "sk-5", "sk-6"].map((key) => (
@@ -181,7 +186,7 @@ export const TreasurerGroupsPageClient = () => {
           className={cn(
             view === "grid"
               ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-              : "flex flex-col gap-4",
+              : "flex flex-col border border-border rounded-xl bg-card overflow-hidden shadow-sm",
           )}
         >
           {groups.map((group) => (

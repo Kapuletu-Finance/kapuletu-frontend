@@ -23,10 +23,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { env } from "@/env";
 import {
   useArchiveGroupMutation,
   useDeleteGroupMutation,
+  useUnarchiveGroupMutation,
   useUpdateGroupMutation,
   useUploadGroupCoverPhotoMutation,
 } from "@/features/groups/services/mutations";
@@ -58,6 +58,7 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
   const router = useRouter();
   const updateGroupMutation = useUpdateGroupMutation(group.id);
   const archiveGroupMutation = useArchiveGroupMutation(group.id);
+  const unarchiveGroupMutation = useUnarchiveGroupMutation(group.id);
   const deleteGroupMutation = useDeleteGroupMutation(group.id);
   const uploadCoverMutation = useUploadGroupCoverPhotoMutation(group.id);
 
@@ -100,6 +101,12 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
   const handleArchive = async () => {
     try {
       await archiveGroupMutation.mutateAsync();
+    } catch (_error) {}
+  };
+
+  const handleUnarchive = async () => {
+    try {
+      await unarchiveGroupMutation.mutateAsync();
     } catch (_error) {}
   };
 
@@ -257,6 +264,7 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
                 type="submit"
                 className="w-full sm:w-auto bg-primary px-8 py-6 text-base font-semibold"
                 isLoading={updateGroupMutation.isPending}
+                disabled={group.status === "archived"}
               >
                 Save Changes
               </Button>
@@ -377,6 +385,7 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
                 type="submit"
                 className="w-full sm:w-auto bg-primary px-8 py-6 text-base font-semibold"
                 isLoading={updateGroupMutation.isPending}
+                disabled={group.status === "archived"}
               >
                 Save Branding Settings
               </Button>
@@ -396,14 +405,28 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
                 Archiving hides the group from active views but preserves all financial history. You
                 can restore it later.
               </p>
-              <Button
-                variant="outline"
-                onClick={handleArchive}
-                isLoading={archiveGroupMutation.isPending}
-                disabled={group.status === "archived"}
-              >
-                {group.status === "archived" ? "Already Archived" : "Archive Group"}
-              </Button>
+              {group.status === "archived" ? (
+                <>
+                  <p className="text-sm font-medium text-destructive mb-3">
+                    This group is currently archived.
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={handleUnarchive}
+                    isLoading={unarchiveGroupMutation.isPending}
+                  >
+                    Unarchive Group
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={handleArchive}
+                  isLoading={archiveGroupMutation.isPending}
+                >
+                  Archive Group
+                </Button>
+              )}
             </div>
           </div>
 
@@ -414,29 +437,29 @@ const GroupSettingsForm = ({ group }: { group: GroupOut }) => {
                 Permanently delete this group and all its data. This action is irreversible. Please
                 type <strong>{group.name}</strong> below to confirm.
               </p>
-              {hasTransactions ? (
-                <p className="text-sm font-medium text-destructive mb-3">
-                  Cannot delete: This group has processed transactions. Please archive instead.
+              {hasTransactions && (
+                <p className="text-sm font-bold text-destructive mb-3 border border-destructive/50 p-2 rounded bg-destructive/10">
+                  WARNING: This group has processed transactions. Deleting it will permanently
+                  destroy financial records. Please proceed with extreme caution.
                 </p>
-              ) : (
-                <div className="space-y-4 max-w-sm">
-                  <Input
-                    placeholder={`Type "${group.name}" to confirm`}
-                    value={deleteConfirmation}
-                    onChange={(e) => setDeleteConfirmation(e.target.value)}
-                    className="border-destructive/30 bg-background"
-                  />
-                  <Button
-                    variant="destructive"
-                    onClick={handleDelete}
-                    disabled={deleteConfirmation !== group.name || deleteGroupMutation.isPending}
-                    isLoading={deleteGroupMutation.isPending}
-                    className="w-full sm:w-auto"
-                  >
-                    Permanently Delete
-                  </Button>
-                </div>
               )}
+              <div className="space-y-4 max-w-sm">
+                <Input
+                  placeholder={`Type "${group.name}" to confirm`}
+                  value={deleteConfirmation}
+                  onChange={(e) => setDeleteConfirmation(e.target.value)}
+                  className="border-destructive/30 bg-background"
+                />
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={deleteConfirmation !== group.name || deleteGroupMutation.isPending}
+                  isLoading={deleteGroupMutation.isPending}
+                  className="w-full sm:w-auto"
+                >
+                  Permanently Delete
+                </Button>
+              </div>
             </div>
           </div>
         </TabsContent>
@@ -496,7 +519,7 @@ const GroupSettingsPageClient = () => {
   const params = useParams();
   const groupSlug = typeof params.groupSlug === "string" ? params.groupSlug : "";
 
-  const { data: groupsData, isLoading } = useGroupsQuery({ limit: 100 });
+  const { data: groupsData, isLoading } = useGroupsQuery({ limit: 100, group_status: "all" });
   const group = groupsData?.items?.find((g) => g.slug === groupSlug || g.id === groupSlug);
 
   return (
