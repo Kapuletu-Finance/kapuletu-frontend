@@ -122,12 +122,17 @@ const PricingPaymentModal = () => {
       frame();
 
       const timer = setTimeout(() => {
-        router.push("/subscriptions");
+        const role = userProfile?.role;
+        if (role === "admin" || role === "super_admin") {
+          router.push("/admin");
+        } else {
+          router.push("/treasurer");
+        }
       }, 4000);
 
       return () => clearTimeout(timer);
     }
-  }, [isSuccess, router]);
+  }, [isSuccess, router, userProfile?.role]);
 
   const formatPhoneNumber = (phone: string) => {
     let cleaned = phone.replace(/\D/g, "");

@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -32,7 +31,6 @@ import { Input } from "@/components/ui/input";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateCampaignMutation } from "@/features/campaigns/services/mutations";
-import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const formSchema = z.object({
   report_title: z.string().min(1, "Report title is required"),
@@ -98,6 +96,27 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
     form,
   ]);
 
+  const insertVariable = (fieldName: "report_title" | "report_footer", variable: string) => {
+    const el = document.getElementById(`${fieldName}_input`) as HTMLTextAreaElement | null;
+    const currentVal = form.getValues(fieldName) || "";
+    if (el) {
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      const newVal = currentVal.substring(0, start) + variable + currentVal.substring(end);
+      form.setValue(fieldName, newVal, { shouldValidate: true, shouldDirty: true });
+
+      setTimeout(() => {
+        el.focus();
+        el.setSelectionRange(start + variable.length, start + variable.length);
+      }, 0);
+    } else {
+      form.setValue(fieldName, currentVal + (currentVal.endsWith(" ") ? "" : " ") + variable, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  };
+
   const onSubmit = async (data: FormValues) => {
     try {
       await updateCampaign.mutateAsync({
@@ -137,6 +156,7 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
                   <FormItem>
                     <FormControl>
                       <Textarea
+                        id="report_title_input"
                         placeholder="Type your report header here..."
                         className="resize-none min-h-[120px]"
                         {...field}
@@ -160,12 +180,9 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
                             type="button"
                             variant="secondary"
                             size="sm"
-                            onClick={() =>
-                              form.setValue(
-                                "report_title",
-                                field.value + (field.value.endsWith(" ") ? "" : " ") + v,
-                              )
-                            }
+                            onMouseDown={(e) => e.preventDefault()}
+                            onTouchStart={(e) => e.preventDefault()}
+                            onClick={() => insertVariable("report_title", v)}
                             className="text-xs h-7 px-3"
                           >
                             + {v.replace(/[[\]]/g, "")}
@@ -191,6 +208,7 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
                   <FormItem>
                     <FormControl>
                       <Textarea
+                        id="report_footer_input"
                         placeholder="Type your report footer here..."
                         className="resize-none min-h-[120px]"
                         {...field}
@@ -214,12 +232,9 @@ const EditCampaignSettingsDialog: React.FC<EditCampaignSettingsDialogProps> = ({
                             type="button"
                             variant="secondary"
                             size="sm"
-                            onClick={() =>
-                              form.setValue(
-                                "report_footer",
-                                field.value + (field.value.endsWith(" ") ? "" : " ") + v,
-                              )
-                            }
+                            onMouseDown={(e) => e.preventDefault()}
+                            onTouchStart={(e) => e.preventDefault()}
+                            onClick={() => insertVariable("report_footer", v)}
                             className="text-xs h-7 px-3"
                           >
                             + {v.replace(/[[\]]/g, "")}

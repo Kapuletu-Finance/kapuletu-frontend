@@ -15,6 +15,7 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 const filterOptions = [
   { label: "All Groups", value: "all" },
   { label: "Active Groups", value: "active" },
+  { label: "Favourited Groups", value: "favorites" },
   { label: "Archived Groups", value: "archived" },
 ] as const;
 

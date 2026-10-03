@@ -68,24 +68,38 @@ const GroupCard: React.FC<GroupCardProps> = ({
 
   if (variant === "table") {
     return (
-      <Card
+      <div
         className={cn(
-          "bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4",
+          "flex items-center justify-between gap-4 px-4 py-3 bg-card hover:bg-muted/50 border-b border-border last:border-b-0 transition-colors group",
           className,
         )}
         style={cardStyle}
       >
-        <div className="flex items-center gap-4 w-full sm:w-auto">
+        <div className="flex items-center gap-4 flex-1 min-w-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleFavorite}
+            className="w-8 h-8 shrink-0 text-muted-foreground hover:text-foreground"
+          >
+            <IconLibrary
+              name="favorite"
+              className={cn(
+                "w-4 h-4 transition-colors",
+                group.isFavorite ? "text-destructive fill-destructive" : "",
+              )}
+            />
+          </Button>
           {fullCoverPhotoUrl ? (
             <img
               src={fullCoverPhotoUrl}
               alt={group.name}
-              className="w-12 h-12 rounded-full object-cover shrink-0"
+              className="w-10 h-10 rounded-full object-cover shrink-0"
             />
           ) : (
             <div
               className={cn(
-                "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
+                "w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
                 !primaryColor && (group.iconClassName ?? "bg-primary/15 text-primary"),
               )}
               style={avatarStyle}
@@ -93,69 +107,75 @@ const GroupCard: React.FC<GroupCardProps> = ({
               {getInitials(group.name)}
             </div>
           )}
-          <div className="flex flex-col">
-            <h3 className="text-base font-bold tracking-tight text-foreground leading-tight">
+          <div className="flex flex-col min-w-0 pr-4 w-1/4 shrink-0">
+            <h3 className="text-sm font-semibold truncate text-foreground leading-tight">
               {group.name}
             </h3>
-            {tagline && <p className="text-xs font-medium text-foreground/80 mt-0.5">{tagline}</p>}
-            <p className="text-xs text-muted-foreground line-clamp-1">{group.description}</p>
+            {tagline ? (
+              <p className="text-xs text-muted-foreground truncate mt-0.5">{tagline}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground truncate mt-0.5">{group.description}</p>
+            )}
           </div>
-          {group.status && (
-            <Badge
-              variant="secondary"
-              className={cn(
-                "ml-4 font-semibold px-2.5 py-0.5 text-[10px] gap-1.5 border-none shadow-none hidden sm:inline-flex",
-                isArchived
-                  ? "bg-muted text-muted-foreground"
-                  : !primaryColor &&
-                      "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
-              )}
-              style={!isArchived ? badgeStyle : undefined}
-            >
-              <span
+
+          <div className="hidden md:flex w-1/4 items-center text-xs text-muted-foreground gap-2 truncate">
+            <IconLibrary name="campaign" className="w-4 h-4 text-muted-foreground/60" />
+            {group.active_campaigns_count} Active Campaigns
+          </div>
+          <div className="hidden lg:flex w-1/4 items-center text-xs font-semibold text-foreground gap-2 truncate">
+            {group.currency} {group.total_funds_raised?.toLocaleString()}
+          </div>
+
+          <div className="w-24 shrink-0 hidden sm:block">
+            {group.status && (
+              <Badge
+                variant="secondary"
                 className={cn(
-                  "w-1 h-1 rounded-full shrink-0",
+                  "font-semibold px-2 py-0.5 text-[10px] gap-1.5 border-none shadow-none",
                   isArchived
-                    ? "bg-muted-foreground"
-                    : !primaryColor && "bg-primary dark:bg-primary",
+                    ? "bg-muted text-muted-foreground"
+                    : !primaryColor &&
+                        "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
                 )}
-                style={!isArchived ? dotStyle : undefined}
-              />
-              {group.status}
-            </Badge>
-          )}
+                style={!isArchived ? badgeStyle : undefined}
+              >
+                <span
+                  className={cn(
+                    "w-1 h-1 rounded-full shrink-0",
+                    isArchived
+                      ? "bg-muted-foreground"
+                      : !primaryColor && "bg-primary dark:bg-primary",
+                  )}
+                  style={!isArchived ? dotStyle : undefined}
+                />
+                {group.status}
+              </Badge>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <div className="flex items-center gap-2 shrink-0 md:opacity-0 group-hover:opacity-100 transition-opacity">
+          <Link href={`/treasurer/groups/${group.slug || group.id}/settings`}>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              title="Group Settings"
+            >
+              <IconLibrary name="settings" className="w-4 h-4" />
+            </Button>
+          </Link>
           <Link href={`/treasurer/groups/${group.slug || group.id}`}>
             <Button
               size="sm"
               onClick={onViewDetails}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 h-9"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 h-8 text-xs font-medium"
             >
-              View Details
+              View Group
             </Button>
           </Link>
-          <Link href={`/treasurer/groups/${group.slug || group.id}/settings`}>
-            <Button
-              size="sm"
-              variant="outline"
-              className="border-primary text-primary hover:text-primary hover:bg-primary/5 h-9"
-            >
-              Group Settings
-            </Button>
-          </Link>
-          <Button variant="outline" size="icon" onClick={onToggleFavorite}>
-            <IconLibrary
-              name="favorite"
-              className={cn(
-                "w-4 h-4",
-                group.isFavorite ? "text-destructive fill-destructive" : "text-muted-foreground",
-              )}
-            />
-          </Button>
         </div>
-      </Card>
+      </div>
     );
   }
 

@@ -22,7 +22,13 @@ export const LandingFooter = () => {
             </p>
             <div className="flex gap-4 pt-2">
               <SocialIcon
-                url="https://facebook.com"
+                url="https://youtube.com"
+                style={{ height: 32, width: 32 }}
+                bgColor="#ffffff20"
+                fgColor="#ffffff"
+              />
+              <SocialIcon
+                url="https://x.com"
                 style={{ height: 32, width: 32 }}
                 bgColor="#ffffff20"
                 fgColor="#ffffff"
@@ -34,7 +40,7 @@ export const LandingFooter = () => {
                 fgColor="#ffffff"
               />
               <SocialIcon
-                url="https://x.com"
+                url="https://tiktok.com"
                 style={{ height: 32, width: 32 }}
                 bgColor="#ffffff20"
                 fgColor="#ffffff"
@@ -70,8 +76,16 @@ export const LandingFooter = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4">Support</h3>
+            <h3 className="text-lg font-semibold mb-4">Company & Support</h3>
             <ul className="space-y-3 text-sm text-primary-foreground/80">
+              <li>
+                <Link
+                  href="/about"
+                  className="hover:text-primary-foreground transition-colors font-medium"
+                >
+                  About Us
+                </Link>
+              </li>
               <li>
                 <Link href="/docs" className="hover:text-primary-foreground transition-colors">
                   Help & Learning Centre

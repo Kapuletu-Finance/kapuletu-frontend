@@ -25,7 +25,7 @@ export const LabeledSwitch: React.FC<LabeledSwitchProps> = ({
       disabled={disabled}
       className={cn(
         "flex items-center justify-between w-[5.5rem] rounded-full px-1.5 h-8 shrink-0 transition-colors cursor-pointer",
-        checked ? "bg-primary flex-row-reverse" : "bg-muted flex-row",
+        checked ? "bg-primary flex-row" : "bg-muted flex-row-reverse",
         disabled && "opacity-50 cursor-not-allowed"
       )}
     >

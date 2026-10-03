@@ -11,4 +11,6 @@ export const CAMPAIGNS_URLS = {
   campaignExportExcel: (id: string) => `/campaigns/${id}/export/excel` as const,
   campaignExportPdf: (id: string) => `/campaigns/${id}/export/pdf` as const,
   campaignReports: (id: string) => `/reports/whatsapp/${id}` as const,
+  campaignUnarchive: (id: string) => `/campaigns/${id}/unarchive` as const,
+  campaignPermanentDelete: (id: string) => `/campaigns/${id}/permanent` as const,
 } as const;

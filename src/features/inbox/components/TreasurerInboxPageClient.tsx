@@ -59,7 +59,7 @@ export const TreasurerInboxPageClient = () => {
   const [isClearHistoryOpen, setIsClearHistoryOpen] = useState(false);
   const clearHistoryMutation = useClearHistoryMutation();
 
-  const { data, isLoading } = usePendingInboxQuery({
+  const { data, isLoading, refetch, isRefetching } = usePendingInboxQuery({
     skip: (page - 1) * limit,
     limit,
     search: search || undefined,
@@ -118,6 +118,14 @@ export const TreasurerInboxPageClient = () => {
       newSet.delete(id);
     }
     setSelectedIds(newSet);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(new Set(inboxItems.map((item) => item.pending_id)));
+    } else {
+      setSelectedIds(new Set());
+    }
   };
 
   const approveMutation = useApproveMutation();
@@ -252,7 +260,6 @@ export const TreasurerInboxPageClient = () => {
 
   return (
     <PageLayout
-      showViewToggle
       title={`Inbox (${totalItems})`}
       subtitle="Review new contributions before adding them to your records"
       actionButton={
@@ -273,6 +280,8 @@ export const TreasurerInboxPageClient = () => {
           onFilterChange={handleFilterChange}
           onStatusChange={handleStatusChange}
           onSortChange={handleSortChange}
+          onRefresh={() => refetch()}
+          isRefetching={isRefetching}
         />
       }
       pagination={
@@ -329,11 +338,13 @@ export const TreasurerInboxPageClient = () => {
             <div
               className={cn(
                 (view === "grid" || view === "stack") &&
-                  "bg-card rounded-xl border border-border shadow-sm overflow-hidden",
+                  "bg-card rounded-xl border border-border shadow-sm",
               )}
             >
               <InboxBulkActions
                 selectedCount={selectedIds.size}
+                totalCount={inboxItems.length}
+                onSelectAll={handleSelectAll}
                 onClearSelection={() => setSelectedIds(new Set())}
                 onApproveAll={() => setIsBulkApproveOpen(true)}
                 onRejectAll={() => setIsBulkRejectOpen(true)}

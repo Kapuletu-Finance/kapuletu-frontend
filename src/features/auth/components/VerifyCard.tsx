@@ -109,7 +109,15 @@ export const VerifyCard: React.FC<VerifyCardProps> = ({ type }) => {
     } else {
       emailConfirmMutation.mutate(data, {
         onSuccess: () => {
-          setTimeout(() => router.push("/sign-in"), 2000);
+          setTimeout(() => {
+            if (user?.role === "admin" || user?.role === "super_admin") {
+              window.location.href = "/admin";
+            } else if (user?.role === "treasurer") {
+              window.location.href = "/treasurer";
+            } else {
+              router.push("/sign-in");
+            }
+          }, 2000);
         },
       });
     }

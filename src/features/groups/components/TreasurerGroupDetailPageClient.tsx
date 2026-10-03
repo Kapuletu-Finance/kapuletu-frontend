@@ -1,12 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { env } from "@/env";
 import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
 import CampaignCard, { type CampaignInfo } from "@/features/campaigns/components/CampaignCard";
 import { CampaignFormModal } from "@/features/campaigns/components/CampaignFormModal";
@@ -56,7 +56,10 @@ export const TreasurerGroupDetailPageClient = () => {
   const limit = 12;
 
   // Resolve group UUID from slug
-  const { data: groupsData, isLoading: isGroupsLoading } = useGroupsQuery({ limit: 100 });
+  const { data: groupsData, isLoading: isGroupsLoading } = useGroupsQuery({
+    limit: 100,
+    group_status: "all",
+  });
   const currentGroup = groupsData?.items?.find((g) => g.slug === groupSlug);
   const groupId = currentGroup?.id || "";
 
@@ -116,40 +119,67 @@ export const TreasurerGroupDetailPageClient = () => {
   return (
     <>
       {/* Group Banner & Title Section */}
-      <div className="w-full max-w-7xl mx-auto mb-8">
-        {fullCoverPhotoUrl && (
-          <div className="w-full h-48 sm:h-64 rounded-xl overflow-hidden mb-6 relative shadow-sm border border-border">
+      <div className="w-full max-w-7xl mx-auto mb-10 relative">
+        {fullCoverPhotoUrl ? (
+          <div className="w-full h-48 sm:h-72 rounded-2xl overflow-hidden relative shadow-sm border border-border">
             <img
               src={fullCoverPhotoUrl}
               alt={`${currentGroup?.name} cover`}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+          </div>
+        ) : (
+          <div className="w-full h-32 sm:h-48 rounded-2xl bg-muted/30 relative border border-border overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
           </div>
         )}
 
-        <div className="flex items-center gap-5 px-1 sm:px-2">
-          {!fullCoverPhotoUrl && (
+        <div
+          className={cn(
+            "flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 px-4 sm:px-8",
+            fullCoverPhotoUrl ? "-mt-16 sm:-mt-24 relative z-10" : "-mt-12 sm:-mt-16 relative z-10",
+          )}
+        >
+          <div className="flex items-end gap-5">
             <div
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl font-bold shrink-0"
+              className={cn(
+                "w-24 h-24 sm:w-32 sm:h-32 rounded-2xl flex items-center justify-center text-4xl sm:text-5xl font-bold shrink-0 shadow-md border-4 border-background bg-card",
+                !primaryColor && "text-primary",
+              )}
               style={
                 primaryColor ? { backgroundColor: `${primaryColor}15`, color: primaryColor } : {}
               }
             >
               {currentGroup ? getInitials(currentGroup.name) : ""}
             </div>
-          )}
-          <div className="flex flex-col gap-1">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-              {currentGroup?.name || <Skeleton className="h-10 w-48" />}
-            </h1>
-            {tagline ? (
-              <p className="text-base font-medium text-foreground/80">{tagline}</p>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                {currentGroup?.description || <Skeleton className="h-5 w-64" />}
-              </p>
-            )}
+
+            <div className="flex flex-col gap-1 pb-1 sm:pb-3">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground drop-shadow-sm">
+                {currentGroup?.name || <Skeleton className="h-10 w-48" />}
+              </h1>
+              {tagline ? (
+                <p className="text-base sm:text-lg font-medium text-foreground/80 drop-shadow-sm max-w-2xl">
+                  {tagline}
+                </p>
+              ) : (
+                <p className="text-sm sm:text-base text-muted-foreground drop-shadow-sm max-w-2xl line-clamp-2">
+                  {currentGroup?.description || <Skeleton className="h-5 w-64" />}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex shrink-0 pb-1 sm:pb-3 ml-29 sm:ml-0">
+            <Link href={`/treasurer/groups/${groupSlug}/settings`}>
+              <Button
+                variant="outline"
+                className="gap-2 bg-background/80 backdrop-blur-sm border-border hover:bg-muted font-semibold shadow-sm"
+              >
+                <IconLibrary name="settings" className="w-4 h-4" />
+                Group Settings
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

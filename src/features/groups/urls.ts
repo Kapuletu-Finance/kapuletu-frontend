@@ -7,4 +7,5 @@ export const GROUPS_URLS = {
   groupPermanentDelete: (id: string) => `/groups/${id}/permanent` as const,
   groupHistory: (id: string) => `/audit/logs/group/${id}` as const,
   groupCoverPhoto: (id: string) => `/groups/${id}/cover-photo` as const,
+  groupUnarchive: (id: string) => `/groups/${id}/unarchive` as const,
 } as const;

@@ -2,7 +2,17 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import {
@@ -59,6 +69,21 @@ const CampaignProgressCard = () => {
 
   const yTicks = [0, Math.round(maxValue / 2), Math.round(maxValue)];
 
+  const total_mpesa = campaign?.total_mpesa || 0;
+  const total_cash = campaign?.total_cash || 0;
+  const total_bank = campaign?.total_bank || 0;
+  const total_pledges = campaign?.total_pledges || 0;
+  const remaining = Math.max(0, target_amount - total_raised);
+
+  const pieDataRaw = [
+    { name: "M-Pesa", value: total_mpesa, color: "var(--primary)" },
+    { name: "Cash", value: total_cash, color: "#f59e0b" },
+    { name: "Bank", value: total_bank, color: "#3b82f6" },
+    { name: "Pledges", value: total_pledges, color: "#8b5cf6" },
+    { name: "Remaining Goal", value: remaining, color: "hsl(var(--muted))" },
+  ];
+  const pieData = pieDataRaw.filter((d) => d.value > 0);
+
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -84,63 +109,114 @@ const CampaignProgressCard = () => {
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div className="lg:col-span-4 flex flex-col items-center justify-center p-6 bg-secondary/30 rounded-2xl">
-          <div className="relative w-40 h-40 flex items-center justify-center">
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-              <title>Progress Ring</title>
-              <path
-                className="text-secondary"
-                strokeWidth="3.5"
-                stroke="currentColor"
-                fill="none"
-                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-              <path
-                className={`text-primary transition-all duration-1000 ease-out ${isGoalMet ? "drop-shadow-[0_0_8px_rgba(var(--primary),0.8)]" : ""}`}
-                strokeDasharray={`${Math.min(progress, 100)}, 100`}
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                stroke="currentColor"
-                fill="none"
-                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-              {/* REMOVED SURPLUS RING */}
-            </svg>
-            <div className="absolute text-center flex flex-col items-center">
-              {isLoading ? (
-                <span className="text-3xl font-extrabold text-foreground tracking-tight">...</span>
-              ) : isGoalMet ? (
-                <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
-                  <IconLibrary name="badge-check" className="w-8 h-8 text-primary mb-1" />
-                  <span className="text-sm font-bold text-foreground tracking-tight leading-none text-center">
-                    Target
-                    <br />
-                    Met!
+        <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col items-center justify-center p-6 bg-secondary/30 rounded-2xl h-52 relative">
+            <div className="relative w-32 h-32 flex items-center justify-center">
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                <title>Progress Ring</title>
+                <path
+                  className="text-secondary"
+                  strokeWidth="3.5"
+                  stroke="currentColor"
+                  fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                <path
+                  className={`text-primary transition-all duration-1000 ease-out ${isGoalMet ? "drop-shadow-[0_0_8px_rgba(var(--primary),0.8)]" : ""}`}
+                  strokeDasharray={`${Math.min(progress, 100)}, 100`}
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  stroke="currentColor"
+                  fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+              </svg>
+              <div className="absolute text-center flex flex-col items-center">
+                {isLoading ? (
+                  <span className="text-2xl font-extrabold text-foreground tracking-tight">
+                    ...
                   </span>
-                </div>
-              ) : (
-                <>
-                  <span className="text-3xl font-extrabold text-foreground tracking-tight">
-                    {`${Math.round(progress)}%`}
-                  </span>
-                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Raised
-                  </span>
-                </>
-              )}
+                ) : isGoalMet ? (
+                  <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
+                    <IconLibrary name="badge-check" className="w-7 h-7 text-primary mb-1" />
+                    <span className="text-xs font-bold text-foreground tracking-tight leading-none text-center">
+                      Target
+                      <br />
+                      Met!
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    <span className="text-2xl font-extrabold text-foreground tracking-tight">
+                      {`${Math.round(progress)}%`}
+                    </span>
+                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                      Raised
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
+            {/* SURPLUS BADGE */}
+            {surplus > 0 && !isLoading && (
+              <div className="absolute bottom-2 bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center gap-1 animate-in fade-in slide-in-from-bottom-2">
+                <IconLibrary name="trending-up" className="w-2.5 h-2.5" />+ Ksh.{" "}
+                {surplus.toLocaleString()}
+              </div>
+            )}
           </div>
 
-          {/* SURPLUS BADGE */}
-          {surplus > 0 && !isLoading && (
-            <div className="mt-4 bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 animate-in fade-in slide-in-from-bottom-2">
-              <IconLibrary name="trending-up" className="w-3 h-3" />+ Ksh.{" "}
-              {surplus.toLocaleString()}
-            </div>
-          )}
+          <div className="flex flex-col items-center justify-center p-6 bg-secondary/30 rounded-2xl h-52 relative overflow-hidden">
+            <h4 className="absolute top-3 left-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Breakdown
+            </h4>
+            {isLoading ? (
+              <span className="text-2xl font-extrabold text-foreground tracking-tight mt-4">
+                ...
+              </span>
+            ) : pieData.length === 0 ? (
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+                No data
+              </div>
+            ) : (
+              <ChartContainer config={{}} className="w-40 h-40 mt-4">
+                <PieChart>
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: "8px",
+                      border: "1px solid hsl(var(--border))",
+                      boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                      backgroundColor: "hsl(var(--background))",
+                    }}
+                    itemStyle={{
+                      color: "hsl(var(--foreground))",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                    }}
+                    formatter={(val: any) => `Ksh. ${Number(val).toLocaleString()}`}
+                  />
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={30}
+                    outerRadius={55}
+                    paddingAngle={2}
+                    stroke="none"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
+            )}
+          </div>
         </div>
 
-        <div className="lg:col-span-8 bg-secondary/20 p-6 rounded-2xl flex flex-col justify-between h-52 relative w-full">
+        <div className="lg:col-span-7 bg-secondary/20 p-6 rounded-2xl flex flex-col justify-between h-52 relative w-full">
           {isLoading ? (
             <div className="w-full h-full flex items-center justify-center">
               <Skeleton className="w-full h-40" />

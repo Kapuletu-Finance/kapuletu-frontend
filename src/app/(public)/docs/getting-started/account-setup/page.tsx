@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DocsArticle } from "@/features/docs/components/DocsArticle";
 import { DocsScreenshotSequence } from "@/features/docs/components/DocsScreenshotSequence";
-import IconLibrary from "@/features/shared/components/IconLibrary";
 
 export const metadata: Metadata = {
   title: "Account Setup | KapuLetu Docs",

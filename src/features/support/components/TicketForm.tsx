@@ -70,7 +70,9 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
           name="subject"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subject</FormLabel>
+              <FormLabel>
+                What do you need help with? <span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input placeholder="Briefly describe your issue..." {...field} />
               </FormControl>
@@ -85,7 +87,9 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>
+                  Topic <span className="text-red-500">*</span>
+                </FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -93,10 +97,10 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="technical">Technical Support</SelectItem>
-                    <SelectItem value="billing">Billing Inquiry</SelectItem>
-                    <SelectItem value="feature">Feature Request</SelectItem>
-                    <SelectItem value="general">General Question</SelectItem>
+                    <SelectItem value="technical">I need help using a feature</SelectItem>
+                    <SelectItem value="billing">I have a billing question</SelectItem>
+                    <SelectItem value="feature">I found a bug</SelectItem>
+                    <SelectItem value="general">Other / General Question</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -109,7 +113,9 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
             name="priority"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Priority</FormLabel>
+                <FormLabel>
+                  How urgent is this? <span className="text-red-500">*</span>
+                </FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -117,10 +123,10 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="low">Low — General inquiry</SelectItem>
-                    <SelectItem value="medium">Standard — Needs attention</SelectItem>
-                    <SelectItem value="high">High — Affecting my work</SelectItem>
-                    <SelectItem value="urgent">Urgent — Critical issue</SelectItem>
+                    <SelectItem value="low">Just a general question</SelectItem>
+                    <SelectItem value="medium">I'm stuck but can keep working</SelectItem>
+                    <SelectItem value="high">I'm completely blocked</SelectItem>
+                    <SelectItem value="urgent">Critical issue / System down</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -134,10 +140,12 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>
+                Please provide more details <span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Provide steps to reproduce, or detailed questions..."
+                  placeholder="Tell us exactly what happened or what you need help with..."
                   className="min-h-[150px]"
                   {...field}
                 />
@@ -148,7 +156,7 @@ export const TicketForm: React.FC<Props> = ({ onSuccess }) => {
         />
 
         <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
-          {isPending ? "Submitting..." : "Submit Ticket"}
+          {isPending ? "Sending..." : "Send Message"}
         </Button>
       </form>
     </Form>

@@ -46,10 +46,8 @@ export const VerifyEmailAlert = () => {
               <IconLibrary name="alert" className="w-5 h-5 text-burnt-amber" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-burnt-amber">Please verify your email</h3>
-              <p className="text-xs text-burnt-amber mt-0.5">
-                Verify your email address to unlock full access to KapuLetu features.
-              </p>
+              <h3 className="text-sm font-semibold text-burnt-amber">Email not verified</h3>
+              <p className="text-xs text-burnt-amber mt-0.5">Click here to verify your email.</p>
             </div>
           </div>
           <Button

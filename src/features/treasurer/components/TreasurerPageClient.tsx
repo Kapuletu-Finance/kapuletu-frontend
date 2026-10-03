@@ -16,22 +16,22 @@ const OverviewSkeleton = () => (
       <CardWithIcon
         label="Total number of groups"
         value={<Skeleton className="h-7 w-12" />}
-        icon={<IconLibrary name="group" className="w-5 h-5 text-primary-foreground" />}
+        icon={<IconLibrary name="group" className="w-5 h-5 text-primary" />}
       />
       <CardWithIcon
         label="Active campaigns"
         value={<Skeleton className="h-7 w-12" />}
-        icon={<IconLibrary name="check-circle" className="w-5 h-5 text-primary-foreground" />}
+        icon={<IconLibrary name="check-circle" className="w-5 h-5 text-primary" />}
       />
       <CardWithIcon
         label="Active groups"
         value={<Skeleton className="h-7 w-12" />}
-        icon={<IconLibrary name="badge-check" className="w-5 h-5 text-primary-foreground" />}
+        icon={<IconLibrary name="badge-check" className="w-5 h-5 text-primary" />}
       />
       <CardWithIcon
         label="Pending approvals"
         value={<Skeleton className="h-7 w-12" />}
-        icon={<IconLibrary name="clock" className="w-5 h-5 text-primary-foreground" />}
+        icon={<IconLibrary name="clock" className="w-5 h-5 text-primary" />}
       />
     </div>
   </section>

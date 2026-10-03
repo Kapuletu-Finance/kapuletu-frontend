@@ -55,6 +55,7 @@ const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
   },
   { href: "/admin/finance", icon: "credit-card", label: "Finance" },
   { href: "/admin/communications", icon: "mail", label: "Communications" },
+  { href: "/admin/blogs", icon: "report", label: "Blogs" },
   { href: "/admin/feedback", icon: "feedback", label: "Feedback" },
   { href: "/admin/support", icon: "ticket", label: "Support" },
   { href: "/admin/ai-governance", icon: "brain", label: "AI Governance" },
@@ -102,9 +103,9 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
           type="button"
           onClick={toggleSidebar}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="absolute -right-3 top-7 z-50 hidden md:flex h-6 w-6 items-center justify-center rounded-full border border-border bg-background shadow-md hover:bg-muted text-muted-foreground hover:text-foreground transition-transform hover:scale-110"
+          className="absolute -right-4 top-7 z-50 hidden md:flex h-8 w-8 items-center justify-center rounded-full border-2 border-border bg-background shadow-md hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-all hover:scale-110"
         >
-          <IconLibrary name={isCollapsed ? "chevron-right" : "chevron-left"} className="size-3.5" />
+          <IconLibrary name={isCollapsed ? "chevron-right" : "chevron-left"} className="size-4" />
         </button>
       )}
 
@@ -121,7 +122,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarMenu className="gap-2">
+          <SidebarMenu className="gap-1.5">
             {links.map((link) => {
               const isRootLink = link.href === "/treasurer";
               const isActive = isRootLink ? pathname === link.href : pathname.startsWith(link.href);
@@ -134,10 +135,10 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
                     <div ref={anchorRef} className="relative">
                       <div
                         className={cn(
-                          "flex items-center transition-all duration-300 py-1 px-4 group-data-[collapsible=icon]:px-2 rounded-lg group",
+                          "flex items-center transition-all duration-300 py-1.5 px-3 group-data-[collapsible=icon]:px-2 rounded-lg group",
                           isGroupsActive
-                            ? "bg-primary/20 text-foreground font-medium"
-                            : "hover:bg-muted/40 text-muted-foreground hover:text-foreground",
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "hover:bg-muted/50 text-muted-foreground hover:text-foreground",
                         )}
                       >
                         {/* Clickable section: icon + label → navigates to /groups */}
@@ -151,7 +152,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
                         >
                           <div
                             className={cn(
-                              "relative flex items-center justify-center shrink-0 size-10 transition-colors duration-300 rounded-md",
+                              "relative flex items-center justify-center shrink-0 size-8 transition-colors duration-300 rounded-md",
                               isGroupsActive
                                 ? "bg-primary text-primary-foreground"
                                 : "text-primary",
@@ -159,7 +160,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
                           >
                             <IconLibrary
                               name={link.icon}
-                              className="size-5 transition-transform duration-300 group-hover:scale-110"
+                              className="size-4.5 transition-transform duration-300 group-hover:scale-110"
                             />
                           </div>
                           <span className="text-base tracking-tight truncate group-data-[collapsible=icon]:hidden">
@@ -217,10 +218,10 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
                       }
                     }}
                     className={cn(
-                      "transition-all duration-300 py-7 px-4 group-data-[collapsible=icon]:p-2 rounded-lg group",
+                      "transition-all duration-300 py-3 px-3 group-data-[collapsible=icon]:p-2 rounded-lg group",
                       isActive
-                        ? "bg-primary/20 text-foreground font-medium"
-                        : "hover:bg-muted/40 text-muted-foreground hover:text-foreground",
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-muted/50 text-muted-foreground hover:text-foreground",
                     )}
                     render={
                       <Link
@@ -229,13 +230,13 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
                       >
                         <div
                           className={cn(
-                            "relative flex items-center justify-center shrink-0 size-10 transition-colors duration-300 rounded-md",
+                            "relative flex items-center justify-center shrink-0 size-8 transition-colors duration-300 rounded-md",
                             isActive ? "bg-primary text-primary-foreground" : "text-primary",
                           )}
                         >
                           <IconLibrary
                             name={link.icon}
-                            className="size-5 transition-transform duration-300 group-hover:scale-110"
+                            className="size-4.5 transition-transform duration-300 group-hover:scale-110"
                           />
                           {link.label === "Inbox" && pendingInboxCount > 0 && (
                             <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none shadow-md bg-primary text-primary-foreground">
@@ -358,9 +359,6 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
               >
                 <IconLibrary name="search" className="h-4 w-4" />
                 <span>Search...</span>
-                <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-                  <span className="text-xs">⌘</span>K
-                </kbd>
               </button>
               <Link
                 href="/support"

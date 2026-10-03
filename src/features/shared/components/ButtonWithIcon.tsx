@@ -20,10 +20,10 @@ const ButtonWithIcon = React.forwardRef<HTMLButtonElement, ButtonWithIconProps>(
       >
         <IconLibrary
           name={iconName}
-          className="text-burnt-amber size-6 shrink-0"
+          className="text-primary size-6 shrink-0 pointer-events-none"
           strokeWidth={1.5}
         />
-        <div className="flex flex-col items-start gap-0.5 text-left min-w-0 flex-1">
+        <div className="flex flex-col items-start gap-0.5 text-left min-w-0 flex-1 pointer-events-none">
           <span className="text-primary font-semibold text-sm leading-snug whitespace-normal wrap-break-word w-full">
             {label}
           </span>

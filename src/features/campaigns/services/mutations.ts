@@ -110,6 +110,46 @@ export const useArchiveCampaignMutation = (campaignId: string) => {
   });
 };
 
+export const useUnarchiveCampaignMutation = (campaignId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.post<CampaignOut>(
+        CAMPAIGNS_URLS.campaignUnarchive(campaignId),
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to unarchive campaign.");
+    },
+    onSuccess: () => {
+      toast.success("Campaign unarchived successfully!");
+      queryClient.invalidateQueries({ queryKey: campaignsQueryKey });
+      queryClient.invalidateQueries({ queryKey: ["campaign", campaignId] });
+    },
+  });
+};
+
+export const useDeleteCampaignMutation = (campaignId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      await apiClient.delete(CAMPAIGNS_URLS.campaignPermanentDelete(campaignId));
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to permanently delete campaign.",
+      );
+    },
+    onSuccess: () => {
+      toast.success("Campaign permanently deleted.");
+      queryClient.invalidateQueries({ queryKey: campaignsQueryKey });
+    },
+  });
+};
+
 export const useToggleCampaignFavoriteMutation = (campaignId: string) => {
   const queryClient = useQueryClient();
 

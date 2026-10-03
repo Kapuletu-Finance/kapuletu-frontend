@@ -10,7 +10,7 @@ const PendingContributionsCard = ({ value = 0 }: PendingContributionsCardProps) 
     <CardWithIcon
       label="Awaiting approval"
       value={value}
-      icon={<IconLibrary name="clock" className="w-5 h-5 text-primary-foreground" />}
+      icon={<IconLibrary name="clock" className="w-5 h-5 text-primary" />}
     />
   );
 };

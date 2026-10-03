@@ -87,9 +87,16 @@ export const GlobalSearch = ({
 
   const groups = searchResults?.groups || [];
   const campaigns = searchResults?.campaigns || [];
+  const contributors = searchResults?.contributors || [];
+  const settings = searchResults?.settings || [];
 
   const showResults = query.length >= 2;
-  const hasResults = matchingActions.length > 0 || groups.length > 0 || campaigns.length > 0;
+  const hasResults =
+    matchingActions.length > 0 ||
+    groups.length > 0 ||
+    campaigns.length > 0 ||
+    contributors.length > 0 ||
+    settings.length > 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -101,15 +108,12 @@ export const GlobalSearch = ({
         <div className="flex items-center border-b border-border px-3">
           <IconLibrary name="search" className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
           <Input
-            placeholder="Type a command or search..."
+            placeholder="Search for anything (e.g. groups, campaigns, contributors)..."
             className="flex h-12 w-full rounded-md bg-transparent py-3 text-sm outline-none border-none placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             autoFocus
           />
-          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-            ESC
-          </kbd>
         </div>
 
         <ScrollArea className="max-h-[300px] w-full" orientation="vertical">
@@ -132,72 +136,118 @@ export const GlobalSearch = ({
               </div>
             )}
 
-            {(!isLoading || groups.length > 0 || matchingActions.length > 0) && showResults && (
-              <>
-                {matchingActions.length > 0 && (
-                  <>
-                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2">
-                      Actions
-                    </div>
-                    {matchingActions.map((action) => (
-                      <Link
-                        key={action.title}
-                        href={action.href}
-                        onClick={() => onOpenChange(false)}
-                        className="relative flex cursor-default select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      >
-                        <IconLibrary name={action.icon as any} className="mr-2 h-4 w-4" />
-                        <span>{action.title}</span>
-                      </Link>
-                    ))}
-                  </>
-                )}
+            {(!isLoading ||
+              groups.length > 0 ||
+              matchingActions.length > 0 ||
+              contributors.length > 0 ||
+              settings.length > 0) &&
+              showResults && (
+                <>
+                  {matchingActions.length > 0 && (
+                    <>
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2">
+                        Quick Links
+                      </div>
+                      {matchingActions.map((action) => (
+                        <Link
+                          key={action.title}
+                          href={action.href}
+                          onClick={() => onOpenChange(false)}
+                          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        >
+                          <IconLibrary name={action.icon as any} className="mr-2 h-4 w-4" />
+                          <span>{action.title}</span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
 
-                {groups.length > 0 && (
-                  <>
-                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2">
-                      Groups
-                    </div>
-                    {groups.map((group) => (
-                      <Link
-                        key={group.group_id}
-                        href={`/treasurer/groups/${group.slug || group.group_id}`}
-                        onClick={() => onOpenChange(false)}
-                        className="relative flex cursor-default select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      >
-                        <IconLibrary name="group" className="mr-2 h-4 w-4" />
-                        <span>{group.name}</span>
-                      </Link>
-                    ))}
-                  </>
-                )}
+                  {groups.length > 0 && (
+                    <>
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2">
+                        Groups
+                      </div>
+                      {groups.map((group) => (
+                        <Link
+                          key={group.group_id}
+                          href={`/treasurer/groups/${group.slug || group.group_id}`}
+                          onClick={() => onOpenChange(false)}
+                          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        >
+                          <IconLibrary name="group" className="mr-2 h-4 w-4" />
+                          <span>{group.name}</span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
 
-                {campaigns.length > 0 && (
-                  <>
-                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2">
-                      Campaigns
-                    </div>
-                    {campaigns.map((campaign) => (
-                      <Link
-                        key={campaign.campaign_id}
-                        href={`/treasurer/groups/${campaign.group_slug || campaign.group_id}/campaigns/${campaign.campaign_slug || campaign.campaign_id}/contributions`}
-                        onClick={() => onOpenChange(false)}
-                        className="relative flex cursor-default select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      >
-                        <IconLibrary
-                          name="add-circle"
-                          className="mr-2 h-4 w-4 fill-primary text-background"
-                        />
-                        <span>{campaign.title}</span>
-                        <span className="ml-2 text-xs text-muted-foreground">
-                          in {campaign.group_name}
-                        </span>
-                      </Link>
-                    ))}
-                  </>
-                )}
-              </>
-            )}
+                  {campaigns.length > 0 && (
+                    <>
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2">
+                        Campaigns
+                      </div>
+                      {campaigns.map((campaign) => (
+                        <Link
+                          key={campaign.campaign_id}
+                          href={`/treasurer/groups/${campaign.group_slug || campaign.group_id}/campaigns/${campaign.campaign_slug || campaign.campaign_id}/contributions`}
+                          onClick={() => onOpenChange(false)}
+                          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        >
+                          <IconLibrary
+                            name="add-circle"
+                            className="mr-2 h-4 w-4 fill-primary text-background"
+                          />
+                          <span>{campaign.title}</span>
+                          <span className="ml-2 text-xs text-muted-foreground">
+                            in {campaign.group_name}
+                          </span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+
+                  {contributors.length > 0 && (
+                    <>
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2">
+                        Contributors
+                      </div>
+                      {contributors.map((contributor, idx) => (
+                        <Link
+                          key={idx}
+                          href={`/treasurer/groups/${contributor.group_id}`}
+                          onClick={() => onOpenChange(false)}
+                          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        >
+                          <IconLibrary name="member" className="mr-2 h-4 w-4" />
+                          <span>{contributor.name}</span>
+                          <span className="ml-2 text-xs text-muted-foreground">
+                            {contributor.phone}
+                          </span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+
+                  {settings.length > 0 && (
+                    <>
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2">
+                        Settings
+                      </div>
+                      {settings.map((setting) => (
+                        <Link
+                          key={setting.title}
+                          href={setting.href}
+                          onClick={() => onOpenChange(false)}
+                          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        >
+                          <IconLibrary name="settings" className="mr-2 h-4 w-4" />
+                          <span>{setting.title}</span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+                </>
+              )}
           </div>
         </ScrollArea>
       </DialogContent>
