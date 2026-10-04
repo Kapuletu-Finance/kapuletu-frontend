@@ -41,28 +41,97 @@ import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert"
 import { usePendingTicketsCountQuery } from "@/features/support/services/queries";
 import { cn } from "@/lib/utils";
 
-const ADMIN_LINKS: { href: string; label: string; icon: IconName }[] = [
-  { href: "/admin/overview", icon: "analytics", label: "Overview" },
-  {
-    href: "/admin/performance",
-    icon: "activity",
-    label: "Platform Performance",
-  },
-  { href: "/admin/users", icon: "group", label: "Users" },
-  {
-    href: "/admin/finance/plans",
-    icon: "credit-card",
-    label: "Billing & Plans",
-  },
-  { href: "/admin/finance", icon: "credit-card", label: "Finance" },
-  { href: "/admin/communications", icon: "mail", label: "Communications" },
-  { href: "/admin/blogs", icon: "report", label: "Blogs" },
-  { href: "/admin/feedback", icon: "feedback", label: "Feedback" },
-  { href: "/admin/support", icon: "ticket", label: "Support" },
-  { href: "/admin/ai-governance", icon: "brain", label: "AI Governance" },
-  { href: "/admin/audit", icon: "shield-ellipsis", label: "Audit Logs" },
-  { href: "/admin/profile", icon: "settings", label: "Settings" },
-];
+const getAdminLinks = (role: UserRole): { href: string; label: string; icon: IconName }[] => {
+  const allLinks = [
+    {
+      href: "/admin/overview",
+      icon: "analytics" as IconName,
+      label: "Overview",
+      allowedRoles: ["super_admin", "admin"],
+    },
+    {
+      href: "/admin/performance",
+      icon: "activity" as IconName,
+      label: "Platform Performance",
+      allowedRoles: ["super_admin", "admin"],
+    },
+    {
+      href: "/admin/users",
+      icon: "group" as IconName,
+      label: "Users",
+      allowedRoles: ["super_admin", "admin", "support_agent", "finance_manager"],
+    },
+    {
+      href: "/admin/finance/plans",
+      icon: "credit-card" as IconName,
+      label: "Billing & Plans",
+      allowedRoles: ["super_admin", "admin", "finance_manager"],
+    },
+    {
+      href: "/admin/finance",
+      icon: "credit-card" as IconName,
+      label: "Finance",
+      allowedRoles: ["super_admin", "admin", "finance_manager"],
+    },
+    {
+      href: "/admin/communications",
+      icon: "mail" as IconName,
+      label: "Communications",
+      allowedRoles: ["super_admin", "admin", "support_agent"],
+    },
+    {
+      href: "/admin/blogs",
+      icon: "report" as IconName,
+      label: "Blogs",
+      allowedRoles: ["super_admin", "admin", "content_manager"],
+    },
+    {
+      href: "/admin/feedback",
+      icon: "feedback" as IconName,
+      label: "Feedback",
+      allowedRoles: ["super_admin", "admin", "support_agent", "content_manager"],
+    },
+    {
+      href: "/admin/support",
+      icon: "ticket" as IconName,
+      label: "Support",
+      allowedRoles: ["super_admin", "admin", "support_agent"],
+    },
+    {
+      href: "/admin/employees",
+      icon: "group" as IconName,
+      label: "Employees",
+      allowedRoles: ["super_admin"],
+    },
+    {
+      href: "/admin/approvals",
+      icon: "shield-ellipsis" as IconName,
+      label: "Approvals Queue",
+      allowedRoles: ["super_admin", "admin"],
+    },
+    {
+      href: "/admin/ai-governance",
+      icon: "brain" as IconName,
+      label: "AI Governance",
+      allowedRoles: ["super_admin", "admin"],
+    },
+    {
+      href: "/admin/audit",
+      icon: "shield-ellipsis" as IconName,
+      label: "Audit Logs",
+      allowedRoles: ["super_admin", "admin"],
+    },
+    {
+      href: "/admin/profile",
+      icon: "settings" as IconName,
+      label: "Settings",
+      allowedRoles: ["super_admin", "admin", "support_agent", "content_manager", "finance_manager"],
+    },
+  ];
+  return allLinks
+    .filter((link) => link.allowedRoles.includes(role as any))
+    .map(({ href, icon, label }) => ({ href, icon, label }));
+};
 
 const TREASURER_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/treasurer", icon: "home", label: "Dashboard" },
@@ -307,15 +376,15 @@ const MobileSidebarTrigger = () => {
 import { useHeartbeat } from "@/hooks/useHeartbeat";
 
 export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
-  const isAdminOrSuperAdmin = role === "admin" || role === "super_admin";
-  const links = isAdminOrSuperAdmin ? ADMIN_LINKS : TREASURER_LINKS;
+  const isInternalEmployee = role !== "treasurer";
+  const links = isInternalEmployee ? getAdminLinks(role) : TREASURER_LINKS;
   useHeartbeat();
   const { data: user, isLoading } = useGetMeQuery();
   const { data: pendingCount } = usePendingInboxCountQuery();
   const { data: feedbackCount } = useNewFeedbackCountQuery();
   const { data: ticketsCount } = usePendingTicketsCountQuery();
   const { data: pendingComments } = useGetAdminCommentsQuery("pending", {
-    enabled: isAdminOrSuperAdmin,
+    enabled: isInternalEmployee,
   });
   const pendingCommentsCount = pendingComments?.length || 0;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -330,8 +399,8 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
           links={links}
           role={role}
           pendingInboxCount={pendingCount ?? 0}
-          newFeedbackCount={isAdminOrSuperAdmin ? (feedbackCount ?? 0) : 0}
-          pendingTicketsCount={!isAdminOrSuperAdmin ? (ticketsCount ?? 0) : 0}
+          newFeedbackCount={isInternalEmployee ? (feedbackCount ?? 0) : 0}
+          pendingTicketsCount={!isInternalEmployee ? (ticketsCount ?? 0) : 0}
           pendingCommentsCount={pendingCommentsCount}
         />
 
@@ -358,7 +427,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
                   )}
                 </h2>
                 <span className="text-[10px] font-semibold text-refined-blue border border-refined-blue/30 bg-refined-blue/5 rounded-full px-2 py-0.5 w-fit mt-0.5">
-                  {isAdminOrSuperAdmin ? "Admin Workspace" : "Treasurer Workspace"}
+                  {isInternalEmployee ? "Admin Workspace" : "Treasurer Workspace"}
                 </span>
               </div>
             </div>
@@ -400,7 +469,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
             <main className="p-4 md:p-6 lg:p-8">
               <div className="max-w-6xl mx-auto space-y-4">
                 <VerifyEmailAlert />
-                {!isAdminOrSuperAdmin && <TrialBanner />}
+                {!isInternalEmployee && <TrialBanner />}
                 {children}
               </div>
             </main>
@@ -411,7 +480,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
       <GlobalSearch open={isSearchOpen} onOpenChange={setIsSearchOpen} />
 
       {/* Floating assistant widget — treasurer workspace only */}
-      {!isAdminOrSuperAdmin && <KapuletuAssistant />}
+      {!isInternalEmployee && <KapuletuAssistant />}
 
       {/* 2FA Nudge Modal */}
       <SecurityNudgeModal />

@@ -507,3 +507,35 @@ export const useUploadProfilePhotoMutation = () => {
     },
   });
 };
+
+export const useEmployeeSetupMutation = () => {
+  return useMutation({
+    mutationFn: async (data: { token: string; password: string }) => {
+      const response = await apiClient.post("/auth/employee-setup", data);
+      return response.data;
+    },
+  });
+};
+
+export const useInviteEmployeeMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      email: string;
+      first_name: string;
+      last_name: string;
+      role: string;
+    }) => {
+      const response = await apiClient.post("/admin/employees/invite", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Employee invitation sent successfully!");
+      queryClient.invalidateQueries({ queryKey: ["admin_employees"] });
+      queryClient.invalidateQueries({ queryKey: ["admin_invites"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to send invitation");
+    },
+  });
+};

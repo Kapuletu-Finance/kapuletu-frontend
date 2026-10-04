@@ -707,3 +707,49 @@ export const useUpdateAdminNotificationEmailsMutation = () => {
     },
   });
 };
+
+// --- Approvals Mutations ---
+
+export const useSubmitApprovalRequestMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { action_type: string; payload: any; justification?: string }) => {
+      const response = await apiClient.post("/admin/approvals", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Action submitted for approval.");
+      queryClient.invalidateQueries({ queryKey: ["admin_approvals"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to submit approval request");
+    },
+  });
+};
+
+export const useResolveApprovalRequestMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      requestId,
+      action,
+    }: {
+      requestId: string;
+      action: "approve" | "reject";
+    }) => {
+      const response = await apiClient.post(`/admin/approvals/${requestId}/resolve`, { action });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.status === "APPROVED") {
+        toast.success("Request approved and executed successfully.");
+      } else {
+        toast.success("Request rejected.");
+      }
+      queryClient.invalidateQueries({ queryKey: ["admin_approvals"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to resolve approval request");
+    },
+  });
+};

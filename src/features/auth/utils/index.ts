@@ -31,7 +31,14 @@ export const validateCsrfShield = (request: NextRequest): boolean => {
   return request.headers.get(CSRF_HEADER_NAME) === "true";
 };
 
-export type UserRole = "admin" | "super_admin" | "treasurer" | null;
+export type UserRole =
+  | "admin"
+  | "super_admin"
+  | "treasurer"
+  | "support_agent"
+  | "content_manager"
+  | "finance_manager"
+  | null;
 
 export const getRoleFromCookie = (): UserRole => {
   if (typeof document === "undefined") return null;

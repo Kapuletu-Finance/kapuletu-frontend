@@ -905,3 +905,46 @@ export const useAdminNotificationEmailsQuery = () => {
     },
   });
 };
+
+// --- Employee Management Queries ---
+
+export const useAdminEmployeesQuery = () => {
+  return useQuery({
+    queryKey: ["admin_employees"],
+    queryFn: async () => {
+      const response = await apiClient.get<any[]>("/admin/employees");
+      return response.data;
+    },
+  });
+};
+
+export const useAdminPendingInvitesQuery = () => {
+  return useQuery({
+    queryKey: ["admin_invites"],
+    queryFn: async () => {
+      const response = await apiClient.get<any[]>("/admin/employees/invites");
+      return response.data;
+    },
+  });
+};
+
+export const useAdminApprovalsQuery = (status?: string) => {
+  return useQuery({
+    queryKey: ["admin_approvals", status],
+    queryFn: async () => {
+      const url = status ? `/admin/approvals?status=${status}` : "/admin/approvals";
+      const response = await apiClient.get<any[]>(url);
+      return response.data;
+    },
+  });
+};
+
+export const useAdminAuditLogsQuery = (limit: number = 100) => {
+  return useQuery({
+    queryKey: ["admin_audit_logs", limit],
+    queryFn: async () => {
+      const response = await apiClient.get<any[]>(`/admin/audit-logs?limit=${limit}`);
+      return response.data;
+    },
+  });
+};

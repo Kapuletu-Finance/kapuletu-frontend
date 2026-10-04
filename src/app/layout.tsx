@@ -28,9 +28,11 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
       className={`${figtree.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <SEOConfig />
+      </head>
       <body className="min-h-full flex flex-col relative">
         <NextTopLoader color="#097255" showSpinner={false} />
-        <SEOConfig />
         <Providers>
           <PublicThemeToggle />
           {children}
