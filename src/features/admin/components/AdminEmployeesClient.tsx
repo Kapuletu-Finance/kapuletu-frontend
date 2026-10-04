@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -39,21 +40,57 @@ import {
   useAdminEmployeesQuery,
   useAdminPendingInvitesQuery,
 } from "@/features/admin/services/queries";
-import { useInviteEmployeeMutation } from "@/features/auth/services/mutations";
+import {
+  useInviteEmployeeMutation,
+  useUpdateEmployeePermissionsMutation,
+} from "@/features/auth/services/mutations";
 import { apiClient } from "@/lib/api-client";
+
+const AVAILABLE_PERMISSIONS = [
+  { id: "manage_finance", label: "Manage Finance" },
+  { id: "manage_users", label: "Manage Users" },
+  { id: "manage_blogs", label: "Manage Blogs" },
+  { id: "manage_support", label: "Manage Support" },
+  { id: "view_audit_logs", label: "View Audit Logs" },
+  { id: "manage_employees", label: "Manage Employees" },
+];
+
+const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
+  content_manager: ["manage_blogs"],
+  support_agent: ["manage_support", "manage_users"],
+  finance_manager: ["manage_finance"],
+  admin: ["manage_finance", "manage_users", "manage_blogs", "manage_support", "view_audit_logs"],
+  super_admin: [
+    "manage_finance",
+    "manage_users",
+    "manage_blogs",
+    "manage_support",
+    "view_audit_logs",
+    "manage_employees",
+  ],
+};
 
 const AdminEmployeesClient: React.FC = () => {
   const { data: employees = [], isLoading: isLoadingEmployees } = useAdminEmployeesQuery();
   const { data: invites = [], isLoading: isLoadingInvites } = useAdminPendingInvitesQuery();
   const inviteMutation = useInviteEmployeeMutation();
+  const updateMutation = useUpdateEmployeePermissionsMutation();
   const queryClient = useQueryClient();
 
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const [inviteForm, setInviteForm] = useState({
+  const [editingEmployee, setEditingEmployee] = useState<any>(null);
+  const [inviteForm, setInviteForm] = useState<{
+    email: string;
+    first_name: string;
+    last_name: string;
+    role: string;
+    permissions: string[];
+  }>({
     email: "",
     first_name: "",
     last_name: "",
     role: "support_agent",
+    permissions: DEFAULT_ROLE_PERMISSIONS["support_agent"] || [],
   });
 
   const handleInvite = (e: React.FormEvent) => {
@@ -61,7 +98,13 @@ const AdminEmployeesClient: React.FC = () => {
     inviteMutation.mutate(inviteForm, {
       onSuccess: () => {
         setIsInviteModalOpen(false);
-        setInviteForm({ email: "", first_name: "", last_name: "", role: "support_agent" });
+        setInviteForm({
+          email: "",
+          first_name: "",
+          last_name: "",
+          role: "support_agent",
+          permissions: DEFAULT_ROLE_PERMISSIONS["support_agent"] || [],
+        });
       },
     });
   };
@@ -146,7 +189,14 @@ const AdminEmployeesClient: React.FC = () => {
                 <Label>Role</Label>
                 <Select
                   value={inviteForm.role}
-                  onValueChange={(val) => setInviteForm({ ...inviteForm, role: val as any })}
+                  onValueChange={(val: string | null) => {
+                    if (!val) return;
+                    setInviteForm({
+                      ...inviteForm,
+                      role: val,
+                      permissions: DEFAULT_ROLE_PERMISSIONS[val] || [],
+                    });
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Role" />
@@ -159,6 +209,39 @@ const AdminEmployeesClient: React.FC = () => {
                     <SelectItem value="super_admin">Super Admin</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <Label className="text-sm font-semibold">Granular Module Access</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {AVAILABLE_PERMISSIONS.map((permission) => (
+                    <div key={permission.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={permission.id}
+                        checked={inviteForm.permissions.includes(permission.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setInviteForm((prev) => ({
+                              ...prev,
+                              permissions: [...prev.permissions, permission.id],
+                            }));
+                          } else {
+                            setInviteForm((prev) => ({
+                              ...prev,
+                              permissions: prev.permissions.filter((p) => p !== permission.id),
+                            }));
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor={permission.id}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {permission.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
               </div>
               <DialogFooter className="pt-4">
                 <Button type="button" variant="outline" onClick={() => setIsInviteModalOpen(false)}>
@@ -237,14 +320,23 @@ const AdminEmployeesClient: React.FC = () => {
                           </TableCell>
                           <TableCell className="text-right">
                             {emp.is_active && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-red-500 hover:bg-red-50 hover:text-red-600"
-                                onClick={() => handleRevokeAccess(emp.user_id)}
-                              >
-                                Revoke
-                              </Button>
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setEditingEmployee(emp)}
+                                >
+                                  Edit Access
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-red-500 hover:bg-red-50 hover:text-red-600"
+                                  onClick={() => handleRevokeAccess(emp.user_id)}
+                                >
+                                  Revoke
+                                </Button>
+                              </div>
                             )}
                           </TableCell>
                         </TableRow>
@@ -316,6 +408,71 @@ const AdminEmployeesClient: React.FC = () => {
           <AdminAuditClient />
         </TabsContent>
       </Tabs>
+      {editingEmployee && (
+        <Dialog open={!!editingEmployee} onOpenChange={(open) => !open && setEditingEmployee(null)}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Edit Employee Access</DialogTitle>
+              <DialogDescription>
+                Update granular module access for {editingEmployee.first_name}{" "}
+                {editingEmployee.last_name}.
+              </DialogDescription>
+            </DialogHeader>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                updateMutation.mutate(
+                  { userId: editingEmployee.user_id, permissions: editingEmployee.permissions },
+                  {
+                    onSuccess: () => setEditingEmployee(null),
+                  },
+                );
+              }}
+              className="space-y-4 pt-4"
+            >
+              <div className="grid grid-cols-2 gap-3">
+                {AVAILABLE_PERMISSIONS.map((permission) => (
+                  <div key={permission.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`edit-${permission.id}`}
+                      checked={editingEmployee.permissions.includes(permission.id)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setEditingEmployee((prev: any) => ({
+                            ...prev,
+                            permissions: [...(prev?.permissions || []), permission.id],
+                          }));
+                        } else {
+                          setEditingEmployee((prev: any) => ({
+                            ...prev,
+                            permissions: (prev?.permissions || []).filter(
+                              (p: string) => p !== permission.id,
+                            ),
+                          }));
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor={`edit-${permission.id}`}
+                      className="text-sm font-medium leading-none"
+                    >
+                      {permission.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <DialogFooter className="pt-4">
+                <Button type="button" variant="outline" onClick={() => setEditingEmployee(null)}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={updateMutation.isPending}>
+                  {updateMutation.isPending ? "Saving..." : "Save Changes"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

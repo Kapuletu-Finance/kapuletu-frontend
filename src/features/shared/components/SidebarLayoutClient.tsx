@@ -41,7 +41,10 @@ import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert"
 import { usePendingTicketsCountQuery } from "@/features/support/services/queries";
 import { cn } from "@/lib/utils";
 
-const getAdminLinks = (role: UserRole): { href: string; label: string; icon: IconName }[] => {
+const getAdminLinks = (
+  role: UserRole,
+  permissions: string[] = [],
+): { href: string; label: string; icon: IconName }[] => {
   const allLinks = [
     {
       href: "/admin/overview",
@@ -59,49 +62,57 @@ const getAdminLinks = (role: UserRole): { href: string; label: string; icon: Ico
       href: "/admin/users",
       icon: "group" as IconName,
       label: "Users",
-      allowedRoles: ["super_admin", "admin", "support_agent", "finance_manager"],
+      allowedRoles: ["super_admin", "admin"],
+      permission: "manage_users",
     },
     {
       href: "/admin/finance/plans",
       icon: "credit-card" as IconName,
       label: "Billing & Plans",
-      allowedRoles: ["super_admin", "admin", "finance_manager"],
+      allowedRoles: ["super_admin", "admin"],
+      permission: "manage_finance",
     },
     {
       href: "/admin/finance",
       icon: "credit-card" as IconName,
       label: "Finance",
-      allowedRoles: ["super_admin", "admin", "finance_manager"],
+      allowedRoles: ["super_admin", "admin"],
+      permission: "manage_finance",
     },
     {
       href: "/admin/communications",
       icon: "mail" as IconName,
       label: "Communications",
-      allowedRoles: ["super_admin", "admin", "support_agent"],
+      allowedRoles: ["super_admin", "admin"],
+      permission: "manage_support",
     },
     {
       href: "/admin/blogs",
       icon: "report" as IconName,
       label: "Blogs",
-      allowedRoles: ["super_admin", "admin", "content_manager"],
+      allowedRoles: ["super_admin", "admin"],
+      permission: "manage_blogs",
     },
     {
       href: "/admin/feedback",
       icon: "feedback" as IconName,
       label: "Feedback",
-      allowedRoles: ["super_admin", "admin", "support_agent", "content_manager"],
+      allowedRoles: ["super_admin", "admin"],
+      permission: "manage_support",
     },
     {
       href: "/admin/support",
       icon: "ticket" as IconName,
       label: "Support",
-      allowedRoles: ["super_admin", "admin", "support_agent"],
+      allowedRoles: ["super_admin", "admin"],
+      permission: "manage_support",
     },
     {
       href: "/admin/employees",
       icon: "group" as IconName,
       label: "Employees",
       allowedRoles: ["super_admin"],
+      permission: "manage_employees",
     },
     {
       href: "/admin/approvals",
@@ -120,6 +131,7 @@ const getAdminLinks = (role: UserRole): { href: string; label: string; icon: Ico
       icon: "shield-ellipsis" as IconName,
       label: "Audit Logs",
       allowedRoles: ["super_admin", "admin"],
+      permission: "view_audit_logs",
     },
     {
       href: "/admin/profile",
@@ -129,7 +141,11 @@ const getAdminLinks = (role: UserRole): { href: string; label: string; icon: Ico
     },
   ];
   return allLinks
-    .filter((link) => link.allowedRoles.includes(role as any))
+    .filter((link) => {
+      if (link.allowedRoles.includes(role as any)) return true;
+      if (link.permission && permissions.includes(link.permission)) return true;
+      return false;
+    })
     .map(({ href, icon, label }) => ({ href, icon, label }));
 };
 

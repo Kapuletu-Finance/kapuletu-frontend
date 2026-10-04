@@ -525,6 +525,7 @@ export const useInviteEmployeeMutation = () => {
       first_name: string;
       last_name: string;
       role: string;
+      permissions: string[];
     }) => {
       const response = await apiClient.post("/admin/employees/invite", data);
       return response.data;
@@ -536,6 +537,25 @@ export const useInviteEmployeeMutation = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.detail || "Failed to send invitation");
+    },
+  });
+};
+
+export const useUpdateEmployeePermissionsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId, permissions }: { userId: string; permissions: string[] }) => {
+      const response = await apiClient.put(`/admin/employees/${userId}/permissions`, {
+        permissions,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Permissions updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["admin_employees"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to update permissions");
     },
   });
 };
