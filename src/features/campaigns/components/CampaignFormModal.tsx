@@ -23,8 +23,8 @@ import {
   useUpdateCampaignMutation,
   useUploadCampaignCoverPhotoMutation,
 } from "@/features/campaigns/services/mutations";
-import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { ImageUploader } from "@/features/shared/components/ImageUploader";
+import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import type { CampaignInfo } from "./CampaignCard";
 
 const campaignSchema = z.object({
@@ -129,7 +129,8 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
         setCoverPhoto(null);
         onOpenChange(false);
         if (response?.slug) {
-          router.push(`/treasurer/groups/${groupId}/campaigns/${response.slug}`);
+          const groupSlug = window.location.pathname.split("/")[3] || groupId;
+          router.push(`/treasurer/groups/${groupSlug}/campaigns/${response.slug}`);
         }
       }
     } catch (_error) {
@@ -152,23 +153,6 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-            <div className="space-y-3">
-              <FieldLabel className="text-xs font-medium text-foreground">
-                Campaign Cover Photo
-              </FieldLabel>
-              <ImageUploader
-                currentImageUrl={null} // Wait, what if we have a current image? campaign settings is not passed! We might need to handle this later. Let's just allow upload.
-                onFileSelect={(file) => setCoverPhoto(file)}
-                onClear={() => setCoverPhoto(null)}
-                shape="video" // 16:9 aspect ratio
-                className="w-full h-48 border-dashed"
-                isLoading={uploadPhotoMutation.isPending}
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">
-                Recommended: 16:9 ratio, at least 1200x675 pixels.
-              </p>
-            </div>
-
             <FormField
               control={form.control}
               name="name"
@@ -314,6 +298,23 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                 )}
               />
             )}
+
+            <div className="space-y-3 pt-2 border-t border-border">
+              <FieldLabel className="text-xs font-medium text-foreground">
+                Campaign Cover Photo
+              </FieldLabel>
+              <ImageUploader
+                currentImageUrl={null}
+                onFileSelect={(file) => setCoverPhoto(file)}
+                onClear={() => setCoverPhoto(null)}
+                shape="video"
+                className="w-full h-48 border-dashed"
+                isLoading={uploadPhotoMutation.isPending}
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Recommended: 16:9 ratio, at least 1200x675 pixels.
+              </p>
+            </div>
 
             <Button
               type="submit"

@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import type React from "react";
+import { useCallback, useState } from "react";
 import Cropper from "react-easy-crop";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { getCroppedImg } from "@/lib/cropImage";
 
@@ -34,7 +35,7 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const onCropCompleteHandler = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+  const onCropCompleteHandler = useCallback((_croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
@@ -88,7 +89,7 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
             min={1}
             max={3}
             step={0.1}
-            onValueChange={(val) => setZoom(val[0])}
+            onValueChange={(val) => setZoom(Array.isArray(val) ? val[0] : (val as any))}
             className="flex-1"
           />
         </div>

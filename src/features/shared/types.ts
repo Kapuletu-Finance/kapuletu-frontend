@@ -368,6 +368,7 @@ export interface CampaignSettingsOverride {
   access_pin?: string | null;
   remove_watermark?: boolean;
   auto_send_reports?: boolean;
+  cover_photo?: string | null;
 }
 
 export interface NotificationOut {
@@ -411,5 +412,6 @@ export interface PublicWebReportOut {
   remaining_message: string;
   footer_message: string | null;
   watermark: string | null;
+  cover_photo?: string | null;
   public_url: string;
 }
