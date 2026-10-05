@@ -54,10 +54,11 @@ export const useGetPublicBlogCommentsQuery = (postId: string) => {
   });
 };
 
-export const useGetAdminBlogsQuery = () => {
+export const useGetAdminBlogsQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["admin_blogs"],
     queryFn: getAdminBlogs,
+    enabled: options?.enabled ?? true,
   });
 };
 
