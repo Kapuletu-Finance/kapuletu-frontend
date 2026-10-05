@@ -13,6 +13,7 @@ export interface PageLayoutProps {
   pagination?: React.ReactNode;
   className?: string;
   showViewToggle?: boolean;
+  defaultView?: "table" | "grid" | "stack";
 }
 
 export const PageLayout: React.FC<PageLayoutProps> = ({
@@ -25,6 +26,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   pagination,
   className,
   showViewToggle,
+  defaultView,
 }) => {
   return (
     <div className={cn("flex flex-col gap-6 w-full max-w-7xl mx-auto pb-12", className)}>
@@ -51,7 +53,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
           <div className="flex-1 min-w-0">{controls}</div>
           {showViewToggle && (
             <div className="shrink-0">
-              <ViewToggleGroup />
+              <ViewToggleGroup defaultView={defaultView} />
             </div>
           )}
         </div>

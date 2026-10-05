@@ -2,48 +2,37 @@ import { parseAsString, useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
 
 export type ViewMode = "table" | "grid" | "stack";
 
-export const ViewToggleGroup = () => {
+export interface ViewToggleGroupProps {
+  defaultView?: ViewMode;
+}
+
+export const ViewToggleGroup: React.FC<ViewToggleGroupProps> = ({ defaultView }) => {
   const isMobile = useIsMobile();
+  const fallbackView = defaultView || "table";
   const [view, setView] = useQueryState(
     "view",
-    parseAsString.withDefault(isMobile ? "table" : "grid"),
+    parseAsString.withDefault(isMobile ? "stack" : fallbackView),
   );
 
+  const toggleView = () => {
+    setView((prev) => (prev === "grid" ? "table" : "grid"));
+  };
+
+  const isGrid = view === "grid";
+
   return (
-    <div className="flex items-center bg-background border border-border rounded-lg shadow-sm p-1">
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "w-8 h-8 rounded-md transition-all",
-          view === "grid"
-            ? "bg-muted text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-        )}
-        onClick={() => setView("grid")}
-        title="Grid View"
-      >
-        <IconLibrary name="grid" className="w-4 h-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "w-8 h-8 rounded-md transition-all",
-          view === "table" || view === "stack"
-            ? "bg-muted text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-        )}
-        onClick={() => setView("table")}
-        title="List View"
-      >
-        <IconLibrary name="list" className="w-4 h-4" />
-      </Button>
-    </div>
+    <Button
+      variant="outline"
+      size="icon"
+      className="w-10 h-10 rounded-md bg-background shadow-sm hover:bg-muted transition-colors border-border"
+      onClick={toggleView}
+      title={isGrid ? "Switch to List View" : "Switch to Grid View"}
+    >
+      <IconLibrary name={isGrid ? "list" : "grid"} className="w-4 h-4 text-muted-foreground" />
+    </Button>
   );
 };
 
