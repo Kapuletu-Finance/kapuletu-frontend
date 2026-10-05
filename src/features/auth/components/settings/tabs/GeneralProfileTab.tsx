@@ -21,7 +21,6 @@ import {
   useUploadProfilePhotoMutation,
 } from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
-import { ImageUploader } from "@/features/shared/components/ImageUploader";
 
 export const GeneralProfileTab: React.FC = () => {
   const { data: user, isLoading: isUserLoading } = useGetMeQuery();
@@ -54,23 +53,6 @@ export const GeneralProfileTab: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6 bg-muted/20 p-6 rounded-xl border border-border/50">
-        <div className="w-24 h-24 shrink-0">
-          <ImageUploader
-            currentImageUrl={(user as any)?.profile_picture_url}
-            onFileSelect={(file) => uploadPhotoMutation.mutate(file)}
-            isLoading={uploadPhotoMutation.isPending}
-            shape="circle"
-          />
-        </div>
-        <div className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-2 pt-2">
-          <h3 className="font-semibold text-lg text-foreground tracking-tight">Profile Picture</h3>
-          <p className="text-sm text-muted-foreground">
-            Upload a professional headshot to help other treasurers and members identify you.
-          </p>
-        </div>
-      </div>
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <fieldset disabled={updateProfileMutation.isPending} className="space-y-6">
@@ -164,16 +146,43 @@ export const GeneralProfileTab: React.FC = () => {
               <h4 className="font-semibold text-sm text-foreground">Profile Photo</h4>
               <div className="flex items-center gap-6">
                 <div className="w-16 h-16 rounded-full bg-primary/20 flex flex-col items-center justify-center overflow-hidden shrink-0 border border-border relative">
-                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-primary flex justify-center">
-                    <div className="w-10 h-12 rounded-t-full bg-primary-foreground/20 -mt-2" />
-                  </div>
-                  <div className="w-7 h-7 rounded-full bg-amber-700/80 mt-1 z-10" />
+                  {(user as any)?.profile_picture_url ? (
+                    <img
+                      src={
+                        (user as any).profile_picture_url.startsWith("http")
+                          ? (user as any).profile_picture_url
+                          : `/api${(user as any).profile_picture_url}`
+                      }
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <>
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-primary flex justify-center">
+                        <div className="w-10 h-12 rounded-t-full bg-primary-foreground/20 -mt-2" />
+                      </div>
+                      <div className="w-7 h-7 rounded-full bg-amber-700/80 mt-1 z-10" />
+                    </>
+                  )}
                 </div>
                 <div className="flex flex-col items-start gap-1">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="profile-photo-upload"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) uploadPhotoMutation.mutate(file);
+                    }}
+                  />
                   <Button
                     type="button"
                     variant="outline"
                     className="h-9 px-4 gap-2 text-xs font-semibold rounded-full border-primary/40 text-primary hover:bg-primary/5"
+                    onClick={() => document.getElementById("profile-photo-upload")?.click()}
+                    isLoading={uploadPhotoMutation.isPending}
+                    disabled={uploadPhotoMutation.isPending}
                   >
                     <Upload className="w-3.5 h-3.5" />
                     Upload Photo

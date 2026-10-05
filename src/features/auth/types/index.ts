@@ -21,6 +21,8 @@ export type User = {
   email_verified: boolean;
   phone_number_verified: boolean;
   role: UserRole;
+  permissions?: string[];
+  profile_picture_url?: string | null;
   two_factor_enabled: boolean;
   two_factor_channel: string | null;
   is_waitlisted: boolean;

@@ -97,7 +97,7 @@ const formatSegment = (
 const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
   const pathname = usePathname();
   const segments = pathname.split("/").filter((segment) => Boolean(segment));
-  const { data: blogs } = useGetAdminBlogsQuery({ enabled: pathname.includes('/admin/blogs') });
+  const { data: blogs } = useGetAdminBlogsQuery({ enabled: pathname.includes("/admin/blogs") });
 
   if (segments.length === 0) {
     return null;
