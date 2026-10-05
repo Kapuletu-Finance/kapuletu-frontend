@@ -68,6 +68,14 @@ const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     "view_audit_logs",
     "manage_employees",
   ],
+  ceo: [
+    "manage_finance",
+    "manage_users",
+    "manage_blogs",
+    "manage_support",
+    "view_audit_logs",
+    "manage_employees",
+  ],
 };
 
 const AdminEmployeesClient: React.FC = () => {
@@ -207,6 +215,7 @@ const AdminEmployeesClient: React.FC = () => {
                     <SelectItem value="finance_manager">Finance Manager</SelectItem>
                     <SelectItem value="admin">Administrator (Legacy)</SelectItem>
                     <SelectItem value="super_admin">Super Admin</SelectItem>
+                    <SelectItem value="ceo">CEO</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
