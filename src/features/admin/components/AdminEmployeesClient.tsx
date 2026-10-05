@@ -53,13 +53,27 @@ const AVAILABLE_PERMISSIONS = [
   { id: "manage_support", label: "Manage Support" },
   { id: "view_audit_logs", label: "View Audit Logs" },
   { id: "manage_employees", label: "Manage Employees" },
+  { id: "manage_settings", label: "Manage Settings" },
+  { id: "manage_approvals", label: "Manage Approvals Queue" },
+  { id: "manage_ai", label: "Manage AI Governance" },
+  { id: "view_overview", label: "View Overview & Performance" },
 ];
 
 const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
-  content_manager: ["manage_blogs"],
-  support_agent: ["manage_support", "manage_users"],
-  finance_manager: ["manage_finance"],
-  admin: ["manage_finance", "manage_users", "manage_blogs", "manage_support", "view_audit_logs"],
+  content_manager: ["manage_blogs", "manage_settings", "view_overview"],
+  support_agent: ["manage_support", "manage_users", "manage_settings"],
+  finance_manager: ["manage_finance", "manage_settings", "view_overview"],
+  admin: [
+    "manage_finance",
+    "manage_users",
+    "manage_blogs",
+    "manage_support",
+    "view_audit_logs",
+    "manage_settings",
+    "manage_approvals",
+    "manage_ai",
+    "view_overview",
+  ],
   super_admin: [
     "manage_finance",
     "manage_users",
@@ -67,6 +81,10 @@ const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     "manage_support",
     "view_audit_logs",
     "manage_employees",
+    "manage_settings",
+    "manage_approvals",
+    "manage_ai",
+    "view_overview",
   ],
   ceo: [
     "manage_finance",
@@ -75,6 +93,10 @@ const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     "manage_support",
     "view_audit_logs",
     "manage_employees",
+    "manage_settings",
+    "manage_approvals",
+    "manage_ai",
+    "view_overview",
   ],
 };
 
