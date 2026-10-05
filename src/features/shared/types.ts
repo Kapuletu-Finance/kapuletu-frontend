@@ -269,6 +269,7 @@ export interface CampaignSettings {
   access_pin?: string | null;
   remove_watermark?: boolean;
   auto_send_reports?: boolean;
+  cover_photo?: string;
 }
 
 export interface CampaignUpdate {

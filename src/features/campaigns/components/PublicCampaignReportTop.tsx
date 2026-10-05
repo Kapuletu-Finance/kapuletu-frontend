@@ -52,6 +52,21 @@ const PublicCampaignReportTop = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-8 p-4 sm:p-6">
+      {/* Cover Photo Banner */}
+      {!showSkeletons && report?.cover_photo && (
+        <div className="w-full h-48 md:h-64 lg:h-80 rounded-3xl overflow-hidden shadow-md">
+          <img
+            src={
+              report.cover_photo.startsWith("http")
+                ? report.cover_photo
+                : `/api${report.cover_photo}`
+            }
+            alt={title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
       {/* Header Card */}
       <Card className="bg-secondary/30 border-border/50 shadow-sm rounded-3xl">
         <CardContent className="p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">

@@ -22,6 +22,7 @@ export interface CampaignInfo {
   contributor_count?: number;
   end_date?: string | null;
   payment_instructions?: string | null;
+  cover_photo?: string | null;
 }
 
 export interface CampaignCardProps {
@@ -70,14 +71,28 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
         )}
       >
         <div className="flex items-center gap-4 w-full lg:w-auto">
-          <div
-            className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
-              campaign.iconClassName ?? "bg-primary/15 text-primary",
-            )}
-          >
-            {getInitials(campaign.name)}
-          </div>
+          {campaign.cover_photo ? (
+            <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-border">
+              <img
+                src={
+                  campaign.cover_photo.startsWith("http")
+                    ? campaign.cover_photo
+                    : `/api${campaign.cover_photo}`
+                }
+                alt={campaign.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div
+              className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
+                campaign.iconClassName ?? "bg-primary/15 text-primary",
+              )}
+            >
+              {getInitials(campaign.name)}
+            </div>
+          )}
           <div className="flex flex-col min-w-50">
             <h3 className="text-base font-bold tracking-tight text-foreground leading-tight truncate">
               {campaign.name}
@@ -152,14 +167,28 @@ const CampaignCard: React.FC<CampaignCardProps> = ({
     <Card className={cn("border border-border flex flex-col justify-between h-full", className)}>
       <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
         <div className="flex items-center gap-4 overflow-hidden">
-          <div
-            className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
-              campaign.iconClassName ?? "bg-primary/15 text-primary",
-            )}
-          >
-            {getInitials(campaign.name)}
-          </div>
+          {campaign.cover_photo ? (
+            <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-border">
+              <img
+                src={
+                  campaign.cover_photo.startsWith("http")
+                    ? campaign.cover_photo
+                    : `/api${campaign.cover_photo}`
+                }
+                alt={campaign.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div
+              className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
+                campaign.iconClassName ?? "bg-primary/15 text-primary",
+              )}
+            >
+              {getInitials(campaign.name)}
+            </div>
+          )}
           <div className="flex flex-col justify-center overflow-hidden gap-1">
             <CardTitle className="text-lg font-semibold tracking-tight text-foreground truncate">
               {campaign.name}

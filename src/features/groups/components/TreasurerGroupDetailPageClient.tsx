@@ -39,6 +39,7 @@ const mapCampaignToInfo = (campaign: CampaignOut): CampaignInfo => ({
   total_raised: campaign.total_raised,
   contributor_count: campaign.contributor_count,
   end_date: campaign.end_date,
+  cover_photo: campaign.settings_override?.cover_photo || null,
 });
 
 export const TreasurerGroupDetailPageClient = () => {
