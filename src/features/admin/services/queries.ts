@@ -212,7 +212,7 @@ export const useAdminTicketDetailQuery = (ticketId: string | null) => {
   });
 };
 
-export const useNewFeedbackCountQuery = () => {
+export const useNewFeedbackCountQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["admin", "feedback", "count", "new"],
     queryFn: async () => {
@@ -220,6 +220,7 @@ export const useNewFeedbackCountQuery = () => {
       const response = await apiClient.get<{ total: number }>("/feedback/admin?status=new&limit=1");
       return response.data.total;
     },
+    enabled: options?.enabled ?? true,
     // Refetch periodically to keep the badge updated
     refetchInterval: 60000,
   });

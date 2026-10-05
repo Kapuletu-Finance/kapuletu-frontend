@@ -397,8 +397,8 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
   useHeartbeat();
   const { data: user, isLoading } = useGetMeQuery();
   const { data: pendingCount } = usePendingInboxCountQuery();
-  const { data: feedbackCount } = useNewFeedbackCountQuery();
-  const { data: ticketsCount } = usePendingTicketsCountQuery();
+  const { data: feedbackCount } = useNewFeedbackCountQuery({ enabled: isInternalEmployee });
+  const { data: ticketsCount } = usePendingTicketsCountQuery({ enabled: !isInternalEmployee });
   const { data: pendingComments } = useGetAdminCommentsQuery("pending", {
     enabled: isInternalEmployee,
   });

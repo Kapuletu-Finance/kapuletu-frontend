@@ -93,9 +93,9 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // If we receive a 401 Unauthorized, or a true 403 Forbidden (not billing related),
+    // If we receive a 401 Unauthorized,
     // after the proxy's resilience loop has already tried (and failed) to refresh, we must log out.
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         const path = window.location.pathname;
         const isPublicAuthRoute =
