@@ -7,11 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GeneralProfileTab } from "@/features/auth/components/settings/tabs/GeneralProfileTab";
 import { useUpdateSystemConfigMutation } from "../../services/mutations";
 import { useSystemConfigQuery } from "../../services/queries";
+import { AccessControlsPanel } from "./tabs/AccessControlsPanel";
 import { BillingRulesTab } from "./tabs/BillingRulesTab";
 import { DataRetentionTab } from "./tabs/DataRetentionTab";
 import { GlobalNotificationsTab } from "./tabs/GlobalNotificationsTab";
 import { GlobalSecurityTab } from "./tabs/GlobalSecurityTab";
 import { IntegrationsTab } from "./tabs/IntegrationsTab";
+import { InvitesPanel } from "./tabs/InvitesPanel";
 
 export const AdminSettingsLayout: React.FC = () => {
   const { data: config, isLoading, isError } = useSystemConfigQuery();
@@ -85,6 +87,18 @@ export const AdminSettingsLayout: React.FC = () => {
             >
               Global Alerts
             </TabsTrigger>
+            <TabsTrigger
+              value="access"
+              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
+            >
+              Access Controls
+            </TabsTrigger>
+            <TabsTrigger
+              value="invites"
+              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
+            >
+              VIP Invites & Signups
+            </TabsTrigger>
           </TabsList>
         </ScrollArea>
 
@@ -126,6 +140,12 @@ export const AdminSettingsLayout: React.FC = () => {
               onUpdate={handleUpdate}
               isLoading={updateMutation.isPending}
             />
+          </TabsContent>
+          <TabsContent value="access" className="mt-0 outline-none">
+            <AccessControlsPanel />
+          </TabsContent>
+          <TabsContent value="invites" className="mt-0 outline-none">
+            <InvitesPanel />
           </TabsContent>
         </div>
       </Tabs>

@@ -4,13 +4,11 @@ import type React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
-import { AccessControlsPanel } from "./AccessControlsPanel";
 import { BroadcastForm } from "./BroadcastForm";
 import { BroadcastHistory } from "./BroadcastHistory";
 import { CommunicationLogs } from "./CommunicationLogs";
 import { ContactMessagesTab } from "./ContactMessagesTab";
 import { EmailTemplatesTab } from "./EmailTemplatesTab";
-import { InvitesPanel } from "./InvitesPanel";
 
 export const AdminCommunicationsPage: React.FC = () => {
   return (
@@ -26,18 +24,6 @@ export const AdminCommunicationsPage: React.FC = () => {
               className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
             >
               Broadcasts
-            </TabsTrigger>
-            <TabsTrigger
-              value="invites"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
-              VIP Invites
-            </TabsTrigger>
-            <TabsTrigger
-              value="access"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
-              Access Controls
             </TabsTrigger>
             <TabsTrigger
               value="inquiries"
@@ -109,20 +95,6 @@ export const AdminCommunicationsPage: React.FC = () => {
                 </div>
               </div>
             </div>
-          </TabsContent>
-
-          <TabsContent
-            value="invites"
-            className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300"
-          >
-            <InvitesPanel />
-          </TabsContent>
-
-          <TabsContent
-            value="access"
-            className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300"
-          >
-            <AccessControlsPanel />
           </TabsContent>
 
           <TabsContent
