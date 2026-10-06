@@ -541,6 +541,23 @@ export const useInviteEmployeeMutation = () => {
   });
 };
 
+export const useResendInviteMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (inviteId: string) => {
+      const response = await apiClient.post(`/admin/employees/invites/${inviteId}/resend`);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Invitation resent successfully!");
+      queryClient.invalidateQueries({ queryKey: ["admin_invites"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to resend invitation");
+    },
+  });
+};
+
 export const useUpdateEmployeePermissionsMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({

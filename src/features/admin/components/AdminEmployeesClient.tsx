@@ -43,6 +43,7 @@ import {
 } from "@/features/admin/services/queries";
 import {
   useInviteEmployeeMutation,
+  useResendInviteMutation,
   useUpdateEmployeePermissionsMutation,
 } from "@/features/auth/services/mutations";
 import { apiClient } from "@/lib/api-client";
@@ -122,6 +123,7 @@ const AdminEmployeesClient: React.FC = () => {
   const { data: employees = [], isLoading: isLoadingEmployees } = useAdminEmployeesQuery();
   const { data: invites = [], isLoading: isLoadingInvites } = useAdminPendingInvitesQuery();
   const inviteMutation = useInviteEmployeeMutation();
+  const resendMutation = useResendInviteMutation();
   const updateMutation = useUpdateEmployeePermissionsMutation();
   const queryClient = useQueryClient();
 
@@ -420,12 +422,13 @@ const AdminEmployeesClient: React.FC = () => {
                       <TableHead>Role</TableHead>
                       <TableHead>Sent At</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {invites.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                        <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
                           No pending invites.
                         </TableCell>
                       </TableRow>
@@ -448,6 +451,16 @@ const AdminEmployeesClient: React.FC = () => {
                             <span className="inline-flex items-center gap-1 text-amber-600">
                               <Clock className="h-4 w-4" /> Pending
                             </span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={resendMutation.isPending}
+                              onClick={() => resendMutation.mutate(inv.id)}
+                            >
+                              {resendMutation.isPending ? "Resending..." : "Resend"}
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))
