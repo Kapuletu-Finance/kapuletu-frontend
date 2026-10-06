@@ -94,6 +94,7 @@ const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     "manage_users",
     "manage_blogs",
     "manage_support",
+    "manage_communications",
     "view_audit_logs",
     "manage_employees",
     "manage_settings",
