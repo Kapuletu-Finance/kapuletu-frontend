@@ -33,11 +33,13 @@ const EmailInput = ({
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-      const newEmail = inputValue.trim();
+      const newEmail = inputValue.trim().replace(/,$/, "");
       if (newEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail) && !emails.includes(newEmail)) {
         onChange([...emails, newEmail]);
         setInputValue("");
       }
+    } else if (e.key === "Backspace" && inputValue === "" && emails.length > 0) {
+      onChange(emails.slice(0, -1));
     }
   };
 
@@ -45,46 +47,58 @@ const EmailInput = ({
     onChange(emails.filter((e) => e !== emailToRemove));
   };
 
+  const inputId = `input-${label.replace(/\s+/g, "-")}`;
+
   return (
-    <div className="space-y-2">
-      <FieldLabel className="font-semibold text-sm">{label}</FieldLabel>
-      <div className="flex flex-wrap gap-2 mb-2">
+    <div className="space-y-2 max-w-2xl">
+      <FieldLabel htmlFor={inputId} className="font-medium text-sm text-foreground/90">
+        {label}
+      </FieldLabel>
+      <div
+        className="flex flex-wrap items-center gap-1.5 p-1.5 min-h-[44px] bg-background border border-input rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 transition-all cursor-text shadow-sm"
+        onClick={() => document.getElementById(inputId)?.focus()}
+      >
         {emails.map((email) => (
           <Badge
             key={email}
             variant="secondary"
-            className="flex items-center gap-1 py-1 px-2 text-sm"
+            className="flex items-center gap-1 py-1 px-2.5 text-xs font-medium hover:bg-secondary/80 bg-secondary"
           >
             {email}
             <button
               type="button"
-              onClick={() => removeEmail(email)}
-              className="text-muted-foreground hover:text-foreground rounded-full hover:bg-muted ml-1 p-0.5"
+              onClick={(e) => {
+                e.stopPropagation();
+                removeEmail(email);
+              }}
+              className="text-muted-foreground hover:text-foreground rounded-full hover:bg-muted ml-0.5 p-0.5 focus:outline-none"
             >
               <X className="h-3 w-3" />
             </button>
           </Badge>
         ))}
+        <input
+          id={inputId}
+          type="email"
+          placeholder={emails.length === 0 ? placeholder : "Add another..."}
+          className="flex-1 bg-transparent min-w-[150px] text-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 h-8 px-2"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onBlur={() => {
+            const newEmail = inputValue.trim().replace(/,$/, "");
+            if (
+              newEmail &&
+              /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail) &&
+              !emails.includes(newEmail)
+            ) {
+              onChange([...emails, newEmail]);
+              setInputValue("");
+            }
+          }}
+        />
       </div>
-      <Input
-        type="email"
-        placeholder={placeholder}
-        className="bg-background border-border max-w-xl"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onBlur={() => {
-          if (inputValue.trim()) {
-            handleKeyDown({
-              key: "Enter",
-              preventDefault: () => {},
-            } as KeyboardEvent<HTMLInputElement>);
-          }
-        }}
-      />
-      <p className="text-xs text-muted-foreground mt-1 max-w-xl">
-        {description} (Press Enter or comma to add)
-      </p>
+      <p className="text-xs text-muted-foreground mt-1.5">{description}</p>
     </div>
   );
 };
