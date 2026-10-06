@@ -699,6 +699,7 @@ export const useUpdateAdminNotificationEmailsMutation = () => {
       emails_hr?: string[];
       emails_signups?: string[];
       emails_warnings?: string[];
+      emails_finance?: string[];
     }) => {
       const response = await apiClient.post("/admin/config/notifications", payload);
       return response.data;

@@ -902,6 +902,7 @@ export interface AdminNotificationEmailsResponse {
   emails_hr: string[];
   emails_signups: string[];
   emails_warnings: string[];
+  emails_finance: string[];
 }
 
 export const useAdminNotificationEmailsQuery = () => {

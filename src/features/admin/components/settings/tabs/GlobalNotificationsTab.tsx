@@ -111,6 +111,7 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
   const [emailsHr, setEmailsHr] = useState<string[]>([]);
   const [emailsSignups, setEmailsSignups] = useState<string[]>([]);
   const [emailsWarnings, setEmailsWarnings] = useState<string[]>([]);
+  const [emailsFinance, setEmailsFinance] = useState<string[]>([]);
 
   useEffect(() => {
     if (adminConfig) {
@@ -118,6 +119,7 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
       setEmailsHr(adminConfig.emails_hr || []);
       setEmailsSignups(adminConfig.emails_signups || []);
       setEmailsWarnings(adminConfig.emails_warnings || []);
+      setEmailsFinance(adminConfig.emails_finance || []);
     }
   }, [adminConfig]);
 
@@ -125,7 +127,8 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
     JSON.stringify(emails) !== JSON.stringify(adminConfig?.emails || []) ||
     JSON.stringify(emailsHr) !== JSON.stringify(adminConfig?.emails_hr || []) ||
     JSON.stringify(emailsSignups) !== JSON.stringify(adminConfig?.emails_signups || []) ||
-    JSON.stringify(emailsWarnings) !== JSON.stringify(adminConfig?.emails_warnings || []);
+    JSON.stringify(emailsWarnings) !== JSON.stringify(adminConfig?.emails_warnings || []) ||
+    JSON.stringify(emailsFinance) !== JSON.stringify(adminConfig?.emails_finance || []);
 
   const isSaving = isLoading || updateAdminEmailsMutation.isPending;
 
@@ -136,6 +139,7 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
         emails_hr: emailsHr,
         emails_signups: emailsSignups,
         emails_warnings: emailsWarnings,
+        emails_finance: emailsFinance,
       });
     }
   };
@@ -145,6 +149,7 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
     setEmailsHr(adminConfig?.emails_hr || []);
     setEmailsSignups(adminConfig?.emails_signups || []);
     setEmailsWarnings(adminConfig?.emails_warnings || []);
+    setEmailsFinance(adminConfig?.emails_finance || []);
   };
 
   if (isAdminConfigLoading) {
@@ -194,6 +199,16 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
         placeholder="growth@kapuletu.co.ke"
         emails={emailsSignups}
         onChange={setEmailsSignups}
+      />
+
+      <Separator className="w-full" />
+
+      <EmailInput
+        label="Finance & Payments"
+        description="Receives notifications for subscription upgrades, package payments, and successful billing transactions."
+        placeholder="billing@kapuletu.co.ke"
+        emails={emailsFinance}
+        onChange={setEmailsFinance}
       />
 
       <Separator className="w-full" />
