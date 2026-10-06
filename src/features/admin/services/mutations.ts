@@ -694,8 +694,13 @@ export const useSaveRawTemplateMutation = () => {
 export const useUpdateAdminNotificationEmailsMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (emails: string[]) => {
-      const response = await apiClient.post("/admin/config/notifications", { emails });
+    mutationFn: async (payload: {
+      emails?: string[];
+      emails_hr?: string[];
+      emails_signups?: string[];
+      emails_warnings?: string[];
+    }) => {
+      const response = await apiClient.post("/admin/config/notifications", payload);
       return response.data;
     },
     onSuccess: () => {

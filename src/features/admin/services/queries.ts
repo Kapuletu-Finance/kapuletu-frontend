@@ -897,11 +897,20 @@ export const useWaitlistHistoryQuery = () => {
   });
 };
 
+export interface AdminNotificationEmailsResponse {
+  emails: string[];
+  emails_hr: string[];
+  emails_signups: string[];
+  emails_warnings: string[];
+}
+
 export const useAdminNotificationEmailsQuery = () => {
   return useQuery({
     queryKey: ["admin", "config", "notifications"],
     queryFn: async () => {
-      const response = await apiClient.get<{ emails: string[] }>("/admin/config/notifications");
+      const response = await apiClient.get<AdminNotificationEmailsResponse>(
+        "/admin/config/notifications",
+      );
       return response.data;
     },
   });

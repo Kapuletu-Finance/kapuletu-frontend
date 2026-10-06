@@ -1,5 +1,7 @@
+import { X } from "lucide-react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { type KeyboardEvent, useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -13,94 +15,182 @@ interface Props {
   isLoading: boolean;
 }
 
+const EmailInput = ({
+  emails,
+  onChange,
+  label,
+  description,
+  placeholder,
+}: {
+  emails: string[];
+  onChange: (emails: string[]) => void;
+  label: string;
+  description: string;
+  placeholder: string;
+}) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const newEmail = inputValue.trim();
+      if (newEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail) && !emails.includes(newEmail)) {
+        onChange([...emails, newEmail]);
+        setInputValue("");
+      }
+    }
+  };
+
+  const removeEmail = (emailToRemove: string) => {
+    onChange(emails.filter((e) => e !== emailToRemove));
+  };
+
+  return (
+    <div className="space-y-2">
+      <FieldLabel className="font-semibold text-sm">{label}</FieldLabel>
+      <div className="flex flex-wrap gap-2 mb-2">
+        {emails.map((email) => (
+          <Badge
+            key={email}
+            variant="secondary"
+            className="flex items-center gap-1 py-1 px-2 text-sm"
+          >
+            {email}
+            <button
+              type="button"
+              onClick={() => removeEmail(email)}
+              className="text-muted-foreground hover:text-foreground rounded-full hover:bg-muted ml-1 p-0.5"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </Badge>
+        ))}
+      </div>
+      <Input
+        type="email"
+        placeholder={placeholder}
+        className="bg-background border-border max-w-xl"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        onBlur={() => {
+          if (inputValue.trim()) {
+            handleKeyDown({
+              key: "Enter",
+              preventDefault: () => {},
+            } as KeyboardEvent<HTMLInputElement>);
+          }
+        }}
+      />
+      <p className="text-xs text-muted-foreground mt-1 max-w-xl">
+        {description} (Press Enter or comma to add)
+      </p>
+    </div>
+  );
+};
+
 export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLoading }) => {
-  const [alertEmail, setAlertEmail] = useState(config.critical_alert_email || "");
   const { data: adminConfig, isLoading: isAdminConfigLoading } = useAdminNotificationEmailsQuery();
   const updateAdminEmailsMutation = useUpdateAdminNotificationEmailsMutation();
 
-  const [lifecycleEmails, setLifecycleEmails] = useState<string>("");
+  const [emails, setEmails] = useState<string[]>([]);
+  const [emailsHr, setEmailsHr] = useState<string[]>([]);
+  const [emailsSignups, setEmailsSignups] = useState<string[]>([]);
+  const [emailsWarnings, setEmailsWarnings] = useState<string[]>([]);
 
   useEffect(() => {
-    if (adminConfig?.emails) {
-      setLifecycleEmails(adminConfig.emails.join(", "));
+    if (adminConfig) {
+      setEmails(adminConfig.emails || []);
+      setEmailsHr(adminConfig.emails_hr || []);
+      setEmailsSignups(adminConfig.emails_signups || []);
+      setEmailsWarnings(adminConfig.emails_warnings || []);
     }
   }, [adminConfig]);
 
-  const isAlertEmailDirty = alertEmail !== (config.critical_alert_email || "");
-  const originalLifecycleStr = (adminConfig?.emails || []).join(", ");
-  const isLifecycleDirty = lifecycleEmails !== originalLifecycleStr;
+  const isDirty =
+    JSON.stringify(emails) !== JSON.stringify(adminConfig?.emails || []) ||
+    JSON.stringify(emailsHr) !== JSON.stringify(adminConfig?.emails_hr || []) ||
+    JSON.stringify(emailsSignups) !== JSON.stringify(adminConfig?.emails_signups || []) ||
+    JSON.stringify(emailsWarnings) !== JSON.stringify(adminConfig?.emails_warnings || []);
 
-  const isDirty = isAlertEmailDirty || isLifecycleDirty;
   const isSaving = isLoading || updateAdminEmailsMutation.isPending;
 
   const handleSave = async () => {
-    if (isAlertEmailDirty) {
-      await onUpdate("critical_alert_email", alertEmail);
-    }
-
-    if (isLifecycleDirty) {
-      const emailArray = lifecycleEmails
-        .split(",")
-        .map((e) => e.trim())
-        .filter((e) => e.length > 0);
-      await updateAdminEmailsMutation.mutateAsync(emailArray);
+    if (isDirty) {
+      await updateAdminEmailsMutation.mutateAsync({
+        emails,
+        emails_hr: emailsHr,
+        emails_signups: emailsSignups,
+        emails_warnings: emailsWarnings,
+      });
     }
   };
 
   const handleDiscard = () => {
-    setAlertEmail(config.critical_alert_email || "");
-    setLifecycleEmails(originalLifecycleStr);
+    setEmails(adminConfig?.emails || []);
+    setEmailsHr(adminConfig?.emails_hr || []);
+    setEmailsSignups(adminConfig?.emails_signups || []);
+    setEmailsWarnings(adminConfig?.emails_warnings || []);
   };
 
+  if (isAdminConfigLoading) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="h-10 w-full bg-muted rounded-md" />
+        <div className="h-10 w-full bg-muted rounded-md" />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <div className="flex flex-col gap-1 mb-6">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300 pb-20">
+      <div className="flex flex-col gap-1">
         <h3 className="font-semibold text-lg text-foreground tracking-tight">
-          Global Notifications & Alerts
+          Administrative Communication Routing
         </h3>
         <p className="text-sm text-muted-foreground">
-          Configure routing for system-critical alerts and lifecycle events.
+          Configure which system administrators or departmental groups receive different types of
+          automated alerts and communications.
         </p>
       </div>
 
-      <div className="py-2">
-        <Field className="space-y-2 max-w-sm">
-          <FieldLabel className="font-semibold text-sm">Critical Alert Email</FieldLabel>
-          <Input
-            type="email"
-            placeholder="admin@kapuletu.co.ke"
-            className="bg-background border-border"
-            value={alertEmail}
-            onChange={(e) => setAlertEmail(e.target.value)}
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            Receives webhook failures, large transactions, and security alerts.
-          </p>
-        </Field>
-      </div>
+      <EmailInput
+        label="General Administrative Alerts"
+        description="Receives fallback notifications and general system events."
+        placeholder="admin@kapuletu.co.ke"
+        emails={emails}
+        onChange={setEmails}
+      />
 
       <Separator className="w-full" />
 
-      <div className="py-2">
-        <Field className="space-y-2 max-w-xl">
-          <FieldLabel className="font-semibold text-sm">Lifecycle Event Alerts</FieldLabel>
-          {isAdminConfigLoading ? (
-            <div className="h-10 w-full animate-pulse bg-muted rounded-md" />
-          ) : (
-            <Input
-              type="text"
-              placeholder="admin@kapuletu.co.ke, support@kapuletu.co.ke"
-              className="bg-background border-border"
-              value={lifecycleEmails}
-              onChange={(e) => setLifecycleEmails(e.target.value)}
-            />
-          )}
-          <p className="text-xs text-muted-foreground mt-1">
-            Enter a comma-separated list of emails to receive real-time notifications when a user
-            signs up, joins the waitlist, or upgrades their plan.
-          </p>
-        </Field>
-      </div>
+      <EmailInput
+        label="HR & Employee Management"
+        description="Receives notifications for scheduled meetings, attendance tracking, and daily work reports."
+        placeholder="hr@kapuletu.co.ke"
+        emails={emailsHr}
+        onChange={setEmailsHr}
+      />
+
+      <Separator className="w-full" />
+
+      <EmailInput
+        label="New User Signups"
+        description="Receives notifications when new users register, join waitlists, or upgrade plans."
+        placeholder="growth@kapuletu.co.ke"
+        emails={emailsSignups}
+        onChange={setEmailsSignups}
+      />
+
+      <Separator className="w-full" />
+
+      <EmailInput
+        label="Security & System Warnings"
+        description="Receives critical alerts for failed webhook deliveries, blocked IPs, or suspicious activity."
+        placeholder="security@kapuletu.co.ke"
+        emails={emailsWarnings}
+        onChange={setEmailsWarnings}
+      />
 
       <StickySaveBar
         isDirty={isDirty}
