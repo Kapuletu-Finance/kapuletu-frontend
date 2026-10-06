@@ -18,7 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAdminEmployeesQuery, useAuditLogsQuery } from "@/features/admin/services/queries";
+import {
+  useAdminEmployeesQuery,
+  useAdminPendingInvitesQuery,
+  useAuditLogsQuery,
+} from "@/features/admin/services/queries";
 import { useConfirmReportMutation } from "@/features/hr/services/mutations";
 import { useEmployeeReportsQuery } from "@/features/hr/services/queries";
 
@@ -59,7 +63,8 @@ const AuditLogsList = ({ userId }: { userId: string }) => {
 
 export const AdminEmployeeProfileClient = ({ userId }: { userId: string }) => {
   const router = useRouter();
-  const { data: employees, isLoading } = useAdminEmployeesQuery();
+  const { data: employees, isLoading: isLoadingEmployees } = useAdminEmployeesQuery();
+  const { data: invites, isLoading: isLoadingInvites } = useAdminPendingInvitesQuery();
   const { data: reports, isLoading: isLoadingReports } = useEmployeeReportsQuery(userId);
   const confirmMutation = useConfirmReportMutation();
 
@@ -67,11 +72,56 @@ export const AdminEmployeeProfileClient = ({ userId }: { userId: string }) => {
     return employees?.find((emp: any) => emp.user_id === userId);
   }, [employees, userId]);
 
-  if (isLoading) {
+  const invite = useMemo(() => {
+    return invites?.find((inv: any) => inv.id === userId);
+  }, [invites, userId]);
+
+  if (isLoadingEmployees || isLoadingInvites) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-10 w-32" />
         <Skeleton className="h-40 w-full" />
+      </div>
+    );
+  }
+
+  if (invite && !employee) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="icon" onClick={() => router.push("/admin/employees")}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {invite.first_name} {invite.last_name}
+            </h1>
+            <p className="text-muted-foreground">{invite.email}</p>
+          </div>
+        </div>
+
+        <Card className="border-amber-500/20 bg-amber-500/5">
+          <CardHeader>
+            <CardTitle>Pending Invitation</CardTitle>
+            <CardDescription>This user has not yet completed their account setup.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-3 text-sm">
+              <User className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium capitalize">{invite.role.replace("_", " ")}</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm">
+              <Shield className="h-4 w-4 text-muted-foreground" />
+              <span>{invite.permissions?.length || 0} Modules Granted</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm">
+              <Activity className="h-4 w-4 text-muted-foreground" />
+              <span>
+                Status: <span className="text-amber-600 font-medium">Pending Setup</span>
+              </span>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }

@@ -3,6 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle, Clock, Mail, PlusCircle, Shield, UserX } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -120,6 +121,7 @@ const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
 };
 
 const AdminEmployeesClient: React.FC = () => {
+  const router = useRouter();
   const { data: employees = [], isLoading: isLoadingEmployees } = useAdminEmployeesQuery();
   const { data: invites = [], isLoading: isLoadingInvites } = useAdminPendingInvitesQuery();
   const inviteMutation = useInviteEmployeeMutation();
@@ -348,14 +350,15 @@ const AdminEmployeesClient: React.FC = () => {
                       </TableRow>
                     ) : (
                       employees.map((emp: any) => (
-                        <TableRow key={emp.user_id}>
+                        <TableRow
+                          key={emp.user_id}
+                          className="cursor-pointer hover:bg-muted/50 transition-colors"
+                          onClick={() => router.push(`/admin/employees/${emp.user_id}`)}
+                        >
                           <TableCell className="font-medium">
-                            <Link
-                              href={`/admin/employees/${emp.user_id}`}
-                              className="text-primary hover:underline"
-                            >
+                            <span className="text-primary font-semibold">
                               {emp.first_name} {emp.last_name}
-                            </Link>
+                            </span>
                           </TableCell>
                           <TableCell>{emp.email}</TableCell>
                           <TableCell>
@@ -434,9 +437,15 @@ const AdminEmployeesClient: React.FC = () => {
                       </TableRow>
                     ) : (
                       invites.map((inv: any) => (
-                        <TableRow key={inv.id}>
+                        <TableRow
+                          key={inv.id}
+                          className="cursor-pointer hover:bg-muted/50 transition-colors"
+                          onClick={() => router.push(`/admin/employees/${inv.id}`)}
+                        >
                           <TableCell className="font-medium">
-                            {inv.first_name} {inv.last_name}
+                            <span className="text-primary font-semibold">
+                              {inv.first_name} {inv.last_name}
+                            </span>
                           </TableCell>
                           <TableCell>{inv.email}</TableCell>
                           <TableCell>
