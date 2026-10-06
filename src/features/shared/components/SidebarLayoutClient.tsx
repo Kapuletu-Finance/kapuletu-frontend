@@ -35,6 +35,7 @@ import { KapuletuAssistant } from "@/features/shared/components/KapuletuAssistan
 import NotificationsDropdown from "@/features/shared/components/NotificationsDropdown";
 import { SecurityNudgeModal } from "@/features/shared/components/SecurityNudgeModal";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
+import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
 import { TrialBanner } from "@/features/shared/components/TrialBanner";
 import { UserProfileDropdown } from "@/features/shared/components/UserProfileDropdown";
 import { VerifyEmailAlert } from "@/features/shared/components/VerifyEmailAlert";
@@ -470,6 +471,7 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
               >
                 <IconLibrary name="help" className="h-5 w-5 text-muted-foreground" />
               </Link>
+              <ThemeToggle variant="ghost" className="text-muted-foreground h-9 w-9" />
               <NotificationsDropdown />
               <UserProfileDropdown role={role} />
             </div>

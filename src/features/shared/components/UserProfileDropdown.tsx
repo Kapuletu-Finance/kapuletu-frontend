@@ -24,18 +24,18 @@ interface UserProfileDropdownProps {
 }
 
 const ThemeDropdownItem = () => {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   return (
     <DropdownMenuItem
       className="cursor-pointer"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
-      {theme === "dark" ? (
+      {resolvedTheme === "dark" ? (
         <IconLibrary name="sun" className="w-4 h-4 mr-2" />
       ) : (
         <IconLibrary name="moon" className="w-4 h-4 mr-2" />
       )}
-      {theme === "dark" ? "Light Mode" : "Dark Mode"}
+      {resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}
     </DropdownMenuItem>
   );
 };

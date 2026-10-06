@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { env } from "@/env";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
 
 export const DocsHeader: React.FC<{ onOpenMobileNav: () => void }> = ({ onOpenMobileNav }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,7 +66,8 @@ export const DocsHeader: React.FC<{ onOpenMobileNav: () => void }> = ({ onOpenMo
             <IconLibrary name="search" className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex items-center space-x-3 sm:space-x-6 ml-auto">
+        <div className="flex items-center space-x-3 sm:space-x-4 ml-auto">
+          <ThemeToggle variant="ghost" className="text-muted-foreground h-9 w-9" />
           <Link
             href="/contact"
             className="hidden sm:block text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
