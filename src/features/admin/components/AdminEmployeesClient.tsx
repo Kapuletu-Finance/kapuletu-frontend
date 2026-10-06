@@ -2,6 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle, Clock, Mail, PlusCircle, Shield, UserX } from "lucide-react";
+import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -334,7 +335,12 @@ const AdminEmployeesClient: React.FC = () => {
                       employees.map((emp: any) => (
                         <TableRow key={emp.user_id}>
                           <TableCell className="font-medium">
-                            {emp.first_name} {emp.last_name}
+                            <Link
+                              href={`/admin/employees/${emp.user_id}`}
+                              className="text-primary hover:underline"
+                            >
+                              {emp.first_name} {emp.last_name}
+                            </Link>
                           </TableCell>
                           <TableCell>{emp.email}</TableCell>
                           <TableCell>

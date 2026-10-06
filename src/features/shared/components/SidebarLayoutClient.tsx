@@ -55,6 +55,19 @@ const getAdminLinks = (
       permission: "view_overview",
     },
     {
+      href: "/employee",
+      icon: "user" as IconName,
+      label: "My Workspace",
+      allowedRoles: [
+        "super_admin",
+        "admin",
+        "ceo",
+        "support_agent",
+        "content_manager",
+        "customer_success",
+      ],
+    },
+    {
       href: "/admin/performance",
       icon: "activity" as IconName,
       label: "Platform Performance",
@@ -114,6 +127,13 @@ const getAdminLinks = (
       href: "/admin/employees",
       icon: "group" as IconName,
       label: "Employees",
+      allowedRoles: ["super_admin", "ceo"],
+      permission: "manage_employees",
+    },
+    {
+      href: "/admin/meetings",
+      icon: "calendar" as IconName,
+      label: "Meetings",
       allowedRoles: ["super_admin", "ceo"],
       permission: "manage_employees",
     },
