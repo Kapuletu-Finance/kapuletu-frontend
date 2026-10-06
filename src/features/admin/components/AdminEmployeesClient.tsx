@@ -51,6 +51,7 @@ const AVAILABLE_PERMISSIONS = [
   { id: "manage_users", label: "Manage Users" },
   { id: "manage_blogs", label: "Manage Blogs" },
   { id: "manage_support", label: "Manage Support" },
+  { id: "manage_communications", label: "Manage Communications" },
   { id: "view_audit_logs", label: "View Audit Logs" },
   { id: "manage_employees", label: "Manage Employees" },
   { id: "manage_settings", label: "Manage Settings" },
@@ -61,13 +62,14 @@ const AVAILABLE_PERMISSIONS = [
 
 const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
   content_manager: ["manage_blogs", "manage_settings", "view_overview"],
-  support_agent: ["manage_support", "manage_users", "manage_settings"],
+  support_agent: ["manage_support", "manage_communications", "manage_users", "manage_settings"],
   finance_manager: ["manage_finance", "manage_settings", "view_overview"],
   admin: [
     "manage_finance",
     "manage_users",
     "manage_blogs",
     "manage_support",
+    "manage_communications",
     "view_audit_logs",
     "manage_settings",
     "manage_approvals",
@@ -79,6 +81,7 @@ const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     "manage_users",
     "manage_blogs",
     "manage_support",
+    "manage_communications",
     "view_audit_logs",
     "manage_employees",
     "manage_settings",

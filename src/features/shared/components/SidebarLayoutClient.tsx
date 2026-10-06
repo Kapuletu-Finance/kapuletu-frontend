@@ -87,7 +87,7 @@ const getAdminLinks = (
       icon: "mail" as IconName,
       label: "Communications",
       allowedRoles: ["super_admin", "admin", "ceo"],
-      permission: "manage_support",
+      permission: "manage_communications",
     },
     {
       href: "/admin/blogs",
