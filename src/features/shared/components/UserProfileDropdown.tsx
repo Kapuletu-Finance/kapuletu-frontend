@@ -24,18 +24,18 @@ interface UserProfileDropdownProps {
 }
 
 const ThemeDropdownItem = () => {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   return (
     <DropdownMenuItem
       className="cursor-pointer"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
-      {theme === "dark" ? (
+      {resolvedTheme === "dark" ? (
         <IconLibrary name="sun" className="w-4 h-4 mr-2" />
       ) : (
         <IconLibrary name="moon" className="w-4 h-4 mr-2" />
       )}
-      {theme === "dark" ? "Light Mode" : "Dark Mode"}
+      {resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}
     </DropdownMenuItem>
   );
 };
@@ -79,7 +79,19 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ role }
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="h-10 w-10 rounded-md bg-primary/20 flex items-center justify-center cursor-pointer hover:bg-primary/30 transition-colors relative overflow-hidden border border-border shrink-0">
-          <IconLibrary name="member" className="size-5 text-primary" />
+          {user?.profile_picture_url ? (
+            <img
+              src={
+                user.profile_picture_url.startsWith("http")
+                  ? user.profile_picture_url
+                  : `/api${user.profile_picture_url}`
+              }
+              alt={user.first_name || "Profile"}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <IconLibrary name="member" className="size-5 text-primary" />
+          )}
           {user && !user.email_verified && isAlertDismissed && (
             <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
           )}
@@ -90,7 +102,19 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ role }
           <DropdownMenuLabel className="font-normal p-0">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted overflow-hidden relative">
-                <IconLibrary name="member" className="size-4 text-muted-foreground" />
+                {user?.profile_picture_url ? (
+                  <img
+                    src={
+                      user.profile_picture_url.startsWith("http")
+                        ? user.profile_picture_url
+                        : `/api${user.profile_picture_url}`
+                    }
+                    alt={user.first_name || "Profile"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <IconLibrary name="member" className="size-4 text-muted-foreground" />
+                )}
                 {user && !user.email_verified && isAlertDismissed && (
                   <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-burnt-amber rounded-full border-2 border-background" />
                 )}

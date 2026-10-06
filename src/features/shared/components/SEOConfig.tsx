@@ -70,6 +70,8 @@ export const metadataConfig: Metadata = {
   },
 };
 
+import Script from "next/script";
+
 export const SEOConfig: React.FC = () => {
   const websiteSchema = {
     "@context": "https://schema.org",
@@ -89,7 +91,8 @@ export const SEOConfig: React.FC = () => {
   };
 
   return (
-    <script
+    <Script
+      id="seo-schema"
       type="application/ld+json"
       // biome-ignore lint/security/noDangerouslySetInnerHtml: required for JSON-LD schema injection
       dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}

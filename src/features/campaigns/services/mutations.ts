@@ -49,6 +49,31 @@ export const useVerifyCampaignPinMutation = (shortCode: string) => {
   });
 };
 
+export const useUploadCampaignCoverPhotoMutation = (campaignId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await apiClient.post(`/campaigns/${campaignId}/cover-photo`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Cover photo updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["campaign", campaignId] });
+      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update cover photo");
+    },
+  });
+};
+
 export const useCreateCampaignMutation = (groupId: string) => {
   const queryClient = useQueryClient();
 

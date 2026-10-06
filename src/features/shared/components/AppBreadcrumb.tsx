@@ -13,12 +13,19 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import type { UserRole } from "@/features/auth/utils";
+import { useGetAdminBlogsQuery } from "@/features/blogs/services/queries";
+import type { BlogPost } from "@/features/blogs/services/types";
 
 interface AppBreadcrumbProps {
   role?: UserRole | string | null;
 }
 
-const formatSegment = (segment: string, index: number, segments: string[]): string => {
+const formatSegment = (
+  segment: string,
+  index: number,
+  segments: string[],
+  blogs?: BlogPost[],
+): string => {
   const lower = segment.toLowerCase();
 
   // Known route mappings
@@ -61,6 +68,13 @@ const formatSegment = (segment: string, index: number, segments: string[]): stri
     if (prevSegment === "feedback") {
       return `Feedback ${segment.substring(0, 8).toUpperCase()}`;
     }
+    if (prevSegment === "blogs") {
+      if (blogs) {
+        const blog = blogs.find((b) => b.id === segment);
+        if (blog) return blog.slug;
+      }
+      return `Blog Post`;
+    }
     return `Details`;
   }
 
@@ -83,6 +97,7 @@ const formatSegment = (segment: string, index: number, segments: string[]): stri
 const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
   const pathname = usePathname();
   const segments = pathname.split("/").filter((segment) => Boolean(segment));
+  const { data: blogs } = useGetAdminBlogsQuery({ enabled: pathname.includes("/admin/blogs") });
 
   if (segments.length === 0) {
     return null;
@@ -105,7 +120,7 @@ const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
     .map((segment, index) => {
       const href = `/${segments.slice(0, index + 1).join("/")}`;
       const isLast = index === segments.length - 1;
-      const label = formatSegment(segment, index, segments);
+      const label = formatSegment(segment, index, segments, blogs);
 
       return {
         href,

@@ -18,14 +18,15 @@ export const AboutHeroSection: React.FC = () => {
 
       <div className="container relative z-10 mx-auto px-4 max-w-4xl text-center">
         <span className="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary text-sm font-semibold tracking-wider uppercase mb-6 shadow-sm border border-primary/20">
-          Our Company
+          About Us
         </span>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6">
-          Empowering <span className="text-primary drop-shadow-sm">Financial Trust</span>
+          Helping communities manage{" "}
+          <span className="text-primary drop-shadow-sm">money together</span>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-          We are building the modern infrastructure for community finance. KapuLetu provides the
-          transparency and tools that treasurers need to lead with absolute confidence.
+          KapuLetu gives groups the simple tools they need to track their money safely and openly,
+          without the headache of spreadsheets.
         </p>
       </div>
     </section>

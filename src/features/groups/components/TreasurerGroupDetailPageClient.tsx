@@ -7,7 +7,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetMySubscriptionQuery } from "@/features/auth/services/queries";
+
 import CampaignCard, { type CampaignInfo } from "@/features/campaigns/components/CampaignCard";
 import { CampaignFormModal } from "@/features/campaigns/components/CampaignFormModal";
 import CampaignsHeaderControls, {
@@ -39,6 +39,7 @@ const mapCampaignToInfo = (campaign: CampaignOut): CampaignInfo => ({
   total_raised: campaign.total_raised,
   contributor_count: campaign.contributor_count,
   end_date: campaign.end_date,
+  cover_photo: campaign.settings_override?.cover_photo || null,
 });
 
 export const TreasurerGroupDetailPageClient = () => {
@@ -46,7 +47,6 @@ export const TreasurerGroupDetailPageClient = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
   const [showLimitBouncer, setShowLimitBouncer] = React.useState(false);
   const [editingCampaign, setEditingCampaign] = React.useState<CampaignInfo | null>(null);
-  const { data: subscription } = useGetMySubscriptionQuery();
   const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
   const [filter, setFilter] = useQueryState("filter", parseAsString.withDefault("all"));
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
@@ -159,13 +159,13 @@ export const TreasurerGroupDetailPageClient = () => {
                 {currentGroup?.name || <Skeleton className="h-10 w-48" />}
               </h1>
               {tagline ? (
-                <p className="text-base sm:text-lg font-medium text-foreground/80 drop-shadow-sm max-w-2xl">
+                <div className="text-base sm:text-lg font-medium text-foreground/80 drop-shadow-sm max-w-2xl">
                   {tagline}
-                </p>
+                </div>
               ) : (
-                <p className="text-sm sm:text-base text-muted-foreground drop-shadow-sm max-w-2xl line-clamp-2">
+                <div className="text-sm sm:text-base text-muted-foreground drop-shadow-sm max-w-2xl line-clamp-2">
                   {currentGroup?.description || <Skeleton className="h-5 w-64" />}
-                </p>
+                </div>
               )}
             </div>
           </div>

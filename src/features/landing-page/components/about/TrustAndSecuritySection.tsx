@@ -17,20 +17,19 @@ export const TrustAndSecuritySection: React.FC = () => {
             </div>
 
             <h2 className="text-3xl md:text-5xl font-bold leading-tight">
-              Enterprise-Grade Protection for Community Funds
+              Bank-Level Security for Your Group's Money
             </h2>
 
             <p className="text-zinc-400 text-lg leading-relaxed">
-              We take the security of your financial data as seriously as a bank would. Our platform
-              is built from the ground up with security, privacy, and immutability in mind.
+              We take your group's privacy and security just as seriously as your bank does.
             </p>
 
             <ul className="space-y-4 pt-4">
               {[
-                "End-to-End Encryption for all data at rest and in transit.",
-                "Immutable ledger technology ensures transactions cannot be secretly altered.",
-                "Role-based access control prevents unauthorized dashboard access.",
-                "Regular third-party security audits and compliance checks.",
+                "Your data is encrypted and locked down at all times.",
+                "Once a payment is saved, it cannot be secretly changed or deleted.",
+                "Only approved members and leaders can see your group's details.",
+                "We regularly test our systems to ensure everything stays safe.",
               ].map((item, idx) => (
                 <li key={idx} className="flex items-start space-x-3">
                   <div className="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary">

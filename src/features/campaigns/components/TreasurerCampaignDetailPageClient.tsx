@@ -48,11 +48,38 @@ export const TreasurerCampaignDetailPageClient: React.FC<
   return (
     <PageLayout>
       <div className="flex flex-col gap-8">
+        {/* Cover Photo Banner */}
+        {!isLoading && campaign.cover_photo && (
+          <div className="w-full h-48 md:h-64 lg:h-80 rounded-3xl overflow-hidden shadow-md -mb-4">
+            <img
+              src={
+                campaign.cover_photo.startsWith("http")
+                  ? campaign.cover_photo
+                  : `/api${campaign.cover_photo}`
+              }
+              alt={campaign.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
         {/* Campaign Header Profile */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-2">
           <div className="flex items-center gap-5">
             {isLoading ? (
-              <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 shrink-0" />
+              <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full" />
+            ) : campaign.cover_photo ? (
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden shrink-0 border border-border">
+                <img
+                  src={
+                    campaign.cover_photo.startsWith("http")
+                      ? campaign.cover_photo
+                      : `/api${campaign.cover_photo}`
+                  }
+                  alt={campaign.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             ) : (
               <div
                 className={cn(

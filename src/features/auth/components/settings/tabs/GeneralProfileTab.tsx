@@ -16,12 +16,16 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { type UpdateProfileFormData, updateProfileSchema } from "@/features/auth/schemas";
-import { useUpdateProfileMutation } from "@/features/auth/services/mutations";
+import {
+  useUpdateProfileMutation,
+  useUploadProfilePhotoMutation,
+} from "@/features/auth/services/mutations";
 import { useGetMeQuery } from "@/features/auth/services/queries";
 
 export const GeneralProfileTab: React.FC = () => {
   const { data: user, isLoading: isUserLoading } = useGetMeQuery();
   const updateProfileMutation = useUpdateProfileMutation();
+  const uploadPhotoMutation = useUploadProfilePhotoMutation();
   const [language, setLanguage] = React.useState("english");
 
   const form = useForm<UpdateProfileFormData>({
@@ -142,16 +146,43 @@ export const GeneralProfileTab: React.FC = () => {
               <h4 className="font-semibold text-sm text-foreground">Profile Photo</h4>
               <div className="flex items-center gap-6">
                 <div className="w-16 h-16 rounded-full bg-primary/20 flex flex-col items-center justify-center overflow-hidden shrink-0 border border-border relative">
-                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-primary flex justify-center">
-                    <div className="w-10 h-12 rounded-t-full bg-primary-foreground/20 -mt-2" />
-                  </div>
-                  <div className="w-7 h-7 rounded-full bg-amber-700/80 mt-1 z-10" />
+                  {(user as any)?.profile_picture_url ? (
+                    <img
+                      src={
+                        (user as any).profile_picture_url.startsWith("http")
+                          ? (user as any).profile_picture_url
+                          : `/api${(user as any).profile_picture_url}`
+                      }
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <>
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-primary flex justify-center">
+                        <div className="w-10 h-12 rounded-t-full bg-primary-foreground/20 -mt-2" />
+                      </div>
+                      <div className="w-7 h-7 rounded-full bg-amber-700/80 mt-1 z-10" />
+                    </>
+                  )}
                 </div>
                 <div className="flex flex-col items-start gap-1">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="profile-photo-upload"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) uploadPhotoMutation.mutate(file);
+                    }}
+                  />
                   <Button
                     type="button"
                     variant="outline"
                     className="h-9 px-4 gap-2 text-xs font-semibold rounded-full border-primary/40 text-primary hover:bg-primary/5"
+                    onClick={() => document.getElementById("profile-photo-upload")?.click()}
+                    isLoading={uploadPhotoMutation.isPending}
+                    disabled={uploadPhotoMutation.isPending}
                   >
                     <Upload className="w-3.5 h-3.5" />
                     Upload Photo

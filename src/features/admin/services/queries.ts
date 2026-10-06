@@ -212,7 +212,7 @@ export const useAdminTicketDetailQuery = (ticketId: string | null) => {
   });
 };
 
-export const useNewFeedbackCountQuery = () => {
+export const useNewFeedbackCountQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["admin", "feedback", "count", "new"],
     queryFn: async () => {
@@ -220,6 +220,7 @@ export const useNewFeedbackCountQuery = () => {
       const response = await apiClient.get<{ total: number }>("/feedback/admin?status=new&limit=1");
       return response.data.total;
     },
+    enabled: options?.enabled ?? true,
     // Refetch periodically to keep the badge updated
     refetchInterval: 60000,
   });
@@ -896,11 +897,64 @@ export const useWaitlistHistoryQuery = () => {
   });
 };
 
+export interface AdminNotificationEmailsResponse {
+  emails: string[];
+  emails_hr: string[];
+  emails_signups: string[];
+  emails_warnings: string[];
+  emails_finance: string[];
+}
+
 export const useAdminNotificationEmailsQuery = () => {
   return useQuery({
     queryKey: ["admin", "config", "notifications"],
     queryFn: async () => {
-      const response = await apiClient.get<{ emails: string[] }>("/admin/config/notifications");
+      const response = await apiClient.get<AdminNotificationEmailsResponse>(
+        "/admin/config/notifications",
+      );
+      return response.data;
+    },
+  });
+};
+
+// --- Employee Management Queries ---
+
+export const useAdminEmployeesQuery = () => {
+  return useQuery({
+    queryKey: ["admin_employees"],
+    queryFn: async () => {
+      const response = await apiClient.get<any[]>("/admin/employees");
+      return response.data;
+    },
+  });
+};
+
+export const useAdminPendingInvitesQuery = () => {
+  return useQuery({
+    queryKey: ["admin_invites"],
+    queryFn: async () => {
+      const response = await apiClient.get<any[]>("/admin/employees/invites");
+      return response.data;
+    },
+  });
+};
+
+export const useAdminApprovalsQuery = (status?: string) => {
+  return useQuery({
+    queryKey: ["admin_approvals", status],
+    queryFn: async () => {
+      const url = status ? `/admin/approvals?status=${status}` : "/admin/approvals";
+      const response = await apiClient.get<any[]>(url);
+      return response.data;
+    },
+  });
+};
+
+export const useAdminAuditLogsQuery = (limit: number = 100) => {
+  return useQuery({
+    queryKey: ["admin_audit_logs", limit],
+    queryFn: async () => {
+      const response = await apiClient.get<any[]>(`/admin/audit-logs?limit=${limit}`);
       return response.data;
     },
   });

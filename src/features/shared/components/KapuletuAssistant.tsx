@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -499,22 +500,34 @@ export const KapuletuAssistant: React.FC = () => {
   const lastScrollY = useRef(0);
 
   // Chat State
-  const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
-  const [isTyping, setIsTyping] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: needed to trigger scroll
-  useEffect(() => {
-    if (scrollRef.current) {
-      const viewport = scrollRef.current.querySelector('[data-slot="scroll-area-viewport"]');
-      if (viewport) {
-        viewport.scrollTop = viewport.scrollHeight;
-      } else {
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("kapuletu_assistant_messages");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (_e) {
+          return INITIAL_MESSAGES;
+        }
       }
     }
-  }, [messages, isTyping, popoverOpen]);
+    return INITIAL_MESSAGES;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("kapuletu_assistant_messages", JSON.stringify(messages));
+  }, [messages]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const _scrollRef = useRef<HTMLDivElement>(null);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
 
   const handleSend = (text: string) => {
     if (!text.trim()) return;
@@ -709,9 +722,11 @@ export const KapuletuAssistant: React.FC = () => {
                   : "opacity-100 translate-y-0",
             )}
           >
-            <img
+            <Image
               src="/assistant-avatar.jpg"
               alt="Assistant"
+              width={64}
+              height={64}
               className="h-full w-full object-cover"
             />
           </PopoverTrigger>
@@ -723,9 +738,11 @@ export const KapuletuAssistant: React.FC = () => {
             {/* Header */}
             <div className="bg-primary p-3 flex items-center gap-3 shrink-0 relative">
               <div className="relative size-10 rounded-full overflow-hidden border border-primary-foreground/20 shrink-0 bg-background shadow-xs">
-                <img
+                <Image
                   src="/assistant-avatar.jpg"
                   alt="Assistant"
+                  width={40}
+                  height={40}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -750,7 +767,7 @@ export const KapuletuAssistant: React.FC = () => {
             </div>
 
             {/* Chat Area */}
-            <ScrollArea className="flex-1 bg-muted/30" ref={scrollRef} orientation="vertical">
+            <ScrollArea className="flex-1 min-h-0 bg-muted/30" orientation="vertical">
               <div className="p-4 flex flex-col gap-4">
                 {messages.map((msg) => (
                   <div
@@ -806,6 +823,7 @@ export const KapuletuAssistant: React.FC = () => {
                     <span className="size-1.5 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]" />
                   </div>
                 )}
+                <div ref={messagesEndRef} />
               </div>
             </ScrollArea>
 

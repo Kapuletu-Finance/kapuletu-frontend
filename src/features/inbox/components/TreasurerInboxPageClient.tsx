@@ -337,6 +337,7 @@ export const TreasurerInboxPageClient = () => {
           {status === "pending" ? (
             <div
               className={cn(
+                "sticky top-0 z-20",
                 (view === "grid" || view === "stack") &&
                   "bg-card rounded-xl border border-border shadow-sm",
               )}

@@ -21,7 +21,9 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   useCreateCampaignMutation,
   useUpdateCampaignMutation,
+  useUploadCampaignCoverPhotoMutation,
 } from "@/features/campaigns/services/mutations";
+import { ImageUploader } from "@/features/shared/components/ImageUploader";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import type { CampaignInfo } from "./CampaignCard";
 
@@ -54,6 +56,8 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
 
   const createMutation = useCreateCampaignMutation(groupId);
   const updateMutation = useUpdateCampaignMutation(campaign?.id ?? "");
+  const uploadPhotoMutation = useUploadCampaignCoverPhotoMutation(campaign?.id ?? "");
+  const [coverPhoto, setCoverPhoto] = React.useState<File | null>(null);
 
   const form = useForm<CampaignFormData>({
     resolver: zodResolver(campaignSchema),
@@ -77,6 +81,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
         fundraisingDeadline: campaign.end_date || "",
         status: campaign.status || "Active",
       });
+      setCoverPhoto(null);
     } else {
       form.reset({
         name: "",
@@ -86,6 +91,7 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
         fundraisingDeadline: "",
         status: "Active",
       });
+      setCoverPhoto(null);
     }
   }, [campaign, form]);
 
@@ -101,13 +107,30 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
     try {
       if (isEditing && campaign?.id) {
         await updateMutation.mutateAsync(payload);
+        if (coverPhoto) {
+          // This will use the existing uploadPhotoMutation which has the correct campaign.id
+          await uploadPhotoMutation.mutateAsync(coverPhoto);
+        }
         onOpenChange(false);
       } else {
         const response = await createMutation.mutateAsync(payload);
+
+        // Handle photo upload immediately if present
+        if (coverPhoto && response.id) {
+          const formData = new FormData();
+          formData.append("file", coverPhoto);
+          await fetch(`/api/campaigns/${response.id}/cover-photo`, {
+            method: "POST",
+            body: formData,
+          });
+        }
+
         form.reset();
+        setCoverPhoto(null);
         onOpenChange(false);
         if (response?.slug) {
-          router.push(`/treasurer/groups/${groupId}/campaigns/${response.slug}`);
+          const groupSlug = window.location.pathname.split("/")[3] || groupId;
+          router.push(`/treasurer/groups/${groupSlug}/campaigns/${response.slug}`);
         }
       }
     } catch (_error) {
@@ -115,7 +138,8 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
     }
   };
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isPending =
+    createMutation.isPending || updateMutation.isPending || uploadPhotoMutation.isPending;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -274,6 +298,23 @@ export const CampaignFormModal: React.FC<CampaignFormModalProps> = ({
                 )}
               />
             )}
+
+            <div className="space-y-3 pt-2 border-t border-border">
+              <FieldLabel className="text-xs font-medium text-foreground">
+                Campaign Cover Photo
+              </FieldLabel>
+              <ImageUploader
+                currentImageUrl={null}
+                onFileSelect={(file) => setCoverPhoto(file)}
+                onClear={() => setCoverPhoto(null)}
+                shape="video"
+                className="w-full h-48 border-dashed"
+                isLoading={uploadPhotoMutation.isPending}
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Recommended: 16:9 ratio, at least 1200x675 pixels.
+              </p>
+            </div>
 
             <Button
               type="submit"

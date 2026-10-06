@@ -1,2 +1,2 @@
 # Kapuletu
-Enterprise treasury assistant.
+Enterprise treasury assistant

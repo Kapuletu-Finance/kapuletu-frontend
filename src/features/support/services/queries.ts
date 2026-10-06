@@ -28,7 +28,7 @@ export const useTicketDetailQuery = (ticketId: string | null) => {
  * Returns the count of open/in-progress tickets for the current user.
  * Used to drive the Help Center badge in the sidebar.
  */
-export const usePendingTicketsCountQuery = () => {
+export const usePendingTicketsCountQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["support-tickets-count"],
     queryFn: async (): Promise<number> => {
@@ -36,6 +36,7 @@ export const usePendingTicketsCountQuery = () => {
       const active = response.data.filter((t) => t.status === "open" || t.status === "in_progress");
       return active.length;
     },
+    enabled: options?.enabled ?? true,
     refetchInterval: 30000, // Poll every 30s — lightweight
   });
 };

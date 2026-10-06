@@ -13,6 +13,8 @@ export const usePendingInboxCountQuery = () => {
       return response.data.total_items;
     },
     queryKey: pendingInboxKey,
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 30, // 30 seconds
   });
 };
 
@@ -41,5 +43,7 @@ export const usePendingInboxQuery = (params: {
       return response.data;
     },
     queryKey: [...pendingInboxKey, params],
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 30, // 30 seconds
   });
 };

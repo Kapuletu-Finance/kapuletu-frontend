@@ -17,9 +17,8 @@ export const MissionVisionSection: React.FC = () => {
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Our Mission</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                To simplify and secure group finances by providing financial leaders with an
-                intuitive, powerful, and transparent platform that eliminates administrative
-                friction.
+                To make group finances simple and safe. We provide community leaders with an
+                easy-to-use platform that removes the stress of administration.
               </p>
             </div>
           </div>
@@ -35,8 +34,8 @@ export const MissionVisionSection: React.FC = () => {
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Our Vision</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                A world where community contributions are 100% transparent, and every organization,
-                regardless of size, has access to enterprise-grade financial integrity tools.
+                A future where every community group can easily show exactly how their money is
+                being used, giving peace of mind to everyone involved.
               </p>
             </div>
           </div>

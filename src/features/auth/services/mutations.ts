@@ -482,3 +482,97 @@ export const useUpdateAuthSettingsMutation = () => {
     },
   });
 };
+
+export const useUploadProfilePhotoMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await apiClient.post<any>("/auth/profile-photo", formData, {
+        headers: {
+          "Content-Type": undefined,
+        },
+      });
+      return response.data;
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to upload profile photo.");
+    },
+    onSuccess: () => {
+      toast.success("Profile photo updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+    },
+  });
+};
+
+export const useEmployeeSetupMutation = () => {
+  return useMutation({
+    mutationFn: async (data: { token: string; password: string }) => {
+      const response = await apiClient.post("/auth/employee-setup", data);
+      return response.data;
+    },
+  });
+};
+
+export const useInviteEmployeeMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      email: string;
+      first_name: string;
+      last_name: string;
+      role: string;
+      permissions: string[];
+    }) => {
+      const response = await apiClient.post("/admin/employees/invite", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Employee invitation sent successfully!");
+      queryClient.invalidateQueries({ queryKey: ["admin_employees"] });
+      queryClient.invalidateQueries({ queryKey: ["admin_invites"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to send invitation");
+    },
+  });
+};
+
+export const useResendInviteMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (inviteId: string) => {
+      const response = await apiClient.post(`/admin/employees/invites/${inviteId}/resend`);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Invitation resent successfully!");
+      queryClient.invalidateQueries({ queryKey: ["admin_invites"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to resend invitation");
+    },
+  });
+};
+
+export const useUpdateEmployeePermissionsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId, permissions }: { userId: string; permissions: string[] }) => {
+      const response = await apiClient.put(`/admin/employees/${userId}/permissions`, {
+        permissions,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Permissions updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["admin_employees"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to update permissions");
+    },
+  });
+};

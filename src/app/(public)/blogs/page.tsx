@@ -4,9 +4,8 @@ import { LandingFooter } from "@/features/landing-page/components/LandingFooter"
 import { LandingHeader } from "@/features/landing-page/components/LandingHeader";
 
 export const metadata: Metadata = {
-  description:
-    "News, events, educational guides, product updates, and community stories from the KapuLetu team.",
-  title: "News & Updates | KapuLetu",
+  description: "Read our latest articles, guides, and tips for managing your group's finances.",
+  title: "Our Journal | KapuLetu",
 };
 
 export default function BlogsPage() {
@@ -17,11 +16,10 @@ export default function BlogsPage() {
         <section className="w-full bg-gradient-to-b from-muted/50 to-background border-b pt-24 pb-12">
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-foreground">
-              News &amp; <span className="text-primary">Updates</span>
+              Our <span className="text-primary">Journal</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Stay informed with news, events, educational resources, product updates, and community
-              stories from the KapuLetu team.
+              Read our latest articles, guides, and tips for managing your group's finances.
             </p>
           </div>
         </section>

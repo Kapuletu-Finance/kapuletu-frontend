@@ -5,11 +5,16 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 export type ViewMode = "table" | "grid" | "stack";
 
-export const ViewToggleGroup = () => {
+export interface ViewToggleGroupProps {
+  defaultView?: ViewMode;
+}
+
+export const ViewToggleGroup: React.FC<ViewToggleGroupProps> = ({ defaultView }) => {
   const isMobile = useIsMobile();
+  const fallbackView = defaultView || "table";
   const [view, setView] = useQueryState(
     "view",
-    parseAsString.withDefault(isMobile ? "stack" : "table"),
+    parseAsString.withDefault(isMobile ? "stack" : fallbackView),
   );
 
   const toggleView = () => {
