@@ -97,6 +97,23 @@ const EmailInput = ({
             }
           }}
         />
+        <button
+          type="button"
+          onClick={() => {
+            const newEmail = inputValue.trim().replace(/,$/, "");
+            if (
+              newEmail &&
+              /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail) &&
+              !emails.includes(newEmail)
+            ) {
+              onChange([...emails, newEmail]);
+              setInputValue("");
+            }
+          }}
+          className="ml-auto bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-md hover:bg-primary/90 transition-colors"
+        >
+          Add
+        </button>
       </div>
       <p className="text-xs text-muted-foreground mt-1.5">{description}</p>
     </div>
@@ -221,12 +238,24 @@ export const GlobalNotificationsTab: React.FC<Props> = ({ config, onUpdate, isLo
         onChange={setEmailsWarnings}
       />
 
-      <StickySaveBar
-        isDirty={isDirty}
-        isSaving={isSaving}
-        onSave={handleSave}
-        onDiscard={handleDiscard}
-      />
+      <div className="flex items-center justify-end gap-3 mt-8 pt-4 border-t border-border">
+        <button
+          type="button"
+          onClick={handleDiscard}
+          disabled={!isDirty || isSaving}
+          className="px-4 py-2 text-sm font-medium border border-input bg-background rounded-md shadow-sm hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+        >
+          Discard Changes
+        </button>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={!isDirty || isSaving}
+          className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md shadow hover:bg-primary/90 disabled:opacity-50"
+        >
+          {isSaving ? "Saving..." : "Save Configuration"}
+        </button>
+      </div>
     </div>
   );
 };
