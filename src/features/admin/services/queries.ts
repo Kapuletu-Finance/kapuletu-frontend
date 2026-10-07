@@ -919,23 +919,49 @@ export const useAdminNotificationEmailsQuery = () => {
 
 // --- Employee Management Queries ---
 
-export const useAdminEmployeesQuery = () => {
+export const useAdminEmployeesQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["admin_employees"],
     queryFn: async () => {
       const response = await apiClient.get<any[]>("/admin/employees");
       return response.data;
     },
+    ...options,
   });
 };
 
-export const useAdminPendingInvitesQuery = () => {
+export const useAdminPendingInvitesQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["admin_invites"],
     queryFn: async () => {
       const response = await apiClient.get<any[]>("/admin/employees/invites");
       return response.data;
     },
+    ...options,
+  });
+};
+
+export interface ActivityTrendItem {
+  date: string;
+  actions: number;
+}
+
+export interface EmployeeMetricsResponse {
+  total_hours_logged: number;
+  total_actions_performed: number;
+  activity_trend: ActivityTrendItem[];
+}
+
+export const useEmployeeMetricsQuery = (userId: string) => {
+  return useQuery({
+    queryKey: ["admin_employee_metrics", userId],
+    queryFn: async () => {
+      const response = await apiClient.get<EmployeeMetricsResponse>(
+        `/admin/employees/${userId}/metrics`,
+      );
+      return response.data;
+    },
+    enabled: !!userId,
   });
 };
 

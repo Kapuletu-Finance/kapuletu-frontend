@@ -12,6 +12,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  useAdminEmployeesQuery,
+  useAdminPendingInvitesQuery,
+} from "@/features/admin/services/queries";
 import type { UserRole } from "@/features/auth/utils";
 import { useGetAdminBlogsQuery } from "@/features/blogs/services/queries";
 import type { BlogPost } from "@/features/blogs/services/types";
@@ -25,6 +29,8 @@ const formatSegment = (
   index: number,
   segments: string[],
   blogs?: BlogPost[],
+  employees?: any[],
+  invites?: any[],
 ): string => {
   const lower = segment.toLowerCase();
 
@@ -75,6 +81,17 @@ const formatSegment = (
       }
       return `Blog Post`;
     }
+    if (prevSegment === "employees") {
+      if (employees) {
+        const emp = employees.find((e: any) => e.user_id === segment);
+        if (emp) return `${emp.first_name} ${emp.last_name}`;
+      }
+      if (invites) {
+        const inv = invites.find((i: any) => i.id === segment);
+        if (inv) return `${inv.first_name} ${inv.last_name}`;
+      }
+      return `Employee Details`;
+    }
     return `Details`;
   }
 
@@ -98,6 +115,12 @@ const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
   const pathname = usePathname();
   const segments = pathname.split("/").filter((segment) => Boolean(segment));
   const { data: blogs } = useGetAdminBlogsQuery({ enabled: pathname.includes("/admin/blogs") });
+  const { data: employees } = useAdminEmployeesQuery({
+    enabled: pathname.includes("/admin/employees"),
+  });
+  const { data: invites } = useAdminPendingInvitesQuery({
+    enabled: pathname.includes("/admin/employees"),
+  });
 
   if (segments.length === 0) {
     return null;
@@ -120,7 +143,7 @@ const AppBreadcrumb: React.FC<AppBreadcrumbProps> = () => {
     .map((segment, index) => {
       const href = `/${segments.slice(0, index + 1).join("/")}`;
       const isLast = index === segments.length - 1;
-      const label = formatSegment(segment, index, segments, blogs);
+      const label = formatSegment(segment, index, segments, blogs, employees, invites);
 
       return {
         href,

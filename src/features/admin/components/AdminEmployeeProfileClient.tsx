@@ -6,13 +6,13 @@ import {
   BarChart3,
   Calendar,
   Clock,
-  DollarSign,
   ListOrdered,
   Shield,
   User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +22,7 @@ import {
   useAdminEmployeesQuery,
   useAdminPendingInvitesQuery,
   useAuditLogsQuery,
+  useEmployeeMetricsQuery,
 } from "@/features/admin/services/queries";
 import { useConfirmReportMutation } from "@/features/hr/services/mutations";
 import { useEmployeeReportsQuery } from "@/features/hr/services/queries";
@@ -66,6 +67,7 @@ export const AdminEmployeeProfileClient = ({ userId }: { userId: string }) => {
   const { data: employees, isLoading: isLoadingEmployees } = useAdminEmployeesQuery();
   const { data: invites, isLoading: isLoadingInvites } = useAdminPendingInvitesQuery();
   const { data: reports, isLoading: isLoadingReports } = useEmployeeReportsQuery(userId);
+  const { data: metrics, isLoading: isLoadingMetrics } = useEmployeeMetricsQuery(userId);
   const confirmMutation = useConfirmReportMutation();
 
   const employee = useMemo(() => {
@@ -179,50 +181,83 @@ export const AdminEmployeeProfileClient = ({ userId }: { userId: string }) => {
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-2 border-primary/20 bg-primary/5">
+        <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle>Performance Overview</CardTitle>
-            <CardDescription>Key metrics for the current quarter</CardDescription>
+            <CardDescription>Real-time metrics and activity over the last 7 days</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Tasks Completed</p>
-                <p className="text-2xl font-bold">142</p>
+            {isLoadingMetrics ? (
+              <Skeleton className="h-40 w-full" />
+            ) : !metrics ? (
+              <div className="text-sm text-muted-foreground">No metrics available.</div>
+            ) : (
+              <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex flex-col gap-6 w-full md:w-1/3 shrink-0">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Hours Logged</p>
+                    <p className="text-3xl font-bold">{metrics.total_hours_logged}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Actions Performed</p>
+                    <p className="text-3xl font-bold">{metrics.total_actions_performed}</p>
+                  </div>
+                </div>
+                <div className="w-full h-[180px]">
+                  {metrics.activity_trend.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={metrics.activity_trend}>
+                        <XAxis
+                          dataKey="date"
+                          stroke="#888888"
+                          fontSize={12}
+                          tickLine={false}
+                          axisLine={false}
+                        />
+                        <YAxis
+                          stroke="#888888"
+                          fontSize={12}
+                          tickLine={false}
+                          axisLine={false}
+                          tickFormatter={(value) => `${value}`}
+                        />
+                        <Tooltip />
+                        <Line
+                          type="monotone"
+                          dataKey="actions"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          className="stroke-primary"
+                          dot={false}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm border border-dashed rounded">
+                      No activity data for the past week
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Hours Logged</p>
-                <p className="text-2xl font-bold">310.5</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Financial Impact</p>
-                <p className="text-2xl font-bold text-green-600">+$24,500</p>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>
-
       <Tabs defaultValue="work" className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="work" className="flex items-center gap-2">
-            <Clock className="h-4 w-4" /> Work Reporting
-          </TabsTrigger>
-          <TabsTrigger value="finance" className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4" /> Financial Reports
+            <Clock className="h-4 w-4" /> Work Reports
           </TabsTrigger>
           <TabsTrigger value="audit" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" /> Action Audit
+            <BarChart3 className="h-4 w-4" /> Audit Logs
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="work">
           <Card>
             <CardHeader>
-              <CardTitle>Work & Shift Reporting</CardTitle>
-              <CardDescription>
-                Detailed logs of employee activities and task progression.
-              </CardDescription>
+              <CardTitle>Work Reports</CardTitle>
+              <CardDescription>Logs of employee activities and task progression.</CardDescription>
             </CardHeader>
             <CardContent>
               {isLoadingReports ? (
@@ -312,33 +347,11 @@ export const AdminEmployeeProfileClient = ({ userId }: { userId: string }) => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="finance">
-          <Card>
-            <CardHeader>
-              <CardTitle>Comprehensive Finance Report</CardTitle>
-              <CardDescription>
-                Administrative overview of financial actions taken by this employee.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground bg-muted/20 rounded-md border border-dashed">
-                <DollarSign className="h-10 w-10 mb-4 opacity-50 text-green-600" />
-                <p className="font-medium">Financial ledger is clear.</p>
-                <p className="text-sm mt-1">
-                  Transactions, refunds processed, and budget approvals will appear here.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         <TabsContent value="audit">
           <Card>
             <CardHeader>
-              <CardTitle>Action Audit Trail</CardTitle>
-              <CardDescription>
-                Security and compliance logging for all employee mutations.
-              </CardDescription>
+              <CardTitle>Audit Logs</CardTitle>
+              <CardDescription>Audit logs and actions for this employee.</CardDescription>
             </CardHeader>
             <CardContent>
               <AuditLogsList userId={userId} />
