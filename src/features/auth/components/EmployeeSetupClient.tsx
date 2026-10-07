@@ -5,11 +5,9 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input";
 import { useEmployeeSetupMutation } from "@/features/auth/services/mutations";
-import { SiteLogo } from "@/features/shared/components/SiteLogo";
 
 const EmployeeSetupClient: React.FC = () => {
   const searchParams = useSearchParams();
@@ -18,27 +16,29 @@ const EmployeeSetupClient: React.FC = () => {
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const setupMutation = useEmployeeSetupMutation();
 
   useEffect(() => {
     if (!token) {
       toast.error("Invalid or missing setup token.");
-      router.push("/login");
+      router.push("/sign-in");
     }
   }, [token, router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return;
+    setError(null);
 
     if (password.length < 8) {
-      toast.error("Password must be at least 8 characters long");
+      setError("Password must be at least 8 characters long");
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
@@ -46,11 +46,11 @@ const EmployeeSetupClient: React.FC = () => {
       { token, password },
       {
         onSuccess: () => {
-          toast.success("Account setup complete! You can now login.");
-          router.push("/login");
+          toast.success("Account setup complete! You can now log in.");
+          router.push("/sign-in");
         },
-        onError: (error: any) => {
-          toast.error(error.response?.data?.detail || "Failed to setup account");
+        onError: (err: any) => {
+          setError(err.response?.data?.detail || "Failed to setup account");
         },
       },
     );
@@ -59,52 +59,83 @@ const EmployeeSetupClient: React.FC = () => {
   if (!token) return null;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-8">
-      <div className="mb-8 flex flex-col items-center justify-center space-y-4">
-        <SiteLogo />
+    <div className="w-full pb-4">
+      <div className="flex flex-col items-center mb-8 text-center">
+        <h1 className="text-2xl font-bold tracking-tight mb-2">Complete Setup</h1>
+        <p className="text-sm text-muted-foreground px-4">
+          Welcome to the team! Set a secure password to activate your account.
+        </p>
       </div>
 
-      <Card className="w-full max-w-md border-border/40 bg-card/60 shadow-xl backdrop-blur-xl">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-3xl font-bold tracking-tight text-foreground">
-            Complete Setup
-          </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Welcome to the team! Please set a secure password to activate your account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter a secure password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+      {error && (
+        <div className="mb-6 rounded-md bg-destructive/15 border border-destructive/20 p-4 text-sm text-destructive flex items-start gap-3">
+          <svg
+            aria-label="Error"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-alert-circle mt-0.5 shrink-0"
+          >
+            <title>Error</title>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" x2="12" y1="8" y2="12" />
+            <line x1="12" x2="12.01" y1="16" y2="16" />
+          </svg>
+          <p>{error}</p>
+        </div>
+      )}
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <fieldset disabled={setupMutation.isPending} className="space-y-5">
+          <Field>
+            <FieldLabel htmlFor="password" className="text-xs font-bold text-foreground" isRequired>
+              New Password
+            </FieldLabel>
+            <PasswordInput
+              id="password"
+              placeholder="**********"
+              className="bg-muted/50"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </Field>
 
-            <Button type="submit" className="w-full" disabled={setupMutation.isPending}>
-              {setupMutation.isPending ? "Setting up..." : "Activate Account"}
+          <Field>
+            <FieldLabel
+              htmlFor="confirmPassword"
+              className="text-xs font-bold text-foreground"
+              isRequired
+            >
+              Confirm Password
+            </FieldLabel>
+            <PasswordInput
+              id="confirmPassword"
+              placeholder="**********"
+              className="bg-muted/50"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </Field>
+
+          <div className="pt-2">
+            <Button
+              type="submit"
+              className="w-full font-medium py-6"
+              isLoading={setupMutation.isPending}
+            >
+              Activate Account
             </Button>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+        </fieldset>
+      </form>
     </div>
   );
 };

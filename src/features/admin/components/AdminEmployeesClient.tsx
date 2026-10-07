@@ -2,13 +2,12 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle, Clock, Mail, PlusCircle, Shield, UserX } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -21,13 +20,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -142,7 +134,7 @@ const AdminEmployeesClient: React.FC = () => {
     first_name: "",
     last_name: "",
     role: "support_agent",
-    permissions: DEFAULT_ROLE_PERMISSIONS["support_agent"] || [],
+    permissions: DEFAULT_ROLE_PERMISSIONS.support_agent || [],
   });
 
   const handleInvite = (e: React.FormEvent) => {
@@ -155,7 +147,7 @@ const AdminEmployeesClient: React.FC = () => {
           first_name: "",
           last_name: "",
           role: "support_agent",
-          permissions: DEFAULT_ROLE_PERMISSIONS["support_agent"] || [],
+          permissions: DEFAULT_ROLE_PERMISSIONS.support_agent || [],
         });
       },
     });
@@ -238,30 +230,30 @@ const AdminEmployeesClient: React.FC = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Role</Label>
-                <Select
+                <Label htmlFor="role-input">Role</Label>
+                <Input
+                  id="role-input"
+                  list="role-suggestions"
+                  placeholder="e.g. support_agent or custom_role"
                   value={inviteForm.role}
-                  onValueChange={(val: string | null) => {
-                    if (!val) return;
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const val = e.target.value;
                     setInviteForm({
                       ...inviteForm,
                       role: val,
-                      permissions: DEFAULT_ROLE_PERMISSIONS[val] || [],
+                      permissions: DEFAULT_ROLE_PERMISSIONS[val] || inviteForm.permissions,
                     });
                   }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="content_manager">Content Manager</SelectItem>
-                    <SelectItem value="support_agent">Support Agent</SelectItem>
-                    <SelectItem value="finance_manager">Finance Manager</SelectItem>
-                    <SelectItem value="admin">Administrator (Legacy)</SelectItem>
-                    <SelectItem value="super_admin">Super Admin</SelectItem>
-                    <SelectItem value="ceo">CEO</SelectItem>
-                  </SelectContent>
-                </Select>
+                  required
+                />
+                <datalist id="role-suggestions">
+                  <option value="content_manager">Content Manager</option>
+                  <option value="support_agent">Support Agent</option>
+                  <option value="finance_manager">Finance Manager</option>
+                  <option value="admin">Administrator (Legacy)</option>
+                  <option value="super_admin">Super Admin</option>
+                  <option value="ceo">CEO</option>
+                </datalist>
               </div>
 
               <div className="space-y-3 pt-2">
