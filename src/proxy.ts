@@ -46,7 +46,7 @@ export const proxy = (request: NextRequest) => {
     }
 
     // If phone is not verified, restrict access to only the verify-phone page
-    if (phoneVerified === "false") {
+    if (phoneVerified === "false" && userRole === "treasurer") {
       if (!isAuthRoute) {
         return NextResponse.redirect(new URL("/verify-phone", request.url));
       }
