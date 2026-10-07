@@ -128,8 +128,7 @@ export const EmployeeDashboardClient = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-primary/20 shadow-sm overflow-hidden relative">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+        <Card className="shadow-sm relative">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
@@ -138,7 +137,7 @@ export const EmployeeDashboardClient = () => {
               {isClockedIn && !isClockedOut && (
                 <Badge
                   variant="outline"
-                  className="bg-green-50 text-green-700 border-green-200 gap-1.5 px-3 py-1 animate-pulse"
+                  className="bg-green-50 text-green-700 border-green-200 gap-1.5 px-3 py-1"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
                   Active
@@ -154,11 +153,8 @@ export const EmployeeDashboardClient = () => {
           <CardContent>
             {!isClockedIn ? (
               <div className="flex flex-col items-center justify-center py-10 text-center space-y-6">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
-                  <div className="relative h-24 w-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg text-white">
-                    <Clock className="h-10 w-10" />
-                  </div>
+                <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto">
+                  <Clock className="h-8 w-8" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-2xl tracking-tight">Ready for your shift?</h3>
@@ -183,8 +179,7 @@ export const EmployeeDashboardClient = () => {
                 </div>
 
                 <Button
-                  size="lg"
-                  className="w-full sm:w-auto px-8 py-6 text-lg rounded-full shadow-md bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all"
+                  className="w-full sm:w-auto"
                   onClick={handleClockIn}
                   disabled={clockInMutation.isPending}
                 >
@@ -193,11 +188,9 @@ export const EmployeeDashboardClient = () => {
               </div>
             ) : !isClockedOut ? (
               <div className="space-y-8 py-2">
-                <div className="flex flex-col items-center justify-center py-6 bg-gradient-to-b from-indigo-50/50 to-transparent dark:from-indigo-950/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/50">
-                  <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-2 uppercase tracking-widest">
-                    Elapsed Time
-                  </p>
-                  <p className="text-6xl sm:text-7xl font-light tabular-nums tracking-tighter text-slate-800 dark:text-slate-100">
+                <div className="flex flex-col items-center justify-center py-6 bg-muted/30 rounded-lg border">
+                  <p className="text-sm font-medium text-muted-foreground mb-2">Elapsed Time</p>
+                  <p className="text-4xl font-bold tabular-nums tracking-tight">
                     {formatTime(elapsedSeconds)}
                   </p>
                 </div>
@@ -219,7 +212,7 @@ export const EmployeeDashboardClient = () => {
 
                 <div className="pt-2">
                   <Button
-                    className="w-full py-6 text-lg shadow-sm border-2"
+                    className="w-full"
                     variant="outline"
                     onClick={() => setIsClockOutModalOpen(true)}
                   >
