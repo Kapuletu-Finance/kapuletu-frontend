@@ -64,14 +64,9 @@ const getAdminLinks = (
       href: "/employee",
       icon: "user" as IconName,
       label: "My Workspace",
-      allowedRoles: [
-        "super_admin",
-        "admin",
-        "ceo",
-        "support_agent",
-        "content_manager",
-        "customer_success",
-      ],
+      // Employees of any role should see their workspace
+      isUniversalEmployeeLink: true,
+      allowedRoles: [] as string[],
     },
     {
       href: "/admin/performance",
@@ -91,42 +86,42 @@ const getAdminLinks = (
       href: "/admin/finance/plans",
       icon: "credit-card" as IconName,
       label: "Billing & Plans",
-      allowedRoles: ["super_admin", "admin", "ceo"],
+      allowedRoles: ["super_admin", "admin", "ceo", "finance_manager"],
       permission: "manage_finance",
     },
     {
       href: "/admin/finance",
       icon: "credit-card" as IconName,
       label: "Finance",
-      allowedRoles: ["super_admin", "admin", "ceo"],
+      allowedRoles: ["super_admin", "admin", "ceo", "finance_manager"],
       permission: "manage_finance",
     },
     {
       href: "/admin/communications",
       icon: "mail" as IconName,
       label: "Communications",
-      allowedRoles: ["super_admin", "admin", "ceo"],
+      allowedRoles: ["super_admin", "admin", "ceo", "content_manager", "support_agent"],
       permission: "manage_communications",
     },
     {
       href: "/admin/blogs",
       icon: "report" as IconName,
       label: "Blogs",
-      allowedRoles: ["super_admin", "admin", "ceo"],
+      allowedRoles: ["super_admin", "admin", "ceo", "content_manager"],
       permission: "manage_blogs",
     },
     {
       href: "/admin/feedback",
       icon: "feedback" as IconName,
       label: "Feedback",
-      allowedRoles: ["super_admin", "admin", "ceo"],
+      allowedRoles: ["super_admin", "admin", "ceo", "support_agent"],
       permission: "manage_support",
     },
     {
       href: "/admin/support",
       icon: "ticket" as IconName,
       label: "Support",
-      allowedRoles: ["super_admin", "admin", "ceo"],
+      allowedRoles: ["super_admin", "admin", "ceo", "support_agent"],
       permission: "manage_support",
     },
     {
@@ -168,12 +163,23 @@ const getAdminLinks = (
       href: "/admin/profile",
       icon: "settings" as IconName,
       label: "Settings",
-      allowedRoles: ["super_admin", "admin", "ceo"],
+      allowedRoles: [
+        "super_admin",
+        "admin",
+        "ceo",
+        "content_manager",
+        "support_agent",
+        "finance_manager",
+      ],
       permission: "manage_settings",
     },
   ];
   return allLinks
     .filter((link) => {
+      // All internal employees can access universal links like "My Workspace"
+      if ((link as any).isUniversalEmployeeLink && role !== "treasurer" && role !== "user") {
+        return true;
+      }
       if (link.allowedRoles.includes(role as any)) return true;
       if (link.permission && permissions.includes(link.permission)) return true;
       return false;

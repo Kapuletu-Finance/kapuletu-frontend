@@ -77,13 +77,18 @@ export const proxy = (request: NextRequest) => {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
 
-    // Standard employees shouldn't access admin features or treasurer features
+    // Standard employees shouldn't access treasurer features
     const isStandardEmployee =
       userRole !== "treasurer" &&
       userRole !== "admin" &&
       userRole !== "super_admin" &&
       userRole !== "ceo";
-    if (isStandardEmployee && (isAdminRoute || isTreasurerRoute)) {
+
+    if (isStandardEmployee && isTreasurerRoute) {
+      return NextResponse.redirect(new URL("/employee", request.url));
+    }
+    // Redirect root /admin to /employee for standard employees
+    if (isStandardEmployee && pathname === "/admin") {
       return NextResponse.redirect(new URL("/employee", request.url));
     }
 

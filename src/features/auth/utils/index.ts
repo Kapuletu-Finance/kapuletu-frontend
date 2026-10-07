@@ -34,10 +34,13 @@ export const validateCsrfShield = (request: NextRequest): boolean => {
 export type UserRole =
   | "admin"
   | "super_admin"
+  | "ceo"
   | "treasurer"
   | "support_agent"
   | "content_manager"
   | "finance_manager"
+  | "user"
+  | (string & {})
   | null;
 
 export const getRoleFromCookie = (): UserRole => {
