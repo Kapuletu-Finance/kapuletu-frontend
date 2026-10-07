@@ -2,9 +2,19 @@
 
 import { Bell, Calendar, CheckCircle2, Clock, Mail, MapPin, User, Video } from "lucide-react";
 import React, { useState } from "react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useGetMeQuery } from "@/features/auth/services/queries";
@@ -22,6 +32,9 @@ export const EmployeeDashboardClient = () => {
   const clockOutMutation = useClockOutMutation();
 
   const [workSummary, setWorkSummary] = useState("");
+  const [isClockOutModalOpen, setIsClockOutModalOpen] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [workMode, setWorkMode] = useState<"physical" | "remote">("physical");
 
   const todayReport = reports?.find(
     (r: any) => new Date(r.report_date).toDateString() === new Date().toDateString(),
@@ -29,12 +42,65 @@ export const EmployeeDashboardClient = () => {
   const isClockedIn = !!todayReport?.clock_in_time;
   const isClockedOut = !!todayReport?.clock_out_time;
 
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isClockedIn && !isClockedOut && todayReport?.clock_in_time) {
+      interval = setInterval(() => {
+        const start = new Date(todayReport.clock_in_time).getTime();
+        const now = new Date().getTime();
+        setElapsedSeconds(Math.floor((now - start) / 1000));
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isClockedIn, isClockedOut, todayReport?.clock_in_time]);
+
+  const formatTime = (totalSeconds: number) => {
+    const hrs = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    return `${hrs.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const progressPercentage = Math.min((elapsedSeconds / (8 * 3600)) * 100, 100);
+
   const handleClockOut = () => {
     if (!workSummary.trim()) {
       alert("Please provide a work summary for today.");
       return;
     }
-    clockOutMutation.mutate(workSummary);
+    clockOutMutation.mutate(workSummary, {
+      onSuccess: () => {
+        setIsClockOutModalOpen(false);
+      },
+    });
+  };
+
+  const handleClockIn = () => {
+    if (workMode === "physical") {
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          clockInMutation.mutate({
+            work_mode: "physical",
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString(),
+          });
+        },
+        (err) => {
+          toast.error(
+            "Location access denied: " +
+              err.message +
+              ". Please allow location access to clock in physically.",
+          );
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+      );
+    } else {
+      clockInMutation.mutate({ work_mode: "remote", latitude: null, longitude: null });
+    }
   };
 
   return (
@@ -62,86 +128,168 @@ export const EmployeeDashboardClient = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" /> Daily Work Log
+        <Card className="border-primary/20 shadow-sm overflow-hidden relative">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-indigo-500" /> My Shift
+              </span>
+              {isClockedIn && !isClockedOut && (
+                <Badge
+                  variant="outline"
+                  className="bg-green-50 text-green-700 border-green-200 gap-1.5 px-3 py-1 animate-pulse"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                  Active
+                </Badge>
+              )}
             </CardTitle>
             <CardDescription>
-              Track your attendance and submit your daily end-of-shift report.
+              {isClockedIn && !isClockedOut
+                ? "You are currently on the clock. Track your time and stay productive."
+                : "Manage your daily attendance and end-of-shift reporting."}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent>
             {!isClockedIn ? (
-              <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
-                <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center">
-                  <Clock className="h-8 w-8 text-muted-foreground" />
+              <div className="flex flex-col items-center justify-center py-10 text-center space-y-6">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
+                  <div className="relative h-24 w-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg text-white">
+                    <Clock className="h-10 w-10" />
+                  </div>
                 </div>
                 <div>
-                  <p className="font-medium text-lg">Not Clocked In</p>
-                  <p className="text-sm text-muted-foreground">
-                    Start your shift to record attendance.
+                  <h3 className="font-semibold text-2xl tracking-tight">Ready for your shift?</h3>
+                  <p className="text-muted-foreground mt-1 max-w-xs mx-auto">
+                    Select your working mode and start your timer.
                   </p>
                 </div>
+
+                <div className="flex bg-muted p-1 rounded-lg w-full max-w-[240px]">
+                  <button
+                    onClick={() => setWorkMode("physical")}
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${workMode === "physical" ? "bg-white shadow-sm text-indigo-600" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    Office (GPS)
+                  </button>
+                  <button
+                    onClick={() => setWorkMode("remote")}
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${workMode === "remote" ? "bg-white shadow-sm text-indigo-600" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    Remote
+                  </button>
+                </div>
+
                 <Button
                   size="lg"
-                  onClick={() => clockInMutation.mutate()}
+                  className="w-full sm:w-auto px-8 py-6 text-lg rounded-full shadow-md bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all"
+                  onClick={handleClockIn}
                   disabled={clockInMutation.isPending}
                 >
-                  Clock In Now
+                  {clockInMutation.isPending ? "Validating..." : "Start Shift"}
                 </Button>
               </div>
             ) : !isClockedOut ? (
-              <div className="space-y-4">
-                <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 flex items-center gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <div>
-                    <p className="font-medium text-green-700 dark:text-green-400">
-                      You are clocked in!
-                    </p>
-                    <p className="text-sm text-green-600/80 dark:text-green-400/80">
-                      Started at {new Date(todayReport.clock_in_time).toLocaleTimeString()}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-2 pt-2">
-                  <p className="text-sm font-medium">End of Day Work Summary</p>
-                  <Textarea
-                    placeholder="Briefly describe what you worked on today..."
-                    value={workSummary}
-                    onChange={(e) => setWorkSummary(e.target.value)}
-                    rows={4}
-                  />
-                </div>
-                <Button
-                  className="w-full"
-                  variant="secondary"
-                  onClick={handleClockOut}
-                  disabled={clockOutMutation.isPending}
-                >
-                  Submit Report & Clock Out
-                </Button>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-6 text-center space-y-4 bg-muted/20 rounded-lg border border-dashed">
-                <CheckCircle2 className="h-10 w-10 text-green-500 mb-2" />
-                <div>
-                  <p className="font-medium text-lg">Shift Completed</p>
-                  <p className="text-sm text-muted-foreground">
-                    Your report has been submitted to your supervisor.
+              <div className="space-y-8 py-2">
+                <div className="flex flex-col items-center justify-center py-6 bg-gradient-to-b from-indigo-50/50 to-transparent dark:from-indigo-950/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/50">
+                  <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-2 uppercase tracking-widest">
+                    Elapsed Time
+                  </p>
+                  <p className="text-6xl sm:text-7xl font-light tabular-nums tracking-tighter text-slate-800 dark:text-slate-100">
+                    {formatTime(elapsedSeconds)}
                   </p>
                 </div>
-                <Badge
-                  variant={todayReport.status === "confirmed" ? "default" : "secondary"}
-                  className="mt-2"
-                >
-                  Status: {todayReport.status.replace("_", " ").toUpperCase()}
-                </Badge>
+
+                <div className="space-y-2 px-2">
+                  <div className="flex justify-between text-xs font-medium text-muted-foreground">
+                    <span>Shift Progress</span>
+                    <span>{Math.floor(progressPercentage)}% (Goal: 8h)</span>
+                  </div>
+                  <Progress value={progressPercentage} className="h-2.5" />
+                  <p className="text-xs text-muted-foreground/70 text-right mt-1">
+                    Started at{" "}
+                    {new Date(todayReport.clock_in_time).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    className="w-full py-6 text-lg shadow-sm border-2"
+                    variant="outline"
+                    onClick={() => setIsClockOutModalOpen(true)}
+                  >
+                    End Shift
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 text-center space-y-4 bg-muted/20 rounded-2xl border border-dashed">
+                <div className="h-20 w-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-2">
+                  <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-500" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-2xl tracking-tight">Shift Completed</h3>
+                  <p className="text-muted-foreground mt-1 max-w-xs mx-auto">
+                    Excellent work today. Your shift report has been successfully submitted to your
+                    supervisor.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 mt-4 pt-4 border-t w-full max-w-xs justify-center">
+                  <span className="text-sm text-muted-foreground">Status:</span>
+                  <Badge
+                    variant={todayReport.status === "confirmed" ? "default" : "secondary"}
+                    className={
+                      todayReport.status === "confirmed" ? "bg-green-500 hover:bg-green-600" : ""
+                    }
+                  >
+                    {todayReport.status.replace("_", " ").toUpperCase()}
+                  </Badge>
+                </div>
               </div>
             )}
           </CardContent>
         </Card>
+
+        {/* Clock Out Modal */}
+        <Dialog open={isClockOutModalOpen} onOpenChange={setIsClockOutModalOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Complete Your Shift</DialogTitle>
+              <DialogDescription>
+                You have been active for <strong>{formatTime(elapsedSeconds)}</strong>. Please
+                provide a brief summary of what you accomplished today before clocking out.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Textarea
+                  placeholder="Summarize your completed tasks, pending items, or any blockers..."
+                  value={workSummary}
+                  onChange={(e) => setWorkSummary(e.target.value)}
+                  rows={5}
+                  className="resize-none"
+                  autoFocus
+                />
+              </div>
+            </div>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button variant="outline" onClick={() => setIsClockOutModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleClockOut}
+                disabled={clockOutMutation.isPending || !workSummary.trim()}
+              >
+                {clockOutMutation.isPending ? "Submitting..." : "Submit & Clock Out"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <Card>
           <CardHeader>

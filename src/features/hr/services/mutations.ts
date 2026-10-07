@@ -2,11 +2,17 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
 
+interface ClockInPayload {
+  work_mode: "physical" | "remote";
+  latitude: string | null;
+  longitude: string | null;
+}
+
 export const useClockInMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async () => {
-      const res = await apiClient.post("/hr/reports/clock-in");
+    mutationFn: async (payload: ClockInPayload) => {
+      const res = await apiClient.post("/hr/reports/clock-in", payload);
       return res.data;
     },
     onSuccess: () => {
@@ -111,6 +117,30 @@ export const useMarkAttendanceMutation = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.detail || "Failed to mark attendance");
+    },
+  });
+};
+
+interface OfficeLocationPayload {
+  location_name: string;
+  latitude: string;
+  longitude: string;
+  radius_meters: string;
+}
+
+export const useUpdateOfficeLocationMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: OfficeLocationPayload) => {
+      const res = await apiClient.put("/hr/office-location", payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["hr", "office-location"] });
+      toast.success("Office location saved successfully.");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to save office location.");
     },
   });
 };

@@ -22,3 +22,21 @@ export const useMeetingsQuery = () => {
     },
   });
 };
+
+export const useOfficeLocationQuery = () => {
+  return useQuery({
+    queryKey: ["hr", "office-location"],
+    queryFn: async () => {
+      const res = await apiClient.get("/hr/office-location");
+      return res.data as {
+        id: string;
+        location_name: string;
+        latitude: string;
+        longitude: string;
+        radius_meters: string;
+        updated_at: string | null;
+      };
+    },
+    retry: false, // Don't retry if 404 (not configured yet)
+  });
+};

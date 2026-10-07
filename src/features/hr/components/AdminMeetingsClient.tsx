@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { OfficeLocationSettings } from "@/features/hr/components/OfficeLocationSettings";
 import { useScheduleMeetingMutation } from "@/features/hr/services/mutations";
 import { useMeetingsQuery } from "@/features/hr/services/queries";
 
@@ -216,6 +217,9 @@ export default function AdminMeetingsClient() {
           )}
         </CardContent>
       </Card>
+
+      {/* Office GPS Location Settings */}
+      <OfficeLocationSettings />
     </div>
   );
 }
