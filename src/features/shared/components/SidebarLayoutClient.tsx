@@ -4,6 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
 import { useRef, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sidebar,
@@ -418,8 +424,13 @@ const MobileSidebarTrigger = () => {
 import { useHeartbeat } from "@/hooks/useHeartbeat";
 
 export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ children, role }) => {
+  const pathname = usePathname();
   const isInternalEmployee = role !== "treasurer";
-  const links = isInternalEmployee ? getAdminLinks(role) : TREASURER_LINKS;
+  const isTreasurerWorkspace =
+    pathname.startsWith("/treasurer") ||
+    pathname.startsWith("/support") ||
+    pathname.startsWith("/notifications");
+  const links = isInternalEmployee && !isTreasurerWorkspace ? getAdminLinks(role) : TREASURER_LINKS;
   useHeartbeat();
   const { data: user, isLoading } = useGetMeQuery();
   const { data: pendingCount } = usePendingInboxCountQuery();
@@ -468,9 +479,32 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
                     "USER."
                   )}
                 </h2>
-                <span className="text-[10px] font-semibold text-refined-blue border border-refined-blue/30 bg-refined-blue/5 rounded-full px-2 py-0.5 w-fit mt-0.5">
-                  {isInternalEmployee ? "Admin Workspace" : "Treasurer Workspace"}
-                </span>
+                {isInternalEmployee ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <button className="flex items-center gap-1 text-[10px] font-semibold text-refined-blue border border-refined-blue/30 bg-refined-blue/5 rounded-full px-2 py-0.5 w-fit mt-0.5 hover:bg-refined-blue/10 transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        {isTreasurerWorkspace ? "Treasurer Workspace" : "Admin Workspace"}
+                        <IconLibrary name="chevron-down" className="size-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-48">
+                      <DropdownMenuItem>
+                        <Link href="/admin/overview" className="cursor-pointer w-full">
+                          Admin Workspace
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link href="/treasurer" className="cursor-pointer w-full">
+                          Treasurer Workspace
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <span className="text-[10px] font-semibold text-refined-blue border border-refined-blue/30 bg-refined-blue/5 rounded-full px-2 py-0.5 w-fit mt-0.5">
+                    Treasurer Workspace
+                  </span>
+                )}
               </div>
             </div>
 

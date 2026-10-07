@@ -70,7 +70,7 @@ export const useSignInMutation = () => {
 
       if (from) {
         window.location.href = from;
-      } else if (data.role === "admin" || data.role === "super_admin") {
+      } else if (data.role !== "treasurer" && data.role !== "user") {
         window.location.href = "/admin";
       } else if (data.is_waitlisted) {
         window.location.href = "/waitlist";
@@ -113,7 +113,7 @@ export const useVerify2FAMutation = () => {
 
       if (from) {
         window.location.href = from;
-      } else if (data.role === "admin" || data.role === "super_admin") {
+      } else if (data.role !== "treasurer" && data.role !== "user") {
         window.location.href = "/admin";
       } else if (data.is_waitlisted) {
         window.location.href = "/waitlist";
@@ -334,7 +334,7 @@ export const useVerifyPhoneConfirmMutation = () => {
       setTimeout(() => {
         if (from) {
           window.location.href = from;
-        } else if (data.role === "admin" || data.role === "super_admin") {
+        } else if (data.role !== "treasurer" && data.role !== "user") {
           window.location.href = "/admin";
         } else if (data.is_waitlisted) {
           window.location.href = "/waitlist";
