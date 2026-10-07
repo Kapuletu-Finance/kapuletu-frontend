@@ -59,8 +59,8 @@ export const useSignInMutation = () => {
       }
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
-      // If phone number is not yet verified, redirect to the verify-phone page
-      if (!data.phone_number_verified) {
+      // If phone number is not yet verified and user is a standard treasurer, redirect to the verify-phone page
+      if (!data.phone_number_verified && data.role === "treasurer") {
         window.location.href = "/verify-phone";
         return;
       }
@@ -103,7 +103,7 @@ export const useVerify2FAMutation = () => {
       }
       localStorage.removeItem(AUTH_LOCAL_STORAGE_KEYS.VERIFY_EMAIL_ALERT_DISMISSED);
 
-      if (!data.phone_number_verified) {
+      if (!data.phone_number_verified && data.role === "treasurer") {
         window.location.href = "/verify-phone";
         return;
       }
