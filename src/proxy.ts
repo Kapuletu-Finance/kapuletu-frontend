@@ -7,6 +7,7 @@ export const proxy = (request: NextRequest) => {
 
   const isTreasurerRoute = pathname.startsWith("/treasurer");
   const isAdminRoute = pathname.startsWith("/admin");
+  const isEmployeeRoute = pathname.startsWith("/employee");
   const isAuthRoute = [
     "/sign-in",
     "/sign-up",
@@ -21,6 +22,7 @@ export const proxy = (request: NextRequest) => {
   if (
     !isTreasurerRoute &&
     !isAdminRoute &&
+    !isEmployeeRoute &&
     !isAuthRoute &&
     !isAuthenticatedOnlyRoute &&
     !isRootRoute
@@ -57,9 +59,10 @@ export const proxy = (request: NextRequest) => {
     if (isAuthRoute) {
       if (userRole === "treasurer")
         return NextResponse.redirect(new URL("/treasurer", request.url));
-      if (userRole === "admin" || userRole === "super_admin")
+      if (userRole === "admin" || userRole === "super_admin" || userRole === "ceo")
         return NextResponse.redirect(new URL("/admin", request.url));
-      return NextResponse.next();
+      // For all other roles (content_manager, support_agent, etc)
+      return NextResponse.redirect(new URL("/employee", request.url));
     }
 
     // Role-Based Cross-Routing Restrictions
@@ -67,8 +70,21 @@ export const proxy = (request: NextRequest) => {
       return NextResponse.redirect(new URL("/treasurer", request.url));
     }
 
-    if ((userRole === "admin" || userRole === "super_admin") && isTreasurerRoute) {
+    if (
+      (userRole === "admin" || userRole === "super_admin" || userRole === "ceo") &&
+      isTreasurerRoute
+    ) {
       return NextResponse.redirect(new URL("/admin", request.url));
+    }
+
+    // Standard employees shouldn't access admin features or treasurer features
+    const isStandardEmployee =
+      userRole !== "treasurer" &&
+      userRole !== "admin" &&
+      userRole !== "super_admin" &&
+      userRole !== "ceo";
+    if (isStandardEmployee && (isAdminRoute || isTreasurerRoute)) {
+      return NextResponse.redirect(new URL("/employee", request.url));
     }
 
     // Valid session and valid role scope, allow access
@@ -76,7 +92,13 @@ export const proxy = (request: NextRequest) => {
   }
 
   // Unauthenticated user attempting to access secure routes
-  if (isTreasurerRoute || isAdminRoute || pathname === "/waitlist" || isAuthenticatedOnlyRoute) {
+  if (
+    isTreasurerRoute ||
+    isAdminRoute ||
+    isEmployeeRoute ||
+    pathname === "/waitlist" ||
+    isAuthenticatedOnlyRoute
+  ) {
     const signInUrl = new URL("/sign-in", request.url);
     // Optionally preserve the attempted URL for post-sign in redirect
     signInUrl.searchParams.set("from", pathname);
@@ -92,6 +114,7 @@ export const config = {
   matcher: [
     "/treasurer/:path*",
     "/admin/:path*",
+    "/employee/:path*",
     "/",
     "/sign-in",
     "/sign-up",
