@@ -1,7 +1,9 @@
 "use client";
 
+import { Download, FileSpreadsheet, FileText, Loader2 } from "lucide-react";
 import type React from "react";
 import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -21,6 +23,8 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  type FinanceExportFormat,
+  useDownloadFinanceRecordsMutation,
   useFinanceInvoicesQuery,
   useFinancePaymentsQuery,
 } from "@/features/admin/services/financeApi";
@@ -79,6 +83,44 @@ const RANGE_OPTIONS: Option[] = RANGE_PRESETS.map((p) => ({ value: p.value, labe
 
 const clickableRow = "cursor-pointer hover:bg-muted/50 focus-visible:bg-muted/50 outline-none";
 
+const ExportActions = ({
+  onDownload,
+  isPending,
+  pendingFormat,
+}: {
+  onDownload: (format: FinanceExportFormat) => void;
+  isPending: boolean;
+  pendingFormat?: FinanceExportFormat;
+}) => (
+  <div className="flex flex-wrap items-center gap-2">
+    <span className="text-sm text-muted-foreground">Export matching records:</span>
+    <Button size="sm" variant="outline" disabled={isPending} onClick={() => onDownload("csv")}>
+      {pendingFormat === "csv" ? (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      ) : (
+        <Download className="mr-2 h-4 w-4" />
+      )}
+      CSV
+    </Button>
+    <Button size="sm" variant="outline" disabled={isPending} onClick={() => onDownload("excel")}>
+      {pendingFormat === "excel" ? (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      ) : (
+        <FileSpreadsheet className="mr-2 h-4 w-4" />
+      )}
+      Excel
+    </Button>
+    <Button size="sm" variant="outline" disabled={isPending} onClick={() => onDownload("pdf")}>
+      {pendingFormat === "pdf" ? (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      ) : (
+        <FileText className="mr-2 h-4 w-4" />
+      )}
+      Official PDF
+    </Button>
+  </div>
+);
+
 const PaymentsTable = ({ onOpen }: { onOpen: (id: string) => void }) => {
   const [status, setStatus] = useState("");
   const [type, setType] = useState("");
@@ -104,6 +146,8 @@ const PaymentsTable = ({ onOpen }: { onOpen: (id: string) => void }) => {
     page,
     limit: LIMIT,
   });
+  const exportRecords = useDownloadFinanceRecordsMutation();
+  const filters = { status, type, provider, q, ...bounds };
 
   return (
     <div className="space-y-3">
@@ -155,6 +199,11 @@ const PaymentsTable = ({ onOpen }: { onOpen: (id: string) => void }) => {
           options={RANGE_OPTIONS}
         />
       </div>
+      <ExportActions
+        isPending={exportRecords.isPending}
+        pendingFormat={exportRecords.isPending ? exportRecords.variables?.format : undefined}
+        onDownload={(format) => exportRecords.mutate({ kind: "payments", format, filters })}
+      />
 
       <div className="rounded-md border border-border bg-card">
         <Table>
@@ -224,6 +273,8 @@ const InvoicesTable = ({ onOpen }: { onOpen: (id: string) => void }) => {
   const q = useDebouncedValue(search);
   const bounds = useMemo(() => (range ? presetRange(range as RangePreset) : {}), [range]);
   const { data, isLoading } = useFinanceInvoicesQuery({ status, q, ...bounds, page, limit: LIMIT });
+  const exportRecords = useDownloadFinanceRecordsMutation();
+  const filters = { status, q, ...bounds };
 
   return (
     <div className="space-y-3">
@@ -263,6 +314,11 @@ const InvoicesTable = ({ onOpen }: { onOpen: (id: string) => void }) => {
           options={RANGE_OPTIONS}
         />
       </div>
+      <ExportActions
+        isPending={exportRecords.isPending}
+        pendingFormat={exportRecords.isPending ? exportRecords.variables?.format : undefined}
+        onDownload={(format) => exportRecords.mutate({ kind: "invoices", format, filters })}
+      />
 
       <div className="rounded-md border border-border bg-card">
         <Table>

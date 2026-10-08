@@ -4,6 +4,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
+import { downloadFile } from "@/lib/download";
 
 // --- shared ---
 
@@ -256,6 +257,28 @@ export const useFinancePaymentQuery = (paymentId: string | null) =>
     queryFn: async () =>
       (await apiClient.get<FinancePaymentDetail>(`/admin/finance/payments/${paymentId}`)).data,
     enabled: !!paymentId,
+  });
+
+export type FinanceExportFormat = "csv" | "excel" | "pdf";
+
+export const useDownloadFinanceRecordsMutation = () =>
+  useMutation({
+    mutationFn: ({
+      kind,
+      format,
+      filters,
+    }: {
+      kind: "payments" | "invoices";
+      format: FinanceExportFormat;
+      filters: PaymentFilters | InvoiceFilters;
+    }) =>
+      downloadFile(`/admin/finance/${kind}/export`, {
+        fallbackName: `kapuletu_${kind}.${format === "excel" ? "xlsx" : format}`,
+        params: { ...filters, format },
+      }),
+    onSuccess: (_, { kind }) =>
+      toast.success(`${kind === "payments" ? "Payment" : "Invoice"} records downloaded.`),
+    onError: (error) => toast.error(errorMessage(error, "Could not download these records.")),
   });
 
 export interface FinanceInvoice {
