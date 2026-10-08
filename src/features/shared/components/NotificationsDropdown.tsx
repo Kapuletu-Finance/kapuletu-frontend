@@ -9,10 +9,10 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { NotificationItem } from "@/features/notifications/components/NotificationItem";
 import {
   useMarkAllNotificationsReadMutation,
+  useMarkNotificationReadMutation,
   useNotificationsQuery,
 } from "@/features/notifications/services/queries";
 import { notificationToDisplay } from "@/features/notifications/utils";
@@ -20,7 +20,8 @@ import IconLibrary from "@/features/shared/components/IconLibrary";
 
 const NotificationsDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { data } = useNotificationsQuery();
+  const { data, isLoading, isError, refetch } = useNotificationsQuery();
+  const markRead = useMarkNotificationReadMutation();
   const markAllRead = useMarkAllNotificationsReadMutation();
 
   const notifications = (data?.notifications ?? []).map(notificationToDisplay);
@@ -50,12 +51,12 @@ const NotificationsDropdown: React.FC = () => {
       />
       <DropdownMenuContent
         align="end"
-        className="w-[calc(100vw-2rem)] sm:w-105 max-w-[calc(100vw-2rem)] sm:max-w-none overflow-hidden border-border bg-background"
+        className="w-[calc(100vw-1rem)] max-w-[calc(100vw-1rem)] overflow-hidden border-border bg-background sm:w-105 sm:max-w-none"
       >
-        <div className="p-6 pb-2">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-xl">Notifications</h3>
-            <div className="flex items-center gap-2">
+        <div className="p-4 pb-2 sm:p-6 sm:pb-2">
+          <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+            <h3 className="text-lg font-semibold sm:text-xl">Notifications</h3>
+            <div className="flex flex-wrap items-center gap-2">
               <Link
                 href="/notifications"
                 onClick={() => setIsOpen(false)}
@@ -80,16 +81,31 @@ const NotificationsDropdown: React.FC = () => {
             </div>
           </div>
 
-          <ScrollArea className="max-h-[60vh] pr-4">
+          <div className="max-h-[min(60vh,30rem)] w-full overflow-y-auto overscroll-contain pr-2 sm:pr-4">
             <div className="space-y-1">
-              {notifications.length === 0 ? (
+              {isLoading ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  Loading notifications…
+                </p>
+              ) : isError ? (
+                <div className="px-2 py-8 text-center">
+                  <p className="text-sm text-muted-foreground">Notifications couldn’t be loaded.</p>
+                  <Button variant="link" size="sm" onClick={() => void refetch()} className="mt-1">
+                    Try again
+                  </Button>
+                </div>
+              ) : notifications.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">
                   No notifications yet.
                 </p>
               ) : (
                 displayedNotifications.map((notification, index) => (
                   <div key={notification.id}>
-                    <NotificationItem notification={notification} variant="menu" />
+                    <NotificationItem
+                      notification={notification}
+                      variant="menu"
+                      onMarkRead={(notificationId) => markRead.mutate(notificationId)}
+                    />
                     {index < displayedNotifications.length - 1 && (
                       <div className="h-px w-full bg-border/40 my-1 mx-auto max-w-[90%]" />
                     )}
@@ -97,7 +113,7 @@ const NotificationsDropdown: React.FC = () => {
                 ))
               )}
             </div>
-          </ScrollArea>
+          </div>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
