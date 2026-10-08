@@ -57,7 +57,6 @@ const getAdminLinks = (
       href: "/admin/overview",
       icon: "analytics" as IconName,
       label: "Overview",
-      allowedRoles: ["super_admin", "admin", "ceo"],
       permission: "view_overview",
     },
     {
@@ -66,20 +65,17 @@ const getAdminLinks = (
       label: "My Workspace",
       // Employees of any role should see their workspace
       isUniversalEmployeeLink: true,
-      allowedRoles: [] as string[],
     },
     {
       href: "/admin/performance",
       icon: "activity" as IconName,
       label: "Platform Performance",
-      allowedRoles: ["super_admin", "admin", "ceo"],
       permission: "view_overview",
     },
     {
       href: "/admin/users",
       icon: "group" as IconName,
       label: "Users",
-      allowedRoles: ["super_admin", "admin", "ceo"],
       permission: "manage_users",
     },
     {
@@ -87,85 +83,66 @@ const getAdminLinks = (
       href: "/admin/finance",
       icon: "credit-card" as IconName,
       label: "Finance",
-      // Gated by the permission (as the API is), not the job title.
-      allowedRoles: ["super_admin", "admin", "ceo"],
       permission: "manage_finance",
     },
     {
       href: "/admin/communications",
       icon: "mail" as IconName,
       label: "Communications",
-      allowedRoles: ["super_admin", "admin", "ceo", "content_manager", "support_agent"],
       permission: "manage_communications",
     },
     {
       href: "/admin/blogs",
       icon: "report" as IconName,
       label: "Blogs",
-      allowedRoles: ["super_admin", "admin", "ceo", "content_manager"],
       permission: "manage_blogs",
     },
     {
       href: "/admin/feedback",
       icon: "feedback" as IconName,
       label: "Feedback",
-      allowedRoles: ["super_admin", "admin", "ceo", "support_agent"],
       permission: "manage_support",
     },
     {
       href: "/admin/support",
       icon: "ticket" as IconName,
       label: "Support",
-      allowedRoles: ["super_admin", "admin", "ceo", "support_agent"],
       permission: "manage_support",
     },
     {
       href: "/admin/employees",
       icon: "group" as IconName,
       label: "Employees",
-      allowedRoles: ["super_admin", "ceo"],
       permission: "manage_employees",
     },
     {
       href: "/admin/meetings",
       icon: "calendar" as IconName,
       label: "Meetings",
-      allowedRoles: ["super_admin", "ceo"],
       permission: "manage_employees",
     },
     {
       href: "/admin/approvals",
       icon: "shield-ellipsis" as IconName,
       label: "Approvals Queue",
-      allowedRoles: ["super_admin", "admin", "ceo"],
       permission: "manage_approvals",
     },
     {
       href: "/admin/ai-governance",
       icon: "brain" as IconName,
       label: "AI Governance",
-      allowedRoles: ["super_admin", "admin", "ceo"],
       permission: "manage_ai",
     },
     {
       href: "/admin/audit",
       icon: "shield-ellipsis" as IconName,
       label: "Audit Logs",
-      allowedRoles: ["super_admin", "admin", "ceo"],
       permission: "view_audit_logs",
     },
     {
       href: "/admin/profile",
       icon: "settings" as IconName,
       label: "Settings",
-      allowedRoles: [
-        "super_admin",
-        "admin",
-        "ceo",
-        "content_manager",
-        "support_agent",
-        "finance_manager",
-      ],
       permission: "manage_settings",
     },
   ];
@@ -175,9 +152,8 @@ const getAdminLinks = (
       if ((link as any).isUniversalEmployeeLink && role !== "treasurer" && role !== "user") {
         return true;
       }
-      if (link.allowedRoles.includes(role as any)) return true;
-      if (link.permission && permissions.includes(link.permission)) return true;
-      return false;
+      if (role === "super_admin" || role === "admin" || role === "ceo") return true;
+      return link.permission ? permissions.includes(link.permission) : false;
     })
     .map(({ href, icon, label }) => ({ href, icon, label }));
 };
