@@ -21,6 +21,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -32,6 +39,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminAuditClient } from "@/features/admin/components/AdminAuditClient";
 import { useEmployeePermissionsCatalogQuery } from "@/features/admin/services/employeeProfile";
 import {
+  type AdminEmployeeInvite,
   useAdminEmployeesQuery,
   useAdminPendingInvitesQuery,
 } from "@/features/admin/services/queries";
@@ -114,12 +122,14 @@ const AdminEmployeesClient: React.FC = () => {
     email: string;
     first_name: string;
     last_name: string;
+    phone_number: string;
     role: string;
     permissions: string[];
   }>({
     email: "",
     first_name: "",
     last_name: "",
+    phone_number: "",
     role: "support_agent",
     permissions: DEFAULT_ROLE_PERMISSIONS.support_agent || [],
   });
@@ -133,6 +143,7 @@ const AdminEmployeesClient: React.FC = () => {
           email: "",
           first_name: "",
           last_name: "",
+          phone_number: "",
           role: "support_agent",
           permissions: DEFAULT_ROLE_PERMISSIONS.support_agent || [],
         });
@@ -217,30 +228,58 @@ const AdminEmployeesClient: React.FC = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="role-input">Role</Label>
+                <Label htmlFor="employee-phone">Phone number</Label>
                 <Input
-                  id="role-input"
-                  list="role-suggestions"
-                  placeholder="e.g. support_agent or custom_role"
+                  id="employee-phone"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="+2547XXXXXXXX"
+                  value={inviteForm.phone_number}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setInviteForm({ ...inviteForm, phone_number: e.target.value })
+                  }
+                />
+                <p className="text-xs text-muted-foreground">
+                  Optional. Employees can sign in with their email without phone verification.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="role-input">Role</Label>
+                <Select
                   value={inviteForm.role}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const val = e.target.value;
+                  onValueChange={(val) => {
+                    if (!val) return;
                     setInviteForm({
                       ...inviteForm,
                       role: val,
                       permissions: DEFAULT_ROLE_PERMISSIONS[val] || inviteForm.permissions,
                     });
                   }}
-                  required
-                />
-                <datalist id="role-suggestions">
-                  <option value="content_manager">Content Manager</option>
-                  <option value="support_agent">Support Agent</option>
-                  <option value="finance_manager">Finance Manager</option>
-                  <option value="admin">Administrator (Legacy)</option>
-                  <option value="super_admin">Super Admin</option>
-                  <option value="ceo">CEO</option>
-                </datalist>
+                >
+                  <SelectTrigger id="role-input" aria-label="Employee role">
+                    <SelectValue>{inviteForm.role.replaceAll("_", " ")}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="content_manager" label="Content Manager">
+                      Content Manager
+                    </SelectItem>
+                    <SelectItem value="support_agent" label="Support Agent">
+                      Support Agent
+                    </SelectItem>
+                    <SelectItem value="finance_manager" label="Finance Manager">
+                      Finance Manager
+                    </SelectItem>
+                    <SelectItem value="admin" label="Administrator (Legacy)">
+                      Administrator (Legacy)
+                    </SelectItem>
+                    <SelectItem value="super_admin" label="Super Admin">
+                      Super Admin
+                    </SelectItem>
+                    <SelectItem value="ceo" label="CEO">
+                      CEO
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-3 pt-2">
@@ -315,6 +354,7 @@ const AdminEmployeesClient: React.FC = () => {
                     <TableRow>
                       <TableHead>Name</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Phone</TableHead>
                       <TableHead>Role</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
@@ -323,7 +363,7 @@ const AdminEmployeesClient: React.FC = () => {
                   <TableBody>
                     {employees.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                        <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
                           No employees found.
                         </TableCell>
                       </TableRow>
@@ -340,6 +380,7 @@ const AdminEmployeesClient: React.FC = () => {
                             </span>
                           </TableCell>
                           <TableCell>{emp.email}</TableCell>
+                          <TableCell>{emp.phone_number || "—"}</TableCell>
                           <TableCell>
                             <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
                               {emp.role.replace("_", " ").toUpperCase()}
@@ -401,6 +442,7 @@ const AdminEmployeesClient: React.FC = () => {
                     <TableRow>
                       <TableHead>Name</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Phone</TableHead>
                       <TableHead>Role</TableHead>
                       <TableHead>Sent At</TableHead>
                       <TableHead>Status</TableHead>
@@ -410,12 +452,12 @@ const AdminEmployeesClient: React.FC = () => {
                   <TableBody>
                     {invites.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
+                        <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
                           No pending invites.
                         </TableCell>
                       </TableRow>
                     ) : (
-                      invites.map((inv: any) => (
+                      invites.map((inv: AdminEmployeeInvite) => (
                         <TableRow
                           key={inv.id}
                           className="cursor-pointer hover:bg-muted/50 transition-colors"
@@ -427,6 +469,7 @@ const AdminEmployeesClient: React.FC = () => {
                             </span>
                           </TableCell>
                           <TableCell>{inv.email}</TableCell>
+                          <TableCell>{inv.phone_number || "—"}</TableCell>
                           <TableCell>
                             <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
                               {inv.role.replace("_", " ").toUpperCase()}

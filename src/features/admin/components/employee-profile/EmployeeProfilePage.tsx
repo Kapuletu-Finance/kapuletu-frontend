@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Mail, Shield } from "lucide-react";
+import { Clock, Mail, Phone, Shield } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { buttonVariants } from "@/components/ui/button";
@@ -48,6 +48,11 @@ const PendingInvite: React.FC<{ inviteId: string }> = ({ inviteId }) => {
         <p className="flex items-center gap-2">
           <Mail className="h-4 w-4 text-muted-foreground" /> {invite.email}
         </p>
+        {invite.phone_number && (
+          <p className="flex items-center gap-2">
+            <Phone className="h-4 w-4 text-muted-foreground" /> {invite.phone_number}
+          </p>
+        )}
         <p className="flex items-center gap-2">
           <Shield className="h-4 w-4 text-muted-foreground" /> {formatRole(invite.role)} ·{" "}
           {invite.permissions?.length ?? 0} permissions granted

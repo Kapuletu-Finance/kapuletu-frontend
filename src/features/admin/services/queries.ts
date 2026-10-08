@@ -952,11 +952,24 @@ export const useAdminEmployeesQuery = (options?: { enabled?: boolean }) => {
   });
 };
 
+export interface AdminEmployeeInvite {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string | null;
+  role: string;
+  permissions: string[];
+  expires_at: string;
+  created_at: string;
+  is_used: boolean;
+}
+
 export const useAdminPendingInvitesQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["admin_invites"],
     queryFn: async () => {
-      const response = await apiClient.get<any[]>("/admin/employees/invites");
+      const response = await apiClient.get<AdminEmployeeInvite[]>("/admin/employees/invites");
       return response.data;
     },
     ...options,

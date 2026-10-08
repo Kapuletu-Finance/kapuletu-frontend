@@ -9,6 +9,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   type EmployeeProfile,
   type EmployeeUpdateInput,
   useEmployeePermissionsCatalogQuery,
@@ -52,6 +59,7 @@ export const EmployeeAccessTab: React.FC<EmployeeAccessTabProps> = ({
   });
 
   const allAccess = ALL_ACCESS_ROLES.has(form.role);
+  const roleOptions = [...new Set([...SUGGESTED_ROLES, employee.role])];
   const canEditAccess = canEdit && !isSelf;
   const granted = new Set(form.permissions);
 
@@ -140,22 +148,22 @@ export const EmployeeAccessTab: React.FC<EmployeeAccessTabProps> = ({
         <CardContent className="space-y-5">
           <div className="max-w-sm space-y-1.5">
             <Label htmlFor="emp-role">Role</Label>
-            <Input
-              id="emp-role"
-              list="emp-role-suggestions"
-              disabled={!canEditAccess}
-              pattern="[a-z][a-z0-9_]*"
-              title="Lowercase letters, numbers and underscores (e.g. support_agent)"
+            <Select
               value={form.role}
-              onChange={(e) => setForm({ ...form, role: e.target.value })}
-            />
-            <datalist id="emp-role-suggestions">
-              {SUGGESTED_ROLES.map((role) => (
-                <option key={role} value={role}>
-                  {formatRole(role)}
-                </option>
-              ))}
-            </datalist>
+              disabled={!canEditAccess}
+              onValueChange={(role) => role && setForm({ ...form, role })}
+            >
+              <SelectTrigger id="emp-role" aria-label="Employee role">
+                <SelectValue>{formatRole(form.role)}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {roleOptions.map((role) => (
+                  <SelectItem key={role} value={role} label={formatRole(role)}>
+                    {formatRole(role)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {allAccess && (
