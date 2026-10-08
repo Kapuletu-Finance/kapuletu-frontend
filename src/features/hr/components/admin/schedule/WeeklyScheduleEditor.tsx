@@ -91,39 +91,50 @@ export const WeeklyScheduleEditor: React.FC<WeeklyScheduleEditorProps> = ({
           return (
             <div
               key={row.weekday}
-              className="grid items-center gap-3 p-3 sm:grid-cols-[7rem_minmax(0,1fr)_auto]"
+              className="grid min-w-0 gap-3 p-3 sm:grid-cols-[minmax(6rem,auto)_minmax(0,1fr)] sm:items-center"
             >
               <span className="text-sm font-medium">{WEEKDAY_LABELS[row.weekday]}</span>
               <SegmentedControl
                 size="sm"
-                className="w-full max-w-sm"
+                className="w-full min-w-0"
                 options={inheritFrom ? INHERIT_OPTIONS : MODE_OPTIONS}
                 value={row.mode}
+                disabled={isSaving}
                 onChange={(mode) => updateRow(row.weekday, { mode })}
               />
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Label htmlFor={`start-${row.weekday}`} className="text-xs font-normal">
-                  Start
-                </Label>
-                <Input
-                  id={`start-${row.weekday}`}
-                  type="time"
-                  className="h-8 w-28"
-                  disabled={!hasTimes}
-                  value={row.start}
-                  onChange={(e) => updateRow(row.weekday, { start: e.target.value })}
-                />
-                <Label htmlFor={`cutoff-${row.weekday}`} className="text-xs font-normal">
-                  Cut-off
-                </Label>
-                <Input
-                  id={`cutoff-${row.weekday}`}
-                  type="time"
-                  className="h-8 w-28"
-                  disabled={!hasTimes}
-                  value={row.cutoff}
-                  onChange={(e) => updateRow(row.weekday, { cutoff: e.target.value })}
-                />
+              <div className="grid min-w-0 grid-cols-2 gap-3 sm:col-start-2">
+                <div className="min-w-0 space-y-1">
+                  <Label
+                    htmlFor={`start-${row.weekday}`}
+                    className="text-xs font-normal text-muted-foreground"
+                  >
+                    Start
+                  </Label>
+                  <Input
+                    id={`start-${row.weekday}`}
+                    type="time"
+                    className="h-9 w-full min-w-0"
+                    disabled={!hasTimes || isSaving}
+                    value={row.start}
+                    onChange={(e) => updateRow(row.weekday, { start: e.target.value })}
+                  />
+                </div>
+                <div className="min-w-0 space-y-1">
+                  <Label
+                    htmlFor={`cutoff-${row.weekday}`}
+                    className="text-xs font-normal text-muted-foreground"
+                  >
+                    Cut-off
+                  </Label>
+                  <Input
+                    id={`cutoff-${row.weekday}`}
+                    type="time"
+                    className="h-9 w-full min-w-0"
+                    disabled={!hasTimes || isSaving}
+                    value={row.cutoff}
+                    onChange={(e) => updateRow(row.weekday, { cutoff: e.target.value })}
+                  />
+                </div>
               </div>
             </div>
           );

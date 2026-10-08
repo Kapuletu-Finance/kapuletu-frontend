@@ -83,10 +83,8 @@ export const WorkScheduleTab: React.FC = () => {
   return (
     <div className="space-y-6">
       <WorkLocationsCard />
-      <div className="grid gap-6 xl:grid-cols-2">
-        <CompanyScheduleCard schedule={companySchedule} />
-        <EmployeeScheduleCard />
-      </div>
+      <CompanyScheduleCard schedule={companySchedule} />
+      <EmployeeScheduleCard />
       <ScheduleOverridesCard />
     </div>
   );

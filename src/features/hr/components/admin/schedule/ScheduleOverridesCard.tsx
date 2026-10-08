@@ -158,11 +158,16 @@ export const ScheduleOverridesCard: React.FC = () => {
         ) : (
           <div className="divide-y rounded-lg border">
             {overrides.map((override) => (
-              <div key={override.id} className="flex items-center gap-3 p-3">
-                <div className="w-28 shrink-0 text-sm font-medium">
-                  {format(parseDateParam(override.date), "EEE d MMM")}
+              <div
+                key={override.id}
+                className="flex min-w-0 flex-col gap-2 p-3 sm:flex-row sm:items-center sm:gap-3"
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="w-28 shrink-0 text-sm font-medium">
+                    {format(parseDateParam(override.date), "EEE d MMM")}
+                  </div>
+                  <WorkModeBadge mode={override.mode} />
                 </div>
-                <WorkModeBadge mode={override.mode} />
                 <div className="min-w-0 flex-1 text-sm">
                   <span className="font-medium">{override.employee_name ?? "Everyone"}</span>
                   {override.mode === "physical" && (
@@ -175,15 +180,17 @@ export const ScheduleOverridesCard: React.FC = () => {
                     <span className="text-muted-foreground"> · {override.reason}</span>
                   )}
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Remove override"
-                  disabled={deleteMutation.isPending}
-                  onClick={() => deleteMutation.mutate(override.id)}
-                >
-                  <Trash2 className="h-4 w-4 text-muted-foreground" />
-                </Button>
+                <div className="flex justify-end sm:shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Remove override"
+                    disabled={deleteMutation.isPending}
+                    onClick={() => deleteMutation.mutate(override.id)}
+                  >
+                    <Trash2 className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
