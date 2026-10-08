@@ -715,77 +715,6 @@ export const useSystemConfigQuery = () => {
     },
   });
 };
-export interface AdminBroadcastItem {
-  id: string;
-  title: string;
-  target_audience: string;
-  channels: string[];
-  status: string;
-  recipients_count: number;
-  created_at: string;
-}
-
-export const useAdminBroadcastsQuery = () => {
-  return useQuery({
-    queryKey: ["admin", "broadcasts"],
-    queryFn: async () => {
-      const response = await apiClient.get<AdminBroadcastItem[]>("/admin/crm/broadcasts");
-      return response.data;
-    },
-  });
-};
-
-export interface AdminBroadcastRecipientItem {
-  log_id: string;
-  user_name: string;
-  channel: string;
-  destination: string;
-  status: string;
-  created_at: string;
-}
-
-export const useBroadcastRecipientsQuery = (campaignId: string | null) => {
-  return useQuery({
-    queryKey: ["admin", "broadcasts", campaignId, "recipients"],
-    queryFn: async () => {
-      const response = await apiClient.get<AdminBroadcastRecipientItem[]>(
-        `/admin/crm/broadcasts/${campaignId}/recipients`,
-      );
-      return response.data;
-    },
-  });
-};
-
-export interface CommunicationLogItem {
-  log_id: string;
-  user_name: string;
-  channel: string;
-  destination: string;
-  subject: string;
-  status: string;
-  error_message: string | null;
-  created_at: string;
-}
-
-export interface CommunicationLogsResponse {
-  total: number;
-  page: number;
-  limit: number;
-  logs: CommunicationLogItem[];
-}
-
-export const useCommunicationLogsQuery = (page: number = 1, limit: number = 50) => {
-  return useQuery({
-    queryKey: ["admin", "communication-logs", page, limit],
-    queryFn: async () => {
-      const response = await apiClient.get<CommunicationLogsResponse>(
-        `/admin/crm/communication-logs?page=${page}&limit=${limit}`,
-      );
-      return response.data;
-    },
-  });
-};
-
 // --- Waitlist and Whitelist ---
 
 export interface WaitlistUserItem {
@@ -888,47 +817,6 @@ export const useAdminWhatsAppBlocklistQuery = (params: {
       );
       return response.data;
     },
-  });
-};
-
-export interface AdminTemplateItem {
-  id: string;
-  name: string;
-}
-
-export const useAdminTemplatesQuery = () => {
-  return useQuery({
-    queryKey: ["admin", "templates"],
-    queryFn: async () => {
-      const response = await apiClient.get<{ templates: AdminTemplateItem[] }>("/admin/templates");
-      return response.data.templates;
-    },
-  });
-};
-
-export const useAdminRawTemplateQuery = (name: string | null) => {
-  return useQuery({
-    queryKey: ["admin", "templates", "raw", name],
-    queryFn: async () => {
-      const response = await apiClient.get<{ name: string; content: string }>(
-        `/admin/templates/raw/${name}`,
-      );
-      return response.data;
-    },
-    enabled: !!name,
-  });
-};
-
-export const useAdminTemplatePreviewQuery = (name: string | null, message: string) => {
-  return useQuery({
-    queryKey: ["admin", "templates", "preview", name, message],
-    queryFn: async () => {
-      const response = await apiClient.get<string>(
-        `/admin/templates/preview/${name}?message=${encodeURIComponent(message)}`,
-      );
-      return response.data;
-    },
-    enabled: !!name,
   });
 };
 

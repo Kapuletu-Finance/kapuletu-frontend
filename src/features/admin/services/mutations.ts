@@ -356,39 +356,6 @@ export const useManualOverrideMutation = () => {
   });
 };
 
-export const useSendBroadcastMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (data: {
-      title: string;
-      message: string;
-      channels: ("in_app" | "email" | "whatsapp")[];
-      target_type:
-        | "all_members"
-        | "active_subscribers"
-        | "treasurers"
-        | "marketing_opt_in"
-        | "custom_selection";
-      target_ids?: string[];
-      target_emails?: string[];
-    }) => {
-      const response = await apiClient.post<{
-        status: string;
-        campaign_id: string;
-        recipients: number;
-      }>("/admin/crm/broadcast", data);
-      return response.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "broadcasts"] });
-      toast.success(`Broadcast queued! Sending to ${data.recipients} users.`);
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to send broadcast.");
-    },
-  });
-};
-
 export const useAdminUpdateTicketMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -709,25 +676,6 @@ export const useUnblockWhatsAppNumberMutation = () => {
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to unblock phone number.");
-    },
-  });
-};
-
-export const useSaveRawTemplateMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ name, content }: { name: string; content: string }) => {
-      const response = await apiClient.put<{ message: string }>(`/admin/templates/raw/${name}`, {
-        content,
-      });
-      return response.data;
-    },
-    onSuccess: (_, { name }) => {
-      toast.success("Template saved successfully.");
-      queryClient.invalidateQueries({ queryKey: ["admin", "templates", "raw", name] });
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to save template.");
     },
   });
 };

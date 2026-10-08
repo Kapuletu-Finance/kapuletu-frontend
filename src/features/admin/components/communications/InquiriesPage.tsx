@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import type React from "react";
 import IconLibrary from "@/features/shared/components/IconLibrary";
+import { PageLayout } from "@/features/shared/components/PageLayout";
 import { apiClient as api } from "@/lib/api-client";
 
 type ContactMessage = {
@@ -15,7 +16,7 @@ type ContactMessage = {
   created_at: string;
 };
 
-export const ContactMessagesTab: React.FC = () => {
+const InquiryList: React.FC = () => {
   const queryClient = useQueryClient();
 
   const { data: messages, isLoading } = useQuery<ContactMessage[]>({
@@ -105,3 +106,12 @@ export const ContactMessagesTab: React.FC = () => {
     </div>
   );
 };
+
+export const InquiriesPage: React.FC = () => (
+  <PageLayout
+    title="Inquiries"
+    subtitle="Messages sent from the contact form on the public website."
+  >
+    <InquiryList />
+  </PageLayout>
+);
