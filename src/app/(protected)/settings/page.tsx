@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import { UserSettingsLayout } from "@/features/auth/components/settings/UserSettingsLayout";
 
 export default function SettingsPage() {
-  return <UserSettingsLayout />;
+  return (
+    <Suspense>
+      <UserSettingsLayout />
+    </Suspense>
+  );
 }

@@ -75,7 +75,13 @@ const Unsubscribe = () => {
               </Button>
             </>
           )}
-          <p>
+          <p className="flex justify-center gap-4">
+            <Link
+              href="/treasurer/settings?tab=communications"
+              className="text-primary hover:underline"
+            >
+              Manage all preferences
+            </Link>
             <Link href="/" className="text-primary hover:underline">
               Go to KapuLetu
             </Link>

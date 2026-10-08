@@ -11,6 +11,7 @@ import {
   useCommsOverviewQuery,
 } from "@/features/admin/services/communicationsApi";
 import { PageLayout } from "@/features/shared/components/PageLayout";
+import { DeliverabilityCards, DeliveryTrendChart } from "./DeliveryInsights";
 import { BroadcastStatusBadge, CHANNEL_LABELS, DeliverySummary, shortDate, totals } from "./shared";
 
 const Kpi = ({ label, value, hint }: { label: string; value: React.ReactNode; hint?: string }) => (
@@ -68,6 +69,9 @@ export const CommunicationsOverviewPage: React.FC = () => {
           />
         </div>
       )}
+
+      {data && <DeliverabilityCards data={data} />}
+      {data && <DeliveryTrendChart daily={data.daily} />}
 
       {data && Object.keys(data.messages).length > 0 && (
         <Card>

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +39,9 @@ import {
   useBroadcastActionMutation,
   useBroadcastMessagesQuery,
   useBroadcastQuery,
+  useDeleteDraftMutation,
 } from "@/features/admin/services/communicationsApi";
+import { ChannelFunnel, MessageTimelineDialog } from "./DeliveryInsights";
 import {
   audienceLabel,
   BroadcastStatusBadge,
@@ -133,6 +137,7 @@ const DecisionDialog = ({
 };
 
 const Recipients = ({ id }: { id: string }) => {
+  const [openMessage, setOpenMessage] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [channel, setChannel] = useState("");
   const [status, setStatus] = useState("");
@@ -196,7 +201,13 @@ const Recipients = ({ id }: { id: string }) => {
               <EmptyRow colSpan={3}>No messages match.</EmptyRow>
             ) : (
               data.items.map((m) => (
-                <TableRow key={m.id}>
+                <TableRow
+                  key={m.id}
+                  tabIndex={0}
+                  className="cursor-pointer hover:bg-muted/50 focus-visible:bg-muted/50 outline-none"
+                  onClick={() => setOpenMessage(m.id)}
+                  onKeyDown={(e) => e.key === "Enter" && setOpenMessage(m.id)}
+                >
                   <TableCell>
                     <div className="font-medium">{m.recipient}</div>
                     {m.channel !== "in_app" && (
@@ -224,6 +235,7 @@ const Recipients = ({ id }: { id: string }) => {
         </Table>
       </div>
       {data && <Pagination page={page} limit={LIMIT} total={data.total} onPage={setPage} />}
+      <MessageTimelineDialog id={openMessage} onClose={() => setOpenMessage(null)} />
     </section>
   );
 };
@@ -235,8 +247,14 @@ export const BroadcastDetailSheet = ({
   id: string | null;
   onClose: () => void;
 }) => {
+  const router = useRouter();
   const { data: b, isLoading } = useBroadcastQuery(id);
   const [action, setAction] = useState<"approve" | "reject" | "cancel" | null>(null);
+  const quick = useBroadcastActionMutation();
+  const deleteDraft = useDeleteDraftMutation();
+  const editDraft = (draftId: string) => router.push(`/admin/communications/new?draft=${draftId}`);
+  const notStarted =
+    b && !b.started_at && ["awaiting_approval", "queued", "rejected"].includes(b.status);
   const reach = b?.stats.audience;
 
   return (
@@ -260,22 +278,72 @@ export const BroadcastDetailSheet = ({
               </SheetDescription>
             </SheetHeader>
 
-            {(b.status === "awaiting_approval" ||
-              b.status === "queued" ||
-              b.status === "sending") && (
-              <div className="flex flex-wrap gap-2">
-                {b.status === "awaiting_approval" && (
-                  <>
-                    <Button onClick={() => setAction("approve")}>Approve</Button>
-                    <Button variant="outline" onClick={() => setAction("reject")}>
-                      Reject
-                    </Button>
-                  </>
-                )}
+            <div className="flex flex-wrap gap-2">
+              {b.status === "draft" && (
+                <>
+                  <Button
+                    nativeButton={false}
+                    render={<Link href={`/admin/communications/new?draft=${b.id}`} />}
+                  >
+                    Edit draft
+                  </Button>
+                  <Button
+                    variant="outline"
+                    disabled={deleteDraft.isPending}
+                    onClick={() => deleteDraft.mutate(b.id, { onSuccess: onClose })}
+                  >
+                    Delete draft
+                  </Button>
+                </>
+              )}
+              {b.status === "awaiting_approval" && (
+                <>
+                  <Button onClick={() => setAction("approve")}>Approve</Button>
+                  <Button variant="outline" onClick={() => setAction("reject")}>
+                    Reject
+                  </Button>
+                </>
+              )}
+              {notStarted && (
+                <Button
+                  variant="outline"
+                  disabled={quick.isPending}
+                  onClick={() =>
+                    quick.mutate(
+                      { id: b.id, action: "return-to-draft" },
+                      { onSuccess: () => editDraft(b.id) },
+                    )
+                  }
+                >
+                  Return to draft
+                </Button>
+              )}
+              {(b.status === "awaiting_approval" ||
+                b.status === "queued" ||
+                b.status === "sending") && (
                 <Button variant="outline" onClick={() => setAction("cancel")}>
                   Cancel broadcast
                 </Button>
-              </div>
+              )}
+              {b.status !== "draft" && (
+                <Button
+                  variant="outline"
+                  disabled={quick.isPending}
+                  onClick={() =>
+                    quick.mutate(
+                      { id: b.id, action: "duplicate" },
+                      { onSuccess: (copy) => editDraft(copy.id) },
+                    )
+                  }
+                >
+                  Duplicate
+                </Button>
+              )}
+            </div>
+            {b.status === "awaiting_approval" && (
+              <p className="text-xs text-muted-foreground">
+                Returning to draft lets the author edit it; it then needs approving again.
+              </p>
             )}
 
             <dl className="grid grid-cols-2 gap-4">
@@ -296,40 +364,49 @@ export const BroadcastDetailSheet = ({
               <Field label="People reached">{b.recipients_count.toLocaleString()}</Field>
             </dl>
 
-            <section className="space-y-3">
-              <h3 className="font-semibold">Delivery</h3>
-              <div className="grid gap-3 sm:grid-cols-3">
-                {b.channels.map((channel: Channel) => {
-                  const t = totals({ [channel]: b.stats.channels?.[channel] });
-                  const skipped = reach?.channels?.[channel];
-                  return (
-                    <div key={channel} className="rounded-md border border-border p-3 space-y-1">
-                      <p className="text-sm font-medium">{CHANNEL_LABELS[channel]}</p>
-                      <p className="text-lg font-semibold tabular-nums">
-                        {t.sent.toLocaleString()}
-                        <span className="text-sm font-normal text-muted-foreground">
-                          {" "}
-                          / {t.total.toLocaleString()} sent
-                        </span>
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {t.failed > 0 && <Badge variant="destructive">{t.failed} failed</Badge>}
-                        {t.pending > 0 && <Badge variant="secondary">{t.pending} pending</Badge>}
-                        {t.cancelled > 0 && <Badge variant="outline">{t.cancelled} stopped</Badge>}
+            {b.status !== "draft" && (
+              <section className="space-y-3">
+                <h3 className="font-semibold">Delivery</h3>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {b.channels.map((channel: Channel) => {
+                    const t = totals({ [channel]: b.stats.channels?.[channel] });
+                    const skipped = reach?.channels?.[channel];
+                    return (
+                      <div key={channel} className="rounded-md border border-border p-3 space-y-1">
+                        <p className="text-sm font-medium">{CHANNEL_LABELS[channel]}</p>
+                        <p className="text-lg font-semibold tabular-nums">
+                          {t.sent.toLocaleString()}
+                          <span className="text-sm font-normal text-muted-foreground">
+                            {" "}
+                            / {t.total.toLocaleString()} sent
+                          </span>
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {t.failed > 0 && <Badge variant="destructive">{t.failed} failed</Badge>}
+                          {t.pending > 0 && <Badge variant="secondary">{t.pending} pending</Badge>}
+                          {t.cancelled > 0 && (
+                            <Badge variant="outline">{t.cancelled} stopped</Badge>
+                          )}
+                        </div>
+                        <ChannelFunnel
+                          channel={channel}
+                          sent={t.sent + t.failed}
+                          engagement={b.stats.engagement?.[channel]}
+                        />
+                        {skipped &&
+                          skipped.no_consent + skipped.suppressed + skipped.no_destination > 0 && (
+                            <p className="text-xs text-muted-foreground">
+                              Not sent: {skipped.no_consent} without marketing consent,{" "}
+                              {skipped.suppressed} suppressed, {skipped.no_destination} with no
+                              address
+                            </p>
+                          )}
                       </div>
-                      {skipped &&
-                        skipped.no_consent + skipped.suppressed + skipped.no_destination > 0 && (
-                          <p className="text-xs text-muted-foreground">
-                            Not sent: {skipped.no_consent} without marketing consent,{" "}
-                            {skipped.suppressed} suppressed, {skipped.no_destination} with no
-                            address
-                          </p>
-                        )}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
 
             {b.content?.email && (
               <section className="space-y-2">
@@ -358,7 +435,7 @@ export const BroadcastDetailSheet = ({
               </section>
             )}
 
-            <Recipients id={b.id} />
+            {b.status !== "draft" && <Recipients id={b.id} />}
             <DecisionDialog broadcast={b} action={action} onClose={() => setAction(null)} />
           </div>
         )}

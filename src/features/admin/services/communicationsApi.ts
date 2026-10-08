@@ -5,6 +5,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
+import { downloadFile } from "@/lib/download";
 import { errorMessage, type Paged, toQuery } from "./financeApi";
 
 export const COMMS_KEY = ["admin", "communications"] as const;
@@ -16,6 +17,7 @@ export type Channel = "email" | "in_app" | "whatsapp";
 export type Category = "service" | "marketing";
 export type SubscriptionState = "paid" | "trial" | "comp" | "lapsed" | "free";
 export type BroadcastStatus =
+  | "draft"
   | "awaiting_approval"
   | "queued"
   | "sending"
@@ -28,6 +30,8 @@ export type MessageStatus =
   | "sent"
   | "delivered"
   | "failed"
+  | "bounced"
+  | "complained"
   | "suppressed"
   | "cancelled";
 
@@ -54,6 +58,12 @@ export interface BroadcastInput {
 
 export type ChannelCounts = Partial<Record<MessageStatus, number>>;
 
+export interface Engagement {
+  delivered: number;
+  opened: number;
+  clicked: number;
+}
+
 export interface ReachSummary {
   audience_size: number;
   reachable_people: number;
@@ -73,7 +83,12 @@ export interface Broadcast {
   audience: Audience;
   channels: Channel[];
   recipients_count: number;
-  stats: { audience?: ReachSummary; channels?: Partial<Record<Channel, ChannelCounts>> };
+  stats: {
+    audience?: ReachSummary;
+    channels?: Partial<Record<Channel, ChannelCounts>>;
+    /** First delivery, open (email) or read (WhatsApp), and click, per message; from provider webhooks. */
+    engagement?: Partial<Record<Channel, Engagement>>;
+  };
   created_by: string | null;
   approved_by: string | null;
   decision_note: string | null;
@@ -82,6 +97,8 @@ export interface Broadcast {
   completed_at: string | null;
   created_at: string;
   content?: BroadcastContent;
+  /** Names for the people picker when the audience is selected_users. */
+  audience_people?: RecipientSearchResult[];
 }
 
 export interface CommMessage {
@@ -92,25 +109,26 @@ export interface CommMessage {
   user_id: string | null;
   channel: Channel;
   destination: string;
-  category: Category;
+  category: Category | "security";
+  /** Transactional messages: what it was (payment_receipt, verification_code...). Null for broadcasts. */
+  kind: string | null;
   subject: string | null;
   status: MessageStatus;
   attempts: number;
   error: string | null;
   next_attempt_at: string | null;
   sent_at: string | null;
+  delivered_at: string | null;
+  opened_at: string | null;
+  clicked_at: string | null;
   created_at: string;
 }
 
-export interface TransactionalLogItem {
-  id: string;
-  recipient: string;
-  channel: string;
-  destination: string;
-  subject: string | null;
-  status: string;
-  error: string | null;
-  created_at: string;
+export interface MessageEvent {
+  event: string;
+  provider: string;
+  detail: string | null;
+  occurred_at: string;
 }
 
 export interface CommsOverview {
@@ -121,6 +139,23 @@ export interface CommsOverview {
   messages: Partial<Record<Channel, ChannelCounts>>;
   suppressions: number;
   approval_threshold: number;
+  deliverability: Partial<
+    Record<
+      "email" | "whatsapp",
+      {
+        attempted: number;
+        delivered: number;
+        opened: number;
+        clicked: number;
+        bounced: number;
+        complained: number;
+        failed: number;
+      }
+    >
+  >;
+  daily: { date: string; attempted: number; delivered: number; failed: number }[];
+  /** Whether provider webhooks have reported anything in the period. */
+  tracking: { email: boolean; whatsapp: boolean };
 }
 
 export interface Suppression {
@@ -248,6 +283,14 @@ export const useCreateBroadcastMutation = () => {
   });
 };
 
+export type BroadcastAction =
+  | "approve"
+  | "reject"
+  | "cancel"
+  | "submit"
+  | "duplicate"
+  | "return-to-draft";
+
 export const useBroadcastActionMutation = () => {
   const qc = useQueryClient();
   return useMutation({
@@ -257,13 +300,13 @@ export const useBroadcastActionMutation = () => {
       note,
     }: {
       id: string;
-      action: "approve" | "reject" | "cancel";
+      action: BroadcastAction;
       note?: string;
     }) =>
       (
         await apiClient.post<Broadcast>(
           `${BASE}/broadcasts/${id}/${action}`,
-          action === "cancel" ? undefined : { note },
+          action === "approve" || action === "reject" ? { note } : undefined,
         )
       ).data,
     onSuccess: (_b, { action }) => {
@@ -273,12 +316,81 @@ export const useBroadcastActionMutation = () => {
           approve: "Broadcast approved and queued.",
           reject: "Broadcast rejected.",
           cancel: "Broadcast cancelled.",
+          submit: "Broadcast submitted.",
+          duplicate: "Copied into a new draft.",
+          "return-to-draft": "Moved back to drafts. It needs submitting again.",
         }[action],
       );
     },
     onError: (e) => toast.error(errorMessage(e, "That didn't work.")),
   });
 };
+
+/** Drafts only need a title; everything else is checked when the draft is submitted. */
+export type DraftInput = Omit<BroadcastInput, "audience"> & { audience: Audience | null };
+
+export const useSaveDraftMutation = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, draft }: { id?: string | null; draft: DraftInput }) => {
+      const body = { ...draft, audience: draft.audience ?? undefined };
+      return (
+        id
+          ? await apiClient.put<Broadcast>(`${BASE}/broadcasts/${id}`, body)
+          : await apiClient.post<Broadcast>(`${BASE}/broadcasts/drafts`, body)
+      ).data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: COMMS_KEY }),
+    onError: (e) => toast.error(errorMessage(e, "Could not save the draft.")),
+  });
+};
+
+export const useDeleteDraftMutation = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => (await apiClient.delete(`${BASE}/broadcasts/${id}`)).data,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: COMMS_KEY });
+      toast.success("Draft deleted.");
+    },
+    onError: (e) => toast.error(errorMessage(e, "Could not delete the draft.")),
+  });
+};
+
+export interface TestSendResult {
+  results: Partial<Record<Channel, { ok: boolean; destination: string; error: string | null }>>;
+}
+
+export const useTestSendMutation = () =>
+  useMutation({
+    mutationFn: async (
+      input: Pick<BroadcastInput, "category" | "channels" | "content"> & { broadcast_id?: string },
+    ) => (await apiClient.post<TestSendResult>(`${BASE}/broadcasts/test`, input)).data,
+    onError: (e) => toast.error(errorMessage(e, "Could not send the test.")),
+  });
+
+export interface WhatsAppTemplate {
+  name: string;
+  language: string;
+  category: string;
+  body: string;
+  variables: number;
+  sendable: boolean;
+  unsupported_reason: string | null;
+}
+
+export const useWhatsAppTemplatesQuery = (enabled: boolean) =>
+  useQuery({
+    queryKey: [...COMMS_KEY, "whatsapp-templates"],
+    queryFn: async () =>
+      (
+        await apiClient.get<{ configured: boolean; templates: WhatsAppTemplate[] }>(
+          `${BASE}/whatsapp/templates`,
+        )
+      ).data,
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
 
 export const useRecipientSearchQuery = (q: string) =>
   useQuery({
@@ -300,6 +412,7 @@ export const useMessagesQuery = (params: {
   channel?: string;
   status?: string;
   q?: string;
+  kind?: "broadcast" | "transactional";
 }) =>
   useQuery({
     queryKey: [...COMMS_KEY, "messages", params],
@@ -308,22 +421,27 @@ export const useMessagesQuery = (params: {
     placeholderData: keepPreviousData,
   });
 
-export const useTransactionalLogQuery = (params: {
-  page: number;
-  limit: number;
+export const useMessageEventsQuery = (id: string | null) =>
+  useQuery({
+    queryKey: [...COMMS_KEY, "message", id, "events"],
+    queryFn: async () =>
+      (
+        await apiClient.get<{ message: CommMessage; events: MessageEvent[] }>(
+          `${BASE}/messages/${id}/events`,
+        )
+      ).data,
+    enabled: !!id,
+  });
+
+export const exportDeliveryLog = (params: {
   channel?: string;
   status?: string;
   q?: string;
+  broadcast_id?: string;
+  kind?: "broadcast" | "transactional";
 }) =>
-  useQuery({
-    queryKey: [...COMMS_KEY, "transactional", params],
-    queryFn: async () =>
-      (
-        await apiClient.get<Paged<TransactionalLogItem>>(
-          `${BASE}/transactional-log${toQuery(params)}`,
-        )
-      ).data,
-    placeholderData: keepPreviousData,
+  downloadFile(`${BASE}/messages/export${toQuery(params)}`, {
+    fallbackName: `delivery-log-${new Date().toISOString().slice(0, 10)}.csv`,
   });
 
 // --- suppressions ---
@@ -431,5 +549,81 @@ export const useRestoreTemplateMutation = () => {
       toast.success(`Restored; now version ${t.version}.`);
     },
     onError: (e) => toast.error(errorMessage(e, "Could not restore that version.")),
+  });
+};
+
+// --- website inquiries ---
+
+export type InquiryStatus = "unread" | "read" | "replied" | "resolved";
+
+export interface Inquiry {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  topic: string;
+  message: string;
+  status: InquiryStatus;
+  replies: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InquiryDetail extends Inquiry {
+  thread: {
+    id: string;
+    body: string;
+    author: string;
+    created_at: string;
+    delivery_status: MessageStatus | null;
+    message_id: string | null;
+  }[];
+}
+
+export const useInquiriesQuery = (params: {
+  page: number;
+  limit: number;
+  status?: InquiryStatus | "";
+  q?: string;
+}) =>
+  useQuery({
+    queryKey: [...COMMS_KEY, "inquiries", params],
+    queryFn: async () =>
+      (
+        await apiClient.get<Paged<Inquiry> & { unread: number }>(
+          `${BASE}/inquiries${toQuery(params)}`,
+        )
+      ).data,
+    placeholderData: keepPreviousData,
+  });
+
+export const useInquiryQuery = (id: string | null) =>
+  useQuery({
+    queryKey: [...COMMS_KEY, "inquiry", id],
+    queryFn: async () => (await apiClient.get<InquiryDetail>(`${BASE}/inquiries/${id}`)).data,
+    enabled: !!id,
+  });
+
+export const useInquiryStatusMutation = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: InquiryStatus }) =>
+      (await apiClient.patch<InquiryDetail>(`${BASE}/inquiries/${id}`, { status })).data,
+    onSuccess: () => qc.invalidateQueries({ queryKey: [...COMMS_KEY] }),
+    onError: (e) => toast.error(errorMessage(e, "Could not update the inquiry.")),
+  });
+};
+
+export const useInquiryReplyMutation = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, body, resolve }: { id: string; body: string; resolve: boolean }) =>
+      (await apiClient.post<InquiryDetail>(`${BASE}/inquiries/${id}/reply`, { body, resolve }))
+        .data,
+    onSuccess: (_d, { resolve }) => {
+      qc.invalidateQueries({ queryKey: [...COMMS_KEY] });
+      toast.success(resolve ? "Reply sent and inquiry resolved." : "Reply sent.");
+    },
+    onError: (e) => toast.error(errorMessage(e, "Could not send the reply.")),
   });
 };

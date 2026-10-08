@@ -1,9 +1,10 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,15 +29,20 @@ import {
   type BroadcastInput,
   type Category,
   type Channel,
+  type DraftInput,
   type RecipientSearchResult,
   type SubscriptionState,
+  useBroadcastActionMutation,
   useBroadcastEstimateQuery,
+  useBroadcastQuery,
   useCreateBroadcastMutation,
   useRecipientSearchQuery,
+  useSaveDraftMutation,
 } from "@/features/admin/services/communicationsApi";
 import { PageLayout } from "@/features/shared/components/PageLayout";
 import { RichTextEditor } from "@/features/shared/components/RichTextEditor";
-import { audienceLabel, CHANNEL_LABELS, useDebouncedValue } from "./shared";
+import { TestSendDialog, useWhatsAppProblems, WhatsAppTemplateFields } from "./ComposerParts";
+import { audienceLabel, CHANNEL_LABELS, useDebouncedValue, useHasCommsAccess } from "./shared";
 
 type AudienceType = "all_users" | "customers" | "subscription" | "staff" | "selected_users";
 
@@ -79,6 +85,13 @@ const fillSample = (text: string) =>
         email: "jane@example.com",
       })[key] ?? `{{${key}}}`,
   );
+
+/** ISO time to the value a datetime-local input expects, in the browser's time zone. */
+const toLocalInput = (iso: string) => {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
 const Section = ({
   step,
@@ -175,9 +188,21 @@ const PeoplePicker = ({
   );
 };
 
-export const ComposeBroadcastPage: React.FC = () => {
+export const ComposeBroadcastPage: React.FC<{ draftId?: string | null }> = ({
+  draftId: initialDraftId = null,
+}) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const { me } = useHasCommsAccess();
   const create = useCreateBroadcastMutation();
+  const saveDraft = useSaveDraftMutation();
+  const action = useBroadcastActionMutation();
+  const [draftId, setDraftId] = useState<string | null>(initialDraftId);
+  // Only a draft opened from the URL is loaded; one created here already has its state in the form
+  const [loadId] = useState(initialDraftId);
+  const { data: draft, isLoading: loadingDraft } = useBroadcastQuery(loadId);
+  const [savedSnapshot, setSavedSnapshot] = useState<string | null>(null);
+  const [testing, setTesting] = useState(false);
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<Category>("service");
@@ -200,6 +225,32 @@ export const ComposeBroadcastPage: React.FC = () => {
   const [scheduledFor, setScheduledFor] = useState("");
   const [confirming, setConfirming] = useState(false);
 
+  // Reopening a draft: fill the form once from what was saved
+  const hydrated = useRef(false);
+  useEffect(() => {
+    if (!draft || hydrated.current) return;
+    hydrated.current = true;
+    const a = draft.audience;
+    setTitle(draft.title);
+    setCategory(draft.category);
+    if (a.type === "subscription") setStates(a.states);
+    if (a.type === "selected_users") setPeople(draft.audience_people ?? []);
+    setAudienceType(a.type === "legacy" ? "customers" : a.type);
+    setChannels(draft.channels);
+    const c = draft.content ?? {};
+    setSubject(c.email?.subject ?? "");
+    setPreheader(c.email?.preheader ?? "");
+    setHtml(c.email?.html ?? "");
+    setSameInApp(!c.in_app);
+    setInAppTitle(c.in_app?.title ?? "");
+    setInAppBody(c.in_app?.body ?? "");
+    setWaTemplate(c.whatsapp?.template ?? "");
+    setWaLanguage(c.whatsapp?.language ?? "en");
+    setWaParams(c.whatsapp?.params ?? []);
+    setScheduled(!!draft.scheduled_for);
+    setScheduledFor(draft.scheduled_for ? toLocalInput(`${draft.scheduled_for}Z`) : "");
+  }, [draft]);
+
   const audience: Audience | null = useMemo(() => {
     if (audienceType === "subscription")
       return states.length ? { type: "subscription", states } : null;
@@ -221,16 +272,18 @@ export const ComposeBroadcastPage: React.FC = () => {
     setChannels(on ? [...channels, c] : channels.filter((x) => x !== c));
   const usesEmailForInApp = has("in_app") && has("email") && sameInApp;
 
+  const contentProblems: string[] = [];
+  if (has("email") && (!subject.trim() || !textOf(html)))
+    contentProblems.push("Email needs a subject and a body.");
+  if (has("in_app") && !usesEmailForInApp && (!inAppTitle.trim() || !inAppBody.trim()))
+    contentProblems.push("In-app notification needs a title and a message.");
+  contentProblems.push(...useWhatsAppProblems(has("whatsapp"), waTemplate, waLanguage, waParams));
+
   const problems: string[] = [];
   if (title.trim().length < 3) problems.push("Give the broadcast a name (at least 3 characters).");
   if (!audience) problems.push("Choose who should receive it.");
   if (!channels.length) problems.push("Pick at least one channel.");
-  if (has("email") && (!subject.trim() || !textOf(html)))
-    problems.push("Email needs a subject and a body.");
-  if (has("in_app") && !usesEmailForInApp && (!inAppTitle.trim() || !inAppBody.trim()))
-    problems.push("In-app notification needs a title and a message.");
-  if (has("whatsapp") && !/^[a-z0-9_]+$/.test(waTemplate))
-    problems.push("WhatsApp needs an approved template name (lower-case letters, digits and _).");
+  problems.push(...contentProblems);
   if (scheduled && (!scheduledFor || new Date(scheduledFor) < new Date()))
     problems.push("Pick a time in the future, or send now.");
   if (reach && reach.reachable_people === 0)
@@ -254,9 +307,70 @@ export const ComposeBroadcastPage: React.FC = () => {
     scheduled_for: scheduled ? new Date(scheduledFor).toISOString() : null,
   });
 
+  const draftPayload = (): DraftInput => ({
+    ...payload(),
+    title: title.trim() || "Untitled broadcast",
+    audience,
+    scheduled_for: scheduled && scheduledFor ? new Date(scheduledFor).toISOString() : null,
+  });
+  const snapshot = JSON.stringify(draftPayload());
+  const unsaved = savedSnapshot === null ? !draftId : snapshot !== savedSnapshot;
+
+  // Mark the hydrated draft as saved so "unsaved changes" only reflects edits made here
+  useEffect(() => {
+    if (draft && hydrated.current && savedSnapshot === null) setSavedSnapshot(snapshot);
+  }, [draft, snapshot, savedSnapshot]);
+
+  const persistDraft = (onSaved?: (id: string) => void) =>
+    saveDraft.mutate(
+      { id: draftId, draft: draftPayload() },
+      {
+        onSuccess: (b) => {
+          setSavedSnapshot(snapshot);
+          if (!draftId) {
+            setDraftId(b.id);
+            router.replace(`${pathname}?draft=${b.id}`, { scroll: false });
+          }
+          onSaved ? onSaved(b.id) : toast.success("Draft saved.");
+        },
+      },
+    );
+
+  const sendOrSubmit = () => {
+    const done = (id: string) => router.push(`/admin/communications/broadcasts?open=${id}`);
+    if (!draftId) {
+      create.mutate(payload(), {
+        onSuccess: (b) => done(b.id),
+        onSettled: () => setConfirming(false),
+      });
+      return;
+    }
+    // A draft: save the latest edits, then submit it
+    persistDraft((id) =>
+      action.mutate(
+        { id, action: "submit" },
+        { onSuccess: () => done(id), onSettled: () => setConfirming(false) },
+      ),
+    );
+  };
+  const busy = create.isPending || saveDraft.isPending || action.isPending;
+
+  if (loadId && loadingDraft) {
+    return <p className="text-sm text-muted-foreground p-6">Loading draft…</p>;
+  }
+  if (loadId && draft && draft.status !== "draft") {
+    return (
+      <PageLayout title="This broadcast isn't a draft">
+        <p className="text-sm text-muted-foreground">
+          It has already been submitted. Return it to draft from the broadcast's details to edit it.
+        </p>
+      </PageLayout>
+    );
+  }
+
   return (
     <PageLayout
-      title="New broadcast"
+      title={draftId ? "Edit draft" : "New broadcast"}
       subtitle="Announce something to customers or staff, or run a marketing campaign to people who opted in."
     >
       <div className="grid gap-6 lg:grid-cols-[1fr_340px] items-start">
@@ -437,63 +551,16 @@ export const ComposeBroadcastPage: React.FC = () => {
               )}
 
               {has("whatsapp") && (
-                <div className="space-y-3 border-t border-border pt-4">
-                  <h3 className="text-sm font-semibold">WhatsApp template</h3>
-                  <p className="text-xs text-muted-foreground">
-                    Enter the exact template name from Meta Business Manager. Marketing templates
-                    are charged per message by Meta.
-                  </p>
-                  <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
-                    <div className="space-y-2">
-                      <Label htmlFor="bc-wa-template">Template name</Label>
-                      <Input
-                        id="bc-wa-template"
-                        value={waTemplate}
-                        onChange={(e) => setWaTemplate(e.target.value.trim())}
-                        placeholder="october_update"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="bc-wa-lang">Language</Label>
-                      <Input
-                        id="bc-wa-lang"
-                        value={waLanguage}
-                        onChange={(e) => setWaLanguage(e.target.value.trim())}
-                        placeholder="en"
-                      />
-                    </div>
-                  </div>
-                  {waParams.map((p, i) => (
-                    <div key={i} className="flex items-end gap-2">
-                      <div className="flex-1 space-y-2">
-                        <Label htmlFor={`bc-wa-${i}`}>{`Variable {{${i + 1}}}`}</Label>
-                        <Input
-                          id={`bc-wa-${i}`}
-                          value={p}
-                          onChange={(e) =>
-                            setWaParams(waParams.map((x, j) => (j === i ? e.target.value : x)))
-                          }
-                          placeholder="e.g. {{first_name}}"
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setWaParams(waParams.filter((_, j) => j !== i))}
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setWaParams([...waParams, ""])}
-                  >
-                    Add variable
-                  </Button>
-                </div>
+                <WhatsAppTemplateFields
+                  template={waTemplate}
+                  language={waLanguage}
+                  params={waParams}
+                  onChange={(next) => {
+                    setWaTemplate(next.template);
+                    setWaLanguage(next.language);
+                    setWaParams(next.params);
+                  }}
+                />
               )}
             </Section>
           )}
@@ -618,9 +685,25 @@ export const ComposeBroadcastPage: React.FC = () => {
               ))}
             </ul>
           )}
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant="outline"
+              disabled={busy || (!!draftId && !unsaved)}
+              onClick={() => persistDraft()}
+            >
+              {saveDraft.isPending ? "Saving…" : draftId && !unsaved ? "Saved" : "Save draft"}
+            </Button>
+            <Button
+              variant="outline"
+              disabled={!channels.length || contentProblems.length > 0}
+              onClick={() => setTesting(true)}
+            >
+              Send test
+            </Button>
+          </div>
           <Button
             className="w-full"
-            disabled={problems.length > 0 || !reach}
+            disabled={problems.length > 0 || !reach || busy}
             onClick={() => setConfirming(true)}
           >
             Review and {scheduled ? "schedule" : "send"}
@@ -650,16 +733,8 @@ export const ComposeBroadcastPage: React.FC = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Back</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={create.isPending}
-              onClick={() =>
-                create.mutate(payload(), {
-                  onSuccess: (b) => router.push(`/admin/communications/broadcasts?open=${b.id}`),
-                  onSettled: () => setConfirming(false),
-                })
-              }
-            >
-              {create.isPending
+            <AlertDialogAction disabled={busy} onClick={sendOrSubmit}>
+              {busy
                 ? "Saving…"
                 : reach?.needs_approval
                   ? "Submit"
@@ -670,6 +745,16 @@ export const ComposeBroadcastPage: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {testing && (
+        <TestSendDialog
+          open
+          onClose={() => setTesting(false)}
+          input={{ category, channels, content: payload().content }}
+          broadcastId={draftId}
+          me={me ? { email: me.email, phone_number: me.phone_number } : undefined}
+        />
+      )}
     </PageLayout>
   );
 };

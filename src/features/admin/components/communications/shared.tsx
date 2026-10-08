@@ -78,6 +78,7 @@ const BROADCAST_STATUS: Record<
   BroadcastStatus,
   { label: string; variant: "default" | "secondary" | "outline" | "destructive" }
 > = {
+  draft: { label: "Draft", variant: "outline" },
   awaiting_approval: { label: "Awaiting approval", variant: "secondary" },
   queued: { label: "Queued", variant: "secondary" },
   sending: { label: "Sending", variant: "secondary" },
@@ -104,6 +105,8 @@ const MESSAGE_STATUS: Record<
   sent: { label: "Sent", variant: "default" },
   delivered: { label: "Delivered", variant: "default" },
   failed: { label: "Failed", variant: "destructive" },
+  bounced: { label: "Bounced", variant: "destructive" },
+  complained: { label: "Marked as spam", variant: "destructive" },
   suppressed: { label: "Suppressed", variant: "outline" },
   cancelled: { label: "Cancelled", variant: "outline" },
 };
@@ -139,8 +142,9 @@ export const totals = (counts: Partial<Record<Channel, ChannelCounts>> | undefin
   for (const c of Object.values(counts ?? {})) {
     for (const [status, n] of Object.entries(c ?? {})) {
       t.total += n ?? 0;
-      if (status === "sent" || status === "delivered") t.sent += n ?? 0;
-      else if (status === "failed") t.failed += n ?? 0;
+      // A spam complaint means the message was delivered; a bounce means it wasn't
+      if (status === "sent" || status === "delivered" || status === "complained") t.sent += n ?? 0;
+      else if (status === "failed" || status === "bounced") t.failed += n ?? 0;
       else if (status === "queued" || status === "sending") t.pending += n ?? 0;
       else t.cancelled += n ?? 0;
     }
@@ -209,3 +213,6 @@ export const CHANNEL_OPTIONS: Option[] = Object.entries(CHANNEL_LABELS).map(([va
   value,
   label,
 }));
+
+export const pct = (part: number, whole: number) =>
+  whole ? `${((part / whole) * 100).toFixed(1)}%` : "—";

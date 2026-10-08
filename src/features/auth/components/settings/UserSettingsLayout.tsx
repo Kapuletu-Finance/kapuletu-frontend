@@ -1,13 +1,20 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AutomationTab } from "./tabs/AutomationTab";
+import { CommunicationsTab } from "./tabs/CommunicationsTab";
 import { GeneralProfileTab } from "./tabs/GeneralProfileTab";
 import { ReportingBillingTab } from "./tabs/ReportingBillingTab";
 import { SecurityTab } from "./tabs/SecurityTab";
 
+const TABS = ["profile", "security", "automation", "reporting", "communications"];
+
 export const UserSettingsLayout: React.FC = () => {
+  // Deep links such as /settings?tab=communications (used by the unsubscribe page)
+  const requested = useSearchParams().get("tab");
+  const initialTab = requested && TABS.includes(requested) ? requested : "profile";
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6 pb-20">
       <div>
@@ -17,7 +24,7 @@ export const UserSettingsLayout: React.FC = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="profile" className="flex flex-col gap-6 w-full">
+      <Tabs defaultValue={initialTab} className="flex flex-col gap-6 w-full">
         <ScrollArea orientation="horizontal" className="w-full border-b border-border">
           <TabsList className="flex h-auto w-full bg-transparent items-center justify-start p-0 rounded-none shrink-0 gap-6">
             <TabsTrigger
@@ -44,6 +51,12 @@ export const UserSettingsLayout: React.FC = () => {
             >
               Reporting & Billing
             </TabsTrigger>
+            <TabsTrigger
+              value="communications"
+              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
+            >
+              Communications
+            </TabsTrigger>
           </TabsList>
         </ScrollArea>
 
@@ -59,6 +72,9 @@ export const UserSettingsLayout: React.FC = () => {
           </TabsContent>
           <TabsContent value="reporting" className="mt-0 outline-none">
             <ReportingBillingTab />
+          </TabsContent>
+          <TabsContent value="communications" className="mt-0 outline-none">
+            <CommunicationsTab />
           </TabsContent>
         </div>
       </Tabs>
