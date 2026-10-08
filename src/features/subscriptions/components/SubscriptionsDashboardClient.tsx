@@ -6,22 +6,21 @@ import { Button } from "@/components/ui/button";
 import {
   useGetBillingHistoryQuery,
   useGetMySubscriptionQuery,
-  useGetSettingsQuery,
 } from "@/features/auth/services/queries";
 import { PricingSection } from "@/features/landing-page/components/PricingSection";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import PageLayout from "@/features/shared/components/PageLayout";
 import { BillingHistoryTable } from "./BillingHistoryTable";
 import { BillingSettingsCard } from "./BillingSettingsCard";
+import { InvoicesTable } from "./InvoicesTable";
 import { SubscriptionOverviewCard } from "./SubscriptionOverviewCard";
 
 export const SubscriptionsDashboardClient = () => {
   const { data: subscription, isLoading: isSubLoading } = useGetMySubscriptionQuery();
   const { data: history, isLoading: isHistoryLoading } = useGetBillingHistoryQuery();
-  const { data: settings, isLoading: isSettingsLoading } = useGetSettingsQuery();
   const [showPlans, setShowPlans] = useState(false);
 
-  const isLoading = isSubLoading || isHistoryLoading || isSettingsLoading;
+  const isLoading = isSubLoading || isHistoryLoading;
 
   if (isLoading) {
     return (
@@ -39,7 +38,10 @@ export const SubscriptionsDashboardClient = () => {
     );
   }
 
-  const isActivePlan = subscription.active_plan.toLowerCase() !== "free";
+  // The free tier is "basic" (older accounts may still say "Free").
+  const isPaidPlan = subscription.plan_code
+    ? subscription.plan_code !== "basic"
+    : !["basic", "free"].includes(subscription.active_plan.toLowerCase());
 
   return (
     <PageLayout
@@ -71,10 +73,11 @@ export const SubscriptionsDashboardClient = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <SubscriptionOverviewCard subscription={subscription} />
+          <InvoicesTable />
           <BillingHistoryTable history={history || []} />
         </div>
         <div className="space-y-8">
-          <BillingSettingsCard billingSettings={settings?.billing} isActivePlan={isActivePlan} />
+          <BillingSettingsCard subscription={subscription} isPaidPlan={isPaidPlan} />
 
           <div className="p-4 bg-muted/50 rounded-lg border border-border">
             <h4 className="font-semibold text-sm flex items-center gap-2 mb-2">

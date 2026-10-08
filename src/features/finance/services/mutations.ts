@@ -53,3 +53,13 @@ export const useExportReceiptPdfMutation = () => {
     },
   });
 };
+
+export const useDownloadInvoicePdfMutation = () => {
+  return useMutation({
+    mutationFn: ({ invoiceId, number }: { invoiceId: string; number: string }) =>
+      downloadFile(`/finance/invoices/${invoiceId}/pdf`, { fallbackName: `${number}.pdf` }),
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to download invoice.");
+    },
+  });
+};

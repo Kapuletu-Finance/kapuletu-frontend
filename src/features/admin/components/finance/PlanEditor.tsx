@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useArchivePlanMutation } from "@/features/admin/services/financeApi";
 import { useCreatePlanMutation, useUpdatePlanMutation } from "@/features/admin/services/mutations";
 import { useAdminPlanQuery } from "@/features/admin/services/queries";
 import { BackNavigation } from "@/features/shared/components/BackNavigation";
@@ -26,6 +28,8 @@ import { BackNavigation } from "@/features/shared/components/BackNavigation";
 const formSchema = z.object({
   name: z.string().min(2),
   price: z.coerce.number().min(0),
+  // Empty = monthly price x the "annual months charged" billing rule
+  annual_price: z.union([z.literal(""), z.coerce.number().min(0)]),
   max_groups: z.coerce.number().min(1),
   max_campaigns: z.coerce.number().min(1),
   max_transactions: z.coerce.number().min(1),
@@ -38,6 +42,7 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
   const updateMutation = useUpdatePlanMutation();
   const createMutation = useCreatePlanMutation();
   const router = useRouter();
+  const archiveMutation = useArchivePlanMutation();
   const [featureInput, setFeatureInput] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -46,6 +51,7 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
     defaultValues: {
       name: "",
       price: 0,
+      annual_price: "",
       max_groups: 1,
       max_campaigns: 1,
       max_transactions: 100,
@@ -53,7 +59,8 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
     },
     values: {
       name: plan?.name || "",
-      price: plan?.price || 0,
+      price: plan?.monthly_price ?? plan?.price ?? 0,
+      annual_price: plan?.annual_price ?? "",
       max_groups: plan?.max_groups || 1,
       max_campaigns: plan?.max_campaigns || 1,
       max_transactions: plan?.max_transactions || 100,
@@ -66,6 +73,14 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
           : [],
     },
   });
+
+  const watchedPrice = form.watch("price");
+  const watchedAnnual = form.watch("annual_price");
+  const priceChanged =
+    !isCreateMode &&
+    !!plan &&
+    (Number(watchedPrice) !== plan.monthly_price ||
+      (watchedAnnual !== "" && Number(watchedAnnual) !== plan.annual_price));
 
   if (isPending && !isCreateMode) {
     return (
@@ -88,13 +103,20 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
       {} as Record<string, boolean>,
     );
 
+    // Send the annual price only when it was typed in; otherwise the server derives it from the monthly one.
+    const { annual_price, ...rest } = values;
+    const annualTouched = !!form.formState.dirtyFields.annual_price && annual_price !== "";
     // biome-ignore lint/suspicious/noExplicitAny: Mutation typing bypass
-    const submitData: any = { ...values, allowed_features: featuresDict };
+    const submitData: any = {
+      ...rest,
+      allowed_features: featuresDict,
+      ...(annualTouched ? { annual_price } : {}),
+    };
 
     if (isCreateMode) {
       createMutation.mutate(submitData, {
         onSuccess: () => {
-          router.push("/admin/finance");
+          router.push("/admin/finance/plans");
         },
       });
     } else {
@@ -102,7 +124,7 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
         { planId, data: submitData },
         {
           onSuccess: () => {
-            router.push("/admin/finance");
+            router.push("/admin/finance/plans");
           },
         },
       );
@@ -136,6 +158,16 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
             {isCreateMode ? "Create Subscription Plan" : `Edit Plan: ${plan?.name}`}
           </h1>
         </div>
+        {!isCreateMode && plan && (
+          <Button
+            type="button"
+            variant="outline"
+            disabled={archiveMutation.isPending || (!plan.archived_at && plan.code === "basic")}
+            onClick={() => archiveMutation.mutate({ planId, archived: !plan.archived_at })}
+          >
+            {plan.archived_at ? "Restore plan" : "Archive plan"}
+          </Button>
+        )}
       </div>
 
       <Form {...form}>
@@ -168,6 +200,23 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="annual_price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Annual price (KES / yr)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="Monthly x months charged" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Leave unchanged to follow the monthly price. A price change applies to new
+                      checkouts only; issued invoices keep their price.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -269,8 +318,21 @@ export const PlanEditor = ({ planId }: { planId: string }) => {
             </CardContent>
           </Card>
 
+          {priceChanged && (
+            <p
+              role="status"
+              className="rounded-md border border-amber-600/40 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-200"
+            >
+              {plan?.active_subscribers
+                ? `${plan.active_subscribers} active ${plan.active_subscribers === 1 ? "subscription is" : "subscriptions are"} on this plan. `
+                : "No one is on this plan yet. "}
+              Their current paid period keeps its price; renewals and new checkouts pay the new
+              price.
+            </p>
+          )}
+
           <div className="flex justify-end gap-4">
-            <Link href="/admin/finance">
+            <Link href="/admin/finance/plans">
               <Button type="button" variant="outline">
                 Cancel
               </Button>

@@ -293,9 +293,17 @@ export interface AdminUserGroupItem {
 
 export interface AdminFinancePlanItem {
   plan_id: string;
+  code: string;
   name: string;
   description?: string;
+  /** Monthly price; same as monthly_price */
   price: number;
+  monthly_price: number;
+  annual_price: number;
+  is_public: boolean;
+  archived_at: string | null;
+  /** Active subscriptions currently on this plan */
+  active_subscribers: number;
   billing_cycle?: string;
   is_active?: boolean;
   features?: string[];
@@ -371,9 +379,32 @@ export const useAdminPlanQuery = (planId: string) => {
   });
 };
 
+export interface AdminBillingSettings {
+  currency: string;
+  trial_days: number;
+  grace_period_days: number;
+  annual_months_charged: number;
+  addon_monthly_price: number;
+  tax_rate_percent: number;
+  invoice_prefix: string;
+  updated_at: string | null;
+}
+
+export const useAdminBillingSettingsQuery = () => {
+  return useQuery({
+    queryKey: ["admin", "finance", "settings"],
+    queryFn: async () => {
+      const response = await apiClient.get<AdminBillingSettings>("/admin/finance/settings");
+      return response.data;
+    },
+    retry: false,
+  });
+};
+
 export interface AdminFinancialHealthResponse {
   mrr: number;
   active_subscribers: number;
+  trial_subscribers: number;
   churn_rate_percent: number;
   generated_at: string;
 }
@@ -453,6 +484,9 @@ export interface AdminFinancePaymentItem {
   amount: number;
   status: string;
   method: string;
+  transaction_type?: string;
+  invoice_number?: string | null;
+  refunded?: boolean;
   created_at: string;
 }
 

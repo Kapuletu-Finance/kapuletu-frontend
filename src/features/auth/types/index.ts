@@ -121,8 +121,14 @@ export interface SubscriptionResponse {
   usage: {
     groups: string;
     campaigns: string;
+    /** Approved contributions this month / monthly limit */
+    transactions?: string;
   };
   allowed_features?: Record<string, boolean>;
+  /** Stable plan id; "basic" is the free tier */
+  plan_code?: string | null;
+  /** Always false for now: plans are paid period by period */
+  renews_automatically?: boolean;
 }
 
 export type BillingHistoryOut = {
@@ -133,6 +139,9 @@ export type BillingHistoryOut = {
   payment_method: string | null;
   provider_reference: string | null;
   created_at: string;
+  transaction_type?: "payment" | "refund" | "comp" | null;
+  invoice_number?: string | null;
+  plan_name?: string | null;
 };
 
 export type BillingSettings = {

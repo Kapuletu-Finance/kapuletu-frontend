@@ -20,8 +20,10 @@ import {
   useInitiateCheckoutMutation,
 } from "@/features/finance/services/mutations";
 import {
+  useCheckoutQuoteQuery,
   useGetAvailablePlansQuery,
   useGetPaymentStatusQuery,
+  usePricingConfigQuery,
 } from "@/features/finance/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { getTierStyles } from "@/features/shared/utils/pricing";
@@ -45,6 +47,7 @@ const PricingPaymentModal = () => {
   const [provisionText, setProvisionText] = useState("Initializing workspace...");
 
   const { data: plans, isLoading: isPlansLoading } = useGetAvailablePlansQuery();
+  const { data: pricingConfig } = usePricingConfigQuery();
   const { data: paymentStatus, isLoading: isPaymentStatusLoading } =
     useGetPaymentStatusQuery(checkoutId);
   const initiateCheckout = useInitiateCheckoutMutation();
@@ -58,20 +61,29 @@ const PricingPaymentModal = () => {
     }
   }, [userProfile?.phone_number]);
 
-  const isValidTier = plans?.some((p) => p.name.toLowerCase() === rawTier.toLowerCase());
+  const matchesTier = (code: string, name: string, wanted: string) =>
+    code === wanted || name.toLowerCase() === wanted;
+  const isValidTier = plans?.some((p) => matchesTier(p.code, p.name, rawTier.toLowerCase()));
   const tier = isValidTier && rawTier ? rawTier.toLowerCase() : "professional";
 
   const tierName = tier.toUpperCase();
   const capitalizedTier = tier.charAt(0).toUpperCase() + tier.slice(1);
   const styles = getTierStyles(tier);
-  const selectedPricing = plans?.find((p) => p.name.toLowerCase() === tier) || plans?.[1];
+  const selectedPricing =
+    plans?.find((p) => matchesTier(p.code, p.name, tier)) ||
+    plans?.find((p) => p.monthly_price > 0);
 
-  const monthlyPrice = selectedPricing?.price || 0;
-  const annualPrice = monthlyPrice * 11;
-  const addonPrice = 200;
-
-  const basePrice = billingCycle === "annual" ? annualPrice : monthlyPrice;
-  const totalPrice = basePrice + (hasAddons ? addonPrice : 0);
+  // Prices, add-on and trial length all come from the server; the quote is what will be charged.
+  const monthlyPrice = selectedPricing?.monthly_price ?? 0;
+  const annualPrice = selectedPricing?.annual_price ?? 0;
+  const addonPrice = pricingConfig?.addon_monthly_price ?? 0;
+  const trialDays = pricingConfig?.trial_days ?? 21;
+  const { data: quote, isFetching: isQuoteLoading } = useCheckoutQuoteQuery(
+    selectedPricing?.id,
+    billingCycle,
+    hasAddons,
+  );
+  const totalPrice = quote?.total ?? 0;
 
   useEffect(() => {
     if (actionQuery === "start_trial" && tier === "professional") {
@@ -356,10 +368,12 @@ const PricingPaymentModal = () => {
           {tier === "professional" && !skipTrial ? (
             <Card className={`border-2 ${styles.borderColor} bg-accent/5`}>
               <CardContent className="space-y-6 pt-6">
-                <h3 className="font-bold text-center text-xl">Start Your 21-Day Free Trial</h3>
+                <h3 className="font-bold text-center text-xl">
+                  Start Your {trialDays}-Day Free Trial
+                </h3>
                 <p className="text-center text-muted-foreground text-sm">
-                  Experience all premium features of KapuLetu Professional for 21 days. No credit
-                  card or M-Pesa required.
+                  Experience all premium features of KapuLetu Professional for {trialDays} days. No
+                  credit card or M-Pesa required.
                 </p>
                 <Button
                   className={`w-full py-6 ${styles.btnClass}`}
@@ -403,18 +417,15 @@ const PricingPaymentModal = () => {
                   </div>
 
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>
-                        {tierName} - {billingCycle === "annual" ? "Annual" : "Monthly"}
-                      </span>
-                      <span>Ksh. {formatCurrency(basePrice)}</span>
-                    </div>
-                    {hasAddons && (
-                      <div className="flex justify-between text-muted-foreground">
-                        <span>Add ons</span>
-                        <span>Ksh. {formatCurrency(addonPrice)}</span>
+                    {quote?.lines.map((line) => (
+                      <div
+                        key={`${line.kind}-${line.description}`}
+                        className={`flex justify-between ${line.kind === "plan" ? "" : "text-muted-foreground"}`}
+                      >
+                        <span>{line.description}</span>
+                        <span>Ksh. {formatCurrency(line.amount)}</span>
                       </div>
-                    )}
+                    ))}
                     <hr className="border-border" />
                     <div className="flex justify-between font-bold">
                       <span>TOTAL :</span>
@@ -425,7 +436,9 @@ const PricingPaymentModal = () => {
                   <Button
                     className={`w-full py-6 ${styles.btnClass}`}
                     onClick={handleUpgrade}
-                    disabled={initiateCheckout.isPending || !phoneNumber}
+                    disabled={
+                      initiateCheckout.isPending || !phoneNumber || !quote || isQuoteLoading
+                    }
                   >
                     {initiateCheckout.isPending ? (
                       <div className="flex items-center gap-2">
@@ -477,8 +490,8 @@ const PricingPaymentModal = () => {
                 <div className="space-y-2">
                   <DialogTitle className="text-2xl font-bold">Unlock Professional</DialogTitle>
                   <p className="text-muted-foreground">
-                    You're about to start a 21-day free trial. Experience advanced analytics,
-                    priority support, and unlimited groups.
+                    You're about to start a {trialDays}-day free trial. Experience advanced
+                    analytics, priority support, and unlimited groups.
                   </p>
                 </div>
                 <div className="pt-4 space-y-3">

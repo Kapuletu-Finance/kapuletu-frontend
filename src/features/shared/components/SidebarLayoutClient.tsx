@@ -83,17 +83,12 @@ const getAdminLinks = (
       permission: "manage_users",
     },
     {
-      href: "/admin/finance/plans",
-      icon: "credit-card" as IconName,
-      label: "Billing & Plans",
-      allowedRoles: ["super_admin", "admin", "ceo", "finance_manager"],
-      permission: "manage_finance",
-    },
-    {
+      // Plans, subscriptions, payments, refunds and reports all live under this one section.
       href: "/admin/finance",
       icon: "credit-card" as IconName,
       label: "Finance",
-      allowedRoles: ["super_admin", "admin", "ceo", "finance_manager"],
+      // Gated by the permission (as the API is), not the job title.
+      allowedRoles: ["super_admin", "admin", "ceo"],
       permission: "manage_finance",
     },
     {

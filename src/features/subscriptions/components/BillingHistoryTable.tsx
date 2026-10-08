@@ -24,8 +24,10 @@ export const BillingHistoryTable: React.FC<Props> = ({ history }) => {
   return (
     <Card className="border-border bg-card">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">Billing History</CardTitle>
-        <CardDescription>View your past subscription payments and invoices.</CardDescription>
+        <CardTitle className="text-lg font-bold">Payments</CardTitle>
+        <CardDescription>
+          Every payment attempt, refund and free grant, with receipts for payments.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {history.length === 0 ? (
@@ -58,7 +60,11 @@ export const BillingHistoryTable: React.FC<Props> = ({ history }) => {
                       {invoice.payment_method || "Unknown"}
                     </TableCell>
                     <TableCell>
-                      {invoice.status === "success" ? (
+                      {invoice.transaction_type === "refund" ? (
+                        <Badge variant="outline">Refund</Badge>
+                      ) : invoice.transaction_type === "comp" ? (
+                        <Badge variant="outline">Free grant</Badge>
+                      ) : invoice.status === "success" ? (
                         <Badge
                           variant="default"
                           className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 shadow-none border-0"
@@ -77,21 +83,22 @@ export const BillingHistoryTable: React.FC<Props> = ({ history }) => {
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      {invoice.status === "success" && (
-                        <button
-                          type="button"
-                          onClick={() => exportPdf.mutate(invoice.payment_id)}
-                          disabled={exportPdf.isPending}
-                          className="p-2 hover:bg-muted rounded-full transition-colors inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
-                          title="Download Receipt"
-                        >
-                          {exportPdf.isPending ? (
-                            <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
-                          ) : (
-                            <IconLibrary name="download" className="w-4 h-4" />
-                          )}
-                        </button>
-                      )}
+                      {invoice.status === "success" &&
+                        (invoice.transaction_type ?? "payment") === "payment" && (
+                          <button
+                            type="button"
+                            onClick={() => exportPdf.mutate(invoice.payment_id)}
+                            disabled={exportPdf.isPending}
+                            className="p-2 hover:bg-muted rounded-full transition-colors inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
+                            title="Download Receipt"
+                          >
+                            {exportPdf.isPending ? (
+                              <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <IconLibrary name="download" className="w-4 h-4" />
+                            )}
+                          </button>
+                        )}
                     </TableCell>
                   </TableRow>
                 ))}

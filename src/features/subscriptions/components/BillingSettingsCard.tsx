@@ -1,104 +1,60 @@
+import { format } from "date-fns";
+import Link from "next/link";
 import type React from "react";
-import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import {
-  useCancelSubscriptionMutation,
-  useUpdateBillingSettingsMutation,
-} from "@/features/auth/services/mutations";
-import type { BillingSettings } from "@/features/auth/types";
-import IconLibrary from "@/features/shared/components/IconLibrary";
+import type { SubscriptionResponse } from "@/features/auth/types";
 
 interface Props {
-  billingSettings?: BillingSettings;
-  isActivePlan: boolean;
+  subscription: SubscriptionResponse;
+  isPaidPlan: boolean;
 }
 
-export const BillingSettingsCard: React.FC<Props> = ({ billingSettings, isActivePlan }) => {
-  const [autoRenew, setAutoRenew] = useState(billingSettings?.auto_renew_subscription ?? true);
-  const updateSettings = useUpdateBillingSettingsMutation();
-  const cancelSubscription = useCancelSubscriptionMutation();
-
-  const handleToggle = (checked: boolean) => {
-    setAutoRenew(checked);
-    updateSettings.mutate({
-      auto_renew_subscription: checked,
-      billing_email: billingSettings?.billing_email || null,
-    });
-  };
-
-  const handleCancel = () => {
-    cancelSubscription.mutate();
-  };
+/**
+ * How renewal works. Plans don't renew by themselves (there is no saved card or M-Pesa standing order),
+ * so this explains what happens instead of offering an auto-renew switch that did nothing.
+ */
+export const BillingSettingsCard: React.FC<Props> = ({ subscription, isPaidPlan }) => {
+  const ends = subscription.expiry_date
+    ? format(new Date(subscription.expiry_date), "d MMMM yyyy")
+    : null;
 
   return (
     <Card className="border-border bg-card">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">Billing Settings</CardTitle>
-        <CardDescription>Manage your subscription renewal and payment settings.</CardDescription>
+        <CardTitle className="text-lg font-bold">Renewal</CardTitle>
+        <CardDescription>
+          Plans are paid one period at a time; nothing is charged automatically.
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-background">
-          <div className="space-y-1">
-            <h4 className="text-sm font-medium">Auto-Renew Subscription</h4>
-            <p className="text-sm text-muted-foreground">
-              Automatically renew your subscription at the end of the billing cycle.
+      <CardContent className="space-y-4 text-sm">
+        {isPaidPlan && ends ? (
+          <>
+            <p>
+              Your <strong>{subscription.active_plan}</strong> plan ends on <strong>{ends}</strong>
+              {subscription.is_on_trial ? " (free trial)" : ""}.
             </p>
-          </div>
-          <Switch
-            checked={autoRenew}
-            onCheckedChange={handleToggle}
-            disabled={updateSettings.isPending || !isActivePlan}
-          />
-        </div>
-
-        {isActivePlan && (
-          <div className="flex items-center justify-between pt-4 border-t border-border">
-            <div className="space-y-1">
-              <h4 className="text-sm font-medium text-destructive">Cancel Subscription</h4>
-              <p className="text-sm text-muted-foreground">
-                Turn off auto-renew immediately. You will retain access until the end of your
-                billing cycle.
-              </p>
-            </div>
-
-            <AlertDialog>
-              <AlertDialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 h-9 px-4 py-2">
-                <IconLibrary name="close" className="w-4 h-4 mr-2" />
-                Cancel Plan
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will disable auto-renewal for your subscription. Your plan will downgrade
-                    to Free at the end of the current billing cycle, and you may lose access to
-                    premium features.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleCancel}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    Yes, cancel it
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+            <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+              <li>We email you 7, 3 and 1 day before it ends.</li>
+              <li>Pay before then to keep going; the new period starts when this one ends.</li>
+              <li>
+                If it lapses, you keep access for a short grace period, then move to Basic. Your
+                data stays.
+              </li>
+            </ul>
+            <Button
+              className="w-full"
+              nativeButton={false}
+              render={<Link href={`/checkout?tier=${subscription.plan_code ?? ""}`} />}
+            >
+              {subscription.is_on_trial ? "Choose a plan" : "Renew now"}
+            </Button>
+          </>
+        ) : (
+          <p className="text-muted-foreground">
+            You're on the free Basic plan. Upgrade any time; you'll only pay for the period you
+            choose.
+          </p>
         )}
       </CardContent>
     </Card>

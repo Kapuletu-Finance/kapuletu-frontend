@@ -6,9 +6,5 @@ export default async function AdminEditPlanPage({
   params: Promise<{ planId: string }>;
 }) {
   const { planId } = await params;
-  return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <PlanEditor planId={planId} />
-    </div>
-  );
+  return <PlanEditor planId={planId} />;
 }

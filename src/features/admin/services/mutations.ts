@@ -276,18 +276,51 @@ export const useExportFinancialDataMutation = () => {
   });
 };
 
+export type RefundReasonCode =
+  | "duplicate"
+  | "service_issue"
+  | "billing_error"
+  | "goodwill"
+  | "other";
+
+export const useUpdateBillingSettingsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (changes: Record<string, string | number>) => {
+      const response = await apiClient.put("/admin/finance/settings", changes);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Billing rules updated.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "finance", "settings"] });
+      queryClient.invalidateQueries({ queryKey: ["pricing-config"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update billing rules.");
+    },
+  });
+};
+
 export const useProcessRefundMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ paymentId, reason }: { paymentId: string; reason: string }) => {
+    mutationFn: async ({
+      paymentId,
+      reason,
+      reasonCode = "other",
+    }: {
+      paymentId: string;
+      reason: string;
+      reasonCode?: RefundReasonCode;
+    }) => {
       const response = await apiClient.post<{ message: string }>(
         `/admin/finance/payments/${paymentId}/refund`,
-        { reason },
+        { reason, reason_code: reasonCode },
       );
       return response.data;
     },
     onSuccess: () => {
-      toast.success("Refund processed successfully.");
+      toast.success("Refund requested. A second finance approver must approve it.");
       queryClient.invalidateQueries({ queryKey: ["admin", "finance", "payments"] });
       queryClient.invalidateQueries({ queryKey: ["admin-metrics"] });
     },

@@ -1,5 +1,5 @@
-import { AdminFinancePage } from "@/features/admin/components/finance/AdminFinancePage";
+import { FinanceOverviewPage } from "@/features/admin/components/finance/FinanceOverviewPage";
 
 export default function FinanceRoute() {
-  return <AdminFinancePage />;
+  return <FinanceOverviewPage />;
 }

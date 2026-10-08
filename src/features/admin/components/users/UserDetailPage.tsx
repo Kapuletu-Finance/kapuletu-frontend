@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -274,10 +275,19 @@ export const UserDetailPage: React.FC = () => {
                       arrangement or manual upgrade bypassing the payment gateway, use the manual
                       override below.
                     </p>
-                    <Button onClick={() => setPlanOpen(true)} variant="outline">
-                      <IconLibrary name="credit-card" className="mr-2 size-4" />
-                      Override Plan Manually
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Button onClick={() => setPlanOpen(true)} variant="outline">
+                        <IconLibrary name="credit-card" className="mr-2 size-4" />
+                        Override Plan Manually
+                      </Button>
+                      <Button
+                        variant="outline"
+                        nativeButton={false}
+                        render={<Link href={`/admin/finance/accounts/${userId}`} />}
+                      >
+                        Billing account
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>

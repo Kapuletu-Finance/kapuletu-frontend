@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import type { SubscriptionResponse } from "@/features/auth/types";
+import { usePricingConfigQuery } from "@/features/finance/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 
 interface Props {
@@ -19,7 +20,11 @@ interface Props {
 }
 
 export const SubscriptionOverviewCard: React.FC<Props> = ({ subscription }) => {
-  const isFree = subscription.active_plan.toLowerCase() === "free";
+  const { data: pricing } = usePricingConfigQuery();
+  const trialDays = pricing?.trial_days ?? 21;
+  const isFree = subscription.plan_code
+    ? subscription.plan_code === "basic"
+    : ["basic", "free"].includes(subscription.active_plan.toLowerCase());
   const showTrial = isFree && !subscription.has_used_trial;
 
   let percentageLeft = 100;
@@ -35,6 +40,9 @@ export const SubscriptionOverviewCard: React.FC<Props> = ({ subscription }) => {
   // Parse usage safely
   const [groupsUsed, groupsTotal] = (subscription.usage?.groups || "0/0").split("/");
   const [campaignsUsed, campaignsTotal] = (subscription.usage?.campaigns || "0/0").split("/");
+  const [txnsUsed, txnsTotal] = (subscription.usage?.transactions || "0/0").split("/");
+  const txnsPercent =
+    parseInt(txnsTotal, 10) > 0 ? (parseInt(txnsUsed, 10) / parseInt(txnsTotal, 10)) * 100 : 0;
 
   const groupsPercent =
     parseInt(groupsTotal, 10) > 0
@@ -74,14 +82,14 @@ export const SubscriptionOverviewCard: React.FC<Props> = ({ subscription }) => {
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Time Remaining</span>
               <span className="font-medium">
-                {subscription.days_remaining} days left (Renews {formattedDate})
+                {subscription.days_remaining} days left (ends {formattedDate})
               </span>
             </div>
             <Progress value={percentageLeft} className="h-2" />
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-border">
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground flex items-center gap-2">
@@ -111,6 +119,30 @@ export const SubscriptionOverviewCard: React.FC<Props> = ({ subscription }) => {
               className="h-2 bg-secondary"
             />
           </div>
+
+          {subscription.usage?.transactions && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground flex items-center gap-2">
+                  <IconLibrary name="report" className="w-4 h-4" /> Contributions this month
+                </span>
+                <span
+                  className={txnsPercent >= 100 ? "font-semibold text-destructive" : "font-medium"}
+                >
+                  {txnsUsed} / {parseInt(txnsTotal, 10) >= 9999 ? "∞" : txnsTotal}
+                </span>
+              </div>
+              <Progress value={Math.min(100, txnsPercent)} className="h-2 bg-secondary" />
+              {txnsPercent >= 80 && txnsPercent < 100 && (
+                <p className="text-xs text-muted-foreground">Close to your monthly limit.</p>
+              )}
+              {txnsPercent >= 100 && (
+                <p className="text-xs text-destructive">
+                  Monthly limit reached. Upgrade to record more.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </CardContent>
       {showTrial && (
@@ -119,11 +151,11 @@ export const SubscriptionOverviewCard: React.FC<Props> = ({ subscription }) => {
             <div>
               <h4 className="font-semibold text-sm">Want to try Professional?</h4>
               <p className="text-xs text-muted-foreground">
-                Unlock all premium features for 21 days.
+                Unlock all premium features for {trialDays} days.
               </p>
             </div>
             <Link href="/checkout?tier=professional&action=start_trial">
-              <Button variant="default">Start 21-Day Pro Trial</Button>
+              <Button variant="default">Start {trialDays}-Day Pro Trial</Button>
             </Link>
           </div>
         </CardFooter>

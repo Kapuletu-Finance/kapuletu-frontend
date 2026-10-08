@@ -21,10 +21,13 @@ export const getTierStyles = (id: string) => {
   };
 };
 
+/**
+ * Marketing copy for each plan, keyed by plan code. Prices, currency and trial length come from the API
+ * (/finance/available-plans and /finance/pricing-config); "{trial_days}" is filled in at render time.
+ */
 export const pricings = [
   {
     ctaText: "GET STARTED",
-    currency: "Ksh.",
     features: [
       "Manage 1 group and 1 campaign",
       "Track up to 30 contributions and 30 messages",
@@ -35,12 +38,10 @@ export const pricings = [
     id: "basic",
     name: "Basic",
     period: "month",
-    price: 0,
     tagline: "Best for exploring the platform on your own.",
   },
   {
     ctaText: "UPGRADE TO BRONZE",
-    currency: "Ksh.",
     features: [
       "Run up to 3 campaigns under one group",
       "Track up to 50 contributions and 150 messages",
@@ -52,12 +53,10 @@ export const pricings = [
     id: "bronze",
     name: "Bronze",
     period: "month",
-    price: 500,
     tagline: "Best for small teams running occasional fundraisers.",
   },
   {
     ctaText: "UPGRADE TO SILVER",
-    currency: "Ksh.",
     features: [
       "Up to 5 groups and 15 campaigns per group",
       "Track up to 500 contributions and 1,500 messages",
@@ -71,12 +70,10 @@ export const pricings = [
     id: "silver",
     name: "Silver",
     period: "month",
-    price: 1000,
     tagline: "Best for growing organizations with regular fundraising.",
   },
   {
     ctaText: "UPGRADE TO GOLD",
-    currency: "Ksh.",
     features: [
       "Unlimited groups, campaigns, and members",
       "Up to 10,000 messages monthly",
@@ -89,14 +86,12 @@ export const pricings = [
     id: "gold",
     name: "Gold",
     period: "month",
-    price: 1500,
     tagline: "Best for large organizations needing scale and advanced control.",
   },
   {
-    ctaText: "START 21-DAY FREE TRIAL",
-    currency: "Ksh.",
+    ctaText: "START {trial_days}-DAY FREE TRIAL",
     features: [
-      "Unlock ALL Premium features for 21 days",
+      "Unlock ALL Premium features for {trial_days} days",
       "Unlimited groups, campaigns, and members",
       "Up to 10,000 messages monthly",
       "WhatsApp, manual entry, and custom system integrations",
@@ -106,7 +101,6 @@ export const pricings = [
     id: "professional",
     name: "Professional",
     period: "month",
-    price: 2000,
     tagline: "Experience the full power of KapuLetu absolutely free.",
   },
 ];

@@ -107,11 +107,7 @@ export const AdminSettingsLayout: React.FC = () => {
             />
           </TabsContent>
           <TabsContent value="billing" className="mt-0 outline-none">
-            <BillingRulesTab
-              config={config}
-              onUpdate={handleUpdate}
-              isLoading={updateMutation.isPending}
-            />
+            <BillingRulesTab />
           </TabsContent>
           <TabsContent value="privacy" className="mt-0 outline-none">
             <DataRetentionTab

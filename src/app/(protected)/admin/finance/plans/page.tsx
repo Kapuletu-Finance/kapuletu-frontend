@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
+import { PlansPage } from "@/features/admin/components/finance/PlansPage";
 
-export default function AdminFinancePlansRedirect() {
-  // Redirect to the main finance page where the plans are listed
-  redirect("/admin/finance");
+export default function FinancePlansRoute() {
+  return <PlansPage />;
 }

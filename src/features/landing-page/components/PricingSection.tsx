@@ -4,10 +4,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetAvailablePlansQuery } from "@/features/finance/services/queries";
+import {
+  useGetAvailablePlansQuery,
+  usePricingConfigQuery,
+} from "@/features/finance/services/queries";
 import IconLibrary from "@/features/shared/components/IconLibrary";
 import { SiteLogo } from "@/features/shared/components/SiteLogo";
 import { getTierStyles, pricings } from "@/features/shared/utils/pricing";
+import { formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
 interface PricingSectionProps {
@@ -24,6 +28,9 @@ export const PricingSection = ({
   isLoggedIn,
 }: PricingSectionProps) => {
   const { data: dynamicPlans, isLoading } = useGetAvailablePlansQuery();
+  const { data: pricingConfig } = usePricingConfigQuery();
+  const fillTrialDays = (text: string) =>
+    text.replace("{trial_days}", String(pricingConfig?.trial_days ?? 21));
   return (
     <section id="pricing" className={cn("py-16 px-4 max-w-7xl mx-auto space-y-12", className)}>
       <div className="text-center flex flex-col items-center space-y-3">
@@ -45,11 +52,11 @@ export const PricingSection = ({
           pricings.map((pricing) => {
             const styles = getTierStyles(pricing.id);
 
-            // Merge dynamic price if available
+            // Price comes from the plan catalogue; plans it doesn't offer (archived, hidden) aren't shown.
             const dynamicPlan = dynamicPlans?.find(
-              (p) => p.name.toLowerCase() === pricing.id.toLowerCase(),
+              (p) => p.code === pricing.id || p.name.toLowerCase() === pricing.id,
             );
-            const displayPrice = dynamicPlan ? dynamicPlan.price : pricing.price;
+            if (!dynamicPlan) return null;
 
             return (
               <Card
@@ -59,7 +66,8 @@ export const PricingSection = ({
                 <div>
                   <CardHeader className="space-y-4">
                     <div className="text-xl font-bold font-sans tracking-tight">
-                      {pricing.currency} <span className="text-2xl">{displayPrice}</span>
+                      Ksh.{" "}
+                      <span className="text-2xl">{formatCurrency(dynamicPlan.monthly_price)}</span>
                       <span className="text-sm font-normal text-muted-foreground">
                         {" "}
                         /{pricing.period}
@@ -91,7 +99,7 @@ export const PricingSection = ({
                             className={`h-5 w-5 shrink-0 mt-0.5 ${styles.iconColor}`}
                             strokeWidth={3}
                           />
-                          <span>{feature}</span>
+                          <span>{fillTrialDays(feature)}</span>
                         </li>
                       ))}
                     </ul>
@@ -119,7 +127,7 @@ export const PricingSection = ({
                         ? "Current Plan"
                         : isLoggedIn && pricing.id === "basic"
                           ? "Select Plan"
-                          : pricing.ctaText}
+                          : fillTrialDays(pricing.ctaText)}
                     </Link>
                   </Button>
                 </CardFooter>

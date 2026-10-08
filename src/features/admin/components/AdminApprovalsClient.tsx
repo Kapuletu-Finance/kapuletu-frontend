@@ -29,28 +29,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  useResolveApprovalRequestMutation,
-  useSubmitApprovalRequestMutation,
-} from "@/features/admin/services/mutations";
+import { useResolveApprovalRequestMutation } from "@/features/admin/services/mutations";
 import { useAdminApprovalsQuery } from "@/features/admin/services/queries";
 
 const AdminApprovalsClient: React.FC = () => {
   const { data: approvals = [], isLoading } = useAdminApprovalsQuery("pending");
   const resolveMutation = useResolveApprovalRequestMutation();
-  const submitDummyMutation = useSubmitApprovalRequestMutation();
 
   const handleResolve = (requestId: string, action: "approve" | "reject") => {
     if (!confirm(`Are you sure you want to ${action} this request?`)) return;
     resolveMutation.mutate({ requestId, action });
-  };
-
-  const handleCreateDummy = () => {
-    submitDummyMutation.mutate({
-      action_type: "ISSUE_REFUND",
-      payload: { amount: 1500, user_id: "user_123", reason: "Double charge" },
-      justification: "User was double charged due to system glitch on payment gateway.",
-    });
   };
 
   return (
@@ -62,13 +50,6 @@ const AdminApprovalsClient: React.FC = () => {
             Review and authorize sensitive actions initiated by staff.
           </p>
         </div>
-        <Button
-          variant="outline"
-          onClick={handleCreateDummy}
-          disabled={submitDummyMutation.isPending}
-        >
-          {submitDummyMutation.isPending ? "Simulating..." : "Simulate Sensitive Action"}
-        </Button>
       </div>
 
       <Card>
