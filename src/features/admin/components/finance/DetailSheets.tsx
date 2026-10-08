@@ -16,6 +16,7 @@ import {
   useFinanceInvoiceQuery,
   useFinancePaymentQuery,
 } from "@/features/admin/services/financeApi";
+import { useDownloadFinanceInvoiceMutation } from "@/features/admin/services/financeOpsApi";
 import { RefundRequestDialog } from "./RefundRequestDialog";
 import {
   dateTime,
@@ -174,6 +175,7 @@ export const InvoiceDetailSheet: React.FC<{
   onOpenPayment?: (paymentId: string) => void;
 }> = ({ invoiceId, onClose, onOpenPayment }) => {
   const { data: inv, isLoading } = useFinanceInvoiceQuery(invoiceId);
+  const downloadInvoice = useDownloadFinanceInvoiceMutation();
 
   return (
     <SheetShell
@@ -186,6 +188,17 @@ export const InvoiceDetailSheet: React.FC<{
         <Skeleton className="h-64 w-full" />
       ) : (
         <>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={downloadInvoice.isPending}
+            onClick={() =>
+              downloadInvoice.mutate({ invoiceId: inv.invoice_id, number: inv.number })
+            }
+          >
+            {downloadInvoice.isPending ? "Preparing PDF…" : "Download invoice PDF"}
+          </Button>
+
           <dl className="divide-y divide-border">
             <Row label="Status">
               <InvoiceStatusBadge status={inv.status} />

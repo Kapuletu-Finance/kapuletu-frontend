@@ -69,6 +69,15 @@ export const useDownloadReportMutation = () =>
     onError: (error) => toast.error(errorMessage(error, "Could not download the report.")),
   });
 
+export const useDownloadFinanceInvoiceMutation = () =>
+  useMutation({
+    mutationFn: ({ invoiceId, number }: { invoiceId: string; number: string }) =>
+      downloadFile(`/admin/finance/invoices/${invoiceId}/pdf`, {
+        fallbackName: `${number}.pdf`,
+      }),
+    onError: (error) => toast.error(errorMessage(error, "Could not download the invoice.")),
+  });
+
 export interface ReportSchedule {
   schedule_id: string;
   report_type: ReportKey;
