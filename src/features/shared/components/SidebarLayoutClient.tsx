@@ -393,7 +393,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
         </SidebarGroup>
       </SidebarContent>
 
-      {role !== "admin" && role !== "super_admin" && (
+      {(role === "treasurer" || role === "user") && (
         <SidebarFooter className="gap-2">
           <CurrentPlanCard />
         </SidebarFooter>
@@ -431,9 +431,12 @@ export const SidebarLayoutClient: React.FC<SidebarLayoutClientProps> = ({ childr
     pathname.startsWith("/treasurer") ||
     pathname.startsWith("/support") ||
     pathname.startsWith("/notifications");
-  const links = isInternalEmployee && !isTreasurerWorkspace ? getAdminLinks(role) : TREASURER_LINKS;
   useHeartbeat();
   const { data: user, isLoading } = useGetMeQuery();
+  const links =
+    isInternalEmployee && !isTreasurerWorkspace
+      ? getAdminLinks(role, user?.permissions ?? [])
+      : TREASURER_LINKS;
   const { data: pendingCount } = usePendingInboxCountQuery();
   const { data: feedbackCount } = useNewFeedbackCountQuery({ enabled: isInternalEmployee });
   const { data: ticketsCount } = usePendingTicketsCountQuery({ enabled: !isInternalEmployee });
