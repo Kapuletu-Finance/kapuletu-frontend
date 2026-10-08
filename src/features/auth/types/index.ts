@@ -1,5 +1,5 @@
 /**
- * Possible user roles, matching backend UserRole enum.
+ * Built-in user roles, matching the backend UserRole enum.
  */
 export type UserRole =
   | "treasurer"
@@ -20,7 +20,7 @@ export type User = {
   phone_number: string;
   email_verified: boolean;
   phone_number_verified: boolean;
-  role: UserRole;
+  role: string;
   permissions?: string[];
   profile_picture_url?: string | null;
   two_factor_enabled: boolean;
