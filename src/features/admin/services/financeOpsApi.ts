@@ -317,6 +317,74 @@ export const useContributionVolumeQuery = (from?: string, to?: string) =>
     placeholderData: keepPreviousData,
   });
 
+export interface ContributionRecord {
+  transaction_id: string;
+  transaction_code: string;
+  created_at: string | null;
+  contributor_name: string | null;
+  contributor_phone: string | null;
+  group_id: string;
+  group_name: string;
+  treasurer_id: string;
+  treasurer_name: string;
+  campaign_id: string | null;
+  campaign_name: string | null;
+  payment_method: string;
+  amount: number;
+}
+
+export interface ContributionFilters {
+  from?: string;
+  to?: string;
+  q?: string;
+  group?: string;
+  treasurer?: string;
+  contributor?: string;
+  method?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface ContributionRegister {
+  items: ContributionRecord[];
+  total: number;
+  total_amount: number;
+  page: number;
+  limit: number;
+  period: { from: string; to: string };
+}
+
+export const useContributionRegisterQuery = (filters: ContributionFilters) =>
+  useQuery({
+    queryKey: [...FINANCE_KEY, "contribution-register", filters],
+    queryFn: async () =>
+      (
+        await apiClient.get<ContributionRegister>(
+          `/admin/finance/contributions${toQuery({ ...filters })}`,
+        )
+      ).data,
+    placeholderData: keepPreviousData,
+  });
+
+export type ContributionStatementFormat = "pdf" | "excel" | "csv";
+
+export const useDownloadContributionStatementMutation = () =>
+  useMutation({
+    mutationFn: async ({
+      format,
+      filters,
+    }: {
+      format: ContributionStatementFormat;
+      filters: Omit<ContributionFilters, "page" | "limit">;
+    }) =>
+      downloadFile("/admin/finance/contributions/export", {
+        fallbackName: `kapuletu_contributions.${format === "excel" ? "xlsx" : format}`,
+        params: { format, ...filters },
+      }),
+    onError: (error) =>
+      toast.error(errorMessage(error, "Could not download the contribution statement.")),
+  });
+
 export interface IntegrityResult {
   period: { from: string; to: string };
   checked: number;

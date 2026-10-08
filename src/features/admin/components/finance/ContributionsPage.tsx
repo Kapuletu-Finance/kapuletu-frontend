@@ -1,11 +1,13 @@
 "use client";
 
+import { addDays } from "date-fns";
 import Link from "next/link";
 import type React from "react";
 import { useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -23,15 +25,36 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  type ContributionFilters,
+  type ContributionStatementFormat,
   type IntegrityResult,
+  useContributionRegisterQuery,
   useContributionVolumeQuery,
+  useDownloadContributionStatementMutation,
   useIntegrityCheckMutation,
 } from "@/features/admin/services/financeOpsApi";
 import { PageLayout } from "@/features/shared/components/PageLayout";
 import { cn } from "@/lib/utils";
-import { dateTime, EmptyRow, money, presetRange, RANGE_PRESETS, type RangePreset } from "./shared";
+import {
+  dateTime,
+  EmptyRow,
+  money,
+  Pagination,
+  presetRange,
+  RANGE_PRESETS,
+  type RangePreset,
+  useDebouncedValue,
+} from "./shared";
 
 const count = (n: number) => new Intl.NumberFormat("en-KE").format(n);
+const LIMIT = 25;
+type ContributionRangePreset = RangePreset | "all";
+const CONTRIBUTION_RANGE_PRESETS = [...RANGE_PRESETS, { value: "all" as const, label: "All time" }];
+const STATEMENT_FORMATS: { value: ContributionStatementFormat; label: string }[] = [
+  { value: "pdf", label: "Official PDF" },
+  { value: "excel", label: "Excel" },
+  { value: "csv", label: "CSV" },
+];
 
 const monthLabel = (ym: string) => {
   const [y, m] = ym.split("-").map(Number);
@@ -103,22 +126,69 @@ const Integrity = ({ range }: { range: { from: string; to?: string } }) => {
 };
 
 export const ContributionsPage: React.FC = () => {
-  const [preset, setPreset] = useState<RangePreset>("12m");
-  const range = useMemo(() => presetRange(preset), [preset]);
+  const [preset, setPreset] = useState<ContributionRangePreset>("12m");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [search, setSearch] = useState("");
+  const [group, setGroup] = useState("");
+  const [treasurer, setTreasurer] = useState("");
+  const [contributor, setContributor] = useState("");
+  const [method, setMethod] = useState("");
+  const [page, setPage] = useState(1);
+  const searchValue = useDebouncedValue(search);
+  const groupValue = useDebouncedValue(group);
+  const treasurerValue = useDebouncedValue(treasurer);
+  const contributorValue = useDebouncedValue(contributor);
+  const methodValue = useDebouncedValue(method);
+  const range = useMemo(() => {
+    const defaultRange = preset === "all" ? { from: "1970-01-01T00:00:00" } : presetRange(preset);
+    return {
+      from: fromDate
+        ? new Date(`${fromDate}T00:00:00`).toISOString().slice(0, 19)
+        : defaultRange.from,
+      to: toDate
+        ? addDays(new Date(`${toDate}T00:00:00`), 1)
+            .toISOString()
+            .slice(0, 19)
+        : defaultRange.to,
+    };
+  }, [fromDate, preset, toDate]);
   const { data, isLoading, isFetching } = useContributionVolumeQuery(range.from, range.to);
+  const filters: Omit<ContributionFilters, "page" | "limit"> = {
+    ...range,
+    q: searchValue,
+    group: groupValue,
+    treasurer: treasurerValue,
+    contributor: contributorValue,
+    method: methodValue,
+  };
+  const register = useContributionRegisterQuery({ ...filters, page, limit: LIMIT });
+  const statement = useDownloadContributionStatementMutation();
   const total = data?.totals.amount ?? 0;
+  const updateFilter = (setter: (value: string) => void) => (value: string) => {
+    setter(value);
+    setPage(1);
+  };
 
   return (
     <PageLayout
       title="Contributions"
       subtitle="Money treasurers' groups collect through Kapuletu. This is their money, not Kapuletu revenue; it's read-only here."
       actionButton={
-        <Select value={preset} onValueChange={(v) => v && setPreset(v as RangePreset)}>
+        <Select
+          value={preset}
+          onValueChange={(value) => {
+            if (value) {
+              setPreset(value as ContributionRangePreset);
+              setPage(1);
+            }
+          }}
+        >
           <SelectTrigger className="w-44" aria-label="Period">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {RANGE_PRESETS.map((p) => (
+            {CONTRIBUTION_RANGE_PRESETS.map((p) => (
               <SelectItem key={p.value} value={p.value}>
                 {p.label}
               </SelectItem>
@@ -127,8 +197,12 @@ export const ContributionsPage: React.FC = () => {
         </Select>
       }
     >
-      {isLoading || !data ? (
+      {isLoading ? (
         <Skeleton className="h-96 w-full" />
+      ) : !data ? (
+        <p role="alert" className="text-sm text-destructive">
+          Could not load the contribution summary. Please check the selected period and retry.
+        </p>
       ) : (
         <div className={cn("space-y-6", isFetching && "opacity-70")}>
           <dl className="grid gap-4 grid-cols-2 lg:grid-cols-5">
@@ -292,6 +366,174 @@ export const ContributionsPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      <Card>
+        <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <CardTitle>Contribution register</CardTitle>
+            <CardDescription>
+              Search approved contributions by contributor, group, treasurer, campaign, payment
+              method, or reference. Downloads include all records matching the filters.
+            </CardDescription>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {STATEMENT_FORMATS.map((format) => (
+              <Button
+                key={format.value}
+                variant={format.value === "pdf" ? "default" : "outline"}
+                size="sm"
+                disabled={statement.isPending}
+                onClick={() => statement.mutate({ format: format.value, filters })}
+              >
+                {statement.isPending ? "Preparing…" : format.label}
+              </Button>
+            ))}
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            <Input
+              type="date"
+              aria-label="From date"
+              value={fromDate}
+              onChange={(event) => updateFilter(setFromDate)(event.target.value)}
+            />
+            <Input
+              type="date"
+              aria-label="To date"
+              value={toDate}
+              onChange={(event) => updateFilter(setToDate)(event.target.value)}
+            />
+            <Input
+              aria-label="Search contributions"
+              placeholder="Search all fields"
+              value={search}
+              onChange={(event) => updateFilter(setSearch)(event.target.value)}
+            />
+            <Input
+              aria-label="Filter by group"
+              placeholder="Group"
+              value={group}
+              onChange={(event) => updateFilter(setGroup)(event.target.value)}
+            />
+            <Input
+              aria-label="Filter by treasurer"
+              placeholder="Treasurer name or email"
+              value={treasurer}
+              onChange={(event) => updateFilter(setTreasurer)(event.target.value)}
+            />
+            <Input
+              aria-label="Filter by contributor"
+              placeholder="Contributor name or phone"
+              value={contributor}
+              onChange={(event) => updateFilter(setContributor)(event.target.value)}
+            />
+            <Input
+              aria-label="Filter by payment method"
+              placeholder="Payment method"
+              value={method}
+              onChange={(event) => updateFilter(setMethod)(event.target.value)}
+            />
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setFromDate("");
+                  setToDate("");
+                  setSearch("");
+                  setGroup("");
+                  setTreasurer("");
+                  setContributor("");
+                  setMethod("");
+                  setPage(1);
+                }}
+              >
+                Clear
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
+            <span>
+              {register.data
+                ? `${count(register.data.total)} matching contributions · ${money(register.data.total_amount)}`
+                : "Loading contribution records…"}
+            </span>
+            <span>Only approved contributions are included.</span>
+          </div>
+          {register.isError ? (
+            <p role="alert" className="text-sm text-destructive">
+              Could not load contribution records. Please retry.
+            </p>
+          ) : (
+            <div className={cn("space-y-2", register.isFetching && "opacity-70")}>
+              <div className="overflow-x-auto rounded-md border border-border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Contributor</TableHead>
+                      <TableHead>Group</TableHead>
+                      <TableHead>Treasurer</TableHead>
+                      <TableHead>Campaign</TableHead>
+                      <TableHead>Method</TableHead>
+                      <TableHead>Reference</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {register.isLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={8}>
+                          <Skeleton className="h-20 w-full" />
+                        </TableCell>
+                      </TableRow>
+                    ) : register.data?.items.length ? (
+                      register.data.items.map((item) => (
+                        <TableRow key={item.transaction_id}>
+                          <TableCell className="whitespace-nowrap">
+                            {item.created_at ? dateTime(item.created_at) : "—"}
+                          </TableCell>
+                          <TableCell>
+                            {item.contributor_name || "Unknown"}
+                            {item.contributor_phone && (
+                              <span className="block text-xs text-muted-foreground">
+                                {item.contributor_phone}
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>{item.group_name}</TableCell>
+                          <TableCell>{item.treasurer_name}</TableCell>
+                          <TableCell>{item.campaign_name || "—"}</TableCell>
+                          <TableCell>{item.payment_method}</TableCell>
+                          <TableCell className="font-mono text-xs">
+                            {item.transaction_code}
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {money(item.amount)}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <EmptyRow colSpan={8}>
+                        No approved contributions match these filters.
+                      </EmptyRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              {register.data && (
+                <Pagination
+                  page={page}
+                  limit={LIMIT}
+                  total={register.data.total}
+                  onPage={setPage}
+                />
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <Integrity range={range} />
     </PageLayout>
