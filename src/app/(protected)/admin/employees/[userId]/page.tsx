@@ -1,15 +1,14 @@
-import React from "react";
-import { AdminEmployeeProfileClient } from "@/features/admin/components/AdminEmployeeProfileClient";
+import { EmployeeProfilePage } from "@/features/admin/components/employee-profile/EmployeeProfilePage";
 
-export default async function EmployeeWorkspacePage({
+export default async function EmployeeProfileRoute({
   params,
 }: {
   params: Promise<{ userId: string }>;
 }) {
-  const resolvedParams = await params;
+  const { userId } = await params;
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6 flex-1">
-      <AdminEmployeeProfileClient userId={resolvedParams.userId} />
+    <div className="mx-auto w-full max-w-7xl flex-1 space-y-6 p-6">
+      <EmployeeProfilePage userId={userId} />
     </div>
   );
 }

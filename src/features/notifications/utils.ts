@@ -51,6 +51,36 @@ export function notificationToDisplay(n: NotificationOut): DisplayNotification {
       iconClassName: "text-blue-600",
       iconBgClassName: "bg-blue-100 dark:bg-blue-900/30",
     },
+    meeting_cancelled: {
+      icon: "calendar",
+      iconClassName: "text-destructive",
+      iconBgClassName: "bg-destructive/10 dark:bg-destructive/30",
+    },
+    meeting_invited: {
+      icon: "calendar",
+      iconClassName: "text-primary",
+      iconBgClassName: "bg-primary/10 dark:bg-primary/30",
+    },
+    meeting_reminder: {
+      icon: "clock",
+      iconClassName: "text-orange-600",
+      iconBgClassName: "bg-orange-100 dark:bg-orange-900/30",
+    },
+    meeting_removed: {
+      icon: "calendar",
+      iconClassName: "text-muted-foreground",
+      iconBgClassName: "bg-muted",
+    },
+    attendance_adjusted: {
+      icon: "calendar",
+      iconClassName: "text-primary",
+      iconBgClassName: "bg-primary/10 dark:bg-primary/30",
+    },
+    meeting_updated: {
+      icon: "calendar",
+      iconClassName: "text-blue-600",
+      iconBgClassName: "bg-blue-100 dark:bg-blue-900/30",
+    },
   };
 
   const fallback = {

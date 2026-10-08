@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminAuditClient } from "@/features/admin/components/AdminAuditClient";
+import { useEmployeePermissionsCatalogQuery } from "@/features/admin/services/employeeProfile";
 import {
   useAdminEmployeesQuery,
   useAdminPendingInvitesQuery,
@@ -40,22 +41,6 @@ import {
   useUpdateEmployeePermissionsMutation,
 } from "@/features/auth/services/mutations";
 import { apiClient } from "@/lib/api-client";
-
-const AVAILABLE_PERMISSIONS = [
-  { id: "manage_finance", label: "Manage Finance" },
-  { id: "manage_users", label: "Manage Users" },
-  { id: "manage_blogs", label: "Manage Blogs" },
-  { id: "manage_support", label: "Manage Support" },
-  { id: "manage_communications", label: "Manage Communications" },
-  { id: "manage_feedback", label: "Manage User Feedback" },
-  { id: "view_audit_logs", label: "View Audit Logs" },
-  { id: "manage_employees", label: "Manage Employees" },
-  { id: "manage_performance", label: "Manage Employee Performance" },
-  { id: "manage_settings", label: "Manage Settings" },
-  { id: "manage_approvals", label: "Manage Approvals Queue" },
-  { id: "manage_ai", label: "Manage AI Governance" },
-  { id: "view_overview", label: "View Overview & Performance" },
-];
 
 const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
   content_manager: ["manage_blogs", "manage_settings", "view_overview", "manage_feedback"],
@@ -113,6 +98,8 @@ const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
 };
 
 const AdminEmployeesClient: React.FC = () => {
+  // Single source of truth for grantable permissions (served by the API)
+  const { data: permissionCatalog = [] } = useEmployeePermissionsCatalogQuery();
   const router = useRouter();
   const { data: employees = [], isLoading: isLoadingEmployees } = useAdminEmployeesQuery();
   const { data: invites = [], isLoading: isLoadingInvites } = useAdminPendingInvitesQuery();
@@ -259,7 +246,7 @@ const AdminEmployeesClient: React.FC = () => {
               <div className="space-y-3 pt-2">
                 <Label className="text-sm font-semibold">Granular Module Access</Label>
                 <div className="grid grid-cols-2 gap-3">
-                  {AVAILABLE_PERMISSIONS.map((permission) => (
+                  {permissionCatalog.map((permission) => (
                     <div key={permission.id} className="flex items-center space-x-2">
                       <Checkbox
                         id={permission.id}
@@ -499,7 +486,7 @@ const AdminEmployeesClient: React.FC = () => {
               className="space-y-4 pt-4"
             >
               <div className="grid grid-cols-2 gap-3">
-                {AVAILABLE_PERMISSIONS.map((permission) => (
+                {permissionCatalog.map((permission) => (
                   <div key={permission.id} className="flex items-center space-x-2">
                     <Checkbox
                       id={`edit-${permission.id}`}

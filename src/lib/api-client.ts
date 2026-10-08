@@ -40,9 +40,26 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
  * handles the actual JWT refresh loops seamlessly, if a 401 reaches this client
  * interceptor, it means the refresh token is also dead and the session is truly over.
  */
+/**
+ * File downloads use `responseType: "blob"`, so their JSON error bodies arrive as Blobs.
+ * Decode them so the handling below (and toasts) see the API's real error message.
+ */
+const decodeBlobErrorBody = async (error: AxiosError) => {
+  const data = error.response?.data;
+  if (error.response && data instanceof Blob && data.type.includes("json")) {
+    try {
+      error.response.data = JSON.parse(await data.text());
+    } catch {
+      // Leave the body as-is if it isn't valid JSON
+    }
+  }
+};
+
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    await decodeBlobErrorBody(error);
+
     // Check if this is a billing/premium limit error (402 or specific 403s)
     const errData = error.response?.data as Record<string, unknown> | undefined;
     const errDetail = typeof errData?.detail === "string" ? errData.detail : "";

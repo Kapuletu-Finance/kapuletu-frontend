@@ -1,6 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import {
+  type OrganizationProfile,
+  organizationProfileKey,
+} from "@/features/admin/services/queries";
 import { apiClient } from "@/lib/api-client";
+import { downloadFile } from "@/lib/download";
 
 // --- Types ---
 
@@ -254,27 +259,15 @@ export const useExportFinancialDataMutation = () => {
       startDate?: string;
       endDate?: string;
     }) => {
-      const params = new URLSearchParams({ format });
-      if (startDate) params.append("start_date", startDate);
-      if (endDate) params.append("end_date", endDate);
-
-      const response = await apiClient.get(`/admin/finance/analytics/export?${params.toString()}`, {
-        responseType: "blob",
-      });
-      return { data: response.data, format };
-    },
-    onSuccess: ({ data, format }) => {
-      const url = window.URL.createObjectURL(new Blob([data]));
-      const link = document.createElement("a");
-      link.href = url;
-
       const extension = format === "excel" ? "xlsx" : format;
       const dateStr = new Date().toISOString().split("T")[0].replace(/-/g, "");
-      link.setAttribute("download", `financial_export_${dateStr}.${extension}`);
-
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      await downloadFile("/admin/finance/analytics/export", {
+        fallbackName: `financial_export_${dateStr}.${extension}`,
+        params: { end_date: endDate, format, start_date: startDate },
+      });
+      return format;
+    },
+    onSuccess: (format) => {
       toast.success(`Exported as ${format.toUpperCase()} successfully.`);
     },
     onError: (error) => {
@@ -528,6 +521,21 @@ export const useSetAdminPinMutation = () => {
 };
 
 // --- System Config ---
+
+export const useUpdateOrganizationProfileMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (profile: OrganizationProfile) =>
+      (await apiClient.put<OrganizationProfile>("/admin/organization-profile", profile)).data,
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to save organisation details.");
+    },
+    onSuccess: (profile) => {
+      queryClient.setQueryData(organizationProfileKey, profile);
+      toast.success("Organisation details saved. New official documents will use them.");
+    },
+  });
+};
 
 export const useUpdateSystemConfigMutation = () => {
   const queryClient = useQueryClient();

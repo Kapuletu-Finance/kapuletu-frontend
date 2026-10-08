@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import type { Employee } from "@/features/hr/types";
 import { apiClient } from "@/lib/api-client";
 
 // --- Types ---
@@ -650,6 +651,27 @@ export interface SystemConfigResponse {
   [key: string]: any;
 }
 
+/** Letterhead details printed on every official Kapuletu document. */
+export interface OrganizationProfile {
+  name: string;
+  tagline: string | null;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  registration_number: string | null;
+  tax_pin: string | null;
+}
+
+export const organizationProfileKey = ["admin", "organization-profile"] as const;
+
+export const useOrganizationProfileQuery = () =>
+  useQuery({
+    queryFn: async () =>
+      (await apiClient.get<OrganizationProfile>("/admin/organization-profile")).data,
+    queryKey: organizationProfileKey,
+  });
+
 export const useSystemConfigQuery = () => {
   return useQuery({
     queryKey: ["admin", "system-config"],
@@ -923,7 +945,7 @@ export const useAdminEmployeesQuery = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["admin_employees"],
     queryFn: async () => {
-      const response = await apiClient.get<any[]>("/admin/employees");
+      const response = await apiClient.get<Employee[]>("/admin/employees");
       return response.data;
     },
     ...options,

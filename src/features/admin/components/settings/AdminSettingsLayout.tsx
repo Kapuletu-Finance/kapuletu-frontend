@@ -14,6 +14,10 @@ import { GlobalNotificationsTab } from "./tabs/GlobalNotificationsTab";
 import { GlobalSecurityTab } from "./tabs/GlobalSecurityTab";
 import { IntegrationsTab } from "./tabs/IntegrationsTab";
 import { InvitesPanel } from "./tabs/InvitesPanel";
+import { OrganizationProfileTab } from "./tabs/OrganizationProfileTab";
+
+const TAB_TRIGGER_CLASS =
+  "px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground";
 
 export const AdminSettingsLayout: React.FC = () => {
   const { data: config, isLoading, isError } = useSystemConfigQuery();
@@ -51,52 +55,31 @@ export const AdminSettingsLayout: React.FC = () => {
       <Tabs defaultValue="profile" className="flex flex-col gap-6 w-full">
         <ScrollArea orientation="horizontal" className="w-full border-b border-border">
           <TabsList className="flex h-auto w-full bg-transparent items-center justify-start p-0 rounded-none shrink-0 gap-6">
-            <TabsTrigger
-              value="profile"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
+            <TabsTrigger value="profile" className={TAB_TRIGGER_CLASS}>
               Personal Profile
             </TabsTrigger>
-            <TabsTrigger
-              value="security"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
+            <TabsTrigger value="organization" className={TAB_TRIGGER_CLASS}>
+              Organisation
+            </TabsTrigger>
+            <TabsTrigger value="security" className={TAB_TRIGGER_CLASS}>
               Global Security
             </TabsTrigger>
-            <TabsTrigger
-              value="integrations"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
+            <TabsTrigger value="integrations" className={TAB_TRIGGER_CLASS}>
               Integrations
             </TabsTrigger>
-            <TabsTrigger
-              value="billing"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
+            <TabsTrigger value="billing" className={TAB_TRIGGER_CLASS}>
               Billing Rules
             </TabsTrigger>
-            <TabsTrigger
-              value="privacy"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
+            <TabsTrigger value="privacy" className={TAB_TRIGGER_CLASS}>
               Data & Privacy
             </TabsTrigger>
-            <TabsTrigger
-              value="notifications"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
+            <TabsTrigger value="notifications" className={TAB_TRIGGER_CLASS}>
               Global Alerts
             </TabsTrigger>
-            <TabsTrigger
-              value="access"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
+            <TabsTrigger value="access" className={TAB_TRIGGER_CLASS}>
               Access Controls
             </TabsTrigger>
-            <TabsTrigger
-              value="invites"
-              className="px-1 py-3 -mb-[1px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:bg-transparent rounded-none text-[13px] font-medium text-muted-foreground data-[state=active]:text-foreground transition-all whitespace-nowrap hover:text-foreground"
-            >
+            <TabsTrigger value="invites" className={TAB_TRIGGER_CLASS}>
               VIP Invites & Signups
             </TabsTrigger>
           </TabsList>
@@ -105,6 +88,9 @@ export const AdminSettingsLayout: React.FC = () => {
         <div className="w-full bg-card border border-border shadow-sm rounded-2xl p-5 md:p-8 min-h-[400px]">
           <TabsContent value="profile" className="mt-0 outline-none">
             <GeneralProfileTab />
+          </TabsContent>
+          <TabsContent value="organization" className="mt-0 outline-none">
+            <OrganizationProfileTab />
           </TabsContent>
           <TabsContent value="security" className="mt-0 outline-none">
             <GlobalSecurityTab

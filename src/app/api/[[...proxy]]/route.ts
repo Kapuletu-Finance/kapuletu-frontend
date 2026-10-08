@@ -209,10 +209,15 @@ const proxyRequest = async (request: NextRequest, attemptRefresh = true): Promis
 
       return NextResponse.json(responseData, { status: axiosResponse.status });
     } else {
+      const headers: Record<string, string> = {
+        "Content-Type": contentType || "application/octet-stream",
+      };
+      // Preserve server-chosen filenames for downloads (e.g. official document references).
+      const disposition = axiosResponse.headers["content-disposition"];
+      if (typeof disposition === "string") headers["Content-Disposition"] = disposition;
+
       return new NextResponse(axiosResponse.data as BodyInit, {
-        headers: {
-          "Content-Type": contentType || "application/octet-stream",
-        },
+        headers,
         status: axiosResponse.status,
       });
     }

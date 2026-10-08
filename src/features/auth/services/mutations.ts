@@ -568,9 +568,7 @@ export const useUpdateEmployeePermissionsMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ userId, permissions }: { userId: string; permissions: string[] }) => {
-      const response = await apiClient.put(`/admin/employees/${userId}/permissions`, {
-        permissions,
-      });
+      const response = await apiClient.patch(`/admin/employees/${userId}`, { permissions });
       return response.data;
     },
     onSuccess: () => {

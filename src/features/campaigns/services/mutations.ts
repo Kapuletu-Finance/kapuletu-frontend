@@ -10,6 +10,7 @@ import type {
   PublicWebReportOut,
 } from "@/features/shared/types";
 import { apiClient } from "@/lib/api-client";
+import { downloadFile } from "@/lib/download";
 
 export const useRegenerateCampaignPinMutation = (campaignId: string) => {
   const queryClient = useQueryClient();
@@ -196,48 +197,24 @@ export const useToggleCampaignFavoriteMutation = (campaignId: string) => {
 
 export const useExportCampaignPdfMutation = (campaignId: string) => {
   return useMutation({
-    mutationFn: async () => {
-      const response = await apiClient.get(CAMPAIGNS_URLS.campaignExportPdf(campaignId), {
-        responseType: "blob",
-      });
-      return response.data;
-    },
+    mutationFn: () =>
+      downloadFile(CAMPAIGNS_URLS.campaignExportPdf(campaignId), {
+        fallbackName: `campaign-${campaignId}.pdf`,
+      }),
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to download PDF.");
-    },
-    onSuccess: (data) => {
-      const url = window.URL.createObjectURL(new Blob([data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `campaign-${campaignId}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
     },
   });
 };
 
 export const useExportCampaignExcelMutation = (campaignId: string) => {
   return useMutation({
-    mutationFn: async () => {
-      const response = await apiClient.get(CAMPAIGNS_URLS.campaignExportExcel(campaignId), {
-        responseType: "blob",
-      });
-      return response.data;
-    },
+    mutationFn: () =>
+      downloadFile(CAMPAIGNS_URLS.campaignExportExcel(campaignId), {
+        fallbackName: `campaign-${campaignId}.xlsx`,
+      }),
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to download Excel.");
-    },
-    onSuccess: (data) => {
-      const url = window.URL.createObjectURL(new Blob([data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `campaign-${campaignId}.xlsx`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
     },
   });
 };

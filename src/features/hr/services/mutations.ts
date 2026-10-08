@@ -1,51 +1,66 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { hrKeys } from "@/features/hr/services/queries";
+import type {
+  AttendanceAdjustmentInput,
+  AttendanceReportParams,
+  Coordinates,
+  MeetingAttendanceMark,
+  MeetingDetail,
+  MeetingInput,
+  ScheduleDay,
+  ScheduleOverrideInput,
+  WorkLocation,
+  WorkLocationInput,
+} from "@/features/hr/types";
+import { HR_URLS } from "@/features/hr/urls";
+import { getCurrentCoordinates } from "@/features/hr/utils";
 import { apiClient } from "@/lib/api-client";
+import { downloadFile } from "@/lib/download";
 
-interface ClockInPayload {
-  work_mode: "physical" | "remote";
-  latitude: string | null;
-  longitude: string | null;
-}
-
-export const useClockInMutation = () => {
+/**
+ * Shared mutation wiring for the HR module: toast on success/failure and invalidate the
+ * affected query groups. Error messages come from the API (normalised by apiClient).
+ */
+const useHrMutation = <TVariables, TData = unknown>(
+  mutationFn: (variables: TVariables) => Promise<TData>,
+  { success, invalidate }: { success: string | ((data: TData) => string); invalidate: QueryKey[] },
+) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: ClockInPayload) => {
-      const res = await apiClient.post("/hr/reports/clock-in", payload);
-      return res.data;
+    mutationFn,
+    onError: (error: Error) => {
+      toast.error(error.message);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hr", "reports"] });
-      toast.success("Clocked in successfully.");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "Failed to clock in");
+    onSuccess: (data) => {
+      for (const queryKey of invalidate) queryClient.invalidateQueries({ queryKey });
+      toast.success(typeof success === "function" ? success(data) : success);
     },
   });
 };
 
-export const useClockOutMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (work_summary: string) => {
-      const res = await apiClient.post("/hr/reports/clock-out", { work_summary });
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hr", "reports"] });
-      toast.success("Clocked out successfully.");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "Failed to clock out");
-    },
-  });
-};
+/** Coordinates are only collected when the action needs to prove office presence. */
+const coordinatesIf = async (needed: boolean): Promise<Partial<Coordinates>> =>
+  needed ? getCurrentCoordinates() : {};
 
-export const useConfirmReportMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
+// --- Daily attendance ---
+
+export const useClockInMutation = () =>
+  useHrMutation(
+    async ({ requiresLocation }: { requiresLocation: boolean }) =>
+      (await apiClient.post(HR_URLS.clockIn, await coordinatesIf(requiresLocation))).data,
+    { invalidate: [hrKeys.attendance, hrKeys.reportsAll], success: "Clocked in successfully." },
+  );
+
+export const useClockOutMutation = () =>
+  useHrMutation(
+    async (work_summary: string) => (await apiClient.post(HR_URLS.clockOut, { work_summary })).data,
+    { invalidate: [hrKeys.attendance, hrKeys.reportsAll], success: "Clocked out successfully." },
+  );
+
+export const useConfirmReportMutation = () =>
+  useHrMutation(
+    async ({
       reportId,
       status,
       notes,
@@ -53,94 +68,168 @@ export const useConfirmReportMutation = () => {
       reportId: string;
       status: "confirmed" | "rejected";
       notes?: string;
-    }) => {
-      const res = await apiClient.put(`/hr/reports/${reportId}/confirm`, null, {
-        params: { status, notes },
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hr", "reports"] });
-      toast.success("Report reviewed successfully.");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "Failed to review report");
-    },
-  });
-};
+    }) =>
+      (await apiClient.put(HR_URLS.confirmReport(reportId), null, { params: { notes, status } }))
+        .data,
+    { invalidate: [hrKeys.reportsAll], success: "Report reviewed successfully." },
+  );
 
-export const useScheduleMeetingMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (payload: {
-      title: string;
-      description?: string;
-      meeting_type: "online" | "physical";
-      location_or_url?: string;
-      start_time: string;
-      end_time: string;
-      attendee_ids: string[];
-    }) => {
-      const res = await apiClient.post("/hr/meetings", payload);
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hr", "meetings"] });
-      toast.success("Meeting scheduled successfully.");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "Failed to schedule meeting");
-    },
-  });
-};
+export const useDownloadAttendanceReportMutation = () =>
+  useHrMutation(
+    (params: AttendanceReportParams) =>
+      downloadFile(HR_URLS.attendanceSummaryPdf, {
+        fallbackName: `attendance-report-${params.period}.pdf`,
+        params,
+      }),
+    { invalidate: [], success: (filename) => `Official document downloaded: ${filename}` },
+  );
 
-export const useMarkAttendanceMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
+// --- Schedule ---
+
+export const useUpdateCompanyScheduleMutation = () =>
+  useHrMutation(
+    async (days: ScheduleDay[]) => (await apiClient.put(HR_URLS.schedule, { days })).data,
+    { invalidate: [hrKeys.schedule, hrKeys.attendance], success: "Company schedule saved." },
+  );
+
+export const useUpdateEmployeeScheduleMutation = () =>
+  useHrMutation(
+    async ({ userId, days }: { userId: string; days: ScheduleDay[] }) =>
+      (await apiClient.put(HR_URLS.employeeSchedule(userId), { days })).data,
+    { invalidate: [hrKeys.schedule, hrKeys.attendance], success: "Employee schedule saved." },
+  );
+
+export const useUpsertOverrideMutation = () =>
+  useHrMutation(
+    async (payload: ScheduleOverrideInput) =>
+      (await apiClient.post(HR_URLS.scheduleOverrides, payload)).data,
+    { invalidate: [hrKeys.schedule, hrKeys.attendance], success: "Date override saved." },
+  );
+
+export const useDeleteOverrideMutation = () =>
+  useHrMutation(
+    async (overrideId: string) =>
+      (await apiClient.delete(HR_URLS.scheduleOverride(overrideId))).data,
+    { invalidate: [hrKeys.schedule, hrKeys.attendance], success: "Date override removed." },
+  );
+
+// --- Meetings (admin) ---
+
+export const useScheduleMeetingMutation = () =>
+  useHrMutation(
+    async (payload: MeetingInput) => (await apiClient.post(HR_URLS.meetings, payload)).data,
+    {
+      invalidate: [hrKeys.meetings],
+      success: "Meeting scheduled. Attendees have been notified.",
+    },
+  );
+
+export const useUpdateMeetingMutation = () =>
+  useHrMutation(
+    async ({ meetingId, payload }: { meetingId: string; payload: Partial<MeetingInput> }) =>
+      (await apiClient.patch(HR_URLS.meeting(meetingId), payload)).data,
+    {
+      invalidate: [hrKeys.meetings],
+      success: "Meeting updated. Affected attendees have been notified.",
+    },
+  );
+
+export const useCancelMeetingMutation = () =>
+  useHrMutation(
+    async (meetingId: string) => (await apiClient.post(HR_URLS.meetingCancel(meetingId))).data,
+    { invalidate: [hrKeys.meetings], success: "Meeting cancelled. Attendees have been notified." },
+  );
+
+export const useMarkAttendanceMutation = () =>
+  useHrMutation(
+    async ({
       meetingId,
-      userId,
-      attendance,
+      records,
     }: {
       meetingId: string;
-      userId: string;
-      attendance: "attended" | "missed" | "excused";
-    }) => {
-      const res = await apiClient.put(`/hr/meetings/${meetingId}/attendance/${userId}`, null, {
-        params: { attendance },
-      });
-      return res.data;
+      records: { user_id: string; attendance: MeetingAttendanceMark }[];
+    }) =>
+      (await apiClient.put<MeetingDetail>(HR_URLS.meetingAttendance(meetingId), { records })).data,
+    {
+      invalidate: [hrKeys.meetings, hrKeys.attendance],
+      success: (detail) => `Attendance saved for "${detail.title}".`,
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hr", "meetings"] });
-      toast.success("Attendance marked.");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "Failed to mark attendance");
-    },
-  });
-};
+  );
 
-interface OfficeLocationPayload {
-  location_name: string;
-  latitude: string;
-  longitude: string;
-  radius_meters: string;
-}
+// --- Meetings (attendee) ---
 
-export const useUpdateOfficeLocationMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (payload: OfficeLocationPayload) => {
-      const res = await apiClient.put("/hr/office-location", payload);
-      return res.data;
+export const useRsvpMutation = () =>
+  useHrMutation(
+    async ({ meetingId, response }: { meetingId: string; response: "accepted" | "declined" }) =>
+      (await apiClient.post(HR_URLS.meetingRsvp(meetingId), { response })).data,
+    { invalidate: [hrKeys.myMeetings], success: "Your response has been recorded." },
+  );
+
+export const useMeetingCheckInMutation = () =>
+  useHrMutation(
+    async ({ meetingId, requiresLocation }: { meetingId: string; requiresLocation: boolean }) =>
+      (
+        await apiClient.post(
+          HR_URLS.meetingCheckIn(meetingId),
+          await coordinatesIf(requiresLocation),
+        )
+      ).data,
+    { invalidate: [hrKeys.myMeetings, hrKeys.attendance], success: "You're checked in." },
+  );
+
+// --- Work locations ---
+
+export const useSaveWorkLocationMutation = () =>
+  useHrMutation(
+    async ({ id, payload }: { id?: string; payload: WorkLocationInput }) =>
+      (id
+        ? await apiClient.put<WorkLocation>(HR_URLS.location(id), payload)
+        : await apiClient.post<WorkLocation>(HR_URLS.locations, payload)
+      ).data,
+    {
+      // Locations change where clock-ins and meetings are checked.
+      invalidate: [hrKeys.locations, hrKeys.attendance, hrKeys.meetings],
+      success: (location) => `${location.name} saved.`,
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hr", "office-location"] });
-      toast.success("Office location saved successfully.");
+  );
+
+export const useWorkLocationActionMutation = () =>
+  useHrMutation(
+    async ({ id, action }: { id: string; action: "default" | "archive" | "restore" }) => {
+      const url = {
+        archive: HR_URLS.locationArchive,
+        default: HR_URLS.locationDefault,
+        restore: HR_URLS.locationRestore,
+      }[action](id);
+      return (await apiClient.post<WorkLocation>(url)).data;
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "Failed to save office location.");
+    {
+      invalidate: [hrKeys.locations, hrKeys.attendance, hrKeys.meetings],
+      success: (location) =>
+        location.is_default
+          ? `${location.name} is now the default location.`
+          : `${location.name} ${location.is_active ? "restored" : "archived"}.`,
     },
-  });
-};
+  );
+
+// --- Attendance corrections ---
+
+export const useSaveAdjustmentMutation = () =>
+  useHrMutation(
+    async (payload: AttendanceAdjustmentInput) =>
+      (await apiClient.put(HR_URLS.attendanceAdjustments, payload)).data,
+    {
+      invalidate: [hrKeys.attendance],
+      success: "Attendance corrected. The employee has been notified.",
+    },
+  );
+
+export const useRevertAdjustmentMutation = () =>
+  useHrMutation(
+    async ({ userId, date }: { userId: string; date: string }) =>
+      (await apiClient.delete(HR_URLS.attendanceAdjustment(userId, date))).data,
+    {
+      invalidate: [hrKeys.attendance],
+      success: "Correction removed; recorded attendance applies again.",
+    },
+  );
